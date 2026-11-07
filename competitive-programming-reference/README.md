@@ -22,7 +22,7 @@ GitHub Pages公開後に上のURLで閲覧できます。ローカルでは [ind
 | 分類 | 内容 |
 |---|---|
 | **[標準ライブラリ](docs/standard-library.md)** | vector・string・set・mapなどの容器と、sort・reverse・二分探索などの操作関数。部分操作を含む主要操作 |
-| **[AtCoder Library](docs/atcoder-library.md)** | DSU・Fenwick Tree・segtree・modintなど |
+| **[AtCoder Library](docs/atcoder-library.md)** | 現在はmodint・math/stringなど。DSU・Fenwick Tree・segtreeは制作者が使い方を理解するまで非表示 |
 | **[定番アルゴリズム・実装](docs/algorithms.md)** | 累積和・全探索・座標圧縮・BFS・Dijkstra・DPなど。機能と全体コードが中心 |
 | **[計算量・メモリの目安](docs/complexity-memory.md)** | Nと計算量の対応、型別・二次元配列の容量、メモリ上限との比較 |
 
@@ -44,12 +44,14 @@ GitHub Pages公開後に上のURLで閲覧できます。ローカルでは [ind
 python build_reference.py
 ```
 
+サイト内の**更新履歴・制作者メモ**は `site-notes.json` に記録します。`published: true` の項目だけがサイトと生成Markdownに表示され、`false` の項目は表示されません。公開リポジトリ内のファイルなので、非公開項目にもパスワードなどの秘密情報は書かないでください。DSU・Fenwick Tree・segtreeの表示を戻す場合は、`build_reference.py` の `HIDDEN_GROUPS` からキーを削除します。
+
 全コードの検証（WSL/Linux、Python3・g++・インターネット接続が必要）：
 
 ```sh
 python3 validate.py
 ```
 
-検証スクリプトは公式ACLを一時フォルダへ取得します。203件の全体コードを、それぞれの本文を別の名前空間に置いてC++23 (GCC 15.2.0)で一括コンパイルし、入出力設定だけの1件を除く202件を実行します。単独cppファイル7本のコンパイルと、355ケースの境界値・ランダム入力の出力照合も行います。すべての入力や手法を網羅する検証ではありません。
+検証スクリプトは公式ACLを一時フォルダへ取得します。サイトに掲載中の全体コードを、それぞれの本文を別の名前空間に置いてC++23 (GCC 15.2.0)で一括コンパイルし、実行可能な例を動かします。単独cppファイル7本のコンパイルと、境界値・ランダム入力の出力照合も行います。すべての入力や手法を網羅する検証ではありません。
 
 GitHub Pagesの初回設定は、[Settings → Pages](https://github.com/NEZIKI2149/github-test/settings/pages)で **Deploy from a branch → master → /(root) → Save**。リポジトリ直下の入口から、この資料へ移動する構成です。

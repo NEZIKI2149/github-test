@@ -1,0 +1,23 @@
+{
+  "timezone": "Asia/Tokyo",
+  "updates": [
+    {
+      "id": "20261108-notes-added",
+      "at": "2026-11-08 06:19",
+      "title": "更新履歴・制作者メモの記録場所を追加",
+      "category": "サイト全体",
+      "text": "更新履歴と制作者メモをソース側で管理できるようにしました。公開フラグを付けた記録だけがサイトに表示されます。",
+      "published": true
+    }
+  ],
+  "memos": [
+    {
+      "id": "20261108-acl-hidden",
+      "at": "2026-11-08 06:19",
+      "title": "AtCoder Libraryの一部を非表示",
+      "category": "AtCoder Library",
+      "text": "DSU・Fenwick Tree・segtreeは、制作者が使い方を理解するまで目次と検索結果から非表示にする。表示を戻すときはbuild_reference.pyのHIDDEN_GROUPSを編集する。",
+      "published": false
+    }
+  ]
+}

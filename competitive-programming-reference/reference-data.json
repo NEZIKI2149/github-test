@@ -19,6 +19,11 @@
       "title": "計算量・メモリ",
       "subtitle": "制約と必要な容量を確認する。",
       "file": "complexity-memory.md"
+    },
+    "notes": {
+      "title": "更新履歴・制作者メモ",
+      "subtitle": "公開した更新と制作者メモ。",
+      "file": "site-notes.md"
     }
   },
   "groups": [
@@ -1717,190 +1722,6 @@
     },
     {
       "page": "acl",
-      "key": "dsu",
-      "title": "dsu：グループ結合・連結判定",
-      "note": "Union-Find。頂点0〜N−1。辺の削除・距離計算はできない。α(N)は逆アッカーマン関数で、実用的には非常に小さい。",
-      "items": [
-        {
-          "id": "dsu-1",
-          "desc": "N頂点を別々のグループとして作る",
-          "code": "atcoder::dsu D(N);",
-          "cost": "O(N)",
-          "note": "",
-          "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\n#include <atcoder/dsu>\nusing namespace std;\n\nint main(){\n    int N = 5;\n    atcoder::dsu D(N);\n    return 0;\n}\n",
-          "input": "",
-          "expected": null
-        },
-        {
-          "id": "dsu-2",
-          "desc": "頂点aとbのグループを結合する",
-          "code": "D.merge(a, b);",
-          "cost": "ならし O(α(N))",
-          "note": "",
-          "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\n#include <atcoder/dsu>\nusing namespace std;\n\nint main(){\n    atcoder::dsu D(5); int a = 0, b = 1; D.merge(0, 1);\n    D.merge(a, b);\n    return 0;\n}\n",
-          "input": "",
-          "expected": null
-        },
-        {
-          "id": "dsu-3",
-          "desc": "頂点aとbが同じグループか判定する",
-          "code": "bool same = D.same(a, b);",
-          "cost": "ならし O(α(N))",
-          "note": "",
-          "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\n#include <atcoder/dsu>\nusing namespace std;\n\nint main(){\n    atcoder::dsu D(5); int a = 0, b = 1; D.merge(0, 1);\n    bool same = D.same(a, b);\n    return 0;\n}\n",
-          "input": "",
-          "expected": null
-        },
-        {
-          "id": "dsu-4",
-          "desc": "頂点aのグループの頂点数を求める",
-          "code": "int size = D.size(a);",
-          "cost": "ならし O(α(N))",
-          "note": "",
-          "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\n#include <atcoder/dsu>\nusing namespace std;\n\nint main(){\n    atcoder::dsu D(5); int a = 0, b = 1; D.merge(0, 1);\n    int size = D.size(a);\n    return 0;\n}\n",
-          "input": "",
-          "expected": null
-        },
-        {
-          "id": "dsu-5",
-          "desc": "頂点aのグループの代表頂点を求める",
-          "code": "int root = D.leader(a);",
-          "cost": "ならし O(α(N))",
-          "note": "代表は最小頂点とは限らず、結合で変わる",
-          "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\n#include <atcoder/dsu>\nusing namespace std;\n\nint main(){\n    atcoder::dsu D(5); int a = 0, b = 1; D.merge(0, 1);\n    int root = D.leader(a);\n    return 0;\n}\n",
-          "input": "",
-          "expected": null
-        },
-        {
-          "id": "dsu-6",
-          "desc": "全グループの頂点一覧を得る",
-          "code": "vector<vector<int>> groups = D.groups();",
-          "cost": "O(N)",
-          "note": "",
-          "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\n#include <atcoder/dsu>\nusing namespace std;\n\nint main(){\n    atcoder::dsu D(5); int a = 0, b = 1; D.merge(0, 1);\n    vector<vector<int>> groups = D.groups();\n    return 0;\n}\n",
-          "input": "",
-          "expected": null
-        }
-      ]
-    },
-    {
-      "page": "acl",
-      "key": "fenwick",
-      "title": "fenwick_tree：1点加算・区間和",
-      "note": "BITとも呼ぶ。0始まり、区間の右端は含まない。初期値はすべて0。sumはlong long内に収まるようにする。",
-      "items": [
-        {
-          "id": "fenwick-1",
-          "desc": "長さNの配列をすべて0で作る",
-          "code": "atcoder::fenwick_tree<long long> F(N);",
-          "cost": "O(N)",
-          "note": "",
-          "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\n#include <atcoder/fenwicktree>\nusing namespace std;\n\nint main(){\n    int N = 5;\n    atcoder::fenwick_tree<long long> F(N);\n    return 0;\n}\n",
-          "input": "",
-          "expected": null
-        },
-        {
-          "id": "fenwick-2",
-          "desc": "添字pの値にxを加算する",
-          "code": "F.add(p, x);",
-          "cost": "O(log N)",
-          "note": "代入ではない",
-          "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\n#include <atcoder/fenwicktree>\nusing namespace std;\n\nint main(){\n    atcoder::fenwick_tree<long long> F(5); int p = 2; long long x = 7;\n    F.add(p, x);\n    return 0;\n}\n",
-          "input": "",
-          "expected": null
-        },
-        {
-          "id": "fenwick-3",
-          "desc": "添字l以上r未満の和を求める",
-          "code": "long long ans = F.sum(l, r);",
-          "cost": "O(log N)",
-          "note": "0 ≤ l ≤ r ≤ N",
-          "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\n#include <atcoder/fenwicktree>\nusing namespace std;\n\nint main(){\n    atcoder::fenwick_tree<long long> F(5); int l = 1, r = 4;\n    long long ans = F.sum(l, r);\n    return 0;\n}\n",
-          "input": "",
-          "expected": null
-        },
-        {
-          "id": "fenwick-4",
-          "desc": "添字pの値をxへ変更する",
-          "code": "F.add(p, x-A.at(p));\nA.at(p) = x;",
-          "cost": "O(log N)",
-          "note": "現在値Aを別に持つ",
-          "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\n#include <atcoder/fenwicktree>\nusing namespace std;\n\nint main(){\n    vector<long long> A = {1,2,3};\n    atcoder::fenwick_tree<long long> F(3);\n    for(int i = 0;i < 3;i++){\n        F.add(i, A.at(i));\n    }\n    int p = 1; long long x = 9;\n    F.add(p, x-A.at(p));\n    A.at(p) = x;\n    return 0;\n}\n",
-          "input": "",
-          "expected": null
-        }
-      ]
-    },
-    {
-      "page": "acl",
-      "key": "segtree",
-      "title": "segtree：1点代入・区間集計",
-      "note": "opは2つの結果をまとめる関数、eは混ぜても結果を変えない値。括弧の付け方で結果が変わらない演算に使う。",
-      "items": [
-        {
-          "id": "segtree-1",
-          "desc": "1点更新に対応する区間の最小値を求める",
-          "code": "atcoder::segtree<long long, op, e> seg(A);\nseg.set(p, x);\nlong long ans = seg.prod(l, r);",
-          "cost": "構築 O(N) / 更新・取得 O(log N)",
-          "note": "setは代入。prodは添字l以上r未満。最大公約数は非負整数を前提。和は型に収まること。",
-          "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\n#include <atcoder/segtree>\nusing namespace std;\n\nlong long op(long long a, long long b){\n    return min(a, b);\n}\nlong long e(){\n    return numeric_limits<long long>::max();\n}\n\nint main(){\n    vector<long long> A = {5,2,8};\n    int p = 1, l = 0, r = 3;\n    long long x = 7;\n    atcoder::segtree<long long, op, e> seg(A);\n    seg.set(p, x);\n    long long ans = seg.prod(l, r);\n    return 0;\n}\n",
-          "input": "",
-          "expected": null
-        },
-        {
-          "id": "segtree-2",
-          "desc": "1点更新に対応する区間の最大値を求める",
-          "code": "atcoder::segtree<long long, op, e> seg(A);\nseg.set(p, x);\nlong long ans = seg.prod(l, r);",
-          "cost": "構築 O(N) / 更新・取得 O(log N)",
-          "note": "setは代入。prodは添字l以上r未満。最大公約数は非負整数を前提。和は型に収まること。",
-          "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\n#include <atcoder/segtree>\nusing namespace std;\n\nlong long op(long long a, long long b){\n    return max(a, b);\n}\nlong long e(){\n    return numeric_limits<long long>::lowest();\n}\n\nint main(){\n    vector<long long> A = {5,2,8};\n    int p = 1, l = 0, r = 3;\n    long long x = 7;\n    atcoder::segtree<long long, op, e> seg(A);\n    seg.set(p, x);\n    long long ans = seg.prod(l, r);\n    return 0;\n}\n",
-          "input": "",
-          "expected": null
-        },
-        {
-          "id": "segtree-3",
-          "desc": "1点更新に対応する区間の和を求める",
-          "code": "atcoder::segtree<long long, op, e> seg(A);\nseg.set(p, x);\nlong long ans = seg.prod(l, r);",
-          "cost": "構築 O(N) / 更新・取得 O(log N)",
-          "note": "setは代入。prodは添字l以上r未満。最大公約数は非負整数を前提。和は型に収まること。",
-          "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\n#include <atcoder/segtree>\nusing namespace std;\n\nlong long op(long long a, long long b){\n    return a+b;\n}\nlong long e(){\n    return 0;\n}\n\nint main(){\n    vector<long long> A = {5,2,8};\n    int p = 1, l = 0, r = 3;\n    long long x = 7;\n    atcoder::segtree<long long, op, e> seg(A);\n    seg.set(p, x);\n    long long ans = seg.prod(l, r);\n    return 0;\n}\n",
-          "input": "",
-          "expected": null
-        },
-        {
-          "id": "segtree-4",
-          "desc": "1点更新に対応する区間の最大公約数を求める",
-          "code": "atcoder::segtree<long long, op, e> seg(A);\nseg.set(p, x);\nlong long ans = seg.prod(l, r);",
-          "cost": "構築 O(N) / 更新・取得 O(log N)",
-          "note": "setは代入。prodは添字l以上r未満。最大公約数は非負整数を前提。和は型に収まること。",
-          "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\n#include <atcoder/segtree>\nusing namespace std;\n\nlong long op(long long a, long long b){\n    return gcd(a, b);\n}\nlong long e(){\n    return 0;\n}\n\nint main(){\n    vector<long long> A = {5,2,8};\n    int p = 1, l = 0, r = 3;\n    long long x = 7;\n    atcoder::segtree<long long, op, e> seg(A);\n    seg.set(p, x);\n    long long ans = seg.prod(l, r);\n    return 0;\n}\n",
-          "input": "",
-          "expected": null
-        },
-        {
-          "id": "segtree-5",
-          "desc": "添字pの現在値を読む",
-          "code": "long long x = seg.get(p);",
-          "cost": "O(1)",
-          "note": "",
-          "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\n#include <atcoder/segtree>\nusing namespace std;\n\nlong long op(long long a, long long b){ return min(a,b); }\nlong long e(){ return LLONG_MAX; }\nint main(){\n    vector<long long> A = {5,2,8};\n    atcoder::segtree<long long, op, e> seg(A); int p = 1;\n    long long x = seg.get(p);\n    return 0;\n}\n",
-          "input": "",
-          "expected": null
-        },
-        {
-          "id": "segtree-6",
-          "desc": "全区間の集計値を読む",
-          "code": "long long ans = seg.all_prod();",
-          "cost": "O(1)",
-          "note": "",
-          "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\n#include <atcoder/segtree>\nusing namespace std;\n\nlong long op(long long a, long long b){ return min(a,b); }\nlong long e(){ return LLONG_MAX; }\nint main(){\n    vector<long long> A = {5,2,8};\n    atcoder::segtree<long long, op, e> seg(A);\n    long long ans = seg.all_prod();\n    return 0;\n}\n",
-          "input": "",
-          "expected": null
-        }
-      ]
-    },
-    {
-      "page": "acl",
       "key": "modint",
       "title": "modint：余りを取りながら整数計算",
       "note": "法は998244353か1000000007。大小比較には使えない。出力はval()、入力は通常の整数で受けて代入。",
@@ -2473,6 +2294,17 @@
       "key": "sizeof",
       "title": "sizeof：実際の型のサイズを確認",
       "content": "<p>型のサイズをB単位で出力する。sizeof(vector&lt;int&gt;)は要素本体を含まない。</p><details class=\"code-only\"><summary>全体コードを開く</summary><pre><code>#include &lt;bits/stdc++.h&gt;\nusing namespace std;\n\nint main(){\n    cout &lt;&lt; sizeof(int) &lt;&lt; endl;\n    cout &lt;&lt; sizeof(long long) &lt;&lt; endl;\n    cout &lt;&lt; sizeof(double) &lt;&lt; endl;\n    cout &lt;&lt; sizeof(vector&lt;int&gt;) &lt;&lt; endl;\n    return 0;\n}\n</code></pre></details>"
+    }
+  ],
+  "notes": [
+    {
+      "id": "20261108-notes-added",
+      "at": "2026-11-08 06:19",
+      "title": "更新履歴・制作者メモの記録場所を追加",
+      "category": "サイト全体",
+      "text": "更新履歴と制作者メモをソース側で管理できるようにしました。公開フラグを付けた記録だけがサイトに表示されます。",
+      "published": true,
+      "kind": "updates"
     }
   ],
   "source": "https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference"

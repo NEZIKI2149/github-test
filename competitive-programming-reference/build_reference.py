@@ -10,6 +10,7 @@ import unicodedata
 ROOT = pathlib.Path(__file__).resolve().parent
 PUBLIC = "https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference"
 GROUPS = []
+HIDDEN_GROUPS = {"dsu", "fenwick", "segtree"}
 
 
 def group(page, key, title, note=""):
@@ -815,11 +816,12 @@ PAGES = {
     "acl": dict(title="AtCoder Library", subtitle="グループ・区間集計・余りの計算。", file="atcoder-library.md"),
     "algo": dict(title="定番アルゴリズム・実装", subtitle="名前と機能を1項目ずつ、読みの50音順で掲載。", file="algorithms.md"),
     "limits": dict(title="計算量・メモリ", subtitle="制約と必要な容量を確認する。", file="complexity-memory.md"),
+    "notes": dict(title="更新履歴・制作者メモ", subtitle="公開した更新と制作者メモ。", file="site-notes.md"),
 }
 
 
 def generate():
-    groups = display_groups()
+    groups = [g for g in display_groups() if g["key"] not in HIDDEN_GROUPS]
     for g in groups:
         for item in g["items"]:
             if "// Reference:" not in item["full"]:
@@ -827,7 +829,9 @@ def generate():
         if g["key"] == "reverse":
             g["keywords"] = "リバース 逆順 逆転 部分反転 部分リバース 回転"
     limits = limits_sections()
-    payload = dict(pages=PAGES, groups=groups, limits=limits, source=PUBLIC)
+    notes = json.loads((ROOT / "site-notes.json").read_text(encoding="utf-8"))
+    public_notes = [dict(note, kind=kind) for kind in ("updates", "memos") for note in notes[kind] if note["published"]]
+    payload = dict(pages=PAGES, groups=groups, limits=limits, notes=public_notes, source=PUBLIC)
     (ROOT / "reference-data.json").write_text(json.dumps(payload, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
     template = (ROOT / "page-template.html").read_text(encoding="utf-8")
     packed = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
@@ -863,6 +867,13 @@ def generate():
                     if item["note"]: lines += [item["note"], ""]
                     lines += ["<details>", "<summary>コンパイルできる全体コード</summary>", "", "```cpp", item["full"].rstrip(), "```", "", "</details>", ""]
         (docs / info["file"]).write_text("\n".join(lines), encoding="utf-8")
+    (docs / "site-notes.md").write_text(
+        "# 更新履歴・制作者メモ\n\n"
+        "[入口へ](../README.md)\n\n"
+        "公開対象の記録は `site-notes.json` の `published: true` の項目だけです。\n"
+        "`published: false` の制作者メモはWebサイトと生成Markdownには出力されません。\n",
+        encoding="utf-8",
+    )
     print(f"Generated: {len(groups)} sections, {sum(len(g['items']) for g in groups)} complete examples")
 
 

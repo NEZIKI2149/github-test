@@ -49,7 +49,7 @@ main .section h2{font-weight:700}
 <body>
 <header>
 <div class="topbar"><div class="brand">ネジキチートシート</div><div class="search-wrap"><input id="search" type="search" autocomplete="off" spellcheck="false" aria-label="全カテゴリから検索" placeholder="ダイクストラ法…"><button type="button" class="clear" id="clear" aria-label="検索を消す">Esc</button></div><a class="source-link" id="source" href="https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference" target="_blank" rel="noopener">GitHub ↗</a><div class="theme-controls"><button type="button" class="theme" id="theme" aria-label="配色を切り替える">明 / 暗</button><button type="button" class="theme" id="poison" aria-label="毒の配色を切り替える" aria-pressed="false">毒</button></div></div>
-<nav class="tabs" aria-label="カテゴリ"><button class="tab active" data-page="std" type="button">標準ライブラリ</button><button class="tab" data-page="acl" type="button">AtCoder Library</button><button class="tab" data-page="algo" type="button">定番アルゴリズム・実装</button><button class="tab" data-page="limits" type="button">計算量・メモリ</button></nav>
+<nav class="tabs" aria-label="カテゴリ"><button class="tab active" data-page="std" type="button">標準ライブラリ</button><button class="tab" data-page="acl" type="button">AtCoder Library</button><button class="tab" data-page="algo" type="button">定番アルゴリズム・実装</button><button class="tab" data-page="limits" type="button">計算量・メモリ</button><button class="tab" data-page="notes" type="button">更新履歴・メモ</button></nav>
 </header>
 <div class="layout"><aside id="sidebar" aria-label="目次"></aside><main id="main"></main></div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
@@ -89,6 +89,7 @@ function section(g, items){
     const algo=g.page==='algo';
     return '<section class="section '+(algo?'algo':'')+'" id="'+g.key+'"><h2>'+esc(g.title)+'<a href="#'+g.page+'/'+g.key+'" aria-label="この項目のリンク">#</a></h2>'+(g.note&&!algo?'<p class="section-note">'+esc(g.note)+'</p>':'')+(algo?'':'<div class="operations"><div class="column-head"><span>機能</span><span>コード</span><span>計算量</span><span>展開</span></div>')+items.map(i=>operation(i,algo,g.note)).join('')+(algo?'':'</div>')+'</section>';
 }
+function noteSection(n){return '<section class="section" id="'+esc(n.id)+'"><h2>'+esc(n.title)+'</h2><p class="section-note">'+esc(n.at)+' JST　 /　 '+esc(n.category)+'</p><p>'+esc(n.text)+'</p></section>';}
 function termsMatch(text){const t=text.toLocaleLowerCase();return query.trim().toLocaleLowerCase().split(/\s+/).every(q=>t.includes(q));}
 function render(){
     query=$('#search').value.trim(); const searching=!!query;
@@ -97,8 +98,11 @@ function render(){
     if(searching){
         for(const g of DATA.groups){const items=g.items.filter(i=>termsMatch(g.title+' '+g.note+' '+(g.keywords||'')+' '+i.desc+' '+i.code+' '+i.note));if(items.length){sections.push(section(g,items));side.push([g.key,g.title,g.page]);total+=items.length;}}
         for(const s of DATA.limits){if(termsMatch(s.title+' '+s.content.replace(/<[^>]*>/g,' '))){sections.push('<section class="section limits" id="'+s.key+'"><h2>'+s.title+'</h2>'+s.content+'</section>');side.push([s.key,s.title,'limits']);total++;}}
+        for(const n of DATA.notes||[]){if(termsMatch(n.title+' '+n.category+' '+n.text+' '+n.at)){sections.push(noteSection(n));side.push([n.id,n.title,'notes']);total++;}}
     }else if(page==='limits'){
         sections=DATA.limits.map(s=>'<section class="section limits" id="'+s.key+'"><h2>'+s.title+'</h2>'+s.content+'</section>');side=DATA.limits.map(s=>[s.key,s.title,'limits']);
+    }else if(page==='notes'){
+        const notes=DATA.notes||[];sections=notes.map(noteSection);side=notes.map(n=>[n.id,n.title,'notes']);
     }else{
         for(const g of DATA.groups.filter(g=>g.page===page)){sections.push(section(g,g.items));side.push([g.key,g.title,g.page]);total+=g.items.length;}
     }
@@ -109,7 +113,7 @@ function render(){
     const selectedContent=selectedIndex<0?'':sections[selectedIndex];
     const selectedKey=selectedIndex<0?'':side[selectedIndex][0];
     let sideHTML='';let label='';
-    for(const [key,title,p] of side){let next=p==='std'?(DATA.groups.findIndex(g=>g.key===key)<7?'容器・データを持つもの':'操作関数'):p==='algo'?'五十音順':DATA.pages[p].title;if(next!==label){sideHTML+='<div class="side-label">'+esc(next)+'</div>';label=next;}sideHTML+='<a class="side-link" href="#'+p+'/'+key+'">'+esc(title)+'</a>';}
+    for(const [key,title,p] of side){let next=p==='std'?(DATA.groups.findIndex(g=>g.key===key)<7?'容器・データを持つもの':'操作関数'):p==='algo'?'五十音順':p==='notes'?((DATA.notes.find(n=>n.id===key)||{}).kind==='updates'?'更新履歴':'制作者メモ'):DATA.pages[p].title;if(next!==label){sideHTML+='<div class="side-label">'+esc(next)+'</div>';label=next;}sideHTML+='<a class="side-link" href="#'+p+'/'+key+'">'+esc(title)+'</a>';}
     $('#sidebar').innerHTML=sideHTML;
     $('#main').innerHTML='<details class="mobile-index"><summary>このページの目次</summary><div>'+sideHTML+'</div></details>'+(selectedContent||'<div class="empty">該当する項目がありません。検索語を短くしてください。</div>')+sourceNote();
     syncTocHighlight();
