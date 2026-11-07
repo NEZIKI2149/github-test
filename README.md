@@ -1,4 +1,4 @@
-# C++ 競プロリファレンス
+# ネジキチートシート
 
 **[ブラウザ用リファレンスを開く](https://neziki2149.github.io/github-test/competitive-programming-reference/)**
 
