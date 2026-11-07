@@ -24,6 +24,23 @@
 main{font-weight:400}
 main strong,main b,main th,main summary,main .desc,main .column-head,main .copy,main .download{font-weight:400}
 main .section h2{font-weight:700}
+/* Light-only separators; inset shadow keeps item geometry unchanged. */
+:root[data-theme=light] .side-link + .side-link{box-shadow:inset 0 1px 0 var(--line)}
+:root[data-theme=light] .side-link + .side-link.current{box-shadow:inset 0 1px 0 var(--line),inset 3px 0 0 var(--accent),0 0 12px var(--glow)}
+/* Bold only text on poison-purple surfaces, not lime controls or code. */
+:root[data-theme=poison] .source-link,
+:root[data-theme=poison] .tab,
+:root[data-theme=poison] aside .side-link:not(.current):not(:hover),
+:root[data-theme=poison] main .section h2 a,
+:root[data-theme=poison] main .algorithm-purpose,
+:root[data-theme=poison] main .algorithm-purpose strong,
+:root[data-theme=poison] main .algorithm-cost,
+:root[data-theme=poison] main .section-note,
+:root[data-theme=poison] main footer,
+:root[data-theme=poison] main footer a,
+:root[data-theme=poison] main .limits > p,
+:root[data-theme=poison] main .column-head,
+:root[data-theme=poison] main .empty{font-weight:700}
 </style>
 </head>
 <body>
