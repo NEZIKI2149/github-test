@@ -68,13 +68,17 @@ function render(){
     selectedTocHref=selectedIndex<0?'':'#'+side[selectedIndex][2]+'/'+side[selectedIndex][0];
     const selectedContent=selectedIndex<0?'':sections[selectedIndex];
     const selectedKey=selectedIndex<0?'':side[selectedIndex][0];
+    const selectedChapter=selectedIndex<0?page:side[selectedIndex][2];
+    const chapterFirstKey=selectedChapter==='limits'?DATA.limits[0]?.key:DATA.groups.find(g=>g.page===selectedChapter)?.key;
+    const showChapterHeading=selectedIndex<0||selectedKey===chapterFirstKey;
     const selectedGroup=DATA.groups.find(g=>g.key===selectedKey);
     const operationCount=selectedGroup?(searching?selectedGroup.items.filter(i=>termsMatch(selectedGroup.title+' '+selectedGroup.note+' '+(selectedGroup.keywords||'')+' '+i.desc+' '+i.code+' '+i.note)).length:selectedGroup.items.length):0;
     let sideHTML='';let label='';
     for(const [key,title,p] of side){let next=p==='std'?(DATA.groups.findIndex(g=>g.key===key)<7?'容器・データを持つもの':'操作関数'):DATA.pages[p].title;if(next!==label){sideHTML+='<div class="side-label">'+esc(next)+'</div>';label=next;}sideHTML+='<a class="side-link" href="#'+p+'/'+key+'">'+esc(title)+'</a>';}
     $('#sidebar').innerHTML=sideHTML;
     const title=searching?'検索結果':DATA.pages[page].title;
-    $('#main').innerHTML='<div class="page-heading"><p class="eyebrow">'+(searching?'SEARCH / ALL CATEGORIES':'REFERENCE / '+({std:'01',acl:'02',algo:'03',limits:'04'}[page]))+'</p><h1>'+title+'</h1><p class="subtitle">'+(searching?esc(query)+' — 全カテゴリから検索':DATA.pages[page].subtitle)+'</p><div class="guide"><span class="badge">C++23 (GCC 15.2.0)</span><span class="badge">添字は0始まり</span><span class="badge">区間は l 以上 r 未満</span><span class="badge">全体コードはクリックで展開</span></div>'+(page==='acl'&&!searching?'<p class="note">ACLのヘッダが必要です。<a href="https://atcoder.github.io/ac-library/production/document_ja/index.html" target="_blank" rel="noopener">公式ドキュメント ↗</a></p>':'')+'<span class="count" role="status">'+(searching?total+' 件が見つかりました。目次から1項目を選択。':page==='limits'?'容量の表は要素本体の目安。上限と他の使用量を合わせて確認。':operationCount+' 件の操作')+'</span></div><details class="mobile-index"><summary>このページの目次</summary><div>'+sideHTML+'</div></details>'+(selectedContent||'<div class="empty">該当する項目がありません。検索語を短くしてください。</div>')+sourceNote();
+    const chapterHeading='<div class="page-heading"><p class="eyebrow">'+(searching?'SEARCH / ALL CATEGORIES':'REFERENCE / '+({std:'01',acl:'02',algo:'03',limits:'04'}[page]))+'</p><h1>'+title+'</h1><p class="subtitle">'+(searching?esc(query)+' — 全カテゴリから検索':DATA.pages[page].subtitle)+'</p><div class="guide"><span class="badge">C++23 (GCC 15.2.0)</span><span class="badge">添字は0始まり</span><span class="badge">区間は l 以上 r 未満</span><span class="badge">全体コードはクリックで展開</span></div>'+(page==='acl'&&!searching?'<p class="note">ACLのヘッダが必要です。<a href="https://atcoder.github.io/ac-library/production/document_ja/index.html" target="_blank" rel="noopener">公式ドキュメント ↗</a></p>':'')+'<span class="count" role="status">'+(searching?total+' 件が見つかりました。目次から1項目を選択。':page==='limits'?'容量の表は要素本体の目安。上限と他の使用量を合わせて確認。':operationCount+' 件の操作')+'</span></div>';
+    $('#main').innerHTML=(showChapterHeading?chapterHeading:'')+'<details class="mobile-index"><summary>このページの目次</summary><div>'+sideHTML+'</div></details>'+(selectedContent||'<div class="empty">該当する項目がありません。検索語を短くしてください。</div>')+sourceNote();
     syncTocHighlight();
 }
 function jumpFromHash(){
