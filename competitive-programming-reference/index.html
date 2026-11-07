@@ -41,11 +41,14 @@ main .section h2{font-weight:700}
 :root[data-theme=poison] main .limits > p,
 :root[data-theme=poison] main .column-head,
 :root[data-theme=poison] main .empty{font-weight:700}
+/* All text, including code and controls, is bold in poison mode. */
+:root[data-theme=poison] body,
+:root[data-theme=poison] body *{font-weight:700!important}
 </style>
 </head>
 <body>
 <header>
-<div class="topbar"><div class="brand">ネジキチートシート</div><div class="search-wrap"><input id="search" type="search" autocomplete="off" spellcheck="false" aria-label="全カテゴリから検索" placeholder="reverse、vector、部分反転…　/ で検索"><button type="button" class="clear" id="clear" aria-label="検索を消す">Esc</button></div><a class="source-link" id="source" href="https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference" target="_blank" rel="noopener">GitHub ↗</a><div class="theme-controls"><button type="button" class="theme" id="theme" aria-label="配色を切り替える">明 / 暗</button><button type="button" class="theme" id="poison" aria-label="毒の配色を切り替える" aria-pressed="false">毒</button></div></div>
+<div class="topbar"><div class="brand">ネジキチートシート</div><div class="search-wrap"><input id="search" type="search" autocomplete="off" spellcheck="false" aria-label="全カテゴリから検索" placeholder="ダイクストラ法…   /で検索"><button type="button" class="clear" id="clear" aria-label="検索を消す">Esc</button></div><a class="source-link" id="source" href="https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference" target="_blank" rel="noopener">GitHub ↗</a><div class="theme-controls"><button type="button" class="theme" id="theme" aria-label="配色を切り替える">明 / 暗</button><button type="button" class="theme" id="poison" aria-label="毒の配色を切り替える" aria-pressed="false">毒</button></div></div>
 <nav class="tabs" aria-label="カテゴリ"><button class="tab active" data-page="std" type="button">標準ライブラリ</button><button class="tab" data-page="acl" type="button">AtCoder Library</button><button class="tab" data-page="algo" type="button">定番アルゴリズム・実装</button><button class="tab" data-page="limits" type="button">計算量・メモリ</button></nav>
 </header>
 <div class="layout"><aside id="sidebar" aria-label="目次"></aside><main id="main"></main></div>
