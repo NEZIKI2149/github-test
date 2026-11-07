@@ -50,6 +50,7 @@ main .section h2{font-weight:700}
 .calc-fields{display:flex;gap:16px;flex-wrap:wrap;margin:20px 0}.calc-fields label{display:flex;flex-direction:column;gap:5px;font-size:12px}.calc-fields input,.calc-fields select{font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:5px;padding:8px;width:160px}.calc-output{font-size:14px;line-height:2;background:var(--paper);border:1px solid var(--line);border-radius:7px;padding:16px}.operation-cost{margin:14px 0}.symbol-definitions{font-size:12px;margin:5px 0 14px}
 aside{top:155px;height:calc(100vh - 155px)}
 .toc-tools{display:grid;gap:8px;padding:0 0 18px;margin:0 0 18px;border-bottom:1px solid var(--line)}.toc-tools .side-link{display:block;border:1px solid var(--line);border-radius:6px;background:var(--paper);padding:10px 12px;margin:0;color:var(--ink);text-align:center}.toc-tools .side-link:hover,.toc-tools .side-link.current{background:var(--tint);border-color:var(--accent);color:var(--accent)}
+.dimension-controls{display:flex;gap:8px;flex-wrap:wrap}.dimension-controls button[aria-pressed="true"]{background:var(--tint);border-color:var(--accent);color:var(--accent)}
 </style>
 </head>
 <body>
@@ -97,23 +98,65 @@ function section(g, items){
 }
 function noteSection(n){return '<section class="section" id="'+esc(n.id)+'"><h2>'+esc(n.title)+'</h2><p class="section-note">'+esc(n.at)+' JST　 /　 '+esc(n.category)+'</p><p>'+esc(n.text)+'</p></section>';}
 function termsMatch(text){const t=text.toLocaleLowerCase();return query.trim().toLocaleLowerCase().split(/\s+/).every(q=>t.includes(q));}
-const calcState={type:'8',rows:'2000',cols:'3000',count:'2',limit:'1024',n:'200000'};
+const calcState={kind:'array',dimension:'1',type:'int',keyType:'int',valueType:'int',size:'100000',rows:'2000',cols:'3000',count:'1',limit:'1024',n:'200000'};
+const memoryTypes={char:{label:'char',bytes:1n,align:1n},int:{label:'int',bytes:4n,align:4n},longlong:{label:'long long',bytes:8n,align:8n},double:{label:'double',bytes:8n,align:8n}};
+const memoryKinds=[['array','配列'],['vector','vector'],['set','set'],['multiset','multiset'],['map','map'],['unordered_set','unordered_set'],['unordered_map','unordered_map']];
 function options(values,current){return values.map(([v,t])=>'<option value="'+v+'"'+(String(v)===current?' selected':'')+'>'+t+'</option>').join('');}
-function memoryTool(){return '<div class="calc-fields"><label>型<select data-calc="type">'+options([['1','char（1 B）'],['4','int（4 B）'],['8','long long / double（8 B）']],calcState.type)+'</select></label>'+[['rows','行数'],['cols','列数'],['count','配列の個数']].map(([k,t])=>'<label>'+t+'<input data-calc="'+k+'" type="text" inputmode="numeric" maxlength="12" value="'+esc(calcState[k])+'"></label>').join('')+'<label>問題のメモリ制限<select data-calc="limit">'+options([256,512,1024,2048].map(v=>[v,v+' MiB']),calcState.limit)+'</select></label></div><div class="calc-output" id="memory-result" aria-live="polite"></div><p>一次元配列は行数を1にする。型のサイズはGCCの一般的な環境を想定。</p><p>要素本体だけの容量。ほかの変数・vectorの管理領域・余分に確保された容量なども加わるため、安全に使える量の判定ではない。</p><p>メモリ制限は問題文を確認して選択。1 MB = 10⁶ B、1 MiB = 2²⁰ B。</p>';}
+function memoryField(key,label){return '<label>'+label+'<input data-calc="'+key+'" type="text" inputmode="numeric" maxlength="12" value="'+esc(calcState[key])+'"></label>';}
+function memoryTypeField(key,label){return '<label>'+label+'<select data-calc="'+key+'">'+options(Object.entries(memoryTypes).map(([k,t])=>[k,t.label+'（'+t.bytes+' B）']),calcState[key])+'</select></label>';}
+function memoryToolContent(){
+    const array=['array','vector'].includes(calcState.kind),map=calcState.kind.endsWith('map');
+    return '<div class="calc-fields"><label>計算する容器<select data-calc="kind">'+options(memoryKinds,calcState.kind)+'</select></label></div>'+(array?'<div class="dimension-controls" role="group" aria-label="配列の次元">'+[['1','一次元配列'],['2','二次元配列']].map(([k,t])=>'<button type="button" class="copy" data-dimension="'+k+'" aria-pressed="'+(calcState.dimension===k)+'">'+t+'</button>').join('')+'</div>':'')+'<div class="calc-fields">'+(map?memoryTypeField('keyType','キーの型')+memoryTypeField('valueType','値の型'):memoryTypeField('type','値の型'))+(array&&calcState.dimension==='2'?memoryField('rows','行数')+memoryField('cols','列数'):memoryField('size',map||calcState.kind==='set'||calcState.kind==='unordered_set'?'要素数（異なるキー・値の個数）':'要素数'))+memoryField('count',array?'配列の個数':'容器の個数')+'<label>問題のメモリ制限<select data-calc="limit">'+options([256,512,1024,2048].map(v=>[v,v+' MiB']),calcState.limit)+'</select></label></div><div class="calc-output" id="memory-result" aria-live="polite"></div><div id="memory-assumptions"></div><p>メモリ制限は問題文を確認して選択。1 MB = 10⁶ B、1 MiB = 2²⁰ B。</p>';
+}
+function memoryTool(){return '<div id="memory-panel">'+memoryToolContent()+'</div>';}
+const alignBytes=(v,a)=>(v+a-1n)/a*a;
+const allocationBytes=v=>{const n=alignBytes(v+8n,16n);return n<32n?32n:n;};
+function memoryEstimate(state){
+    const array=['array','vector'].includes(state.kind),map=state.kind.endsWith('map'),two=array&&state.dimension==='2';
+    const keys=two?['rows','cols','count']:['size','count'];
+    if(keys.some(k=>!/^\d{1,12}$/.test(state[k])||BigInt(state[k])<1n))return {error:'要素数・行数・列数・個数には、1以上の整数を入力してください。'};
+    const copies=BigInt(state.count),rows=two?BigInt(state.rows):1n,n=two?rows*BigInt(state.cols):BigInt(state.size);
+    let value=memoryTypes[state.type].bytes;
+    if(map){const k=memoryTypes[state.keyType],v=memoryTypes[state.valueType];value=alignBytes(alignBytes(k.bytes,v.align)+v.bytes,k.align>v.align?k.align:v.align);}
+    const payload=n*value*copies;
+    let low=payload,high=payload,assumption='要素本体の容量。ほかの変数や実行環境の使用量は含まない。';
+    if(state.kind==='vector'){
+        const valueBytes=memoryTypes[state.type].bytes;
+        const base=two?24n+allocationBytes(rows*24n)+rows*allocationBytes(BigInt(state.cols)*valueBytes):24n+allocationBytes(n*valueBytes);
+        low=base*copies;high=(base+16n*(two?rows+1n:1n))*copies;
+        assumption='capacityを要素数ちょうどにしたvectorを想定。二次元はvector<vector<T>>として各行の管理領域も計算。push_backなどで余分な容量を確保した場合は、この値より増える。';
+    }else if(state.kind==='set'||state.kind==='multiset'||state.kind==='map'){
+        const node=alignBytes(32n+value,8n);
+        low=(allocationBytes(node)*n+48n)*copies;high=((allocationBytes(node)+16n)*n+48n)*copies;
+        assumption='各要素に木の管理情報を持つGCCの一般的な実装を想定。要素数はset・mapでは重複を除いた個数、multisetでは重複も数える。';
+    }else if(state.kind.startsWith('unordered_')){
+        const node=alignBytes(8n+value,8n);
+        low=(allocationBytes(node)*n+allocationBytes(8n*n)+56n)*copies;high=((allocationBytes(node)+16n)*n+allocationBytes(16n*n)+16n+56n)*copies;
+        assumption='標準のハッシュ関数を使い、バケット数を要素数の約1〜2倍として見積もる。reserve・rehash・max_load_factorの設定や再確保の途中では、この範囲から外れることがある。';
+    }
+    return {payload,low,high,estimated:state.kind!=='array',assumption};
+}
+function memoryBytes(n){const b=Number(n);return (n<10000n?n.toLocaleString('ja-JP')+' B（':'')+(b/1e6).toLocaleString('ja-JP',{maximumSignificantDigits:5})+' MB / '+(b/2**20).toLocaleString('ja-JP',{maximumSignificantDigits:5})+' MiB'+(n<10000n?'）':'');}
+function updateMemory(){
+    const result=$('#memory-result');if(!result)return;
+    const estimate=memoryEstimate(calcState),help=$('#memory-assumptions');
+    if(estimate.error){result.textContent=estimate.error;if(help)help.textContent='';return;}
+    const {payload,low,high,estimated,assumption}=estimate,limit=BigInt(calcState.limit)*2n**20n;
+    const percent=n=>(Number(n)/Number(limit)*100).toLocaleString('ja-JP',{maximumSignificantDigits:4});
+    result.innerHTML=(estimated?'管理領域込みの推定容量：'+(memoryBytes(low)===memoryBytes(high)?'約'+memoryBytes(high):memoryBytes(low)+' 〜 '+memoryBytes(high))+'<br>':'')+(calcState.kind.endsWith('map')?'キー・値本体の容量（配置の隙間を含む）':'保存する値の容量')+'：'+memoryBytes(payload)+'<br>問題のメモリ制限：'+calcState.limit+' MiB<br>制限に対する割合：'+(estimated?'約'+percent(low)+(percent(low)===percent(high)?'':'〜'+percent(high)):'約'+percent(payload))+'％'+(low>limit?'<br>この見積もりではメモリ制限を超えています。':high>limit?'<br>推定範囲がメモリ制限をまたいでいます。':'');
+    if(help)help.innerHTML='<p>'+esc(assumption)+'</p>'+(estimated?'<p>64 bit Linux・GCC系の一般的な実装での概算。表示範囲は確保量の上限・下限を保証しない。確保処理の管理分や配置の隙間も考慮しているが、ほかの変数・再確保中の一時領域などは別に必要。</p><details><summary>見積もりの前提</summary><p>参照は8 B、vectorの管理領域は24 B、木の管理情報は1要素32 Bとして計算。mapのキーと値の間の隙間も考慮。確保処理は管理分8 Bを加えて16 B単位に丸め、最小32 Bとするモデル。推定範囲には確保1か所あたり16 Bの変動幅を加えている。</p><p><a href="https://gcc.gnu.org/onlinedocs/gcc-15.2.0/libstdc%2B%2B/api/a00413_source.html" target="_blank" rel="noopener">GCCの木構造の実装</a> · <a href="https://gcc.gnu.org/onlinedocs/gcc-15.2.0/libstdc%2B%2B/api/a18194_source.html" target="_blank" rel="noopener">ハッシュ表の実装</a> · <a href="https://github.com/bminor/glibc/blob/master/malloc/malloc.c" target="_blank" rel="noopener">メモリ確保処理の実装</a></p></details>':'');
+}
+function refreshMemory(){const panel=$('#memory-panel');if(panel)panel.innerHTML=memoryToolContent();updateMemory();}
 function timeTool(){return '<div class="calc-fields"><label>Nを選択<select data-calc="n">'+options([[10,'10'],[15,'15'],[20,'20'],[25,'25'],[30,'30'],[100,'10²'],[1000,'10³'],[3000,'3×10³'],[10000,'10⁴'],[200000,'2×10⁵'],[1000000,'10⁶']],calcState.n)+'</select></label></div><div id="time-result" aria-live="polite"></div><p>実行秒数や実際のCPU命令数ではなく、計算量の式にNを入れた値。処理内容や定数倍で実行時間は変わる。</p>';}
 const superscript=n=>String(n).replace(/[0-9-]/g,c=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[Number(c)]||'⁻');
 function scientificLog(log){if(log===0)return '1';let exponent=Math.floor(log),mantissa=Number((10**(log-exponent)).toPrecision(3));if(mantissa>=10){mantissa=1;exponent++;}return '約'+mantissa+'×10'+superscript(exponent);}
 function updateTools(){
-    const memory=$('#memory-result');
-    if(memory){
-        const dims=['rows','cols','count'].map(k=>calcState[k]);
-        if(dims.some(v=>!/^\d{1,12}$/.test(v)||BigInt(v)<1n)){memory.textContent='行数・列数・配列の個数には、1以上の整数を入力してください。';}
-        else{const bytes=dims.reduce((a,v)=>a*BigInt(v),BigInt(calcState.type)),b=Number(bytes),limit=Number(calcState.limit)*2**20;memory.innerHTML='配列の要素本体：'+(b/1e6).toLocaleString('ja-JP',{maximumFractionDigits:3})+' MB（約'+(b/2**20).toLocaleString('ja-JP',{maximumFractionDigits:3})+' MiB）<br>問題のメモリ制限：'+calcState.limit+' MiB<br>制限に対する割合：約'+(b/limit*100).toLocaleString('ja-JP',{maximumFractionDigits:2})+'％'+(b>limit?'<br>要素本体だけでメモリ制限を超えています。':'');}
-    }
+    updateMemory();
     const time=$('#time-result');
     if(time){const n=Number(calcState.n),l=Math.log10(n);let fact=n<101?Array.from({length:n},(_,i)=>Math.log10(i+1)).reduce((a,b)=>a+b,0):(n+.5)*Math.log10(n)-n*Math.LOG10E+.5*Math.log10(2*Math.PI)+Math.LOG10E/(12*n);const values=[['N',l],['N log₂ N',l+Math.log10(Math.log2(n))],['N²',2*l],['N³',3*l],['2ᴺ',n*Math.log10(2)],['N × 2ᴺ',l+n*Math.log10(2)],['N!',fact]];time.innerHTML='<div class="table-wrap"><table><thead><tr><th>計算量の式</th><th>N = '+n.toLocaleString('ja-JP')+' を代入した値</th></tr></thead><tbody>'+values.map(([name,value])=>'<tr><td>'+name+'</td><td>'+scientificLog(value)+'</td></tr>').join('')+'</tbody></table></div>';}
 }
-for(const event of ['input','change'])document.addEventListener(event,e=>{const k=e.target.dataset.calc;if(k){calcState[k]=e.target.value;updateTools();}});
+for(const event of ['input','change'])document.addEventListener(event,e=>{const k=e.target.dataset.calc;if(!k)return;if(event==='input'&&e.target.tagName==='SELECT'||event==='change'&&e.target.tagName==='INPUT')return;calcState[k]=e.target.value;if(k==='kind')refreshMemory();else updateTools();});
+document.addEventListener('click',e=>{const button=e.target.closest('[data-dimension]');if(button){calcState.dimension=button.dataset.dimension;refreshMemory();}});
 
 let openGroup=null;
 let mobileIndexOpen=true;

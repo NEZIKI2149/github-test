@@ -831,7 +831,7 @@ def generate():
             g["keywords"] = "リバース 逆順 逆転 部分反転 部分リバース 回転"
     enrich(groups)
     limits = limits_sections()
-    limits.insert(2, dict(key="memory-calculator", title="メモリ計算機", tool="memory", content="<p>型・行数・列数・配列の個数から要素本体の容量を求め、選択したメモリ制限と比較する。</p>"))
+    limits.insert(2, dict(key="memory-calculator", title="メモリ計算機", tool="memory", content="<p>一次元／二次元と型を選んで配列容量を計算する。vector・set・multiset・map・unordered_set・unordered_mapにも対応し、管理領域込みの推定容量を選択式のメモリ制限と比較する。</p>"))
     for section in limits:
         if section["key"] == "time-count":
             section.update(title="計算量計算機", tool="time")

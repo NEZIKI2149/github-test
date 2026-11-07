@@ -2,6 +2,14 @@
   "timezone": "Asia/Tokyo",
   "updates": [
     {
+      "id": "20261108-memory-containers",
+      "at": "2026-11-08 08:02",
+      "title": "メモリ計算機に次元切替とコンテナ選択を追加",
+      "category": "計算量・メモリ",
+      "text": "一次元配列と二次元配列をボタンで選べるようにし、long longとdoubleを別の選択肢にしました。vector・set・multiset・map・unordered_set・unordered_mapに対応しました。mapではキーと値の型を別々に選択できます。コンテナは管理領域込みの推定容量と、保存する値本体の容量を表示します。",
+      "published": true
+    },
+    {
       "id": "20261108-calculator-buttons",
       "at": "2026-11-08 07:45",
       "title": "計算機を目次上部の専用ボタンに変更",
