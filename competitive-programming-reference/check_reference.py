@@ -15,6 +15,16 @@ keys = [g["key"] for g in data["groups"]] + [s["key"] for s in data["limits"]]
 assert len(keys) == len(set(keys))
 assert not (set(keys) & {"search", "main", "source", "sidebar", "theme", "clear", "toast", "reference-data"})
 items = [i for g in data["groups"] for i in g["items"]]
+algorithms = [g for g in data["groups"] if g["page"] == "algo"]
+assert len(algorithms) == 21
+assert all(len(g["items"]) == 1 and g.get("reading") for g in algorithms)
+assert len({g["title"] for g in algorithms}) == len(algorithms)
+import unicodedata
+def gojuon(reading):
+    plain = "".join(c for c in unicodedata.normalize("NFD", reading) if not unicodedata.combining(c))
+    return plain.translate(str.maketrans("ぁぃぅぇぉっゃゅょゎ", "あいうえおつやゆよわ")), reading
+assert [g["reading"] for g in algorithms] == sorted([g["reading"] for g in algorithms], key=gojuon)
+assert algorithms[0]["title"] == "いもす法" and algorithms[-1]["title"] == "累積和"
 assert len({i["id"] for i in items}) == len(items)
 assert all("#include" in i["full"] and "int main()" in i["full"] and "// Reference:" in i["full"] for i in items)
 assert all("万" not in s["content"] and "億" not in s["content"] for s in data["limits"])

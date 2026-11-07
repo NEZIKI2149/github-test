@@ -5,6 +5,7 @@ import math
 import pathlib
 import re
 import textwrap
+import unicodedata
 
 ROOT = pathlib.Path(__file__).resolve().parent
 PUBLIC = "https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference"
@@ -720,23 +721,74 @@ def limits_sections():
     return result
 
 
+# 表示するアルゴリズムは1機能ずつ独立させ、明示した読みで並べる。
+# 元の項目IDはコードや検証データの対応を保つため変更しない。
+ALGORITHM_SECTIONS = {
+    "prefix-1": ("prefix-sum", "累積和", "るいせきわ"),
+    "prefix-2": ("prefix-sum-2d", "二次元累積和", "にじげんるいせきわ"),
+    "prefix-3": ("imos", "いもす法", "いもすほう"),
+    "enumeration-1": ("bit-enumeration", "ビット全探索", "びっとぜんたんさく"),
+    "enumeration-2": ("permutation-enumeration", "順列全探索", "じゅんれつぜんたんさく"),
+    "enumeration-3": ("coordinate-compression", "座標圧縮", "ざひょうあっしゅく"),
+    "enumeration-4": ("equal-pair-count", "ペア数の数え上げ（同じ値）", "ぺあすうのかぞえあげおなじあたい"),
+    "answer-search-1": ("answer-binary-search", "答えに対する二分探索", "こたえにたいするにぶんたんさく"),
+    "answer-search-2": ("two-pointers", "しゃくとり法", "しゃくとりほう"),
+    "graph-1": ("bfs", "幅優先探索（BFS）", "はばゆうせんたんさく"),
+    "graph-2": ("dijkstra", "ダイクストラ法（Dijkstra）", "だいくすとらほう"),
+    "graph-3": ("grid-bfs", "グリッドBFS", "ぐりっどびーえふえす"),
+    "graph-4": ("topological-sort", "トポロジカルソート", "とぽろじかるそーと"),
+    "dp-1": ("stair-dp", "階段DP", "かいだんでぃーぴー"),
+    "dp-2": ("lis-quadratic", "最長増加部分列（二重ループ）", "さいちょうぞうかぶぶんれつにじゅうるーぷ"),
+    "dp-3": ("lis-binary-search", "最長増加部分列（二分探索）", "さいちょうぞうかぶぶんれつにぶんたんさく"),
+    "dp-4": ("knapsack", "ナップサックDP（0/1）", "なっぷさっくでぃーぴー"),
+    "number-1": ("divisors", "約数列挙", "やくすうれっきょ"),
+    "number-2": ("primality-trial", "素数判定（試し割り）", "そすうはんていためしわり"),
+    "number-3": ("sieve", "エラトステネスの篩", "えらとすてねすのふるい"),
+    "number-4": ("prime-factorization", "素因数分解", "そいんすうぶんかい"),
+}
+
+
+def gojuon_key(reading):
+    # 濁音・半濁音と小書き文字を基本の仮名にそろえて50音順にする。
+    large = str.maketrans("ぁぃぅぇぉっゃゅょゎ", "あいうえおつやゆよわ")
+    plain = "".join(c for c in unicodedata.normalize("NFD", reading) if not unicodedata.combining(c))
+    return plain.translate(large), reading
+
+
+def display_groups():
+    ordinary = [g for g in GROUPS if g["page"] != "algo"]
+    algorithms = []
+    found = set()
+    for g in GROUPS:
+        if g["page"] != "algo":
+            continue
+        for item in g["items"]:
+            key, title, reading = ALGORITHM_SECTIONS[item["id"]]
+            found.add(item["id"])
+            algorithms.append(dict(page="algo", key=key, title=title, reading=reading,
+                                   note=g["note"], items=[item]))
+    assert found == set(ALGORITHM_SECTIONS), "アルゴリズム名と機能の対応を確認してください"
+    return ordinary + sorted(algorithms, key=lambda g: gojuon_key(g["reading"]))
+
+
 PAGES = {
     "std": dict(title="標準ライブラリ", subtitle="容器と操作関数を、名前から引く。", file="standard-library.md"),
     "acl": dict(title="AtCoder Library", subtitle="グループ・区間集計・余りの計算。", file="atcoder-library.md"),
-    "algo": dict(title="定番アルゴリズム・実装", subtitle="機能を確認し、全体コードを開く。", file="algorithms.md"),
+    "algo": dict(title="定番アルゴリズム・実装", subtitle="名前と機能を1項目ずつ、読みの50音順で掲載。", file="algorithms.md"),
     "limits": dict(title="計算量・メモリ", subtitle="制約と必要な容量を確認する。", file="complexity-memory.md"),
 }
 
 
 def generate():
-    for g in GROUPS:
+    groups = display_groups()
+    for g in groups:
         for item in g["items"]:
             if "// Reference:" not in item["full"]:
                 item["full"] = "// Reference: " + PUBLIC + "\n" + item["full"]
         if g["key"] == "reverse":
             g["keywords"] = "リバース 逆順 逆転 部分反転 部分リバース 回転"
     limits = limits_sections()
-    payload = dict(pages=PAGES, groups=GROUPS, limits=limits, source=PUBLIC)
+    payload = dict(pages=PAGES, groups=groups, limits=limits, source=PUBLIC)
     (ROOT / "reference-data.json").write_text(json.dumps(payload, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
     template = (ROOT / "page-template.html").read_text(encoding="utf-8")
     packed = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
@@ -753,7 +805,7 @@ def generate():
                 lines += ["**容器**：vector・string・set・map・queue・stack・deque・priority_queue・pair・tuple", "", "**操作関数**：sort・reverse・rotate・fill・unique・二分探索・集計・数値計算・入出力", ""]
             if page == "acl":
                 lines += ["**ACLのヘッダが必要です。** ローカルでは `atcoder` フォルダの親を `-I` に指定します。", "", "[公式ドキュメント](https://atcoder.github.io/ac-library/production/document_ja/index.html)", ""]
-            for g in GROUPS:
+            for g in groups:
                 if g["page"] != page: continue
                 lines += ["## "+g["title"], ""]
                 if g["note"]: lines += [g["note"], ""]
@@ -764,7 +816,7 @@ def generate():
                     if item["note"]: lines += [item["note"], ""]
                     lines += ["<details>", "<summary>コンパイルできる全体コード</summary>", "", "```cpp", item["full"].rstrip(), "```", "", "</details>", ""]
         (docs / info["file"]).write_text("\n".join(lines), encoding="utf-8")
-    print(f"Generated: {len(GROUPS)} sections, {sum(len(g['items']) for g in GROUPS)} complete examples")
+    print(f"Generated: {len(groups)} sections, {sum(len(g['items']) for g in groups)} complete examples")
 
 
 if __name__ == "__main__":
