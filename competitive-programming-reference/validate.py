@@ -23,7 +23,7 @@ with tempfile.TemporaryDirectory(prefix="cpp-reference-") as directory:
     commit = json.loads(fetch("https://api.github.com/repos/atcoder/ac-library/commits/master"))["sha"]
     headers = work / "atcoder"
     headers.mkdir()
-    pending = ["dsu", "fenwicktree", "segtree", "modint"]
+    pending = ["dsu", "fenwicktree", "segtree", "modint", "math", "string"]
     downloaded = set()
     while pending:
         name = pending.pop()
@@ -121,29 +121,42 @@ with tempfile.TemporaryDirectory(prefix="cpp-reference-") as directory:
         check("acl_modint", f"{n}\n", [a])
         a, b = b, (a+b) % 998244353
 
-    # 資料内の単独で動く部分コードもmainで包んでコンパイル・実行する。
-    markdown = (ROOT / "README.md").read_text(encoding="utf-8")
-    blocks = re.findall(r"```cpp\n(.*?)```", markdown, re.S)
-    skip = ["A.begin()+l", "#include", "const long long INF = (1LL << 60);\nvector<long long> dist",
-            "vector<int> dist(N", "vector<int> dh", "vector<int> indeg", "using mint =",
-            "mint a =", "atcoder::", "long long op", "bool is_prime", "int N = A.size();\nint p ="]
-    smoke = 0
-    for index, block in enumerate(blocks):
-        if any(marker in block for marker in skip):
-            continue
-        # LIS高速版は直前の配列定義を前提とする。
-        if "vector<int> tail;" in block:
-            block = "vector<int> A = {3,1,2,5}; int N = A.size();\n"+block
-        if block.startswith("sort(A.begin(), A.end());"):
-            block = "vector<int> A = {3,1,3,2};\n"+block
-        source = work / f"snippet{index}.cpp"
-        source.write_text("#include <bits/stdc++.h>\nusing namespace std;\nint main(){\n"+block+"\n}\n")
-        binary = work / f"snippet{index}"
-        result = subprocess.run(["g++", "-std=c++17", "-O2", "-Wall", "-Wextra", str(source), "-o", str(binary)],
-                                capture_output=True, text=True)
-        assert result.returncode == 0, (index, result.stderr)
-        subprocess.run([str(binary)], input="1 0\nhello\n", text=True, capture_output=True, check=True, timeout=5)
-        smoke += 1
-
-    print(f"PASS: {len(programs)} complete programs compiled; {count} output checks; {smoke} standalone snippets compiled and run")
+    data = json.loads((ROOT / "reference-data.json").read_text(encoding="utf-8"))
+    items = [i for g in data["groups"] for i in g["items"]]
+    # 全コードを別々の名前空間に置き、mainのみrunに改名して一括検証。
+    # includeは外に出すが、本文・補助関数・型定義はそのままコンパイルする。
+    includes = set()
+    namespaces, runs = [], []
+    for index, item in enumerate(items):
+        full = item["full"]
+        assert "int main()" in full and "#include" in full, item["id"]
+        includes.update(re.findall(r"^#include[^\n]+", full, re.M))
+        full = re.sub(r"^#include[^\n]+\n", "", full, flags=re.M)
+        full = full.replace("int main()", "int run()", 1)
+        # C++でmain末尾のreturn省略は許可される。改名したrunには明記する。
+        last = full.rfind("}")
+        full = full[:last]+"\nreturn 0;\n"+full[last:]
+        namespaces.append(f"namespace example{index} {{\n{full}\n}}\n")
+        if "sync_with_stdio" in full:
+            continue  # 入出力バッファ設定の例は構文のみ検証
+        inp = json.dumps(item.get("input", ""))
+        expected = item.get("expected")
+        compare = "" if expected is None else f"if(output.str() != {json.dumps(expected)}){{ cerr << \"Output mismatch: {item['id']}\\n\"; return 1; }}"
+        runs.append(f"""{{
+            istringstream input({inp}); ostringstream output;
+            auto inbuf = cin.rdbuf(input.rdbuf()); auto outbuf = cout.rdbuf(output.rdbuf());
+            cin.clear(); cout.clear();
+            example{index}::run();
+            cin.rdbuf(inbuf); cout.rdbuf(outbuf); cin.clear(); cout.clear();
+            {compare}
+        }}""")
+    bundle = work / "all-examples.cpp"
+    bundle.write_text("\n".join(sorted(includes))+"\nusing namespace std;\n"+"\n".join(namespaces)+
+                      "\nint main(){\n"+"\n".join(runs)+"\nreturn 0;\n}\n", encoding="utf-8")
+    binary = work / "all-examples"
+    result = subprocess.run(["g++", "-std=c++17", "-O1", "-Werror=return-type", "-I", str(work),
+                             str(bundle), "-o", str(binary)], capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+    subprocess.run([str(binary)], check=True, timeout=20)
+    print(f"PASS: {len(programs)} standalone files compiled; {count} randomized/boundary output checks; {len(items)} reference examples compiled; {len(runs)} examples executed")
     print(f"ACL revision: {commit}")
