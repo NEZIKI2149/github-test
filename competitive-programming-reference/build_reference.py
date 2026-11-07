@@ -853,7 +853,7 @@ def generate():
                     desc = item["desc"]
                     if page == "algo":
                         definition = "（"+item["cost_definition"]+"）" if item.get("cost_definition") else ""
-                        lines += ["**目的** : "+desc, "", "全体の時間："+item["time"]+"　メモリ："+item["memory"]+definition, ""]
+                        lines += ["**目的** : "+desc, "", "計算量："+item["time"]+"　メモリ："+item["memory"]+definition, ""]
                         for note in [g["note"], item["note"]]:
                             if note: lines += [note, ""]
                         lines += ["```cpp", item["full"].rstrip(), "```", ""]

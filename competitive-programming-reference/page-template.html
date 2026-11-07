@@ -53,7 +53,7 @@ function fullCode(i){
 function operation(i, algo, groupNote=''){
     if(algo){
         const notes=[groupNote,i.note].filter(Boolean).join(' ');
-        return '<article class="algorithm-entry" id="'+i.id+'"><p class="algorithm-purpose"><strong>目的</strong> : '+esc(i.desc)+'</p><p class="algorithm-cost">全体の時間 '+esc(i.time)+'　 /　 メモリ '+esc(i.memory)+(i.cost_definition?'　（'+esc(i.cost_definition)+'）':'')+'</p>'+(notes?'<p class="section-note">'+esc(notes)+'</p>':'')+fullCode(i)+'</article>';
+        return '<article class="algorithm-entry" id="'+i.id+'"><p class="algorithm-purpose"><strong>目的</strong> : '+esc(i.desc)+'</p><p class="algorithm-cost">計算量 '+esc(i.time)+'　 /　 メモリ '+esc(i.memory)+(i.cost_definition?'　（'+esc(i.cost_definition)+'）':'')+'</p>'+(notes?'<p class="section-note">'+esc(notes)+'</p>':'')+fullCode(i)+'</article>';
     }
     return '<details class="op" id="'+i.id+'"><summary class="op-row"><span class="desc">'+esc(i.desc)+(i.note?'<span class="row-note">'+esc(i.note)+'</span>':'')+'</span><code class="short">'+esc(i.code)+'</code><span class="cost">'+esc(i.cost)+'</span><span class="expand">全体コード</span></summary>'+fullCode(i)+'</details>';
 }
