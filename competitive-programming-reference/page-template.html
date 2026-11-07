@@ -81,7 +81,7 @@ function render(){
     const selectedContent=selectedIndex<0?'':sections[selectedIndex];
     const selectedKey=selectedIndex<0?'':side[selectedIndex][0];
     let sideHTML='';let label='';
-    for(const [key,title,p] of side){let next=p==='std'?(DATA.groups.findIndex(g=>g.key===key)<7?'容器・データを持つもの':'操作関数'):DATA.pages[p].title;if(next!==label){sideHTML+='<div class="side-label">'+esc(next)+'</div>';label=next;}sideHTML+='<a class="side-link" href="#'+p+'/'+key+'">'+esc(title)+'</a>';}
+    for(const [key,title,p] of side){let next=p==='std'?(DATA.groups.findIndex(g=>g.key===key)<7?'容器・データを持つもの':'操作関数'):p==='algo'?'五十音順':DATA.pages[p].title;if(next!==label){sideHTML+='<div class="side-label">'+esc(next)+'</div>';label=next;}sideHTML+='<a class="side-link" href="#'+p+'/'+key+'">'+esc(title)+'</a>';}
     $('#sidebar').innerHTML=sideHTML;
     $('#main').innerHTML='<details class="mobile-index"><summary>このページの目次</summary><div>'+sideHTML+'</div></details>'+(selectedContent||'<div class="empty">該当する項目がありません。検索語を短くしてください。</div>')+sourceNote();
     syncTocHighlight();
