@@ -765,6 +765,13 @@ def display_groups():
         for item in g["items"]:
             key, title, reading = ALGORITHM_SECTIONS[item["id"]]
             found.add(item["id"])
+            total_cost = {
+                "prefix-1": "時間 O(N+Q) / メモリ O(N)",
+                "prefix-2": "時間 O(HW+Q) / メモリ O(HW)",
+                "prefix-3": "時間 O(N+Q) / メモリ O(N)",
+            }.get(item["id"], item["cost"].replace("追加メモリ", "メモリ"))
+            time, memory = total_cost.removeprefix("時間 ").split(" / メモリ ")
+            item = dict(item, cost=total_cost, time=time, memory=memory)
             algorithms.append(dict(page="algo", key=key, title=title, reading=reading,
                                    note=g["note"], items=[item]))
     assert found == set(ALGORITHM_SECTIONS), "アルゴリズム名と機能の対応を確認してください"
@@ -809,9 +816,15 @@ def generate():
             for g in groups:
                 if g["page"] != page: continue
                 lines += ["## "+g["title"], ""]
-                if g["note"]: lines += [g["note"], ""]
+                if g["note"] and page != "algo": lines += [g["note"], ""]
                 for item in g["items"]:
                     desc = item["desc"].replace("添字", "**添字**")
+                    if page == "algo":
+                        lines += ["**目的**："+desc, "", "**全体の時間**："+item["time"]+"　**メモリ**："+item["memory"], ""]
+                        for note in [g["note"], item["note"]]:
+                            if note: lines += [note, ""]
+                        lines += ["```cpp", item["full"].rstrip(), "```", ""]
+                        continue
                     lines += ["### "+desc, "", "計算量："+item["cost"], ""]
                     if page != "algo": lines += ["```cpp", item["code"], "```", ""]
                     if item["note"]: lines += [item["note"], ""]

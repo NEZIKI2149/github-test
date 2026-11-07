@@ -8,14 +8,11 @@
 
 ## いもす法
 
+**目的**：区間への加算をすべて行った後、各要素の値を求める
+
+**全体の時間**：O(N+Q)　**メモリ**：O(N)
+
 添字と区間は0始まり。和・加算結果はlong longに収まること。
-
-### 区間への加算をすべて行った後、各要素の値を求める
-
-計算量：更新合計 O(Q) / 復元 O(N) / メモリ O(N)
-
-<details>
-<summary>コンパイルできる全体コード</summary>
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -43,18 +40,13 @@ int main(){
 }
 ```
 
-</details>
-
 ## エラトステネスの篩
 
-### N以下の整数が素数かをまとめて求める
+**目的**：N以下の整数が素数かをまとめて求める
 
-計算量：時間 O(N log log N) / メモリ O(N)
+**全体の時間**：O(N log log N)　**メモリ**：O(N)
 
 N ≥ 0。vector<char>の0/1で管理する。
-
-<details>
-<summary>コンパイルできる全体コード</summary>
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -86,18 +78,13 @@ int main(){
 }
 ```
 
-</details>
-
 ## 階段DP
 
-### 1段・2段ずつN段上る方法の数を余りで求める
+**目的**：1段・2段ずつN段上る方法の数を余りで求める
 
-計算量：時間 O(N) / メモリ O(N)
+**全体の時間**：O(N)　**メモリ**：O(N)
 
 法998244353。ACLが必要。
-
-<details>
-<summary>コンパイルできる全体コード</summary>
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -120,18 +107,13 @@ int main(){
 }
 ```
 
-</details>
-
 ## グリッドBFS
 
-### 壁のある盤面で、上下左右移動の最短距離を求める
+**目的**：壁のある盤面で、上下左右移動の最短距離を求める
 
-計算量：時間 O(HW) / メモリ O(HW)
+**全体の時間**：O(HW)　**メモリ**：O(HW)
 
 入力はH W、開始h w、目標h w、盤面。座標0始まり、#は壁。
-
-<details>
-<summary>コンパイルできる全体コード</summary>
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -172,18 +154,13 @@ int main(){
 }
 ```
 
-</details>
-
 ## 答えに対する二分探索
 
-### x² ≥ Kとなる最小整数xを二分探索で求める
+**目的**：x² ≥ Kとなる最小整数xを二分探索で求める
 
-計算量：時間 O(log K) / メモリ O(1)
+**全体の時間**：O(log K)　**メモリ**：O(1)
 
 1 ≤ K ≤ 10¹⁸。一般の問題では判定と初期ok/ngを両方変更する。
-
-<details>
-<summary>コンパイルできる全体コード</summary>
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -211,18 +188,13 @@ int main(){
 }
 ```
 
-</details>
-
 ## 最長増加部分列（二重ループ）
 
-### 狭義単調増加部分列の最大長を求める（二重ループ版）
+**目的**：狭義単調増加部分列の最大長を求める（二重ループ版）
 
-計算量：時間 O(N²) / メモリ O(N)
+**全体の時間**：O(N²)　**メモリ**：O(N)
 
 同じ値を連続して選ばない。高速版のtail全体は実際の部分列とは限らない。
-
-<details>
-<summary>コンパイルできる全体コード</summary>
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -252,18 +224,13 @@ int main(){
 }
 ```
 
-</details>
-
 ## 最長増加部分列（二分探索）
 
-### 狭義単調増加部分列の最大長を求める（高速版）
+**目的**：狭義単調増加部分列の最大長を求める（高速版）
 
-計算量：時間 O(N log N) / メモリ O(N)
+**全体の時間**：O(N log N)　**メモリ**：O(N)
 
 同じ値を連続して選ばない。高速版のtail全体は実際の部分列とは限らない。
-
-<details>
-<summary>コンパイルできる全体コード</summary>
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -293,18 +260,13 @@ int main(){
 }
 ```
 
-</details>
-
 ## 座標圧縮
 
-### 値の大小関係を保ったまま、0始まりの順位へ置き換える
+**目的**：値の大小関係を保ったまま、0始まりの順位へ置き換える
 
-計算量：時間 O(N log N) / メモリ O(N)
+**全体の時間**：O(N log N)　**メモリ**：O(N)
 
 値の差・距離は保たない。
-
-<details>
-<summary>コンパイルできる全体コード</summary>
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -329,18 +291,13 @@ int main(){
 }
 ```
 
-</details>
-
 ## しゃくとり法
 
-### 非負配列で、区間和がK以下の空でない連続部分列を数える
+**目的**：非負配列で、区間和がK以下の空でない連続部分列を数える
 
-計算量：時間 O(N) / メモリ O(N)
+**全体の時間**：O(N)　**メモリ**：O(N)
 
 Aの全要素 ≥ 0、K ≥ 0。
-
-<details>
-<summary>コンパイルできる全体コード</summary>
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -375,18 +332,13 @@ int main(){
 }
 ```
 
-</details>
-
 ## 順列全探索
 
-### 配列の値の全順列を列挙する
+**目的**：配列の値の全順列を列挙する
 
-計算量：時間 O(N × N!) / メモリ O(N)
+**全体の時間**：O(N × N!)　**メモリ**：O(N)
 
 同じ値の並びは重複して出力しない。
-
-<details>
-<summary>コンパイルできる全体コード</summary>
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -414,18 +366,13 @@ int main(){
 }
 ```
 
-</details>
-
 ## 素因数分解
 
-### 正整数Nを素因数と指数に分解する
+**目的**：正整数Nを素因数と指数に分解する
 
-計算量：時間 O(√N) / メモリ O(log N)
+**全体の時間**：O(√N)　**メモリ**：O(log N)
 
 N ≥ 1。N自体を途中で変更する。
-
-<details>
-<summary>コンパイルできる全体コード</summary>
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -456,16 +403,11 @@ int main(){
 }
 ```
 
-</details>
-
 ## 素数判定（試し割り）
 
-### 整数Nが素数か判定する
+**目的**：整数Nが素数か判定する
 
-計算量：時間 O(√N) / 追加メモリ O(1)
-
-<details>
-<summary>コンパイルできる全体コード</summary>
+**全体の時間**：O(√N)　**メモリ**：O(1)
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -492,18 +434,13 @@ int main(){
 }
 ```
 
-</details>
-
 ## ダイクストラ法（Dijkstra）
 
-### 非負重みの有向グラフで頂点1からの最短距離を求める
+**目的**：非負重みの有向グラフで頂点1からの最短距離を求める
 
-計算量：時間 O((N+M) log(N+M)) / メモリ O(N+M)
+**全体の時間**：O((N+M) log(N+M))　**メモリ**：O(N+M)
 
 重み ≥ 0。有限の最短距離 < INF、距離+重みがlong long内。
-
-<details>
-<summary>コンパイルできる全体コード</summary>
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -559,18 +496,13 @@ int main(){
 }
 ```
 
-</details>
-
 ## トポロジカルソート
 
-### 有向辺の前後関係を守る順番を求める
+**目的**：有向辺の前後関係を守る順番を求める
 
-計算量：時間 O(N+M) / メモリ O(N+M)
+**全体の時間**：O(N+M)　**メモリ**：O(N+M)
 
 N M、M本の有向辺a b（1始まり）を入力。閉路があれば−1。
-
-<details>
-<summary>コンパイルできる全体コード</summary>
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -620,18 +552,13 @@ int main(){
 }
 ```
 
-</details>
-
 ## ナップサックDP（0/1）
 
-### 各品物を1個まで選び、重さW以下で価値の和を最大化する
+**目的**：各品物を1個まで選び、重さW以下で価値の和を最大化する
 
-計算量：時間 O(NW) / メモリ O(W)
+**全体の時間**：O(NW)　**メモリ**：O(W)
 
 N W、各品物の重さ・価値を入力。重さは正整数。価値の合計はlong long内。
-
-<details>
-<summary>コンパイルできる全体コード</summary>
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -655,18 +582,13 @@ int main(){
 }
 ```
 
-</details>
-
 ## 二次元累積和
 
+**目的**：二次元配列の長方形内の和を求める
+
+**全体の時間**：O(HW+Q)　**メモリ**：O(HW)
+
 添字と区間は0始まり。和・加算結果はlong longに収まること。
-
-### 二次元配列の長方形内の和を求める
-
-計算量：前処理 O(HW) / 質問 O(1) / メモリ O(HW)
-
-<details>
-<summary>コンパイルできる全体コード</summary>
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -694,18 +616,13 @@ int main(){
 }
 ```
 
-</details>
-
 ## 幅優先探索（BFS）
 
-### 無向・重みなしグラフで頂点1からの最短距離を求める
+**目的**：無向・重みなしグラフで頂点1からの最短距離を求める
 
-計算量：時間 O(N+M) / メモリ O(N+M)
+**全体の時間**：O(N+M)　**メモリ**：O(N+M)
 
 頂点番号は入力が1始まり、内部は0始まり。到達不可は−1。
-
-<details>
-<summary>コンパイルできる全体コード</summary>
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -747,18 +664,13 @@ int main(){
 }
 ```
 
-</details>
-
 ## ビット全探索
 
-### 各要素を選ぶ・選ばない全組合せで、和がKになる数を数える
+**目的**：各要素を選ぶ・選ばない全組合せで、和がKになる数を数える
 
-計算量：時間 O(N × 2ᴺ) / メモリ O(N)
+**全体の時間**：O(N × 2ᴺ)　**メモリ**：O(N)
 
 空集合も含む。Nは典型的には20前後。
-
-<details>
-<summary>コンパイルできる全体コード</summary>
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -790,16 +702,11 @@ int main(){
 }
 ```
 
-</details>
-
 ## ペア数の数え上げ（同じ値）
 
-### 同じ値を持つ**添字**のペア数を求める
+**目的**：同じ値を持つ**添字**のペア数を求める
 
-計算量：時間 O(N log N) / メモリ O(値の種類数)
-
-<details>
-<summary>コンパイルできる全体コード</summary>
+**全体の時間**：O(N log N)　**メモリ**：O(値の種類数)
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -825,18 +732,13 @@ int main(){
 }
 ```
 
-</details>
-
 ## 約数列挙
 
-### 正整数Nの約数を昇順に列挙する
+**目的**：正整数Nの約数を昇順に列挙する
 
-計算量：時間 O(√N + D log D) / メモリ O(D)
+**全体の時間**：O(√N + D log D)　**メモリ**：O(D)
 
 Dは約数の個数。N ≥ 1。
-
-<details>
-<summary>コンパイルできる全体コード</summary>
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -863,18 +765,13 @@ int main(){
 }
 ```
 
-</details>
-
 ## 累積和
 
+**目的**：更新なしの配列で、区間の和を繰り返し求める
+
+**全体の時間**：O(N+Q)　**メモリ**：O(N)
+
 添字と区間は0始まり。和・加算結果はlong longに収まること。
-
-### 更新なしの配列で、区間の和を繰り返し求める
-
-計算量：前処理 O(N) / 質問 O(1) / メモリ O(N)
-
-<details>
-<summary>コンパイルできる全体コード</summary>
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -897,5 +794,3 @@ int main(){
     return 0;
 }
 ```
-
-</details>

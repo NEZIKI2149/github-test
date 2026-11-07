@@ -15,6 +15,7 @@
 @media(max-width:750px){.topbar{padding:12px 16px;gap:12px;flex-wrap:wrap}.brand{font-size:16px}.brand small{display:none}.search-wrap{order:3;flex-basis:100%;max-width:none}.source-link{margin-left:auto}.tabs{padding:0 16px;gap:20px;font-size:12px}.layout{display:block}aside{display:none}main{padding:25px 16px 60px}h1{font-size:24px}.column-head{display:none}.op-row,.algo .op-row{grid-template-columns:minmax(0,1fr) 85px;gap:8px 10px;padding:14px}.desc{grid-column:1;grid-row:1}.expand,.algo .expand{grid-column:2;grid-row:1}.short{grid-column:1/3;grid-row:2;background:var(--code);padding:8px;border-radius:4px}.cost,.algo .cost{grid-column:1/3;grid-row:3}.algo .desc{grid-column:1;grid-row:1}.algo .cost{grid-row:2}.mobile-index{display:block;margin:18px 0;border:1px solid var(--line);border-radius:6px;background:var(--paper)}.mobile-index summary{padding:10px;cursor:pointer}.mobile-index div{padding:0 8px 8px}.code-toolbar{align-items:flex-start}.code-actions{flex-wrap:wrap;justify-content:flex-end}.full-code{padding:10px}.section{scroll-margin-top:190px}html{scroll-padding-top:190px}}
 @media print{header,aside,.copy,.download,.expand,.mobile-index{display:none}.layout{display:block}main{padding:0}details.op{break-inside:avoid}pre{white-space:pre-wrap}.op-row{display:block}.short,.cost{margin-top:5px}.full-code{background:white}}
 .side-link.current{font-weight:750;box-shadow:inset 3px 0 0 var(--accent),0 0 12px rgba(8,124,114,.18)}
+.algorithm-purpose{margin:18px 0 10px;font-size:14px}.algorithm-cost{font-size:12px;margin:0 0 14px;color:var(--muted)}.algorithm-cost strong{color:var(--ink)}.algorithm-entry>.full-code{border:1px solid var(--line);border-radius:7px;margin-top:16px}
 </style>
 </head>
 <body>
@@ -47,8 +48,20 @@ function clearTocHighlight(){
 }
 function notify(message){ $('#toast').textContent=message;$('#toast').classList.add('show');clearTimeout(timer);timer=setTimeout(()=>$('#toast').classList.remove('show'),2200); }
 function sourceNote(){return '<footer>C++23 (GCC 15.2.0) / 添字は0始まり / 区間は l 以上 r 未満。全体コードはそのままコンパイルできます。<br>ACLの例は別途AtCoder Libraryのヘッダが必要です。<br>AIで事前作成したコードをABC・ARC・AGCでコピーして使う場合は、開始前のWeb公開と参照URLの添付が必要です。<a href="https://info.atcoder.jp/entry/llm-rules-ja" target="_blank" rel="noopener">公式ルール</a> · <a href="'+DATA.source+'" target="_blank" rel="noopener">公開ソース</a></footer>';}
-function operation(i, algo){return '<details class="op" id="'+i.id+'"><summary class="op-row"><span class="desc">'+emphasize(i.desc)+(i.note?'<span class="row-note">'+emphasize(i.note)+'</span>':'')+'</span>'+(algo?'':'<code class="short">'+esc(i.code)+'</code>')+'<span class="cost">'+esc(i.cost)+'</span><span class="expand">全体コード</span></summary><div class="full-code"><div class="code-toolbar"><span>C++23 (GCC 15.2.0) · #include / main() を含む全体コード</span><div class="code-actions"><button type="button" class="copy" data-copy="'+i.id+'">コードをコピー</button><button type="button" class="download" data-download="'+i.id+'">.cpp を保存</button></div></div><pre><code>'+esc(i.full)+'</code></pre></div></details>';}
-function section(g, items){const algo=g.page==='algo';return '<section class="section '+(algo?'algo':'')+'" id="'+g.key+'"><h2>'+esc(g.title)+'<a href="#'+g.page+'/'+g.key+'" aria-label="この項目のリンク">#</a></h2>'+(g.note?'<p class="section-note">'+emphasize(g.note)+'</p>':'')+'<div class="operations"><div class="column-head"><span>機能</span>'+(algo?'':'<span>コード</span>')+'<span>計算量</span><span>展開</span></div>'+items.map(i=>operation(i,algo)).join('')+'</div></section>';}
+function fullCode(i){
+    return '<div class="full-code"><div class="code-toolbar"><span>C++23 (GCC 15.2.0) · #include / main() を含む全体コード</span><div class="code-actions"><button type="button" class="copy" data-copy="'+i.id+'">コードをコピー</button><button type="button" class="download" data-download="'+i.id+'">C++ファイルを保存</button></div></div><pre><code>'+esc(i.full)+'</code></pre></div>';
+}
+function operation(i, algo, groupNote=''){
+    if(algo){
+        const notes=[groupNote,i.note].filter(Boolean).join(' ');
+        return '<article class="algorithm-entry" id="'+i.id+'"><p class="algorithm-purpose"><strong>目的</strong>　'+emphasize(i.desc)+'</p><p class="algorithm-cost"><strong>全体の時間</strong> '+esc(i.time)+'　 /　 <strong>メモリ</strong> '+esc(i.memory)+'</p>'+(notes?'<p class="section-note">'+emphasize(notes)+'</p>':'')+fullCode(i)+'</article>';
+    }
+    return '<details class="op" id="'+i.id+'"><summary class="op-row"><span class="desc">'+emphasize(i.desc)+(i.note?'<span class="row-note">'+emphasize(i.note)+'</span>':'')+'</span><code class="short">'+esc(i.code)+'</code><span class="cost">'+esc(i.cost)+'</span><span class="expand">全体コード</span></summary>'+fullCode(i)+'</details>';
+}
+function section(g, items){
+    const algo=g.page==='algo';
+    return '<section class="section '+(algo?'algo':'')+'" id="'+g.key+'"><h2>'+esc(g.title)+'<a href="#'+g.page+'/'+g.key+'" aria-label="この項目のリンク">#</a></h2>'+(g.note&&!algo?'<p class="section-note">'+emphasize(g.note)+'</p>':'')+(algo?'':'<div class="operations"><div class="column-head"><span>機能</span><span>コード</span><span>計算量</span><span>展開</span></div>')+items.map(i=>operation(i,algo,g.note)).join('')+(algo?'':'</div>')+'</section>';
+}
 function termsMatch(text){const t=text.toLocaleLowerCase();return query.trim().toLocaleLowerCase().split(/\s+/).every(q=>t.includes(q));}
 function render(){
     query=$('#search').value.trim(); const searching=!!query;
@@ -77,7 +90,7 @@ function render(){
     for(const [key,title,p] of side){let next=p==='std'?(DATA.groups.findIndex(g=>g.key===key)<7?'容器・データを持つもの':'操作関数'):DATA.pages[p].title;if(next!==label){sideHTML+='<div class="side-label">'+esc(next)+'</div>';label=next;}sideHTML+='<a class="side-link" href="#'+p+'/'+key+'">'+esc(title)+'</a>';}
     $('#sidebar').innerHTML=sideHTML;
     const title=searching?'検索結果':DATA.pages[page].title;
-    const chapterHeading='<div class="page-heading"><p class="eyebrow">'+(searching?'SEARCH / ALL CATEGORIES':'REFERENCE / '+({std:'01',acl:'02',algo:'03',limits:'04'}[page]))+'</p><h1>'+title+'</h1><p class="subtitle">'+(searching?esc(query)+' — 全カテゴリから検索':DATA.pages[page].subtitle)+'</p><div class="guide"><span class="badge">C++23 (GCC 15.2.0)</span><span class="badge">添字は0始まり</span><span class="badge">区間は l 以上 r 未満</span><span class="badge">全体コードはクリックで展開</span></div>'+(page==='acl'&&!searching?'<p class="note">ACLのヘッダが必要です。<a href="https://atcoder.github.io/ac-library/production/document_ja/index.html" target="_blank" rel="noopener">公式ドキュメント ↗</a></p>':'')+'<span class="count" role="status">'+(searching?total+' 件が見つかりました。目次から1項目を選択。':page==='limits'?'容量の表は要素本体の目安。上限と他の使用量を合わせて確認。':operationCount+' 件の操作')+'</span></div>';
+    const chapterHeading='<div class="page-heading"><p class="eyebrow">'+(searching?'SEARCH / ALL CATEGORIES':'REFERENCE / '+({std:'01',acl:'02',algo:'03',limits:'04'}[page]))+'</p><h1>'+title+'</h1><p class="subtitle">'+(searching?esc(query)+' — 全カテゴリから検索':DATA.pages[page].subtitle)+'</p><div class="guide"><span class="badge">C++23 (GCC 15.2.0)</span><span class="badge">添字は0始まり</span><span class="badge">区間は l 以上 r 未満</span><span class="badge">'+(selectedChapter==='algo'?'全体コードを表示中':'全体コードはクリックで展開')+'</span></div>'+(page==='acl'&&!searching?'<p class="note">ACLのヘッダが必要です。<a href="https://atcoder.github.io/ac-library/production/document_ja/index.html" target="_blank" rel="noopener">公式ドキュメント ↗</a></p>':'')+'<span class="count" role="status">'+(searching?total+' 件が見つかりました。目次から1項目を選択。':page==='limits'?'容量の表は要素本体の目安。上限と他の使用量を合わせて確認。':operationCount+' 件の操作')+'</span></div>';
     $('#main').innerHTML=(showChapterHeading?chapterHeading:'')+'<details class="mobile-index"><summary>このページの目次</summary><div>'+sideHTML+'</div></details>'+(selectedContent||'<div class="empty">該当する項目がありません。検索語を短くしてください。</div>')+sourceNote();
     syncTocHighlight();
 }
