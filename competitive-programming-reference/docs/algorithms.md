@@ -10,9 +10,7 @@
 
 **目的**：区間への加算をすべて行った後、各要素の値を求める
 
-**全体の時間**：O(N+Q)　**メモリ**：O(N)
-
-すべての加算が終わってから、各要素の値を求める。
+全体の時間：O(N+Q)　メモリ：O(N)
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -44,9 +42,7 @@ int main(){
 
 **目的**：N以下の整数が素数かをまとめて求める
 
-**全体の時間**：O(N log log N)　**メモリ**：O(N)
-
-Nは0以上。
+全体の時間：O(N log log N)　メモリ：O(N)
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -82,9 +78,9 @@ int main(){
 
 **目的**：1段・2段ずつN段上る方法の数を余りで求める
 
-**全体の時間**：O(N)　**メモリ**：O(N)
+全体の時間：O(N)　メモリ：O(N)
 
-答えを998244353で割った余りを求める。AtCoder Libraryが必要。
+⚠︎ 余りは998244353で計算する！AtCoder Libraryが必要。
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -111,9 +107,7 @@ int main(){
 
 **目的**：壁のある盤面で、上下左右移動の最短距離を求める
 
-**全体の時間**：O(HW)　**メモリ**：O(HW)
-
-上下左右に1マスずつ移動する。#は通れないマス。入力はH W、開始位置h w、目標位置h w、盤面の順。
+全体の時間：O(HW)　メモリ：O(HW)
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -158,9 +152,9 @@ int main(){
 
 **目的**：x² ≥ Kとなる最小整数xを二分探索で求める
 
-**全体の時間**：O(log K)　**メモリ**：O(1)
+全体の時間：O(log K)　メモリ：O(1)
 
-Kは1以上10¹⁸以下。別の問題に使うときは、判定式と最初のok・ngを書き換える。
+⚠︎ ある値以上なら必ず条件を満たす問題限定！
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -192,9 +186,9 @@ int main(){
 
 **目的**：狭義単調増加部分列の最大長を求める（二重ループ版）
 
-**全体の時間**：O(N²)　**メモリ**：O(N)
+全体の時間：O(N²)　メモリ：O(N)
 
-元の順番のまま選び、次に選ぶ値は前の値より大きくする。
+⚠︎ 同じ値を続けて選ぶことはできない！
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -228,9 +222,9 @@ int main(){
 
 **目的**：狭義単調増加部分列の最大長を求める（高速版）
 
-**全体の時間**：O(N log N)　**メモリ**：O(N)
+全体の時間：O(N log N)　メモリ：O(N)
 
-元の順番のまま選び、次に選ぶ値は前の値より大きくする。tailには、実際に選んだ並びが入るとは限らない。
+⚠︎ 同じ値を続けて選ぶことはできない！tailの中身は、実際に選べる並びとは限らない。
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -264,9 +258,9 @@ int main(){
 
 **目的**：値の大小関係を保ったまま、0始まりの順位へ置き換える
 
-**全体の時間**：O(N log N)　**メモリ**：O(N)
+全体の時間：O(N log N)　メモリ：O(N)
 
-値の大小と一致は保つが、値同士の差は保たない。
+⚠︎ 圧縮後の番号の差は、元の値の差にはならない！
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -295,9 +289,9 @@ int main(){
 
 **目的**：区間の合計がK以下になる、空でない連続部分の個数を数える
 
-**全体の時間**：O(N)　**メモリ**：O(N)
+全体の時間：O(N)　メモリ：O(N)
 
-配列の値がすべて0以上。
+⚠︎ 配列の値がすべて0以上のとき限定！
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -336,9 +330,9 @@ int main(){
 
 **目的**：配列の値の全順列を列挙する
 
-**全体の時間**：O(N × N!)　**メモリ**：O(N)
+全体の時間：O(N × N!)　メモリ：O(N)
 
-同じ値があっても、同じ並びは1回だけ出力する。
+⚠︎ 同じ値を入れ替えただけの並びは、別の並びとして数えない！
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -370,9 +364,9 @@ int main(){
 
 **目的**：正整数Nを素因数と指数に分解する
 
-**全体の時間**：O(√N)　**メモリ**：O(log N)
+全体の時間：O(√N)　メモリ：O(log N)
 
-Nは1以上。処理中にNの値を書き換える。
+⚠︎ 処理後はNの値が変わる！元の値も使うなら先にコピー。
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -407,7 +401,7 @@ int main(){
 
 **目的**：整数Nが素数か判定する
 
-**全体の時間**：O(√N)　**メモリ**：O(1)
+全体の時間：O(√N)　メモリ：O(1)
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -438,9 +432,9 @@ int main(){
 
 **目的**：一方通行のルートで、頂点1から各頂点までの最小の移動コストを求める
 
-**全体の時間**：O((N+M) log(N+M))　**メモリ**：O(N+M)
+全体の時間：O((N+M) log(N+M))　メモリ：O(N+M)
 
-各ルートを通るコストは0以上。一方通行のルートを扱う。
+⚠︎ 各ルートを通るコストがすべて0以上のとき限定！
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -500,9 +494,7 @@ int main(){
 
 **目的**：有向辺の前後関係を守る順番を求める
 
-**全体の時間**：O(N+M)　**メモリ**：O(N+M)
-
-入力のa→bは、aをbより先に処理する指定。順番を決められない場合は−1を出力する。
+全体の時間：O(N+M)　メモリ：O(N+M)
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -556,9 +548,9 @@ int main(){
 
 **目的**：各品物を1個まで選び、重さW以下で価値の和を最大化する
 
-**全体の時間**：O(NW)　**メモリ**：O(W)
+全体の時間：O(NW)　メモリ：O(W)
 
-品物の重さは1以上の整数。同じ品物は2回選ばない。入力はN W、各品物の重さと価値の順。
+⚠︎ 重さは0以上の整数限定！
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -586,9 +578,9 @@ int main(){
 
 **目的**：二次元配列の長方形内の和を求める
 
-**全体の時間**：O(HW+Q)　**メモリ**：O(HW)
+全体の時間：O(HW+Q)　メモリ：O(HW)
 
-盤面の値を途中で書き換えない場合に使う。
+⚠︎ 盤面の値を途中で書き換えないとき限定！
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -620,9 +612,9 @@ int main(){
 
 **目的**：無向・重みなしグラフで頂点1からの最短距離を求める
 
-**全体の時間**：O(N+M)　**メモリ**：O(N+M)
+全体の時間：O(N+M)　メモリ：O(N+M)
 
-どのルートも1回の移動として数える。行き来できるルートを扱い、到達できない地点は−1を出力する。
+⚠︎ すべてのルートを同じ1回の移動として数えられるとき限定！
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -668,9 +660,9 @@ int main(){
 
 **目的**：各要素を選ぶ・選ばない全組合せで、和がKになる数を数える
 
-**全体の時間**：O(N × 2ᴺ)　**メモリ**：O(N)
+全体の時間：O(N × 2ᴺ)　メモリ：O(N)
 
-何も選ばない場合も含む。Nが20前後までの規模向け。
+⚠︎ 何も選ばない場合も数える！Nは20前後までが目安。
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -706,7 +698,7 @@ int main(){
 
 **目的**：同じ値を持つ**添字**のペア数を求める
 
-**全体の時間**：O(N log N)　**メモリ**：O(値の種類数)
+全体の時間：O(N log N)　メモリ：O(値の種類数)
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -736,9 +728,7 @@ int main(){
 
 **目的**：正整数Nの約数を昇順に列挙する
 
-**全体の時間**：O(√N + D log D)　**メモリ**：O(D)
-
-Nは1以上。Dは約数の個数。
+全体の時間：O(√N + D log D)　メモリ：O(D)（Dは約数の個数）
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -769,9 +759,9 @@ int main(){
 
 **目的**：更新なしの配列で、区間の和を繰り返し求める
 
-**全体の時間**：O(N+Q)　**メモリ**：O(N)
+全体の時間：O(N+Q)　メモリ：O(N)
 
-配列の値を途中で書き換えない場合に使う。
+⚠︎ 配列の値を途中で書き換えないとき限定！
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference

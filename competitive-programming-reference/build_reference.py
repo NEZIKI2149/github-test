@@ -749,27 +749,27 @@ ALGORITHM_SECTIONS = {
 
 # 各実装を使うときに確認する条件を、入力に即した短い言葉で示す。
 ALGORITHM_NOTES = {
-    "prefix-1": "配列の値を途中で書き換えない場合に使う。",
-    "prefix-2": "盤面の値を途中で書き換えない場合に使う。",
-    "prefix-3": "すべての加算が終わってから、各要素の値を求める。",
-    "enumeration-1": "何も選ばない場合も含む。Nが20前後までの規模向け。",
-    "enumeration-2": "同じ値があっても、同じ並びは1回だけ出力する。",
-    "enumeration-3": "値の大小と一致は保つが、値同士の差は保たない。",
+    "prefix-1": "⚠︎ 配列の値を途中で書き換えないとき限定！",
+    "prefix-2": "⚠︎ 盤面の値を途中で書き換えないとき限定！",
+    "prefix-3": "",
+    "enumeration-1": "⚠︎ 何も選ばない場合も数える！Nは20前後までが目安。",
+    "enumeration-2": "⚠︎ 同じ値を入れ替えただけの並びは、別の並びとして数えない！",
+    "enumeration-3": "⚠︎ 圧縮後の番号の差は、元の値の差にはならない！",
     "enumeration-4": "",
-    "answer-search-1": "Kは1以上10¹⁸以下。別の問題に使うときは、判定式と最初のok・ngを書き換える。",
-    "answer-search-2": "配列の値がすべて0以上。",
-    "graph-1": "どのルートも1回の移動として数える。行き来できるルートを扱い、到達できない地点は−1を出力する。",
-    "graph-2": "各ルートを通るコストは0以上。一方通行のルートを扱う。",
-    "graph-3": "上下左右に1マスずつ移動する。#は通れないマス。入力はH W、開始位置h w、目標位置h w、盤面の順。",
-    "graph-4": "入力のa→bは、aをbより先に処理する指定。順番を決められない場合は−1を出力する。",
-    "dp-1": "答えを998244353で割った余りを求める。AtCoder Libraryが必要。",
-    "dp-2": "元の順番のまま選び、次に選ぶ値は前の値より大きくする。",
-    "dp-3": "元の順番のまま選び、次に選ぶ値は前の値より大きくする。tailには、実際に選んだ並びが入るとは限らない。",
-    "dp-4": "品物の重さは1以上の整数。同じ品物は2回選ばない。入力はN W、各品物の重さと価値の順。",
-    "number-1": "Nは1以上。Dは約数の個数。",
+    "answer-search-1": "⚠︎ ある値以上なら必ず条件を満たす問題限定！",
+    "answer-search-2": "⚠︎ 配列の値がすべて0以上のとき限定！",
+    "graph-1": "⚠︎ すべてのルートを同じ1回の移動として数えられるとき限定！",
+    "graph-2": "⚠︎ 各ルートを通るコストがすべて0以上のとき限定！",
+    "graph-3": "",
+    "graph-4": "",
+    "dp-1": "⚠︎ 余りは998244353で計算する！AtCoder Libraryが必要。",
+    "dp-2": "⚠︎ 同じ値を続けて選ぶことはできない！",
+    "dp-3": "⚠︎ 同じ値を続けて選ぶことはできない！tailの中身は、実際に選べる並びとは限らない。",
+    "dp-4": "⚠︎ 重さは0以上の整数限定！",
+    "number-1": "",
     "number-2": "",
-    "number-3": "Nは0以上。",
-    "number-4": "Nは1以上。処理中にNの値を書き換える。",
+    "number-3": "",
+    "number-4": "⚠︎ 処理後はNの値が変わる！元の値も使うなら先にコピー。",
 }
 
 
@@ -798,6 +798,8 @@ def display_groups():
             time, memory = total_cost.removeprefix("時間 ").split(" / メモリ ")
             item = dict(item, cost=total_cost, time=time, memory=memory,
                         note=ALGORITHM_NOTES[item["id"]])
+            if item["id"] == "number-1":
+                item["cost_definition"] = "Dは約数の個数"
             if item["id"] == "graph-2":
                 item["desc"] = "一方通行のルートで、頂点1から各頂点までの最小の移動コストを求める"
             elif item["id"] == "answer-search-2":
@@ -850,7 +852,8 @@ def generate():
                 for item in g["items"]:
                     desc = item["desc"].replace("添字", "**添字**")
                     if page == "algo":
-                        lines += ["**目的**："+desc, "", "**全体の時間**："+item["time"]+"　**メモリ**："+item["memory"], ""]
+                        definition = "（"+item["cost_definition"]+"）" if item.get("cost_definition") else ""
+                        lines += ["**目的**："+desc, "", "全体の時間："+item["time"]+"　メモリ："+item["memory"]+definition, ""]
                         for note in [g["note"], item["note"]]:
                             if note: lines += [note, ""]
                         lines += ["```cpp", item["full"].rstrip(), "```", ""]
