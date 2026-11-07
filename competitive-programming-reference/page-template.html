@@ -115,6 +115,8 @@ function updateTools(){
 for(const event of ['input','change'])document.addEventListener(event,e=>{const k=e.target.dataset.calc;if(k){calcState[k]=e.target.value;updateTools();}});
 
 let openGroup=null;
+let mobileIndexOpen=true;
+const isMobile=()=>matchMedia("(max-width:750px)").matches;
 function librarySection(g,i){return '<section class="section" id="'+i.id+'"><h2>'+esc(i.desc)+'</h2>'+operation(i,false)+'</section>';}
 function limitSection(s){return '<section class="section limits" id="'+s.key+'"><h2>'+esc(s.title)+'</h2>'+ (s.key==='time-count'?timeTool():s.tool==='memory'?memoryTool():s.content)+'</section>';}
 function render(){
@@ -141,7 +143,7 @@ function render(){
     }
     if(currentGroup)sideHTML+='</details>';
     $('#sidebar').innerHTML=sideHTML;
-    $('#main').innerHTML='<details class="mobile-index"><summary>このページの目次</summary><div>'+sideHTML+'</div></details>'+(chosen?.html||'<div class="empty">該当する項目がありません。検索語を短くしてください。</div>')+sourceNote();
+    $('#main').innerHTML='<details class="mobile-index"'+(mobileIndexOpen?' open':'')+'><summary>このページの目次</summary><div>'+sideHTML+'</div></details>'+(chosen?.html||'<div class="empty">該当する項目がありません。検索語を短くしてください。</div>')+sourceNote();
     syncTocHighlight();updateTools();
 }
 function jumpFromHash(){
@@ -149,13 +151,17 @@ function jumpFromHash(){
     if(DATA.pages[p]){page=p;}
     const g=DATA.groups.find(g=>g.page===page&&(g.key===key||g.items.some(i=>i.id===key)));
     const target=g&&g.page!=='algo'?(g.key===key?g.items[0].id:key):key;
-    openGroup=g&&g.page!=='algo'?g.key:null;
+    openGroup=isMobile()&&!target?'':g&&g.page!=='algo'?g.key:null;
+    mobileIndexOpen=!target;
     selectedTocHref=target?'#'+page+'/'+target:'';
     render();
-    window.scrollTo({top:0,left:0,behavior:'instant'});
+    const content=$('main>.section');
+    const top=isMobile()&&target&&content?window.scrollY+content.getBoundingClientRect().top-$('header').getBoundingClientRect().height-12:0;
+    window.scrollTo({top:Math.max(0,top),left:0,behavior:'instant'});
 }
 document.addEventListener('click',e=>{
-    const summary=e.target.closest('.toc-group>summary');if(summary){e.preventDefault();const key=summary.parentElement.dataset.group;openGroup=openGroup===key?'':key;render();return;}
+    const outer=e.target.closest('.mobile-index>summary');if(outer){e.preventDefault();mobileIndexOpen=!outer.parentElement.open;outer.parentElement.open=mobileIndexOpen;return;}
+    const summary=e.target.closest('.toc-group>summary');if(summary){e.preventDefault();const top=summary.getBoundingClientRect().top;const key=summary.parentElement.dataset.group;openGroup=openGroup===key?'':key;document.querySelectorAll('.toc-group').forEach(g=>{g.open=g.dataset.group===openGroup;});if(isMobile())requestAnimationFrame(()=>{window.scrollBy({top:summary.getBoundingClientRect().top-top,behavior:'instant'});});return;}
     const link=e.target.closest('.side-link');
     if(!link||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey){return;}
     e.preventDefault();
@@ -165,7 +171,7 @@ document.addEventListener('click',e=>{
 });
 $('#search').addEventListener('input',()=>{clearTocHighlight();render();});
 $('#clear').addEventListener('click',()=>{clearTocHighlight();$('#search').value='';query='';render();$('#search').focus();});
-document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{clearTocHighlight();page=b.dataset.page;openGroup=null;$('#search').value='';query='';history.replaceState(null,'','#'+page);render();window.scrollTo(0,0);}));
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{clearTocHighlight();page=b.dataset.page;openGroup=isMobile()?'':null;mobileIndexOpen=true;$('#search').value='';query='';history.replaceState(null,'','#'+page);render();window.scrollTo(0,0);}));
 document.addEventListener('keydown',e=>{const editing=['INPUT','TEXTAREA'].includes(document.activeElement.tagName)||document.activeElement.isContentEditable;if(e.key==='/'&&!editing){e.preventDefault();$('#search').focus();}if(e.key==='Escape'&&document.activeElement===$('#search')){$('#search').value='';query='';render();$('#search').blur();}});
 document.addEventListener('click',async e=>{const copy=e.target.closest('[data-copy],[data-shortcopy]');if(copy){const short=!!copy.dataset.shortcopy;const item=entries.get(copy.dataset.shortcopy||copy.dataset.copy);const code=short?item.code:item.full;try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(code);}else{const ta=document.createElement('textarea');ta.value=code;ta.style.position='fixed';ta.style.left='-9999px';document.body.append(ta);ta.select();const success=document.execCommand('copy');ta.remove();if(!success)throw Error('copy');}notify(short?'短いコードをコピーしました':'全体コードをコピーしました');}catch{notify('コピーできませんでした。.cppを保存するか、コードを選択してください');}}
 const dl=e.target.closest('[data-download]');if(dl){const item=entries.get(dl.dataset.download);const url=URL.createObjectURL(new Blob([item.full],{type:'text/plain;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download=item.id+'.cpp';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}});
