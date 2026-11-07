@@ -132,7 +132,7 @@ function render(){
     }
     if(searching||page==='limits')for(const s of DATA.limits)if(!searching||termsMatch(s.title+' '+s.content.replace(/<[^>]*>/g,' ')))rows.push({key:s.key,title:s.title,page:'limits',html:limitSection(s),label:'計算量・メモリ'});
     if(searching||page==='notes')for(const n of DATA.notes||[])if(!searching||termsMatch(n.title+' '+n.category+' '+n.text+' '+n.at))rows.push({key:n.id,title:n.title,page:'notes',html:noteSection(n),label:n.kind==='updates'?'更新履歴':'制作者メモ'});
-    const chosen=rows.find(r=>'#'+r.page+'/'+r.key===selectedTocHref)||rows[0];
+    const chosen=rows.find(r=>'#'+r.page+'/'+r.key===selectedTocHref);
     selectedTocHref=chosen?'#'+chosen.page+'/'+chosen.key:'';
     if(openGroup===null)openGroup=chosen?.group||'';
     let sideHTML='',label='',currentGroup='';
@@ -143,15 +143,15 @@ function render(){
     }
     if(currentGroup)sideHTML+='</details>';
     $('#sidebar').innerHTML=sideHTML;
-    $('#main').innerHTML='<details class="mobile-index"'+(mobileIndexOpen?' open':'')+'><summary>このページの目次</summary><div>'+sideHTML+'</div></details>'+(chosen?.html||'<div class="empty">該当する項目がありません。検索語を短くしてください。</div>')+sourceNote();
+    $('#main').innerHTML='<details class="mobile-index"'+(mobileIndexOpen?' open':'')+'><summary>このページの目次</summary><div>'+sideHTML+'</div></details>'+(chosen?.html||'<div class="empty">'+(rows.length?'目次から項目を選んでください。':'該当する項目がありません。検索語を短くしてください。')+'</div>')+sourceNote();
     syncTocHighlight();updateTools();
 }
 function jumpFromHash(){
     const [p,key]=decodeURIComponent(location.hash.slice(1)).split('/');
     if(DATA.pages[p]){page=p;}
     const g=DATA.groups.find(g=>g.page===page&&(g.key===key||g.items.some(i=>i.id===key)));
-    const target=g&&g.page!=='algo'?(g.key===key?g.items[0].id:key):key;
-    openGroup=isMobile()&&!target?'':g&&g.page!=='algo'?g.key:null;
+    const target=g&&g.page!=='algo'?(g.key===key?undefined:key):key;
+    openGroup=g&&g.page!=='algo'?g.key:isMobile()&&!target?'':null;
     mobileIndexOpen=!target;
     selectedTocHref=target?'#'+page+'/'+target:'';
     render();
