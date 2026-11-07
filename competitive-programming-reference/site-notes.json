@@ -9,15 +9,5 @@
       "text": "更新履歴と制作者メモをソース側で管理できるようにしました。公開フラグを付けた記録だけがサイトに表示されます。",
       "published": true
     }
-  ],
-  "memos": [
-    {
-      "id": "20261108-acl-hidden",
-      "at": "2026-11-08 06:19",
-      "title": "AtCoder Libraryの一部を非表示",
-      "category": "AtCoder Library",
-      "text": "DSU・Fenwick Tree・segtreeは、制作者が使い方を理解するまで目次と検索結果から非表示にする。表示を戻すときはbuild_reference.pyのHIDDEN_GROUPSを編集する。",
-      "published": false
-    }
   ]
 }

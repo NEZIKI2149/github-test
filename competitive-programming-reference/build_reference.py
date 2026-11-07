@@ -830,7 +830,10 @@ def generate():
             g["keywords"] = "リバース 逆順 逆転 部分反転 部分リバース 回転"
     limits = limits_sections()
     notes = json.loads((ROOT / "site-notes.json").read_text(encoding="utf-8"))
-    public_notes = [dict(note, kind=kind) for kind in ("updates", "memos") for note in notes[kind] if note["published"]]
+    local_notes_path = ROOT / "site-notes.local.json"
+    local_notes = json.loads(local_notes_path.read_text(encoding="utf-8")) if local_notes_path.exists() else {"memos": []}
+    public_notes = [dict(note, kind="updates") for note in notes["updates"] if note["published"]]
+    public_notes += [dict(note, kind="memos") for note in local_notes["memos"] if note["published"]]
     payload = dict(pages=PAGES, groups=groups, limits=limits, notes=public_notes, source=PUBLIC)
     (ROOT / "reference-data.json").write_text(json.dumps(payload, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
     template = (ROOT / "page-template.html").read_text(encoding="utf-8")
@@ -870,8 +873,8 @@ def generate():
     (docs / "site-notes.md").write_text(
         "# 更新履歴・制作者メモ\n\n"
         "[入口へ](../README.md)\n\n"
-        "公開対象の記録は `site-notes.json` の `published: true` の項目だけです。\n"
-        "`published: false` の制作者メモはWebサイトと生成Markdownには出力されません。\n",
+        "更新履歴と公開済みの記録は `site-notes.json`、制作者用の下書きはローカル専用の `site-notes.local.json` で管理します。\n"
+        "公開対象は `published: true` の項目だけです。ローカル下書きファイルは公開リポジトリへアップロードしないでください。\n",
         encoding="utf-8",
     )
     print(f"Generated: {len(groups)} sections, {sum(len(g['items']) for g in groups)} complete examples")

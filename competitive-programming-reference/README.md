@@ -44,7 +44,7 @@ GitHub Pages公開後に上のURLで閲覧できます。ローカルでは [ind
 python build_reference.py
 ```
 
-サイト内の**更新履歴・制作者メモ**は `site-notes.json` に記録します。`published: true` の項目だけがサイトと生成Markdownに表示され、`false` の項目は表示されません。公開リポジトリ内のファイルなので、非公開項目にもパスワードなどの秘密情報は書かないでください。DSU・Fenwick Tree・segtreeの表示を戻す場合は、`build_reference.py` の `HIDDEN_GROUPS` からキーを削除します。
+サイト内の**更新履歴・制作者メモ**は、公開する記録を `site-notes.json`、下書きをローカル専用の `site-notes.local.json` に記録します。`published: true` の項目だけがサイトと生成Markdownに表示されます。`site-notes.local.json` は公開リポジトリにアップロードしないでください。DSU・Fenwick Tree・segtreeの表示を戻す場合は、`build_reference.py` の `HIDDEN_GROUPS` からキーを削除します。
 
 全コードの検証（WSL/Linux、Python3・g++・インターネット接続が必要）：
 
