@@ -44,11 +44,16 @@ main .section h2{font-weight:700}
 /* All text, including code and controls, is bold in poison mode. */
 :root[data-theme=poison] body,
 :root[data-theme=poison] body *{font-weight:700!important}
+.search-help{font-size:11px;margin:4px 0 0;color:var(--ink)}
+.toc-group{margin:7px 0}.toc-group>summary{cursor:pointer;padding:8px 4px;color:var(--ink);font-size:12px}.toc-group .side-link{margin-left:10px}
+.operation-entry .section-note,.operation-entry .operation-cost{color:var(--ink);font-size:12px}.operation-short,.operation-example{background:var(--code);border:1px solid var(--line);border-radius:7px;padding:14px;margin:16px 0}.operation-short .code-actions{justify-content:flex-end;margin-top:8px}.operation-entry .full-code{border:1px solid var(--line);border-radius:7px;margin-top:20px}
+.calc-fields{display:flex;gap:16px;flex-wrap:wrap;margin:20px 0}.calc-fields label{display:flex;flex-direction:column;gap:5px;font-size:12px}.calc-fields input,.calc-fields select{font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:5px;padding:8px;width:160px}.calc-output{font-size:14px;line-height:2;background:var(--paper);border:1px solid var(--line);border-radius:7px;padding:16px}.operation-cost{margin:14px 0}.symbol-definitions{font-size:12px;margin:5px 0 14px}
+aside{top:155px;height:calc(100vh - 155px)}
 </style>
 </head>
 <body>
 <header>
-<div class="topbar"><div class="brand">ネジキチートシート</div><div class="search-wrap"><input id="search" type="search" autocomplete="off" spellcheck="false" aria-label="全カテゴリから検索" placeholder="ダイクストラ法…"><button type="button" class="clear" id="clear" aria-label="検索を消す">Esc</button></div><a class="source-link" id="source" href="https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference" target="_blank" rel="noopener">GitHub ↗</a><div class="theme-controls"><button type="button" class="theme" id="theme" aria-label="配色を切り替える">明 / 暗</button><button type="button" class="theme" id="poison" aria-label="毒の配色を切り替える" aria-pressed="false">毒</button></div></div>
+<div class="topbar"><div class="brand">ネジキチートシート</div><div class="search-wrap"><input id="search" type="search" autocomplete="off" spellcheck="false" aria-label="全カテゴリから検索" placeholder="ダイクストラ法…"><button type="button" class="clear" id="clear" aria-label="検索を消す">Esc</button><p class="search-help">関数名でも、日本語でも検索できます。例：reverse／逆順</p></div><a class="source-link" id="source" href="https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference" target="_blank" rel="noopener">GitHub ↗</a><div class="theme-controls"><button type="button" class="theme" id="theme" aria-label="配色を切り替える">明 / 暗</button><button type="button" class="theme" id="poison" aria-label="毒の配色を切り替える" aria-pressed="false">毒</button></div></div>
 <nav class="tabs" aria-label="カテゴリ"><button class="tab active" data-page="std" type="button">標準ライブラリ</button><button class="tab" data-page="acl" type="button">AtCoder Library</button><button class="tab" data-page="algo" type="button">定番アルゴリズム・実装</button><button class="tab" data-page="limits" type="button">計算量・メモリ</button><button class="tab" data-page="notes" type="button">更新履歴・メモ</button></nav>
 </header>
 <div class="layout"><aside id="sidebar" aria-label="目次"></aside><main id="main"></main></div>
@@ -76,14 +81,14 @@ function clearTocHighlight(){
 function notify(message){ $('#toast').textContent=message;$('#toast').classList.add('show');clearTimeout(timer);timer=setTimeout(()=>$('#toast').classList.remove('show'),2200); }
 function sourceNote(){return '<footer><a href="'+DATA.source+'" target="_blank" rel="noopener">公開ソース・共通の前提</a> · <a href="https://info.atcoder.jp/entry/llm-rules-ja" target="_blank" rel="noopener">AtCoderの利用ルール</a></footer>';}
 function fullCode(i){
-    return '<div class="full-code"><div class="code-toolbar"><span>C++23 (GCC 15.2.0) · #include / main() を含む全体コード</span><div class="code-actions"><button type="button" class="copy" data-copy="'+i.id+'">コードをコピー</button><button type="button" class="download" data-download="'+i.id+'">C++ファイルを保存</button></div></div><pre><code>'+esc(i.full)+'</code></pre></div>';
+    return '<div class="full-code"><div class="code-toolbar"><span>C++23 (GCC 15.2.0) · #include / main() を含む全体コード</span><div class="code-actions"><button type="button" class="copy" data-copy="'+i.id+'">全体コードをコピー</button><button type="button" class="download" data-download="'+i.id+'">C++ファイルを保存</button></div></div><pre><code>'+esc(i.full)+'</code></pre></div>';
 }
 function operation(i, algo, groupNote=''){
     if(algo){
         const notes=[groupNote,i.note].filter(Boolean).join(' ');
         return '<article class="algorithm-entry" id="'+i.id+'"><p class="algorithm-purpose"><strong>目的</strong> : '+esc(i.desc)+'</p><p class="algorithm-cost">計算量 '+esc(i.time)+'　 /　 メモリ '+esc(i.memory)+(i.cost_definition?'　（'+esc(i.cost_definition)+'）':'')+'</p>'+(notes?'<p class="section-note">'+esc(notes)+'</p>':'')+fullCode(i)+'</article>';
     }
-    return '<details class="op" id="'+i.id+'"><summary class="op-row"><span class="desc">'+esc(i.desc)+(i.note?'<span class="row-note">'+esc(i.note)+'</span>':'')+'</span><code class="short">'+esc(i.code)+'</code><span class="cost">'+esc(i.cost)+'</span><span class="expand">全体コード</span></summary>'+fullCode(i)+'</details>';
+    return '<article class="operation-entry" id="'+i.id+'-operation"><p class="algorithm-purpose">機能 : '+esc(i.desc)+'</p><div class="operation-short"><pre><code>'+esc(i.code)+'</code></pre><div class="code-actions"><button type="button" class="copy" data-shortcopy="'+i.id+'">この部分をコピー</button></div></div><p class="operation-cost">計算量 '+esc(i.cost)+'　 /　 追加メモリ '+esc(i.memory)+'</p>'+(i.definitions?'<p class="symbol-definitions">'+esc(i.definitions)+'</p>':'')+(i.note?'<p class="section-note">'+esc(i.note)+'</p>':'')+(i.example?'<pre class="operation-example">'+esc(i.example)+'</pre>':'')+fullCode(i)+'</article>';
 }
 function section(g, items){
     const algo=g.page==='algo';
@@ -91,41 +96,66 @@ function section(g, items){
 }
 function noteSection(n){return '<section class="section" id="'+esc(n.id)+'"><h2>'+esc(n.title)+'</h2><p class="section-note">'+esc(n.at)+' JST　 /　 '+esc(n.category)+'</p><p>'+esc(n.text)+'</p></section>';}
 function termsMatch(text){const t=text.toLocaleLowerCase();return query.trim().toLocaleLowerCase().split(/\s+/).every(q=>t.includes(q));}
-function render(){
-    query=$('#search').value.trim(); const searching=!!query;
-    document.querySelectorAll('.tab').forEach(b=>{b.classList.toggle('active',b.dataset.page===page);b.setAttribute('aria-current',b.dataset.page===page?'page':'false');});
-    let sections=[],side=[],total=0;
-    if(searching){
-        for(const g of DATA.groups){const items=g.items.filter(i=>termsMatch(g.title+' '+g.note+' '+(g.keywords||'')+' '+i.desc+' '+i.code+' '+i.note));if(items.length){sections.push(section(g,items));side.push([g.key,g.title,g.page]);total+=items.length;}}
-        for(const s of DATA.limits){if(termsMatch(s.title+' '+s.content.replace(/<[^>]*>/g,' '))){sections.push('<section class="section limits" id="'+s.key+'"><h2>'+s.title+'</h2>'+s.content+'</section>');side.push([s.key,s.title,'limits']);total++;}}
-        for(const n of DATA.notes||[]){if(termsMatch(n.title+' '+n.category+' '+n.text+' '+n.at)){sections.push(noteSection(n));side.push([n.id,n.title,'notes']);total++;}}
-    }else if(page==='limits'){
-        sections=DATA.limits.map(s=>'<section class="section limits" id="'+s.key+'"><h2>'+s.title+'</h2>'+s.content+'</section>');side=DATA.limits.map(s=>[s.key,s.title,'limits']);
-    }else if(page==='notes'){
-        const notes=DATA.notes||[];sections=notes.map(noteSection);side=notes.map(n=>[n.id,n.title,'notes']);
-    }else{
-        for(const g of DATA.groups.filter(g=>g.page===page)){sections.push(section(g,g.items));side.push([g.key,g.title,g.page]);total+=g.items.length;}
+const calcState={type:'8',rows:'2000',cols:'3000',count:'2',limit:'1024',n:'200000'};
+function options(values,current){return values.map(([v,t])=>'<option value="'+v+'"'+(String(v)===current?' selected':'')+'>'+t+'</option>').join('');}
+function memoryTool(){return '<div class="calc-fields"><label>型<select data-calc="type">'+options([['1','char（1 B）'],['4','int（4 B）'],['8','long long / double（8 B）']],calcState.type)+'</select></label>'+[['rows','行数'],['cols','列数'],['count','配列の個数']].map(([k,t])=>'<label>'+t+'<input data-calc="'+k+'" type="text" inputmode="numeric" maxlength="12" value="'+esc(calcState[k])+'"></label>').join('')+'<label>問題のメモリ制限<select data-calc="limit">'+options([256,512,1024,2048].map(v=>[v,v+' MiB']),calcState.limit)+'</select></label></div><div class="calc-output" id="memory-result" aria-live="polite"></div><p>一次元配列は行数を1にする。型のサイズはGCCの一般的な環境を想定。</p><p>要素本体だけの容量。ほかの変数・vectorの管理領域・余分に確保された容量なども加わるため、安全に使える量の判定ではない。</p><p>メモリ制限は問題文を確認して選択。1 MB = 10⁶ B、1 MiB = 2²⁰ B。</p>';}
+function timeTool(){return '<div class="calc-fields"><label>Nを選択<select data-calc="n">'+options([[10,'10'],[15,'15'],[20,'20'],[25,'25'],[30,'30'],[100,'10²'],[1000,'10³'],[3000,'3×10³'],[10000,'10⁴'],[200000,'2×10⁵'],[1000000,'10⁶']],calcState.n)+'</select></label></div><div id="time-result" aria-live="polite"></div><p>実行秒数や実際のCPU命令数ではなく、計算量の式にNを入れた値。処理内容や定数倍で実行時間は変わる。</p>';}
+const superscript=n=>String(n).replace(/[0-9-]/g,c=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[Number(c)]||'⁻');
+function scientificLog(log){if(log===0)return '1';let exponent=Math.floor(log),mantissa=Number((10**(log-exponent)).toPrecision(3));if(mantissa>=10){mantissa=1;exponent++;}return '約'+mantissa+'×10'+superscript(exponent);}
+function updateTools(){
+    const memory=$('#memory-result');
+    if(memory){
+        const dims=['rows','cols','count'].map(k=>calcState[k]);
+        if(dims.some(v=>!/^\d{1,12}$/.test(v)||BigInt(v)<1n)){memory.textContent='行数・列数・配列の個数には、1以上の整数を入力してください。';}
+        else{const bytes=dims.reduce((a,v)=>a*BigInt(v),BigInt(calcState.type)),b=Number(bytes),limit=Number(calcState.limit)*2**20;memory.innerHTML='配列の要素本体：'+(b/1e6).toLocaleString('ja-JP',{maximumFractionDigits:3})+' MB（約'+(b/2**20).toLocaleString('ja-JP',{maximumFractionDigits:3})+' MiB）<br>問題のメモリ制限：'+calcState.limit+' MiB<br>制限に対する割合：約'+(b/limit*100).toLocaleString('ja-JP',{maximumFractionDigits:2})+'％'+(b>limit?'<br>要素本体だけでメモリ制限を超えています。':'');}
     }
-    // 目次には候補を残し、本文のDOMには選択した1項目だけを置く。
-    let selectedIndex=side.findIndex(([key,title,p])=>'#'+p+'/'+key===selectedTocHref);
-    if(selectedIndex<0&&side.length){selectedIndex=0;}
-    selectedTocHref=selectedIndex<0?'':'#'+side[selectedIndex][2]+'/'+side[selectedIndex][0];
-    const selectedContent=selectedIndex<0?'':sections[selectedIndex];
-    const selectedKey=selectedIndex<0?'':side[selectedIndex][0];
-    let sideHTML='';let label='';
-    for(const [key,title,p] of side){let next=p==='std'?(DATA.groups.findIndex(g=>g.key===key)<7?'容器・データを持つもの':'操作関数'):p==='algo'?'五十音順':p==='notes'?((DATA.notes.find(n=>n.id===key)||{}).kind==='updates'?'更新履歴':'制作者メモ'):DATA.pages[p].title;if(next!==label){sideHTML+='<div class="side-label">'+esc(next)+'</div>';label=next;}sideHTML+='<a class="side-link" href="#'+p+'/'+key+'">'+esc(title)+'</a>';}
+    const time=$('#time-result');
+    if(time){const n=Number(calcState.n),l=Math.log10(n);let fact=n<101?Array.from({length:n},(_,i)=>Math.log10(i+1)).reduce((a,b)=>a+b,0):(n+.5)*Math.log10(n)-n*Math.LOG10E+.5*Math.log10(2*Math.PI)+Math.LOG10E/(12*n);const values=[['N',l],['N log₂ N',l+Math.log10(Math.log2(n))],['N²',2*l],['N³',3*l],['2ᴺ',n*Math.log10(2)],['N × 2ᴺ',l+n*Math.log10(2)],['N!',fact]];time.innerHTML='<div class="table-wrap"><table><thead><tr><th>計算量の式</th><th>N = '+n.toLocaleString('ja-JP')+' を代入した値</th></tr></thead><tbody>'+values.map(([name,value])=>'<tr><td>'+name+'</td><td>'+scientificLog(value)+'</td></tr>').join('')+'</tbody></table></div>';}
+}
+for(const event of ['input','change'])document.addEventListener(event,e=>{const k=e.target.dataset.calc;if(k){calcState[k]=e.target.value;updateTools();}});
+
+let openGroup=null;
+function librarySection(g,i){return '<section class="section" id="'+i.id+'"><h2>'+esc(i.desc)+'</h2>'+operation(i,false)+'</section>';}
+function limitSection(s){return '<section class="section limits" id="'+s.key+'"><h2>'+esc(s.title)+'</h2>'+ (s.key==='time-count'?timeTool():s.tool==='memory'?memoryTool():s.content)+'</section>';}
+function render(){
+    query=$('#search').value.trim();const searching=!!query;
+    document.querySelectorAll('.tab').forEach(b=>{b.classList.toggle('active',b.dataset.page===page);b.setAttribute('aria-current',b.dataset.page===page?'page':'false');});
+    const rows=[];
+    for(const g of DATA.groups){
+        if(!searching&&g.page!==page)continue;
+        const items=g.items.filter(i=>!searching||termsMatch(g.title+' '+(g.keywords||'')+' '+(i.keywords||'')+' '+i.desc+' '+i.code+' '+i.note));
+        if(g.page==='algo'){
+            if(items.length)rows.push({key:g.key,title:g.title,page:g.page,html:section(g,items),label:'五十音順'});
+        }else for(const i of items)rows.push({key:i.id,title:i.desc,page:g.page,group:g.key,groupTitle:g.title,html:librarySection(g,i),label:g.page==='acl'?'AtCoder Library':DATA.groups.findIndex(x=>x.key===g.key)<7?'容器・データを持つもの':'操作関数'});
+    }
+    if(searching||page==='limits')for(const s of DATA.limits)if(!searching||termsMatch(s.title+' '+s.content.replace(/<[^>]*>/g,' ')))rows.push({key:s.key,title:s.title,page:'limits',html:limitSection(s),label:'計算量・メモリ'});
+    if(searching||page==='notes')for(const n of DATA.notes||[])if(!searching||termsMatch(n.title+' '+n.category+' '+n.text+' '+n.at))rows.push({key:n.id,title:n.title,page:'notes',html:noteSection(n),label:n.kind==='updates'?'更新履歴':'制作者メモ'});
+    const chosen=rows.find(r=>'#'+r.page+'/'+r.key===selectedTocHref)||rows[0];
+    selectedTocHref=chosen?'#'+chosen.page+'/'+chosen.key:'';
+    if(openGroup===null)openGroup=chosen?.group||'';
+    let sideHTML='',label='',currentGroup='';
+    for(const r of rows){
+        if(r.label!==label){if(currentGroup){sideHTML+='</details>';currentGroup='';}sideHTML+='<div class="side-label">'+esc(r.label)+'</div>';label=r.label;}
+        if((r.group||'')!==currentGroup){if(currentGroup)sideHTML+='</details>';currentGroup=r.group||'';if(currentGroup)sideHTML+='<details class="toc-group" data-group="'+currentGroup+'"'+(openGroup===currentGroup?' open':'')+'><summary>'+esc(r.groupTitle)+'</summary>';}
+        sideHTML+='<a class="side-link" href="#'+r.page+'/'+r.key+'">'+esc(r.title)+'</a>';
+    }
+    if(currentGroup)sideHTML+='</details>';
     $('#sidebar').innerHTML=sideHTML;
-    $('#main').innerHTML='<details class="mobile-index"><summary>このページの目次</summary><div>'+sideHTML+'</div></details>'+(selectedContent||'<div class="empty">該当する項目がありません。検索語を短くしてください。</div>')+sourceNote();
-    syncTocHighlight();
+    $('#main').innerHTML='<details class="mobile-index"><summary>このページの目次</summary><div>'+sideHTML+'</div></details>'+(chosen?.html||'<div class="empty">該当する項目がありません。検索語を短くしてください。</div>')+sourceNote();
+    syncTocHighlight();updateTools();
 }
 function jumpFromHash(){
     const [p,key]=decodeURIComponent(location.hash.slice(1)).split('/');
     if(DATA.pages[p]){page=p;}
-    selectedTocHref=key?'#'+page+'/'+key:'';
+    const g=DATA.groups.find(g=>g.page===page&&(g.key===key||g.items.some(i=>i.id===key)));
+    const target=g&&g.page!=='algo'?(g.key===key?g.items[0].id:key):key;
+    openGroup=g&&g.page!=='algo'?g.key:null;
+    selectedTocHref=target?'#'+page+'/'+target:'';
     render();
     window.scrollTo({top:0,left:0,behavior:'instant'});
 }
 document.addEventListener('click',e=>{
+    const summary=e.target.closest('.toc-group>summary');if(summary){e.preventDefault();const key=summary.parentElement.dataset.group;openGroup=openGroup===key?'':key;render();return;}
     const link=e.target.closest('.side-link');
     if(!link||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey){return;}
     e.preventDefault();
@@ -135,9 +165,9 @@ document.addEventListener('click',e=>{
 });
 $('#search').addEventListener('input',()=>{clearTocHighlight();render();});
 $('#clear').addEventListener('click',()=>{clearTocHighlight();$('#search').value='';query='';render();$('#search').focus();});
-document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{clearTocHighlight();page=b.dataset.page;$('#search').value='';query='';history.replaceState(null,'','#'+page);render();window.scrollTo(0,0);}));
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{clearTocHighlight();page=b.dataset.page;openGroup=null;$('#search').value='';query='';history.replaceState(null,'','#'+page);render();window.scrollTo(0,0);}));
 document.addEventListener('keydown',e=>{const editing=['INPUT','TEXTAREA'].includes(document.activeElement.tagName)||document.activeElement.isContentEditable;if(e.key==='/'&&!editing){e.preventDefault();$('#search').focus();}if(e.key==='Escape'&&document.activeElement===$('#search')){$('#search').value='';query='';render();$('#search').blur();}});
-document.addEventListener('click',async e=>{const copy=e.target.closest('[data-copy]');if(copy){const code=entries.get(copy.dataset.copy).full;try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(code);}else{const ta=document.createElement('textarea');ta.value=code;ta.style.position='fixed';ta.style.left='-9999px';document.body.append(ta);ta.select();const success=document.execCommand('copy');ta.remove();if(!success)throw Error('copy');}notify('全体コードをコピーしました');}catch{notify('コピーできませんでした。.cppを保存するか、コードを選択してください');}}
+document.addEventListener('click',async e=>{const copy=e.target.closest('[data-copy],[data-shortcopy]');if(copy){const short=!!copy.dataset.shortcopy;const item=entries.get(copy.dataset.shortcopy||copy.dataset.copy);const code=short?item.code:item.full;try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(code);}else{const ta=document.createElement('textarea');ta.value=code;ta.style.position='fixed';ta.style.left='-9999px';document.body.append(ta);ta.select();const success=document.execCommand('copy');ta.remove();if(!success)throw Error('copy');}notify(short?'短いコードをコピーしました':'全体コードをコピーしました');}catch{notify('コピーできませんでした。.cppを保存するか、コードを選択してください');}}
 const dl=e.target.closest('[data-download]');if(dl){const item=entries.get(dl.dataset.download);const url=URL.createObjectURL(new Blob([item.full],{type:'text/plain;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download=item.id+'.cpp';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}});
 let lastStandardTheme=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
 function applyTheme(theme){

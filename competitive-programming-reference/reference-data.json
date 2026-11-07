@@ -41,7 +41,11 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    int N = 5;\n    vector<int> A(N, 0);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(N)",
+          "definitions": "N：指定した要素数",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "vector-2",
@@ -51,57 +55,81 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    int H = 3, W = 4;\n    vector<vector<int>> A(H, vector<int>(W, -1));\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(HW + H)",
+          "definitions": "H：行数、W：列数",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "vector-3",
           "desc": "添字iの要素を読む",
           "code": "int x = A.at(i);",
           "cost": "O(1)",
-          "note": "0 ≤ i < N",
+          "note": "⚠︎ 0以上、要素数未満の添字を指定する",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {3,1,4};\n    int i = 1;\n    int x = A.at(i);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "vector-4",
           "desc": "添字iの要素を変更する",
           "code": "A.at(i) = x;",
           "cost": "O(1)",
-          "note": "0 ≤ i < N",
+          "note": "⚠︎ 0以上、要素数未満の添字を指定する",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {3, 1, 4, 1, 5};\n    int N = A.size();\n    int i = 2, x = 9, l = 1, r = 4;\n    A.at(i) = x;\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "vector-5",
           "desc": "先頭の要素を読む",
           "code": "int x = A.front();",
           "cost": "O(1)",
-          "note": "空でないこと",
+          "note": "⚠︎ 容器が空のときは使えない",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {3,1,4};\n    int i = 1;\n    int x = A.front();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "vector-6",
           "desc": "末尾の要素を読む",
           "code": "int x = A.back();",
           "cost": "O(1)",
-          "note": "空でないこと",
+          "note": "⚠︎ 容器が空のときは使えない",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {3,1,4};\n    int i = 1;\n    int x = A.back();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "vector-7",
           "desc": "要素数を求める",
           "code": "int N = A.size();",
           "cost": "O(1)",
-          "note": "size()自体は符号なし整数を返す",
+          "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {3,1,4};\n    int N = A.size();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "vector-8",
@@ -111,77 +139,109 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {3, 1, 4, 1, 5};\n    int N = A.size();\n    int i = 2, x = 9, l = 1, r = 4;\n    bool empty = A.empty();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "vector-9",
           "desc": "末尾にxを追加する",
           "code": "A.push_back(x);",
           "cost": "ならし O(1)",
-          "note": "",
+          "note": "⚠︎ 容量が足りなくなると、メモリの確保し直しが発生する。 「ならし」は、操作を何度も繰り返したときの1回あたりの目安",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {3, 1, 4, 1, 5};\n    int N = A.size();\n    int i = 2, x = 9, l = 1, r = 4;\n    A.push_back(x);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "再確保時 O(N)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 追加 入れる"
         },
         {
           "id": "vector-10",
           "desc": "末尾の1要素を削除する",
           "code": "A.pop_back();",
           "cost": "O(1)",
-          "note": "値は返さない。空でないこと",
+          "note": "⚠︎ 配列が空のときは使えない。取り出した値は返さない",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {3, 1, 4, 1, 5};\n    int N = A.size();\n    int i = 2, x = 9, l = 1, r = 4;\n    A.pop_back();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": " 削除 取り出す"
         },
         {
           "id": "vector-11",
           "desc": "添字iの直前にxを挿入する",
           "code": "A.insert(A.begin()+i, x);",
           "cost": "O(N)",
-          "note": "0 ≤ i ≤ N。後ろの添字がずれる",
+          "note": "⚠︎ 挿入位置は0以上、要素数以下。挿入位置以降の添字が後ろにずれる",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {3, 1, 4, 1, 5};\n    int N = A.size();\n    int i = 2, x = 9, l = 1, r = 4;\n    A.insert(A.begin()+i, x);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "再確保時 O(N)",
+          "definitions": "N：操作前の要素数",
+          "example": "i = 1、x = 9\n実行前：[3, 1, 4]\n実行後：[3, 9, 1, 4]",
+          "keywords": ""
         },
         {
           "id": "vector-12",
           "desc": "添字iの1要素を削除する",
           "code": "A.erase(A.begin()+i);",
           "cost": "O(N)",
-          "note": "後ろの添字がずれる",
+          "note": "⚠︎ 削除位置は0以上、要素数未満。削除位置より後ろの添字が前にずれる",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {3, 1, 4, 1, 5};\n    int N = A.size();\n    int i = 2, x = 9, l = 1, r = 4;\n    A.erase(A.begin()+i);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "i = 1\n実行前：[3, 1, 4]\n実行後：[3, 4]",
+          "keywords": " 消す 削除 消去"
         },
         {
           "id": "vector-13",
           "desc": "添字l以上r未満を削除する",
           "code": "A.erase(A.begin()+l, A.begin()+r);",
           "cost": "O(N)",
-          "note": "0 ≤ l ≤ r ≤ N",
+          "note": "⚠︎ 0 ≤ l ≤ r ≤ 要素数。削除した区間より後ろの添字が前にずれる",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {3, 1, 4, 1, 5};\n    int N = A.size();\n    int i = 2, x = 9, l = 1, r = 4;\n    A.erase(A.begin()+l, A.begin()+r);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "l = 1、r = 3\n実行前：[3, 1, 4, 2, 5]\n実行後：[3, 2, 5]",
+          "keywords": " 消す 削除 消去"
         },
         {
           "id": "vector-14",
           "desc": "要素数をNにする",
           "code": "A.resize(N, -1);",
           "cost": "O(N + 変更前の要素数)",
-          "note": "増えた要素だけ−1。減らした部分は失われる",
+          "note": "⚠︎ 増えた要素だけ−1。減らした部分は失われる",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {3, 1, 4, 1, 5};\n    int N = A.size();\n    int i = 2, x = 9, l = 1, r = 4;\n    A.resize(N, -1);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "再確保時 O(N)",
+          "definitions": "N：指定した要素数（変更前の要素数は別）",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "vector-15",
           "desc": "N要素ぶんの容量を予約する",
           "code": "A.reserve(N);",
           "cost": "再確保時 O(現在の要素数)",
-          "note": "要素数は増えない。atで新しい位置を読めるようにはならない",
+          "note": "⚠︎ 要素数は増えない。atで新しい位置を読めるようにはならない",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {3, 1, 4, 1, 5};\n    int N = A.size();\n    int i = 2, x = 9, l = 1, r = 4;\n    A.reserve(N);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(N)",
+          "definitions": "N：指定した要素数",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "vector-16",
@@ -191,27 +251,39 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {3, 1, 4, 1, 5};\n    int N = A.size();\n    int i = 2, x = 9, l = 1, r = 4;\n    A.assign(N, x);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "再確保時 O(N)",
+          "definitions": "N：指定した要素数（変更前の要素数は別）",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "vector-17",
           "desc": "全要素を削除する",
           "code": "A.clear();",
           "cost": "O(N)",
-          "note": "確保済みの容量は通常残る",
+          "note": "⚠︎ 確保済みの容量は通常残る",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {3, 1, 4, 1, 5};\n    int N = A.size();\n    int i = 2, x = 9, l = 1, r = 4;\n    A.clear();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "vector-18",
           "desc": "配列全体をコピーする",
           "code": "vector<int> B = A;",
           "cost": "O(N)",
-          "note": "Bにも要素ぶんのメモリが必要",
+          "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {3, 1, 4, 1, 5};\n    int N = A.size();\n    int i = 2, x = 9, l = 1, r = 4;\n    vector<int> B = A;\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(N)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": ""
         }
       ]
     },
@@ -229,27 +301,39 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    int N = 5;\n    string S(N, 'a');\n    return 0;\n}\n",
           "input": "1\nhello world\n",
-          "expected": null
+          "expected": null,
+          "memory": "O(N)",
+          "definitions": "N：指定した要素数",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "string-2",
           "desc": "添字iの文字を読む",
           "code": "char c = S.at(i);",
           "cost": "O(1)",
-          "note": "",
+          "note": "⚠︎ 0以上、文字数未満の添字を指定する",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    string S = \"abc\"; int i = 1;\n    char c = S.at(i);\n    return 0;\n}\n",
           "input": "1\nhello world\n",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "string-3",
           "desc": "添字iの文字を変更する",
           "code": "S.at(i) = c;",
           "cost": "O(1)",
-          "note": "",
+          "note": "⚠︎ 0以上、文字数未満の添字を指定する",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    string S = \"abcabc\";\n    int i = 1, pos = 1, k = 3;\n    char c = 'x';\n    string T = \"bc\";\n    S.at(i) = c;\n    return 0;\n}\n",
           "input": "1\nhello world\n",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "string-4",
@@ -259,7 +343,11 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    string S = \"abcabc\";\n    int i = 1, pos = 1, k = 3;\n    char c = 'x';\n    string T = \"bc\";\n    int N = S.size();\n    return 0;\n}\n",
           "input": "1\nhello world\n",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "string-5",
@@ -269,187 +357,263 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    string S = \"abcabc\";\n    int i = 1, pos = 1, k = 3;\n    char c = 'x';\n    string T = \"bc\";\n    bool empty = S.empty();\n    return 0;\n}\n",
           "input": "1\nhello world\n",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "string-6",
           "desc": "末尾に1文字追加する",
           "code": "S.push_back(c);",
           "cost": "ならし O(1)",
-          "note": "",
+          "note": "⚠︎ 容量が足りなくなると、メモリの確保し直しが発生する。 「ならし」は、操作を何度も繰り返したときの1回あたりの目安",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    string S = \"abcabc\";\n    int i = 1, pos = 1, k = 3;\n    char c = 'x';\n    string T = \"bc\";\n    S.push_back(c);\n    return 0;\n}\n",
           "input": "1\nhello world\n",
-          "expected": null
+          "expected": null,
+          "memory": "再確保時 O(N)",
+          "definitions": "N：文字列の文字数",
+          "example": "",
+          "keywords": " 追加 入れる"
         },
         {
           "id": "string-7",
           "desc": "末尾に文字列Tを連結する",
           "code": "S += T;",
           "cost": "ならし O(Tの長さ)",
-          "note": "再確保時は元の文字列のコピーも発生",
+          "note": "⚠︎ 再確保時は元の文字列のコピーも発生 「ならし」は、操作を何度も繰り返したときの1回あたりの目安",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    string S = \"abcabc\";\n    int i = 1, pos = 1, k = 3;\n    char c = 'x';\n    string T = \"bc\";\n    S += T;\n    return 0;\n}\n",
           "input": "1\nhello world\n",
-          "expected": null
+          "expected": null,
+          "memory": "再確保時 O(N + Tの長さ)",
+          "definitions": "N：文字列の文字数",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "string-8",
           "desc": "末尾の文字を読む",
           "code": "char last = S.back();",
           "cost": "O(1)",
-          "note": "空でないこと",
+          "note": "⚠︎ 容器が空のときは使えない",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    string S = \"abcabc\";\n    int i = 1, pos = 1, k = 3;\n    char c = 'x';\n    string T = \"bc\";\n    char last = S.back();\n    return 0;\n}\n",
           "input": "1\nhello world\n",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "string-9",
           "desc": "末尾の1文字を削除する",
           "code": "S.pop_back();",
           "cost": "O(1)",
-          "note": "空でないこと",
+          "note": "⚠︎ 容器が空のときは使えない",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    string S = \"abcabc\";\n    int i = 1, pos = 1, k = 3;\n    char c = 'x';\n    string T = \"bc\";\n    S.pop_back();\n    return 0;\n}\n",
           "input": "1\nhello world\n",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": " 削除 取り出す"
         },
         {
           "id": "string-10",
           "desc": "添字posからk文字を取り出す",
           "code": "string U = S.substr(pos, k);",
-          "cost": "O(取り出す文字数)",
-          "note": "第2引数は終点ではなく文字数。残りがk未満なら末尾まで",
+          "cost": "O(K)",
+          "note": "⚠︎ 第2引数は終点ではなく文字数。posは0以上、文字数以下。残りがk文字未満なら末尾まで",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    string S = \"abcabc\";\n    int i = 1, pos = 1, k = 3;\n    char c = 'x';\n    string T = \"bc\";\n    string U = S.substr(pos, k);\n    return 0;\n}\n",
           "input": "1\nhello world\n",
-          "expected": null
+          "expected": null,
+          "memory": "O(K)",
+          "definitions": "K：取り出す文字数",
+          "example": "pos = 1、k = 3\n元の文字列：\"abcde\"\n取り出す文字列：\"bcd\"（元の文字列は変わらない）",
+          "keywords": " 部分文字列 切り出す 取り出す"
         },
         {
           "id": "string-11",
           "desc": "添字posから末尾まで取り出す",
           "code": "string U = S.substr(pos);",
           "cost": "O(N−pos)",
-          "note": "0 ≤ pos ≤ N",
+          "note": "⚠︎ posは0以上、文字数以下",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    string S = \"abcabc\";\n    int i = 1, pos = 1, k = 3;\n    char c = 'x';\n    string T = \"bc\";\n    string U = S.substr(pos);\n    return 0;\n}\n",
           "input": "1\nhello world\n",
-          "expected": null
+          "expected": null,
+          "memory": "O(N−pos)",
+          "definitions": "N：文字列の文字数 / pos：取り出しを始める添字",
+          "example": "",
+          "keywords": " 部分文字列 切り出す 取り出す"
         },
         {
           "id": "string-12",
           "desc": "文字列Tが最初に現れる位置を探す",
           "code": "size_t p = S.find(T);",
           "cost": "最悪 O(N × Tの長さ)",
-          "note": "なければstring::npos。文字1個の検索はO(N)",
+          "note": "⚠︎ なければstring::npos。文字1個の検索はO(N)",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    string S = \"abcabc\";\n    int i = 1, pos = 1, k = 3;\n    char c = 'x';\n    string T = \"bc\";\n    size_t p = S.find(T);\n    return 0;\n}\n",
           "input": "1\nhello world\n",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：文字列の文字数",
+          "example": "",
+          "keywords": " 探す 検索 存在"
         },
         {
           "id": "string-13",
           "desc": "添字pos以降で文字列Tを探す",
           "code": "size_t p = S.find(T, pos);",
           "cost": "最悪 O(N × Tの長さ)",
-          "note": "posから検索開始",
+          "note": "⚠︎ 見つからなければstring::nposになる",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    string S = \"abcabc\";\n    int i = 1, pos = 1, k = 3;\n    char c = 'x';\n    string T = \"bc\";\n    size_t p = S.find(T, pos);\n    return 0;\n}\n",
           "input": "1\nhello world\n",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：文字列の文字数",
+          "example": "",
+          "keywords": " 探す 検索 存在"
         },
         {
           "id": "string-14",
           "desc": "文字列Tが最後に現れる位置を探す",
           "code": "size_t p = S.rfind(T);",
           "cost": "最悪 O(N × Tの長さ)",
-          "note": "なければstring::npos",
+          "note": "⚠︎ なければstring::npos",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    string S = \"abcabc\";\n    int i = 1, pos = 1, k = 3;\n    char c = 'x';\n    string T = \"bc\";\n    size_t p = S.rfind(T);\n    return 0;\n}\n",
           "input": "1\nhello world\n",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：文字列の文字数",
+          "example": "",
+          "keywords": " 探す 検索 存在"
         },
         {
           "id": "string-15",
           "desc": "検索結果が見つかったか判定する",
           "code": "bool found = p != string::npos;",
           "cost": "O(1)",
-          "note": "見つからない位置をatで読まない",
+          "note": "⚠︎ 見つからない位置をatで読まない",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    string S = \"abcabc\";\n    int i = 1, pos = 1, k = 3;\n    char c = 'x';\n    string T = \"bc\";\n    size_t p = S.find(T);\n    bool found = p != string::npos;\n    return 0;\n}\n",
           "input": "1\nhello world\n",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "string-16",
           "desc": "添字posの直前にTを挿入する",
           "code": "S.insert(pos, T);",
           "cost": "O(N + Tの長さ)",
-          "note": "0 ≤ pos ≤ N",
+          "note": "⚠︎ posは0以上、文字数以下",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    string S = \"abcabc\";\n    int i = 1, pos = 1, k = 3;\n    char c = 'x';\n    string T = \"bc\";\n    S.insert(pos, T);\n    return 0;\n}\n",
           "input": "1\nhello world\n",
-          "expected": null
+          "expected": null,
+          "memory": "再確保時 O(N + Tの長さ)",
+          "definitions": "N：文字列の文字数",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "string-17",
           "desc": "添字posからk文字を削除する",
           "code": "S.erase(pos, k);",
           "cost": "O(N)",
-          "note": "第2引数は文字数",
+          "note": "⚠︎ 第2引数は文字数",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    string S = \"abcabc\";\n    int i = 1, pos = 1, k = 3;\n    char c = 'x';\n    string T = \"bc\";\n    S.erase(pos, k);\n    return 0;\n}\n",
           "input": "1\nhello world\n",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：文字列の文字数",
+          "example": "pos = 1、k = 2\n実行前：\"abcde\"\n実行後：\"ade\"",
+          "keywords": " 消す 削除 消去"
         },
         {
           "id": "string-18",
           "desc": "添字posからk文字をTに置き換える",
           "code": "S.replace(pos, k, T);",
           "cost": "O(N + Tの長さ)",
-          "note": "第2引数は文字数",
+          "note": "⚠︎ 第2引数は文字数",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    string S = \"abcabc\";\n    int i = 1, pos = 1, k = 3;\n    char c = 'x';\n    string T = \"bc\";\n    S.replace(pos, k, T);\n    return 0;\n}\n",
           "input": "1\nhello world\n",
-          "expected": null
+          "expected": null,
+          "memory": "再確保時 O(N + Tの長さ)",
+          "definitions": "N：文字列の文字数",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "string-19",
           "desc": "文字列の大小を辞書順で比較する",
           "code": "bool smaller = S < T;",
           "cost": "O(比較する文字数)",
-          "note": "大文字・小文字などは文字コード順",
+          "note": "⚠︎ 大文字・小文字などは文字コード順",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    string S = \"abcabc\";\n    int i = 1, pos = 1, k = 3;\n    char c = 'x';\n    string T = \"bc\";\n    bool smaller = S < T;\n    return 0;\n}\n",
           "input": "1\nhello world\n",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "string-20",
           "desc": "文字の数字を整数にする",
           "code": "int x = c - '0';",
           "cost": "O(1)",
-          "note": "cが'0'〜'9'であること",
+          "note": "⚠︎ 文字が'0'〜'9'のとき限定",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    char c = '7';\n    int x = c - '0';\n    return 0;\n}\n",
           "input": "1\nhello world\n",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "string-21",
           "desc": "英小文字を0〜25の番号にする",
           "code": "int x = c - 'a';",
           "cost": "O(1)",
-          "note": "英小文字を前提とする",
+          "note": "⚠︎ 英小文字のとき限定",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    char c = 'c';\n    int x = c - 'a';\n    return 0;\n}\n",
           "input": "1\nhello world\n",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "string-22",
           "desc": "文字列をintに変換する",
           "code": "int x = stoi(S);",
           "cost": "O(読み取る文字数)",
-          "note": "変換不能・型の範囲外で例外。先頭の数値部分だけを読む場合がある",
+          "note": "⚠︎ 変換不能・型の範囲外で例外。先頭の数値部分だけを読む場合がある",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    string S = \"123\";\n    int x = stoi(S);\n    return 0;\n}\n",
           "input": "1\nhello world\n",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "string-23",
           "desc": "文字列をlong longに変換する",
           "code": "long long x = stoll(S);",
           "cost": "O(読み取る文字数)",
-          "note": "変換不能・型の範囲外で例外",
+          "note": "⚠︎ 変換不能・型の範囲外で例外",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    string S = \"12345678900\";\n    long long x = stoll(S);\n    return 0;\n}\n",
           "input": "1\nhello world\n",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "string-24",
@@ -459,27 +623,39 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    long long x = 123;\n    string S = to_string(x);\n    return 0;\n}\n",
           "input": "1\nhello world\n",
-          "expected": null
+          "expected": null,
+          "memory": "O(桁数)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "string-25",
           "desc": "空白を含む1行を読み取る",
           "code": "getline(cin, S);",
           "cost": "O(読み取る文字数)",
-          "note": "直前の >> が残した改行に注意",
+          "note": "⚠︎ 直前の >> が残した改行に注意",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    string S;\n    getline(cin, S);\n    return 0;\n}\n",
           "input": "1\nhello world\n",
-          "expected": null
+          "expected": null,
+          "memory": "O(読み取る文字数)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "string-26",
           "desc": "整数入力の後に、次の1行を読み取る",
           "code": "cin.ignore(numeric_limits<streamsize>::max(), '\\n');\ngetline(cin, S);",
           "cost": "O(読み捨てる文字数 + 読む文字数)",
-          "note": "行末まで捨ててから読む。次の行の先頭空白は保持",
+          "note": "⚠︎ 行末まで捨ててから読む。次の行の先頭空白は保持",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    int N;\n    cin >> N;\n    string S;\n    cin.ignore(numeric_limits<streamsize>::max(), '\\n');\n    getline(cin, S);\n    return 0;\n}\n",
           "input": "1\nhello world\n",
-          "expected": null
+          "expected": null,
+          "memory": "O(読む文字数)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         }
       ]
     },
@@ -497,7 +673,11 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    set<int> S;\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "set-2",
@@ -507,37 +687,53 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    multiset<int> S;\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "set-3",
           "desc": "xを追加する",
           "code": "S.insert(x);",
           "cost": "O(log N)",
-          "note": "setでは同じ値は増えない",
+          "note": "⚠︎ setでは同じ値は増えない",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    set<int> S; int x = 3;\n    S.insert(x);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "set-4",
           "desc": "xがあるか判定する",
           "code": "bool exists = S.find(x) != S.end();",
           "cost": "O(log N)",
-          "note": "multisetでも同じ",
+          "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    set<int> S = {2,5,9}; int x = 5;\n    bool exists = S.find(x) != S.end();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 探す 検索 存在"
         },
         {
           "id": "set-5",
           "desc": "要素数を求める",
           "code": "int N = S.size();",
           "cost": "O(1)",
-          "note": "multisetでは重複も数える",
+          "note": "⚠︎ multisetでは重複も数える",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    multiset<int> S = {2,5,5};\n    int N = S.size();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "set-6",
@@ -547,87 +743,123 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    multiset<int> S = {2,5,5}; int x = 5;\n    int cnt = S.count(x);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数 / K：同じ値の個数",
+          "example": "",
+          "keywords": " 個数 数える カウント"
         },
         {
           "id": "set-7",
           "desc": "xをすべて削除する",
           "code": "S.erase(x);",
           "cost": "O(log N + 削除数)",
-          "note": "multisetでは同じ値が全部消える",
+          "note": "⚠︎ multisetでは同じ値が全部消える",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    multiset<int> S = {2,5,5}; int x = 5;\n    S.erase(x);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 消す 削除 消去"
         },
         {
           "id": "set-8",
           "desc": "xを1個だけ削除する",
           "code": "auto it = S.find(x);\nif(it != S.end()){\n    S.erase(it);\n}",
           "cost": "検索 O(log N) / 位置指定削除はならし O(1)",
-          "note": "存在しない場合は削除しない",
+          "note": "⚠︎ 「ならし」は、操作を何度も繰り返したときの1回あたりの目安",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    multiset<int> S = {2,5,5}; int x = 5;\n    auto it = S.find(x);\n    if(it != S.end()){\n        S.erase(it);\n    }\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 消す 削除 消去 探す 検索 存在"
         },
         {
           "id": "set-9",
           "desc": "最小値を読む",
           "code": "int x = *S.begin();",
           "cost": "O(1)",
-          "note": "空でないこと",
+          "note": "⚠︎ 容器が空のときは使えない",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    set<int> S = {2,5,9};\n    int x = *S.begin();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "set-10",
           "desc": "最大値を読む",
           "code": "int x = *S.rbegin();",
           "cost": "O(1)",
-          "note": "空でないこと",
+          "note": "⚠︎ 容器が空のときは使えない",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    set<int> S = {2,5,9};\n    int x = *S.rbegin();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "set-11",
           "desc": "最小値を1個削除する",
           "code": "S.erase(S.begin());",
           "cost": "ならし O(1)",
-          "note": "空でないこと",
+          "note": "⚠︎ 容器が空のときは使えない 「ならし」は、操作を何度も繰り返したときの1回あたりの目安",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    multiset<int> S = {2,5,5};\n    S.erase(S.begin());\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": " 消す 削除 消去"
         },
         {
           "id": "set-12",
           "desc": "x以上の最小値を探す",
           "code": "auto it = S.lower_bound(x);\nif(it != S.end()){\n    int ans = *it;\n}",
           "cost": "O(log N)",
-          "note": "endなら該当なし",
+          "note": "⚠︎ 該当する値がなければendになる。endの中身は読めない",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    set<int> S = {2,5,9}; int x = 6;\n    auto it = S.lower_bound(x);\n    if(it != S.end()){\n        int ans = *it;\n    }\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 二分探索 ロウワーバウンド"
         },
         {
           "id": "set-13",
           "desc": "xより大きい最小値を探す",
           "code": "auto it = S.upper_bound(x);\nif(it != S.end()){\n    int ans = *it;\n}",
           "cost": "O(log N)",
-          "note": "",
+          "note": "⚠︎ 該当する値がなければendになる。endの中身は読めない",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    set<int> S = {2,5,9}; int x = 5;\n    auto it = S.upper_bound(x);\n    if(it != S.end()){\n        int ans = *it;\n    }\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 二分探索 アッパーバウンド"
         },
         {
           "id": "set-14",
           "desc": "x未満の最大値を探す",
           "code": "auto it = S.lower_bound(x);\nif(it != S.begin()){\n    it--;\n    int ans = *it;\n}",
           "cost": "O(log N)",
-          "note": "beginから前に戻さない",
+          "note": "⚠︎ beginから前に戻さない",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    set<int> S = {2,5,9}; int x = 6;\n    auto it = S.lower_bound(x);\n    if(it != S.begin()){\n        it--;\n        int ans = *it;\n    }\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 二分探索 ロウワーバウンド"
         },
         {
           "id": "set-15",
@@ -637,7 +869,11 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    set<int> S = {2,5,9}; int x = 5;\n    auto it = S.upper_bound(x);\n    if(it != S.begin()){\n        it--;\n        int ans = *it;\n    }\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 二分探索 アッパーバウンド"
         },
         {
           "id": "set-16",
@@ -647,7 +883,11 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    set<int> S = {2,5,9};\n    for(auto it = S.begin();it != S.end();it++){\n        cout << *it << endl;\n    }\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": ""
         }
       ]
     },
@@ -665,7 +905,11 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    map<int, long long> cnt;\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "map-2",
@@ -675,57 +919,81 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    map<string, int> cnt;\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "map-3",
           "desc": "xの回数を1増やす",
           "code": "cnt[x]++;",
           "cost": "O(log K)",
-          "note": "キーがなければ0から始まる",
+          "note": "⚠︎ キーがなければ0から始まる",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    map<int, long long> cnt; int x = 5;\n    cnt[x]++;\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "K：キーの種類数",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "map-4",
           "desc": "キーxの値を読む",
           "code": "long long num = cnt[x];",
           "cost": "O(log K)",
-          "note": "キーがないと値0の要素を追加する",
+          "note": "⚠︎ キーがないと値0の要素を追加する",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    map<int, long long> cnt; int x = 5;\n    long long num = cnt[x];\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "K：キーの種類数",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "map-5",
           "desc": "キーxがあるか判定する",
           "code": "bool exists = cnt.count(x) > 0;",
           "cost": "O(log K)",
-          "note": "値が0かどうかとは別。要素は追加しない",
+          "note": "⚠︎ 値が0かどうかとは別。要素は追加しない",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    map<int, long long> cnt; int x = 5;\n    bool exists = cnt.count(x) > 0;\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "K：キーの種類数",
+          "example": "",
+          "keywords": " 個数 数える カウント"
         },
         {
           "id": "map-6",
           "desc": "キーxがあれば値を読む",
           "code": "auto it = cnt.find(x);\nif(it != cnt.end()){\n    long long num = it->second;\n}",
           "cost": "O(log K)",
-          "note": "要素を追加しない",
+          "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    map<int, long long> cnt; int x = 5;\n    auto it = cnt.find(x);\n    if(it != cnt.end()){\n        long long num = it->second;\n    }\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "K：キーの種類数",
+          "example": "",
+          "keywords": " 探す 検索 存在"
         },
         {
           "id": "map-7",
           "desc": "キーxとその値を削除する",
           "code": "cnt.erase(x);",
           "cost": "O(log K)",
-          "note": "値を0にするだけではキーは消えない",
+          "note": "⚠︎ 値を0にするだけではキーは消えない",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    map<int, long long> cnt; int x = 5;\n    cnt.erase(x);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "K：キーの種類数",
+          "example": "",
+          "keywords": " 消す 削除 消去"
         },
         {
           "id": "map-8",
@@ -735,37 +1003,53 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    map<int, long long> cnt;\n    int kinds = cnt.size();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "map-9",
           "desc": "キーの昇順にキーと値を読む",
           "code": "for(auto it = cnt.begin();it != cnt.end();it++){\n    cout << it->first << \" \" << it->second << endl;\n}",
           "cost": "O(K)",
-          "note": "firstがキー、secondが値",
+          "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    map<int, long long> cnt = {{5,2},{2,1}};\n    for(auto it = cnt.begin();it != cnt.end();it++){\n        cout << it->first << \" \" << it->second << endl;\n    }\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "K：キーの種類数",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "map-10",
           "desc": "順序なしの対応表を作る",
           "code": "unordered_map<int, int> M;",
-          "cost": "検索等は平均 O(1) / 最悪 O(K)",
-          "note": "lower_bound・大小順の走査は不可",
+          "cost": "O(1)",
+          "note": "⚠︎ lower_bound・大小順の走査は不可",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    unordered_map<int, int> M;\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "map-11",
           "desc": "順序なしの重複しない集合を作る",
           "code": "unordered_set<int> S;",
-          "cost": "検索等は平均 O(1) / 最悪 O(N)",
-          "note": "順序不要でも最悪計算量に注意",
+          "cost": "O(1)",
+          "note": "⚠︎ 順序不要でも最悪計算量に注意",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    unordered_set<int> S;\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         }
       ]
     },
@@ -783,7 +1067,11 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    queue<int> Q;\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "queue-2",
@@ -793,27 +1081,39 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    queue<int> Q; int x = 3;\n    Q.push(x);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "通常 O(1) / 管理領域の拡張時 O(N)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 追加 入れる"
         },
         {
           "id": "queue-3",
           "desc": "queue：先に入れた順の次の値を読む",
           "code": "int ans = Q.front();",
           "cost": "O(1)",
-          "note": "空でないこと",
+          "note": "⚠︎ 容器が空のときは使えない",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    queue<int> Q; Q.push(3);\n    int ans = Q.front();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "queue-4",
           "desc": "queue：先に入れた順の次の要素を削除する",
           "code": "Q.pop();",
           "cost": "O(1)",
-          "note": "空でないこと",
+          "note": "⚠︎ 容器が空のときは使えない",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    queue<int> Q; Q.push(3);\n    Q.pop();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": " 削除 取り出す"
         },
         {
           "id": "queue-5",
@@ -823,7 +1123,11 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    stack<int> Q;\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "queue-6",
@@ -833,27 +1137,39 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    stack<int> Q; int x = 3;\n    Q.push(x);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "通常 O(1) / 管理領域の拡張時 O(N)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 追加 入れる"
         },
         {
           "id": "queue-7",
           "desc": "stack：後に入れた順の次の値を読む",
           "code": "int ans = Q.top();",
           "cost": "O(1)",
-          "note": "空でないこと",
+          "note": "⚠︎ 容器が空のときは使えない",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    stack<int> Q; Q.push(3);\n    int ans = Q.top();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "queue-8",
           "desc": "stack：後に入れた順の次の要素を削除する",
           "code": "Q.pop();",
           "cost": "O(1)",
-          "note": "空でないこと",
+          "note": "⚠︎ 容器が空のときは使えない",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    stack<int> Q; Q.push(3);\n    Q.pop();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": " 削除 取り出す"
         },
         {
           "id": "queue-9",
@@ -863,7 +1179,11 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    queue<int> Q;\n    bool empty = Q.empty();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "queue-10",
@@ -873,7 +1193,11 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    queue<int> Q;\n    int N = Q.size();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "queue-11",
@@ -883,7 +1207,11 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    deque<int> D;\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "queue-12",
@@ -893,7 +1221,11 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    deque<int> D = {1,2,3}; int x = 9, i = 1;\n    D.push_front(x);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "通常 O(1) / 管理領域の拡張時 O(N)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 追加 入れる"
         },
         {
           "id": "queue-13",
@@ -903,37 +1235,53 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    deque<int> D = {1,2,3}; int x = 9, i = 1;\n    D.push_back(x);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "通常 O(1) / 管理領域の拡張時 O(N)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 追加 入れる"
         },
         {
           "id": "queue-14",
           "desc": "先頭の要素を削除する",
           "code": "D.pop_front();",
           "cost": "O(1)",
-          "note": "削除する場合は空でないこと",
+          "note": "⚠︎ 容器が空のときは使えない",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    deque<int> D = {1,2,3}; int x = 9, i = 1;\n    D.pop_front();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": " 削除 取り出す"
         },
         {
           "id": "queue-15",
           "desc": "末尾の要素を削除する",
           "code": "D.pop_back();",
           "cost": "O(1)",
-          "note": "削除する場合は空でないこと",
+          "note": "⚠︎ 容器が空のときは使えない",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    deque<int> D = {1,2,3}; int x = 9, i = 1;\n    D.pop_back();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": " 削除 取り出す"
         },
         {
           "id": "queue-16",
           "desc": "添字iの要素を読む",
           "code": "int ans = D.at(i);",
           "cost": "O(1)",
-          "note": "",
+          "note": "⚠︎ 0以上、要素数未満の添字を指定する",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    deque<int> D = {1,2,3}; int x = 9, i = 1;\n    int ans = D.at(i);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         }
       ]
     },
@@ -951,57 +1299,81 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    priority_queue<int> Q;\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "priority-queue-2",
           "desc": "最小値を先に取り出す容器を作る",
           "code": "priority_queue<int, vector<int>, greater<int>> Q;",
           "cost": "O(1)",
-          "note": "long longなら3か所のintをlong longにする",
+          "note": "⚠︎ long longなら3か所のintをlong longにする",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    priority_queue<int, vector<int>, greater<int>> Q;\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "priority-queue-3",
           "desc": "値xを追加する",
           "code": "Q.push(x);",
           "cost": "O(log N)",
-          "note": "",
+          "note": "⚠︎ 容量が足りなくなると、メモリの確保し直しが発生する",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    priority_queue<int> Q; int x = 3;\n    Q.push(x);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "再確保時 O(N)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 追加 入れる"
         },
         {
           "id": "priority-queue-4",
           "desc": "次に取り出す値を読む",
           "code": "int ans = Q.top();",
           "cost": "O(1)",
-          "note": "空でないこと",
+          "note": "⚠︎ 容器が空のときは使えない",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    priority_queue<int> Q; Q.push(3);\n    int ans = Q.top();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "priority-queue-5",
           "desc": "次の要素を削除する",
           "code": "Q.pop();",
           "cost": "O(log N)",
-          "note": "値は返さない",
+          "note": "⚠︎ 容器が空のときは使えない。取り出した値は返さない",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    priority_queue<int> Q; Q.push(3);\n    Q.pop();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 削除 取り出す"
         },
         {
           "id": "priority-queue-6",
           "desc": "距離・頂点の組を距離の小さい順に取り出す",
           "code": "priority_queue<pair<long long, int>, vector<pair<long long, int>>, greater<pair<long long, int>>> Q;",
           "cost": "構築 O(1)",
-          "note": "pairはfirst、同値ならsecondで比較する",
+          "note": "⚠︎ pairはfirst、同値ならsecondで比較する",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    priority_queue<pair<long long, int>, vector<pair<long long, int>>, greater<pair<long long, int>>> Q;\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         }
       ]
     },
@@ -1019,7 +1391,11 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    pair<int, int> P = {3, 7};\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "pair-2",
@@ -1029,7 +1405,11 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    pair<int, int> P = {3,7};\n    int a = P.first;\n    int b = P.second;\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "pair-3",
@@ -1039,17 +1419,25 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    tuple<int, int, int> T = {2, 5, 8};\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "pair-4",
           "desc": "tupleの添字1の項目を読む",
           "code": "int x = get<1>(T);",
           "cost": "O(1)",
-          "note": "getの< >内はコンパイル時に決まる整数",
+          "note": "⚠︎ getの< >内はコンパイル時に決まる整数",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    tuple<int,int,int> T = {2,5,8};\n    int x = get<1>(T);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "pair-5",
@@ -1059,7 +1447,11 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    pair<int,int> P = {3,7};\n    auto [a, b] = P;\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         }
       ]
     },
@@ -1074,70 +1466,98 @@
           "desc": "配列全体を昇順にする",
           "code": "sort(A.begin(), A.end());",
           "cost": "O(N log N)",
-          "note": "",
+          "note": "⚠︎ 追加メモリはGCCの一般的な実装の目安",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {3,1,4,1,5};\n    int l = 1, r = 4;\n    sort(A.begin(), A.end());\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(log N)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " ソート 並べ替え 並び替え"
         },
         {
           "id": "sort-2",
           "desc": "配列全体を降順にする",
           "code": "sort(A.begin(), A.end(), greater<int>());",
           "cost": "O(N log N)",
-          "note": "",
+          "note": "⚠︎ 追加メモリはGCCの一般的な実装の目安",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {3,1,4,1,5};\n    int l = 1, r = 4;\n    sort(A.begin(), A.end(), greater<int>());\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(log N)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " ソート 並べ替え 並び替え"
         },
         {
           "id": "sort-3",
           "desc": "添字l以上r未満を昇順にする",
           "code": "sort(A.begin()+l, A.begin()+r);",
-          "cost": "O((r−l) log(r−l))",
-          "note": "0 ≤ l ≤ r ≤ N",
+          "cost": "O(K log K)",
+          "note": "⚠︎ 0 ≤ l ≤ r ≤ 要素数 追加メモリはGCCの一般的な実装の目安",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {3,1,4,1,5};\n    int l = 1, r = 4;\n    sort(A.begin()+l, A.begin()+r);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(log K)",
+          "definitions": "K：操作する区間の要素数",
+          "example": "",
+          "keywords": " ソート 並べ替え 並び替え"
         },
         {
           "id": "sort-4",
           "desc": "文字列を文字コード順に並べる",
           "code": "sort(S.begin(), S.end());",
           "cost": "O(N log N)",
-          "note": "",
+          "note": "⚠︎ 追加メモリはGCCの一般的な実装の目安",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    string S = \"cabca\";\n    sort(S.begin(), S.end());\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(log N)",
+          "definitions": "N：文字列の文字数",
+          "example": "",
+          "keywords": " ソート 並べ替え 並び替え"
         },
         {
           "id": "sort-5",
           "desc": "pairをfirst優先の昇順にする",
           "code": "sort(A.begin(), A.end());",
           "cost": "O(N log N)",
-          "note": "",
+          "note": "⚠︎ 追加メモリはGCCの一般的な実装の目安",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<pair<int,int>> A = {{2,8},{1,9},{2,3}};\n    sort(A.begin(), A.end());\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(log N)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " ソート 並べ替え 並び替え"
         },
         {
           "id": "sort-6",
           "desc": "同じ値の元の順序を保って並べる",
           "code": "stable_sort(A.begin(), A.end(), [](pair<int,int> a, pair<int,int> b){\n    return a.first < b.first;\n});",
           "cost": "通常 O(N log N) / 補助メモリ不足時 O(N log² N)",
-          "note": "同じfirst同士の順序を保つ",
+          "note": "⚠︎ 同じfirst同士の順序を保つ",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<pair<int,int>> A = {{2,8},{1,9},{2,3}};\n    stable_sort(A.begin(), A.end(), [](pair<int,int> a, pair<int,int> b){\n        return a.first < b.first;\n    });\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(N)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " ソート 並べ替え 並び替え"
         },
         {
           "id": "sort-7",
           "desc": "元の添字を値の降順・同値なら添字の昇順に並べる",
           "code": "sort(order.begin(), order.end(), [&](int i, int j){\n    if(A.at(i) != A.at(j)){\n        return A.at(i) > A.at(j);\n    }\n    return i < j;\n});",
           "cost": "O(N log N)",
-          "note": "比較は同じもの同士でfalseになるようにする。<=や>=は不可",
+          "note": "⚠︎ 比較は同じもの同士でfalseになるようにする。<=や>=は不可",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {30,10,30};\n    int N = A.size();\n    vector<int> order(N);\n    iota(order.begin(), order.end(), 0);\n    sort(order.begin(), order.end(), [&](int i, int j){\n        if(A.at(i) != A.at(j)){\n            return A.at(i) > A.at(j);\n        }\n        return i < j;\n    });\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(N)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " ソート 並べ替え 並び替え"
         }
       ]
     },
@@ -1155,17 +1575,25 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {3,1,4,1,5};\n    int l = 1, r = 4;\n    reverse(A.begin(), A.end());\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": "リバース 逆順 逆転 部分反転 部分リバース 回転 リバース 逆順 逆転 反転 部分リバース 部分反転"
         },
         {
           "id": "reverse-2",
           "desc": "添字l以上r未満の並びを反転する",
           "code": "reverse(A.begin()+l, A.begin()+r);",
-          "cost": "O(r−l)",
-          "note": "0 ≤ l ≤ r ≤ N",
+          "cost": "OK",
+          "note": "⚠︎ 0 ≤ l ≤ r ≤ 要素数",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {3,1,4,1,5};\n    int l = 1, r = 4;\n    reverse(A.begin()+l, A.begin()+r);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "K：操作する区間の要素数",
+          "example": "l = 1、r = 4\n実行前：[3, 1, 4, 2, 5]\n実行後：[3, 2, 4, 1, 5]",
+          "keywords": "リバース 逆順 逆転 部分反転 部分リバース 回転 リバース 逆順 逆転 反転 部分リバース 部分反転"
         },
         {
           "id": "reverse-3",
@@ -1175,47 +1603,67 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    string S = \"abcde\";\n    reverse(S.begin(), S.end());\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：文字列の文字数",
+          "example": "",
+          "keywords": "リバース 逆順 逆転 部分反転 部分リバース 回転 リバース 逆順 逆転 反転 部分リバース 部分反転"
         },
         {
           "id": "reverse-4",
           "desc": "文字列の添字l以上r未満を反転する",
           "code": "reverse(S.begin()+l, S.begin()+r);",
-          "cost": "O(r−l)",
+          "cost": "OK",
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    string S = \"abcde\"; int l = 1, r = 4;\n    reverse(S.begin()+l, S.begin()+r);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "K：操作する区間の要素数",
+          "example": "l = 1、r = 4\n実行前：\"abcde\"\n実行後：\"adcbe\"",
+          "keywords": "リバース 逆順 逆転 部分反転 部分リバース 回転 リバース 逆順 逆転 反転 部分リバース 部分反転"
         },
         {
           "id": "reverse-5",
           "desc": "配列全体を左にk個ぶん回転する",
           "code": "rotate(A.begin(), A.begin()+k, A.end());",
           "cost": "O(N)",
-          "note": "0 ≤ k ≤ N。先頭k個を末尾へ移す",
+          "note": "⚠︎ 0 ≤ k ≤ N。先頭k個を末尾へ移す",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {0,1,2,3,4}; int k = 2;\n    rotate(A.begin(), A.begin()+k, A.end());\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "k = 2\n実行前：[1, 2, 3, 4, 5]\n実行後：[3, 4, 5, 1, 2]",
+          "keywords": "リバース 逆順 逆転 部分反転 部分リバース 回転 回転 ローテート ずらす"
         },
         {
           "id": "reverse-6",
           "desc": "配列全体を右にk個ぶん回転する",
           "code": "rotate(A.begin(), A.end()-k, A.end());",
           "cost": "O(N)",
-          "note": "0 ≤ k ≤ N。末尾k個を先頭へ移す",
+          "note": "⚠︎ 0 ≤ k ≤ N。末尾k個を先頭へ移す",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {0,1,2,3,4}; int k = 2;\n    rotate(A.begin(), A.end()-k, A.end());\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "k = 2\n実行前：[1, 2, 3, 4, 5]\n実行後：[4, 5, 1, 2, 3]",
+          "keywords": "リバース 逆順 逆転 部分反転 部分リバース 回転 回転 ローテート ずらす"
         },
         {
           "id": "reverse-7",
           "desc": "添字l以上r未満を、添字mが先頭になるよう回転する",
           "code": "rotate(A.begin()+l, A.begin()+m, A.begin()+r);",
-          "cost": "O(r−l)",
-          "note": "0 ≤ l ≤ m ≤ r ≤ N",
+          "cost": "OK",
+          "note": "⚠︎ 0 ≤ l ≤ m ≤ r ≤ N",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {0,1,2,3,4}; int l = 1, m = 2, r = 4;\n    rotate(A.begin()+l, A.begin()+m, A.begin()+r);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "K：操作する区間の要素数",
+          "example": "l = 1、m = 3、r = 5\n実行前：[0, 1, 2, 3, 4, 5]\n実行後：[0, 3, 4, 1, 2, 5]",
+          "keywords": "リバース 逆順 逆転 部分反転 部分リバース 回転 回転 ローテート ずらす"
         }
       ],
       "keywords": "リバース 逆順 逆転 部分反転 部分リバース 回転"
@@ -1231,80 +1679,112 @@
           "desc": "全要素をxにする",
           "code": "fill(A.begin(), A.end(), x);",
           "cost": "O(N)",
-          "note": "要素数は変えない",
+          "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {3,1,4,1,5};\n    int l = 1, r = 4; int x = 9;\n    fill(A.begin(), A.end(), x);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 埋める 初期化"
         },
         {
           "id": "fill-2",
           "desc": "添字l以上r未満をxにする",
           "code": "fill(A.begin()+l, A.begin()+r, x);",
-          "cost": "O(r−l)",
+          "cost": "OK",
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {3,1,4,1,5};\n    int l = 1, r = 4; int x = 9;\n    fill(A.begin()+l, A.begin()+r, x);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "K：操作する区間の要素数",
+          "example": "",
+          "keywords": " 埋める 初期化"
         },
         {
           "id": "fill-3",
           "desc": "先頭から0,1,2,…を入れる",
           "code": "iota(A.begin(), A.end(), 0);",
           "cost": "O(N)",
-          "note": "末尾の引数が開始値",
+          "note": "⚠︎ 末尾の引数が開始値",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A(5);\n    iota(A.begin(), A.end(), 0);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "fill-4",
           "desc": "隣接する同じ値を1個にまとめる",
           "code": "A.erase(unique(A.begin(), A.end()), A.end());",
           "cost": "O(N)",
-          "note": "離れた同じ値は消えない",
+          "note": "⚠︎ 隣り合う重複だけが対象。掲載コードはeraseも行うので、要素数も減る",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {1,1,3,3,1};\n    A.erase(unique(A.begin(), A.end()), A.end());\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "実行前：[1, 1, 2, 1, 1]\nuniqueだけ：[1, 2, 1, ?, ?]（要素数は5のまま）\n掲載コード（eraseも実行）：[1, 2, 1]\n? の位置の値は使わない",
+          "keywords": " 消す 削除 消去 重複 ダブり 消す"
         },
         {
           "id": "fill-5",
           "desc": "配列全体から重複を取り除く",
           "code": "sort(A.begin(), A.end());\nA.erase(unique(A.begin(), A.end()), A.end());",
           "cost": "O(N log N)",
-          "note": "元の順序は失われる",
+          "note": "⚠︎ 並べ替えるので元の順序は失われる 追加メモリはGCCの一般的な実装の目安",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {3,1,4,1,5};\n    int l = 1, r = 4;\n    sort(A.begin(), A.end());\n    A.erase(unique(A.begin(), A.end()), A.end());\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(log N)",
+          "definitions": "N：操作前の要素数",
+          "example": "実行前：[3, 1, 3, 2, 1]\n実行後：[1, 2, 3]",
+          "keywords": " 消す 削除 消去 ソート 並べ替え 並び替え 重複 ダブり 消す"
         },
         {
           "id": "fill-6",
           "desc": "値xの要素を全部削除する",
           "code": "A.erase(remove(A.begin(), A.end(), x), A.end());",
           "cost": "O(N)",
-          "note": "残る要素の相対順序は保つ",
+          "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {3,1,4,1,5};\n    int l = 1, r = 4; int x = 1;\n    A.erase(remove(A.begin(), A.end(), x), A.end());\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 消す 削除 消去"
         },
         {
           "id": "fill-7",
           "desc": "条件を満たす要素を全部削除する",
           "code": "A.erase(remove_if(A.begin(), A.end(), [](int x){\n    return x < 0;\n}), A.end());",
           "cost": "O(N)",
-          "note": "trueを返した要素を削除する",
+          "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {3,-1,4,-2};\n    A.erase(remove_if(A.begin(), A.end(), [](int x){\n        return x < 0;\n    }), A.end());\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 消す 削除 消去"
         },
         {
           "id": "fill-8",
           "desc": "値xを全部yに置き換える",
           "code": "replace(A.begin(), A.end(), x, y);",
           "cost": "O(N)",
-          "note": "要素数は変わらない",
+          "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {3,1,4,1,5};\n    int l = 1, r = 4; int x = 1, y = 9;\n    replace(A.begin(), A.end(), x, y);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": ""
         }
       ]
     },
@@ -1319,110 +1799,154 @@
           "desc": "x以上の値が最初に現れる添字を求める",
           "code": "int p = lower_bound(A.begin(), A.end(), x) - A.begin();",
           "cost": "O(log N)",
-          "note": "値そのものではなく添字",
+          "note": "⚠︎ 配列を昇順に並べてあるとき限定。値そのものではなく添字",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {1,3,3,7};\n    int N = A.size();\n    int x = 3;\n    int p = lower_bound(A.begin(), A.end(), x) - A.begin();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "A = [1, 3, 3, 7]、x = 3\n結果：1（最初の3の添字）",
+          "keywords": " 二分探索 ロウワーバウンド"
         },
         {
           "id": "bounds-2",
           "desc": "xより大きい値が最初に現れる添字を求める",
           "code": "int p = upper_bound(A.begin(), A.end(), x) - A.begin();",
           "cost": "O(log N)",
-          "note": "値そのものではなく添字",
+          "note": "⚠︎ 配列を昇順に並べてあるとき限定。値そのものではなく添字",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {1,3,3,7};\n    int N = A.size();\n    int x = 3;\n    int p = upper_bound(A.begin(), A.end(), x) - A.begin();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "A = [1, 3, 3, 7]、x = 3\n結果：3（7の添字）",
+          "keywords": " 二分探索 アッパーバウンド"
         },
         {
           "id": "bounds-3",
           "desc": "x未満の要素数を求める",
           "code": "int cnt = lower_bound(A.begin(), A.end(), x) - A.begin();",
           "cost": "O(log N)",
-          "note": "",
+          "note": "⚠︎ 配列を昇順に並べてあるとき限定",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {1,3,3,7};\n    int N = A.size();\n    int x = 3;\n    int cnt = lower_bound(A.begin(), A.end(), x) - A.begin();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 二分探索 ロウワーバウンド"
         },
         {
           "id": "bounds-4",
           "desc": "x以下の要素数を求める",
           "code": "int cnt = upper_bound(A.begin(), A.end(), x) - A.begin();",
           "cost": "O(log N)",
-          "note": "",
+          "note": "⚠︎ 配列を昇順に並べてあるとき限定",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {1,3,3,7};\n    int N = A.size();\n    int x = 3;\n    int cnt = upper_bound(A.begin(), A.end(), x) - A.begin();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 二分探索 アッパーバウンド"
         },
         {
           "id": "bounds-5",
           "desc": "x以上の要素数を求める",
           "code": "int cnt = N - (lower_bound(A.begin(), A.end(), x) - A.begin());",
           "cost": "O(log N)",
-          "note": "",
+          "note": "⚠︎ 配列を昇順に並べてあるとき限定",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {1,3,3,7};\n    int N = A.size();\n    int x = 3;\n    int cnt = N - (lower_bound(A.begin(), A.end(), x) - A.begin());\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 二分探索 ロウワーバウンド"
         },
         {
           "id": "bounds-6",
           "desc": "xより大きい要素数を求める",
           "code": "int cnt = N - (upper_bound(A.begin(), A.end(), x) - A.begin());",
           "cost": "O(log N)",
-          "note": "",
+          "note": "⚠︎ 配列を昇順に並べてあるとき限定",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {1,3,3,7};\n    int N = A.size();\n    int x = 3;\n    int cnt = N - (upper_bound(A.begin(), A.end(), x) - A.begin());\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 二分探索 アッパーバウンド"
         },
         {
           "id": "bounds-7",
           "desc": "xと等しい要素数を求める",
           "code": "int cnt = upper_bound(A.begin(), A.end(), x) - lower_bound(A.begin(), A.end(), x);",
           "cost": "O(log N)",
-          "note": "",
+          "note": "⚠︎ 配列を昇順に並べてあるとき限定",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {1,3,3,7};\n    int N = A.size();\n    int x = 3;\n    int cnt = upper_bound(A.begin(), A.end(), x) - lower_bound(A.begin(), A.end(), x);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 二分探索 ロウワーバウンド 二分探索 アッパーバウンド"
         },
         {
           "id": "bounds-8",
           "desc": "xがあるか判定する",
           "code": "bool exists = binary_search(A.begin(), A.end(), x);",
           "cost": "O(log N)",
-          "note": "",
+          "note": "⚠︎ 配列を昇順に並べてあるとき限定",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {1,3,3,7};\n    int N = A.size();\n    int x = 3;\n    bool exists = binary_search(A.begin(), A.end(), x);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "bounds-9",
           "desc": "x以上で最小の値を読む",
           "code": "int p = lower_bound(A.begin(), A.end(), x) - A.begin();\nif(p < N){\n    int ans = A.at(p);\n}",
           "cost": "O(log N)",
-          "note": "p==Nなら該当なし",
+          "note": "⚠︎ 配列を昇順に並べてあるとき限定。p==Nなら該当なし",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {1,3,3,7};\n    int N = A.size();\n    int x = 3;\n    int p = lower_bound(A.begin(), A.end(), x) - A.begin();\n    if(p < N){\n        int ans = A.at(p);\n    }\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 二分探索 ロウワーバウンド"
         },
         {
           "id": "bounds-10",
           "desc": "x未満で最大の値を読む",
           "code": "int p = lower_bound(A.begin(), A.end(), x) - A.begin();\nif(p > 0){\n    int ans = A.at(p-1);\n}",
           "cost": "O(log N)",
-          "note": "p==0なら該当なし",
+          "note": "⚠︎ 配列を昇順に並べてあるとき限定。p==0なら該当なし",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {1,3,3,7};\n    int N = A.size();\n    int x = 3;\n    int p = lower_bound(A.begin(), A.end(), x) - A.begin();\n    if(p > 0){\n        int ans = A.at(p-1);\n    }\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 二分探索 ロウワーバウンド"
         },
         {
           "id": "bounds-11",
           "desc": "x以下で最大の値を読む",
           "code": "int p = upper_bound(A.begin(), A.end(), x) - A.begin();\nif(p > 0){\n    int ans = A.at(p-1);\n}",
           "cost": "O(log N)",
-          "note": "",
+          "note": "⚠︎ 配列を昇順に並べてあるとき限定",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {1,3,3,7};\n    int N = A.size();\n    int x = 3;\n    int p = upper_bound(A.begin(), A.end(), x) - A.begin();\n    if(p > 0){\n        int ans = A.at(p-1);\n    }\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 二分探索 アッパーバウンド"
         }
       ]
     },
@@ -1437,20 +1961,28 @@
           "desc": "2つの値の小さい方を求める",
           "code": "int ans = min(a, b);",
           "cost": "O(1)",
-          "note": "2引数の型をそろえる",
+          "note": "⚠︎ 2引数の型をそろえる",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    int a = 3, b = 5;\n    int ans = min(a, b);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "aggregate-2",
           "desc": "2つの値の大きい方を求める",
           "code": "long long ans = max(0LL, x);",
           "cost": "O(1)",
-          "note": "xがlong longなら0LL",
+          "note": "⚠︎ xがlong longなら0LL",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    long long x = 5;\n    long long ans = max(0LL, x);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "aggregate-3",
@@ -1460,77 +1992,109 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    int a = 2, b = 5, c = 3;\n    int ans = max({a, b, c});\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "aggregate-4",
           "desc": "2つの変数の値を交換する",
           "code": "swap(a, b);",
           "cost": "O(1)",
-          "note": "intなどの値の場合",
+          "note": "⚠︎ intなどの値の場合",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    int a = 2, b = 5;\n    swap(a, b);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": " 交換 入れ替え"
         },
         {
           "id": "aggregate-5",
           "desc": "配列の最小値を求める",
           "code": "int ans = *min_element(A.begin(), A.end());",
           "cost": "O(N)",
-          "note": "空でないこと",
+          "note": "⚠︎ 容器が空のときは使えない",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {4,1,7}; int x = 4;\n    int ans = *min_element(A.begin(), A.end());\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "aggregate-6",
           "desc": "配列の最大値を求める",
           "code": "int ans = *max_element(A.begin(), A.end());",
           "cost": "O(N)",
-          "note": "空でないこと",
+          "note": "⚠︎ 容器が空のときは使えない",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {4,1,7}; int x = 4;\n    int ans = *max_element(A.begin(), A.end());\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "aggregate-7",
           "desc": "最小値が最初に現れる添字を求める",
           "code": "int p = min_element(A.begin(), A.end()) - A.begin();",
           "cost": "O(N)",
-          "note": "",
+          "note": "⚠︎ 対象の区間が空のときは使えない",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {4,1,7}; int x = 4;\n    int p = min_element(A.begin(), A.end()) - A.begin();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "aggregate-8",
           "desc": "添字l以上r未満の最大値を求める",
           "code": "int ans = *max_element(A.begin()+l, A.begin()+r);",
-          "cost": "O(r−l)",
-          "note": "l < r",
+          "cost": "OK",
+          "note": "⚠︎ 対象の区間が空のときは使えない。l < r",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {4,1,7}; int x = 4; int l = 0, r = 2;\n    int ans = *max_element(A.begin()+l, A.begin()+r);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "K：操作する区間の要素数",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "aggregate-9",
           "desc": "配列の合計をlong longで求める",
           "code": "long long sum = accumulate(A.begin(), A.end(), 0LL);",
           "cost": "O(N)",
-          "note": "0ではなく0LLを使う",
+          "note": "⚠︎ 0ではなく0LLを使う",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {4,1,7}; int x = 4;\n    long long sum = accumulate(A.begin(), A.end(), 0LL);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 合計 和 足す"
         },
         {
           "id": "aggregate-10",
           "desc": "値xの個数を数える",
           "code": "int cnt = count(A.begin(), A.end(), x);",
           "cost": "O(N)",
-          "note": "ソート不要",
+          "note": "⚠︎ ソート不要",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {4,1,7}; int x = 4;\n    int cnt = count(A.begin(), A.end(), x);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 個数 数える カウント"
         },
         {
           "id": "aggregate-11",
@@ -1540,37 +2104,53 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {4,1,7}; int x = 4;\n    int cnt = count_if(A.begin(), A.end(), [](int x){\n        return x % 2 == 0;\n    });\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 個数 数える カウント"
         },
         {
           "id": "aggregate-12",
           "desc": "値xが最初に現れる添字を求める",
           "code": "auto it = find(A.begin(), A.end(), x);\nif(it != A.end()){\n    int p = it - A.begin();\n}",
           "cost": "O(N)",
-          "note": "見つからないとend。ソート不要",
+          "note": "⚠︎ 見つからないとend。ソート不要",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {4,1,7}; int x = 4;\n    auto it = find(A.begin(), A.end(), x);\n    if(it != A.end()){\n        int p = it - A.begin();\n    }\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": " 探す 検索 存在"
         },
         {
           "id": "aggregate-13",
           "desc": "全要素が条件を満たすか判定する",
           "code": "bool ok = all_of(A.begin(), A.end(), [](int x){\n    return x >= 0;\n});",
           "cost": "O(N)",
-          "note": "空ならtrue",
+          "note": "⚠︎ 空ならtrue",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {4,1,7}; int x = 4;\n    bool ok = all_of(A.begin(), A.end(), [](int x){\n        return x >= 0;\n    });\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "aggregate-14",
           "desc": "1個以上の要素が条件を満たすか判定する",
           "code": "bool ok = any_of(A.begin(), A.end(), [](int x){\n    return x >= 0;\n});",
           "cost": "O(N)",
-          "note": "空ならfalse",
+          "note": "⚠︎ 空ならfalse",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {4,1,7}; int x = 4;\n    bool ok = any_of(A.begin(), A.end(), [](int x){\n        return x >= 0;\n    });\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": ""
         }
       ]
     },
@@ -1585,80 +2165,112 @@
           "desc": "最大公約数を求める",
           "code": "long long g = gcd(a, b);",
           "cost": "O(log min(a,b))（正整数）",
-          "note": "gcd(0,0)=0。絶対値が型に収まること",
+          "note": "⚠︎ gcd(0,0)=0。絶対値が型に収まること",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    long long a = 12, b = 18;\n    long long g = gcd(a, b);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "numeric-2",
           "desc": "最小公倍数を求める",
           "code": "long long l = lcm(a, b);",
           "cost": "O(log min(a,b))（正整数）",
-          "note": "最小公倍数が型に収まること",
+          "note": "⚠︎ 最小公倍数が型に収まること",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    long long a = 12, b = 18;\n    long long l = lcm(a, b);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "numeric-3",
           "desc": "絶対値を求める",
           "code": "long long d = abs(x);",
           "cost": "O(1)",
-          "note": "long longの最小値の絶対値は型に収まらない",
+          "note": "⚠︎ long longの最小値の絶対値は型に収まらない",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    long long x = -5;\n    long long d = abs(x);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "numeric-4",
           "desc": "平方根を実数で求める",
           "code": "double x = sqrt(2.0);",
           "cost": "通常 O(1)",
-          "note": "浮動小数点の丸め誤差あり",
+          "note": "⚠︎ 浮動小数点の丸め誤差あり",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    double x = sqrt(2.0);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "numeric-5",
           "desc": "非負整数aを正整数bで割って切り上げる",
           "code": "long long ans = a/b + (a % b != 0);",
           "cost": "O(1)",
-          "note": "a ≥ 0、b > 0",
+          "note": "⚠︎ a ≥ 0、b > 0",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    long long a = 17, b = 5;\n    long long ans = a/b + (a % b != 0);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "numeric-6",
           "desc": "余りを0以上MOD未満にそろえる",
           "code": "long long r = x % MOD;\nif(r < 0){\n    r += MOD;\n}",
           "cost": "O(1)",
-          "note": "MOD > 0",
+          "note": "⚠︎ MOD > 0",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    long long x = -3, MOD = 5;\n    long long r = x % MOD;\n    if(r < 0){\n        r += MOD;\n    }\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "numeric-7",
           "desc": "int同士の積をlong longで計算する",
           "code": "long long ans = 1LL * a * b;",
           "cost": "O(1)",
-          "note": "最終結果はlong long内に収まること",
+          "note": "⚠︎ 最終結果はlong long内に収まること",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    int a = 200000, b = 200000;\n    long long ans = 1LL * a * b;\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "numeric-8",
           "desc": "型の最大値・最小値を得る",
           "code": "long long hi = numeric_limits<long long>::max();\nlong long lo = numeric_limits<long long>::lowest();",
           "cost": "O(1)",
-          "note": "INFに最大値を使って足し算するとあふれる",
+          "note": "⚠︎ INFに最大値を使って足し算するとあふれる",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    long long hi = numeric_limits<long long>::max();\n    long long lo = numeric_limits<long long>::lowest();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         }
       ]
     },
@@ -1676,37 +2288,53 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    double x = sqrt(2.0); int k = 10;\n    cout << fixed << setprecision(k) << x << endl;\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "出力バッファは実装依存",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "io-2",
           "desc": "大量入出力を高速化する",
           "code": "ios::sync_with_stdio(false);\ncin.tie(nullptr);",
           "cost": "設定 O(1)",
-          "note": "mainの先頭、最初の入出力より前に置く。大量出力は'\\n'を使う",
+          "note": "⚠︎ mainの先頭、最初の入出力より前に置く。大量出力は'\\n'を使う",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "io-3",
           "desc": "次の辞書順の順列に進める",
           "code": "bool exists = next_permutation(A.begin(), A.end());",
           "cost": "O(N)",
-          "note": "最後の並びから呼ぶと最初の並びに戻ってfalse。全列挙は昇順からdo-while",
+          "note": "⚠︎ 最後の並びから呼ぶと最初の並びに戻ってfalse。全列挙は昇順からdo-while",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    vector<int> A = {0,1,2};\n    bool exists = next_permutation(A.begin(), A.end());\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "N：操作前の要素数",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "io-4",
           "desc": "整数を固定長の2進文字列にする",
           "code": "string S = bitset<8>(x).to_string();",
           "cost": "O(B)",
-          "note": "Bはbit数。ここでは8。上位の余分なbitは切り捨てる",
+          "note": "⚠︎ Bはbit数。ここでは8。上位の余分なbitは切り捨てる",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    unsigned long long x = 5;\n    string S = bitset<8>(x).to_string();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(B)",
+          "definitions": "B：bit数",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "io-5",
@@ -1716,7 +2344,11 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    bitset<8> B(5);\n    int cnt = B.count();\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "B：bit数",
+          "example": "",
+          "keywords": " 個数 数える カウント"
         }
       ]
     },
@@ -1731,10 +2363,14 @@
           "desc": "998244353で割った余りを管理する",
           "code": "mint x = a;",
           "cost": "O(1)",
-          "note": "法を変えるには全体コードの型の別名を変更",
+          "note": "⚠︎ 法を変えるには全体コードの型の別名を変更",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\n#include <atcoder/modint>\nusing namespace std;\n\nusing mint = atcoder::modint998244353;\n\nint main(){\n    long long a = 123;\n    mint x = a;\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "modint-2",
@@ -1744,7 +2380,11 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\n#include <atcoder/modint>\nusing namespace std;\n\nusing mint = atcoder::modint998244353;\n\nint main(){\n    mint a = 10, b = 3, c = 5;\n    mint ans = a*b + c;\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "modint-3",
@@ -1754,27 +2394,39 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\n#include <atcoder/modint>\nusing namespace std;\n\nusing mint = atcoder::modint998244353;\n\nint main(){\n    mint x = 123;\n    cout << x.val() << endl;\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "modint-4",
           "desc": "xのn乗の余りを求める",
           "code": "mint ans = x.pow(n);",
           "cost": "O(log n)",
-          "note": "n ≥ 0",
+          "note": "⚠︎ n ≥ 0",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\n#include <atcoder/modint>\nusing namespace std;\n\nusing mint = atcoder::modint998244353;\n\nint main(){\n    mint x = 3; long long n = 5;\n    mint ans = x.pow(n);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "n：指数",
+          "example": "",
+          "keywords": " べき乗 累乗 冪乗"
         },
         {
           "id": "modint-5",
           "desc": "逆元を掛ける割り算をする",
           "code": "mint ans = a/b;",
           "cost": "O(log MOD)",
-          "note": "整数の切り捨て除算ではない。bの余りが0なら不可",
+          "note": "⚠︎ 普通の整数の割り算とは異なる。bを法で割った余りが0のときは使えない",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\n#include <atcoder/modint>\nusing namespace std;\n\nusing mint = atcoder::modint998244353;\n\nint main(){\n    mint a = 10, b = 3;\n    mint ans = a/b;\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "MOD：余りを求めるときの法",
+          "example": "",
+          "keywords": ""
         },
         {
           "id": "modint-6",
@@ -1784,7 +2436,11 @@
           "note": "",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\n#include <atcoder/modint>\nusing namespace std;\n\nusing mint = atcoder::modint998244353;\n\nint main(){\n    int N = 5;\n    vector<mint> dp(N+1, 0);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(N)",
+          "definitions": "N：指定した要素数",
+          "example": "",
+          "keywords": ""
         }
       ]
     },
@@ -1799,20 +2455,28 @@
           "desc": "xのn乗をmで割った余りを求める",
           "code": "long long ans = atcoder::pow_mod(x, n, m);",
           "cost": "O(log n)",
-          "note": "n ≥ 0、1 ≤ m ≤ intの最大値",
+          "note": "⚠︎ n ≥ 0、1 ≤ m ≤ intの最大値",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\n#include <atcoder/math>\nusing namespace std;\n\nint main(){\n    long long x = 3, n = 5; int m = 7;\n    long long ans = atcoder::pow_mod(x, n, m);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(1)",
+          "definitions": "n：指数",
+          "example": "",
+          "keywords": " べき乗 累乗 冪乗"
         },
         {
           "id": "acl-extra-2",
           "desc": "各位置からの接尾辞と先頭が一致する長さを求める",
           "code": "vector<int> Z = atcoder::z_algorithm(S);",
           "cost": "O(N)",
-          "note": "Z[i]はSの先頭とS[i..N)の共通接頭辞長",
+          "note": "⚠︎ Z[i]はSの先頭とS[i..N)の共通接頭辞長",
           "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\n#include <atcoder/string>\nusing namespace std;\n\nint main(){\n    string S = \"ababa\";\n    vector<int> Z = atcoder::z_algorithm(S);\n    return 0;\n}\n",
           "input": "",
-          "expected": null
+          "expected": null,
+          "memory": "O(N)",
+          "definitions": "N：文字列の文字数",
+          "example": "",
+          "keywords": ""
         }
       ]
     },
@@ -2271,6 +2935,12 @@
       "content": "<div class=\"table-wrap\"><table><thead><tr><th>N / O(N)</th><th>N log₂N</th><th>N²</th><th>N³</th></tr></thead><tbody><tr><td>10²</td><td>6.6×10²</td><td>10⁴</td><td>10⁶</td></tr><tr><td>10³</td><td>10×10³</td><td>10⁶</td><td>10⁹</td></tr><tr><td>3×10³</td><td>3.5×10⁴</td><td>9×10⁶</td><td>2.7×10¹⁰</td></tr><tr><td>10⁴</td><td>1.3×10⁵</td><td>10⁸</td><td>10¹²</td></tr><tr><td>2×10⁵</td><td>3.5×10⁶</td><td>4×10¹⁰</td><td>8×10¹⁵</td></tr><tr><td>10⁶</td><td>2×10⁷</td><td>10¹²</td><td>10¹⁸</td></tr></tbody></table></div><div class=\"table-wrap\"><table><thead><tr><th>N</th><th>2ᴺ</th><th>N × 2ᴺ</th><th>N!</th></tr></thead><tbody><tr><td>10</td><td>1×10³</td><td>1×10⁴</td><td>3.6×10⁶</td></tr><tr><td>15</td><td>3.3×10⁴</td><td>4.9×10⁵</td><td>1.3×10¹²</td></tr><tr><td>20</td><td>1×10⁶</td><td>2.1×10⁷</td><td>2.4×10¹⁸</td></tr><tr><td>25</td><td>3.4×10⁷</td><td>8.4×10⁸</td><td>1.6×10²⁵</td></tr><tr><td>30</td><td>1.1×10⁹</td><td>3.2×10¹⁰</td><td>2.7×10³²</td></tr></tbody></table></div><p class=\"note\">実際のCPU命令数ではなく、計算量の式の値。文字列コピーやmap操作などは単純な加算より重い。</p>"
     },
     {
+      "key": "memory-calculator",
+      "title": "配列のメモリを計算する",
+      "tool": "memory",
+      "content": "<p>型・行数・列数・配列の個数から要素本体の容量を求め、選択したメモリ制限と比較する。</p>"
+    },
+    {
       "key": "type-memory",
       "title": "型と配列のメモリ",
       "content": "<div class=\"table-wrap\"><table><thead><tr><th>型</th><th>1要素の目安</th><th>10⁵要素</th><th>10⁶要素</th><th>10⁷要素</th></tr></thead><tbody><tr><td>char</td><td>1 B</td><td>100 KB</td><td>1 MB</td><td>10 MB</td></tr><tr><td>int</td><td>4 B</td><td>400 KB</td><td>4 MB</td><td>40 MB</td></tr><tr><td>long long / double</td><td>8 B</td><td>800 KB</td><td>8 MB</td><td>80 MB</td></tr><tr><td>pair&lt;int,int&gt;</td><td>通常8 B</td><td>約800 KB</td><td>約8 MB</td><td>約80 MB</td></tr></tbody></table></div><p class=\"note\">この表はint=4 B、long long=8 B、double=8 Bの一般的なGCC環境を想定。実際はsizeofで確認。1 KB=10³ B、1 MB=10⁶ B。1 KiB=2¹⁰ B、1 MiB=2²⁰ B。</p>"
@@ -2297,6 +2967,15 @@
     }
   ],
   "notes": [
+    {
+      "id": "20261108-operation-reference",
+      "at": "2026-11-08 06:48",
+      "title": "標準ライブラリ・ACLと計算ツールを改善",
+      "category": "標準ライブラリ / AtCoder Library / 計算量・メモリ",
+      "text": "目次から操作を1つずつ選ぶ表示に変更しました。全体コードの常時表示、短いコードのコピー、追加メモリ、計算量の文字の意味、平易な注意点、実行前後の例、日本語や別名での検索を追加しました。配列のメモリ容量と選択式のメモリ制限の比較、Nを選択する計算量の比較にも対応しました。",
+      "published": true,
+      "kind": "updates"
+    },
     {
       "id": "20261108-notes-added",
       "at": "2026-11-08 06:19",

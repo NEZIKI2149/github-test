@@ -6,6 +6,7 @@ import pathlib
 import re
 import textwrap
 import unicodedata
+from operation_metadata import enrich
 
 ROOT = pathlib.Path(__file__).resolve().parent
 PUBLIC = "https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference"
@@ -828,7 +829,9 @@ def generate():
                 item["full"] = "// Reference: " + PUBLIC + "\n" + item["full"]
         if g["key"] == "reverse":
             g["keywords"] = "リバース 逆順 逆転 部分反転 部分リバース 回転"
+    enrich(groups)
     limits = limits_sections()
+    limits.insert(2, dict(key="memory-calculator", title="配列のメモリを計算する", tool="memory", content="<p>型・行数・列数・配列の個数から要素本体の容量を求め、選択したメモリ制限と比較する。</p>"))
     notes = json.loads((ROOT / "site-notes.json").read_text(encoding="utf-8"))
     local_notes_path = ROOT / "site-notes.local.json"
     local_notes = json.loads(local_notes_path.read_text(encoding="utf-8")) if local_notes_path.exists() else {"memos": []}
@@ -865,10 +868,11 @@ def generate():
                             if note: lines += [note, ""]
                         lines += ["```cpp", item["full"].rstrip(), "```", ""]
                         continue
-                    lines += ["### "+desc, "", "計算量："+item["cost"], ""]
+                    lines += ["### "+desc, "", "計算量："+item["cost"]+" / 追加メモリ："+item["memory"], "", item["definitions"], ""]
                     if page != "algo": lines += ["```cpp", item["code"], "```", ""]
                     if item["note"]: lines += [item["note"], ""]
-                    lines += ["<details>", "<summary>コンパイルできる全体コード</summary>", "", "```cpp", item["full"].rstrip(), "```", "", "</details>", ""]
+                    if item.get("example"): lines += ["```text", item["example"], "```", ""]
+                    lines += ["```cpp", item["full"].rstrip(), "```", ""]
         (docs / info["file"]).write_text("\n".join(lines), encoding="utf-8")
     (docs / "site-notes.md").write_text(
         "# 更新履歴・制作者メモ\n\n"

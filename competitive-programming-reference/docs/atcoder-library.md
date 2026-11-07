@@ -16,16 +16,15 @@
 
 ### 998244353で割った余りを管理する
 
-計算量：O(1)
+計算量：O(1) / 追加メモリ：O(1)
+
+
 
 ```cpp
 mint x = a;
 ```
 
-法を変えるには全体コードの型の別名を変更
-
-<details>
-<summary>コンパイルできる全体コード</summary>
+⚠︎ 法を変えるには全体コードの型の別名を変更
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -42,18 +41,15 @@ int main(){
 }
 ```
 
-</details>
-
 ### 余りを取りながら加減乗算する
 
-計算量：O(1)
+計算量：O(1) / 追加メモリ：O(1)
+
+
 
 ```cpp
 mint ans = a*b + c;
 ```
-
-<details>
-<summary>コンパイルできる全体コード</summary>
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -70,18 +66,15 @@ int main(){
 }
 ```
 
-</details>
-
 ### 余りを整数として出力する
 
-計算量：O(1)（桁数固定）
+計算量：O(1)（桁数固定） / 追加メモリ：O(1)
+
+
 
 ```cpp
 cout << x.val() << endl;
 ```
-
-<details>
-<summary>コンパイルできる全体コード</summary>
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -98,20 +91,17 @@ int main(){
 }
 ```
 
-</details>
-
 ### xのn乗の余りを求める
 
-計算量：O(log n)
+計算量：O(log n) / 追加メモリ：O(1)
+
+n：指数
 
 ```cpp
 mint ans = x.pow(n);
 ```
 
-n ≥ 0
-
-<details>
-<summary>コンパイルできる全体コード</summary>
+⚠︎ n ≥ 0
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -128,20 +118,17 @@ int main(){
 }
 ```
 
-</details>
-
 ### 逆元を掛ける割り算をする
 
-計算量：O(log MOD)
+計算量：O(log MOD) / 追加メモリ：O(1)
+
+MOD：余りを求めるときの法
 
 ```cpp
 mint ans = a/b;
 ```
 
-整数の切り捨て除算ではない。bの余りが0なら不可
-
-<details>
-<summary>コンパイルできる全体コード</summary>
+⚠︎ 普通の整数の割り算とは異なる。bを法で割った余りが0のときは使えない
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -158,18 +145,15 @@ int main(){
 }
 ```
 
-</details>
-
 ### 余りを管理するDP配列を作る
 
-計算量：O(N)
+計算量：O(N) / 追加メモリ：O(N)
+
+N：指定した要素数
 
 ```cpp
 vector<mint> dp(N+1, 0);
 ```
-
-<details>
-<summary>コンパイルできる全体コード</summary>
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -186,24 +170,21 @@ int main(){
 }
 ```
 
-</details>
-
 ## math / string：累乗・文字列処理
 
 各機能の詳しい条件はAtCoder Libraryの公式ドキュメントを参照。
 
 ### xのn乗をmで割った余りを求める
 
-計算量：O(log n)
+計算量：O(log n) / 追加メモリ：O(1)
+
+n：指数
 
 ```cpp
 long long ans = atcoder::pow_mod(x, n, m);
 ```
 
-n ≥ 0、1 ≤ m ≤ intの最大値
-
-<details>
-<summary>コンパイルできる全体コード</summary>
+⚠︎ n ≥ 0、1 ≤ m ≤ intの最大値
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -218,20 +199,17 @@ int main(){
 }
 ```
 
-</details>
-
 ### 各位置からの接尾辞と先頭が一致する長さを求める
 
-計算量：O(N)
+計算量：O(N) / 追加メモリ：O(N)
+
+N：文字列の文字数
 
 ```cpp
 vector<int> Z = atcoder::z_algorithm(S);
 ```
 
-Z[i]はSの先頭とS[i..N)の共通接頭辞長
-
-<details>
-<summary>コンパイルできる全体コード</summary>
+⚠︎ Z[i]はSの先頭とS[i..N)の共通接頭辞長
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -245,5 +223,3 @@ int main(){
     return 0;
 }
 ```
-
-</details>

@@ -14,6 +14,10 @@
 
 <div class="table-wrap"><table><thead><tr><th>N / O(N)</th><th>N log₂N</th><th>N²</th><th>N³</th></tr></thead><tbody><tr><td>10²</td><td>6.6×10²</td><td>10⁴</td><td>10⁶</td></tr><tr><td>10³</td><td>10×10³</td><td>10⁶</td><td>10⁹</td></tr><tr><td>3×10³</td><td>3.5×10⁴</td><td>9×10⁶</td><td>2.7×10¹⁰</td></tr><tr><td>10⁴</td><td>1.3×10⁵</td><td>10⁸</td><td>10¹²</td></tr><tr><td>2×10⁵</td><td>3.5×10⁶</td><td>4×10¹⁰</td><td>8×10¹⁵</td></tr><tr><td>10⁶</td><td>2×10⁷</td><td>10¹²</td><td>10¹⁸</td></tr></tbody></table></div><div class="table-wrap"><table><thead><tr><th>N</th><th>2ᴺ</th><th>N × 2ᴺ</th><th>N!</th></tr></thead><tbody><tr><td>10</td><td>1×10³</td><td>1×10⁴</td><td>3.6×10⁶</td></tr><tr><td>15</td><td>3.3×10⁴</td><td>4.9×10⁵</td><td>1.3×10¹²</td></tr><tr><td>20</td><td>1×10⁶</td><td>2.1×10⁷</td><td>2.4×10¹⁸</td></tr><tr><td>25</td><td>3.4×10⁷</td><td>8.4×10⁸</td><td>1.6×10²⁵</td></tr><tr><td>30</td><td>1.1×10⁹</td><td>3.2×10¹⁰</td><td>2.7×10³²</td></tr></tbody></table></div><p class="note">実際のCPU命令数ではなく、計算量の式の値。文字列コピーやmap操作などは単純な加算より重い。</p>
 
+## 配列のメモリを計算する
+
+<p>型・行数・列数・配列の個数から要素本体の容量を求め、選択したメモリ制限と比較する。</p>
+
 ## 型と配列のメモリ
 
 <div class="table-wrap"><table><thead><tr><th>型</th><th>1要素の目安</th><th>10⁵要素</th><th>10⁶要素</th><th>10⁷要素</th></tr></thead><tbody><tr><td>char</td><td>1 B</td><td>100 KB</td><td>1 MB</td><td>10 MB</td></tr><tr><td>int</td><td>4 B</td><td>400 KB</td><td>4 MB</td><td>40 MB</td></tr><tr><td>long long / double</td><td>8 B</td><td>800 KB</td><td>8 MB</td><td>80 MB</td></tr><tr><td>pair&lt;int,int&gt;</td><td>通常8 B</td><td>約800 KB</td><td>約8 MB</td><td>約80 MB</td></tr></tbody></table></div><p class="note">この表はint=4 B、long long=8 B、double=8 Bの一般的なGCC環境を想定。実際はsizeofで確認。1 KB=10³ B、1 MB=10⁶ B。1 KiB=2¹⁰ B、1 MiB=2²⁰ B。</p>
