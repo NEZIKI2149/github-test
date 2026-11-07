@@ -49,6 +49,7 @@ main .section h2{font-weight:700}
 .operation-entry .section-note,.operation-entry .operation-cost{color:var(--ink);font-size:12px}.operation-short,.operation-example{background:var(--code);border:1px solid var(--line);border-radius:7px;padding:14px;margin:16px 0}.operation-short .code-actions{justify-content:flex-end;margin-top:8px}.operation-entry .full-code{border:1px solid var(--line);border-radius:7px;margin-top:20px}
 .calc-fields{display:flex;gap:16px;flex-wrap:wrap;margin:20px 0}.calc-fields label{display:flex;flex-direction:column;gap:5px;font-size:12px}.calc-fields input,.calc-fields select{font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:5px;padding:8px;width:160px}.calc-output{font-size:14px;line-height:2;background:var(--paper);border:1px solid var(--line);border-radius:7px;padding:16px}.operation-cost{margin:14px 0}.symbol-definitions{font-size:12px;margin:5px 0 14px}
 aside{top:155px;height:calc(100vh - 155px)}
+.toc-tools{display:grid;gap:8px;padding:0 0 18px;margin:0 0 18px;border-bottom:1px solid var(--line)}.toc-tools .side-link{display:block;border:1px solid var(--line);border-radius:6px;background:var(--paper);padding:10px 12px;margin:0;color:var(--ink);text-align:center}.toc-tools .side-link:hover,.toc-tools .side-link.current{background:var(--tint);border-color:var(--accent);color:var(--accent)}
 </style>
 </head>
 <body>
@@ -118,7 +119,7 @@ let openGroup=null;
 let mobileIndexOpen=true;
 const isMobile=()=>matchMedia("(max-width:750px)").matches;
 function librarySection(g,i){return '<section class="section" id="'+i.id+'"><h2>'+esc(i.desc)+'</h2>'+operation(i,false)+'</section>';}
-function limitSection(s){return '<section class="section limits" id="'+s.key+'"><h2>'+esc(s.title)+'</h2>'+ (s.key==='time-count'?timeTool():s.tool==='memory'?memoryTool():s.content)+'</section>';}
+function limitSection(s){return '<section class="section limits" id="'+s.key+'"><h2>'+esc(s.title)+'</h2>'+ (s.tool==='time'?timeTool():s.tool==='memory'?memoryTool():s.content)+'</section>';}
 function render(){
     query=$('#search').value.trim();const searching=!!query;
     document.querySelectorAll('.tab').forEach(b=>{b.classList.toggle('active',b.dataset.page===page);b.setAttribute('aria-current',b.dataset.page===page?'page':'false');});
@@ -130,13 +131,14 @@ function render(){
             if(items.length)rows.push({key:g.key,title:g.title,page:g.page,html:section(g,items),label:'五十音順'});
         }else for(const i of items)rows.push({key:i.id,title:i.desc,page:g.page,group:g.key,groupTitle:g.title,html:librarySection(g,i),label:g.page==='acl'?'AtCoder Library':DATA.groups.findIndex(x=>x.key===g.key)<7?'容器・データを持つもの':'操作関数'});
     }
-    if(searching||page==='limits')for(const s of DATA.limits)if(!searching||termsMatch(s.title+' '+s.content.replace(/<[^>]*>/g,' ')))rows.push({key:s.key,title:s.title,page:'limits',html:limitSection(s),label:'計算量・メモリ'});
+    if(searching||page==='limits')for(const s of DATA.limits)if(!searching||termsMatch(s.title+' '+s.content.replace(/<[^>]*>/g,' ')))rows.push({key:s.key,title:s.title,page:'limits',html:limitSection(s),label:'計算量・メモリ',tool:!!s.tool});
     if(searching||page==='notes')for(const n of DATA.notes||[])if(!searching||termsMatch(n.title+' '+n.category+' '+n.text+' '+n.at))rows.push({key:n.id,title:n.title,page:'notes',html:noteSection(n),label:n.kind==='updates'?'更新履歴':'制作者メモ'});
     const chosen=rows.find(r=>'#'+r.page+'/'+r.key===selectedTocHref);
     selectedTocHref=chosen?'#'+chosen.page+'/'+chosen.key:'';
     if(openGroup===null)openGroup=chosen?.group||'';
-    let sideHTML='',label='',currentGroup='';
-    for(const r of rows){
+    const tools=rows.filter(r=>r.tool);
+    let sideHTML=tools.length?'<div class="toc-tools" aria-label="計算機">'+tools.sort((a,b)=>a.key==='memory-calculator'?-1:b.key==='memory-calculator'?1:0).map(r=>'<a class="side-link" href="#'+r.page+'/'+r.key+'">'+esc(r.title)+'</a>').join('')+'</div>':'',label='',currentGroup='';
+    for(const r of rows.filter(r=>!r.tool)){
         if(r.label!==label){if(currentGroup){sideHTML+='</details>';currentGroup='';}sideHTML+='<div class="side-label">'+esc(r.label)+'</div>';label=r.label;}
         if((r.group||'')!==currentGroup){if(currentGroup)sideHTML+='</details>';currentGroup=r.group||'';if(currentGroup)sideHTML+='<details class="toc-group" data-group="'+currentGroup+'"'+(openGroup===currentGroup?' open':'')+'><summary>'+esc(r.groupTitle)+'</summary>';}
         sideHTML+='<a class="side-link" href="#'+r.page+'/'+r.key+'">'+esc(r.title)+'</a>';

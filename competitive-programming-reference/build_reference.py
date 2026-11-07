@@ -831,7 +831,10 @@ def generate():
             g["keywords"] = "リバース 逆順 逆転 部分反転 部分リバース 回転"
     enrich(groups)
     limits = limits_sections()
-    limits.insert(2, dict(key="memory-calculator", title="配列のメモリを計算する", tool="memory", content="<p>型・行数・列数・配列の個数から要素本体の容量を求め、選択したメモリ制限と比較する。</p>"))
+    limits.insert(2, dict(key="memory-calculator", title="メモリ計算機", tool="memory", content="<p>型・行数・列数・配列の個数から要素本体の容量を求め、選択したメモリ制限と比較する。</p>"))
+    for section in limits:
+        if section["key"] == "time-count":
+            section.update(title="計算量計算機", tool="time")
     notes = json.loads((ROOT / "site-notes.json").read_text(encoding="utf-8"))
     local_notes_path = ROOT / "site-notes.local.json"
     local_notes = json.loads(local_notes_path.read_text(encoding="utf-8")) if local_notes_path.exists() else {"memos": []}

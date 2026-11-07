@@ -10,11 +10,11 @@
 
 <div class="table-wrap"><table><thead><tr><th>入力規模</th><th>候補になる計算量</th></tr></thead><tbody><tr><td>N ≲ 10</td><td>O(N × N!)</td></tr><tr><td>N ≲ 20</td><td>O(N × 2ᴺ)</td></tr><tr><td>N ≲ 3×10³</td><td>O(N²)</td></tr><tr><td>N ≲ 2×10⁵</td><td>O(N log N)、O(N)</td></tr><tr><td>値の範囲が10⁹〜10¹⁸</td><td>二分探索・数式など。値を1ずつ列挙しない</td></tr></tbody></table></div><p class="note">制限時間・処理内容・定数倍で変わる目安。秒数の保証ではない。</p>
 
-## 計算量：式にNを入れた規模
+## 計算量計算機
 
 <div class="table-wrap"><table><thead><tr><th>N / O(N)</th><th>N log₂N</th><th>N²</th><th>N³</th></tr></thead><tbody><tr><td>10²</td><td>6.6×10²</td><td>10⁴</td><td>10⁶</td></tr><tr><td>10³</td><td>10×10³</td><td>10⁶</td><td>10⁹</td></tr><tr><td>3×10³</td><td>3.5×10⁴</td><td>9×10⁶</td><td>2.7×10¹⁰</td></tr><tr><td>10⁴</td><td>1.3×10⁵</td><td>10⁸</td><td>10¹²</td></tr><tr><td>2×10⁵</td><td>3.5×10⁶</td><td>4×10¹⁰</td><td>8×10¹⁵</td></tr><tr><td>10⁶</td><td>2×10⁷</td><td>10¹²</td><td>10¹⁸</td></tr></tbody></table></div><div class="table-wrap"><table><thead><tr><th>N</th><th>2ᴺ</th><th>N × 2ᴺ</th><th>N!</th></tr></thead><tbody><tr><td>10</td><td>1×10³</td><td>1×10⁴</td><td>3.6×10⁶</td></tr><tr><td>15</td><td>3.3×10⁴</td><td>4.9×10⁵</td><td>1.3×10¹²</td></tr><tr><td>20</td><td>1×10⁶</td><td>2.1×10⁷</td><td>2.4×10¹⁸</td></tr><tr><td>25</td><td>3.4×10⁷</td><td>8.4×10⁸</td><td>1.6×10²⁵</td></tr><tr><td>30</td><td>1.1×10⁹</td><td>3.2×10¹⁰</td><td>2.7×10³²</td></tr></tbody></table></div><p class="note">実際のCPU命令数ではなく、計算量の式の値。文字列コピーやmap操作などは単純な加算より重い。</p>
 
-## 配列のメモリを計算する
+## メモリ計算機
 
 <p>型・行数・列数・配列の個数から要素本体の容量を求め、選択したメモリ制限と比較する。</p>
 
