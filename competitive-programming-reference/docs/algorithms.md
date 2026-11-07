@@ -12,7 +12,7 @@
 
 **全体の時間**：O(N+Q)　**メモリ**：O(N)
 
-添字と区間は0始まり。和・加算結果はlong longに収まること。
+すべての加算が終わってから、各要素の値を求める。
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -46,7 +46,7 @@ int main(){
 
 **全体の時間**：O(N log log N)　**メモリ**：O(N)
 
-N ≥ 0。vector<char>の0/1で管理する。
+Nは0以上。
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -84,7 +84,7 @@ int main(){
 
 **全体の時間**：O(N)　**メモリ**：O(N)
 
-法998244353。ACLが必要。
+答えを998244353で割った余りを求める。AtCoder Libraryが必要。
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -113,7 +113,7 @@ int main(){
 
 **全体の時間**：O(HW)　**メモリ**：O(HW)
 
-入力はH W、開始h w、目標h w、盤面。座標0始まり、#は壁。
+上下左右に1マスずつ移動する。#は通れないマス。入力はH W、開始位置h w、目標位置h w、盤面の順。
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -160,7 +160,7 @@ int main(){
 
 **全体の時間**：O(log K)　**メモリ**：O(1)
 
-1 ≤ K ≤ 10¹⁸。一般の問題では判定と初期ok/ngを両方変更する。
+Kは1以上10¹⁸以下。別の問題に使うときは、判定式と最初のok・ngを書き換える。
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -194,7 +194,7 @@ int main(){
 
 **全体の時間**：O(N²)　**メモリ**：O(N)
 
-同じ値を連続して選ばない。高速版のtail全体は実際の部分列とは限らない。
+元の順番のまま選び、次に選ぶ値は前の値より大きくする。
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -230,7 +230,7 @@ int main(){
 
 **全体の時間**：O(N log N)　**メモリ**：O(N)
 
-同じ値を連続して選ばない。高速版のtail全体は実際の部分列とは限らない。
+元の順番のまま選び、次に選ぶ値は前の値より大きくする。tailには、実際に選んだ並びが入るとは限らない。
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -266,7 +266,7 @@ int main(){
 
 **全体の時間**：O(N log N)　**メモリ**：O(N)
 
-値の差・距離は保たない。
+値の大小と一致は保つが、値同士の差は保たない。
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -293,11 +293,11 @@ int main(){
 
 ## しゃくとり法
 
-**目的**：非負配列で、区間和がK以下の空でない連続部分列を数える
+**目的**：区間の合計がK以下になる、空でない連続部分の個数を数える
 
 **全体の時間**：O(N)　**メモリ**：O(N)
 
-Aの全要素 ≥ 0、K ≥ 0。
+配列の値がすべて0以上。
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -338,7 +338,7 @@ int main(){
 
 **全体の時間**：O(N × N!)　**メモリ**：O(N)
 
-同じ値の並びは重複して出力しない。
+同じ値があっても、同じ並びは1回だけ出力する。
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -372,7 +372,7 @@ int main(){
 
 **全体の時間**：O(√N)　**メモリ**：O(log N)
 
-N ≥ 1。N自体を途中で変更する。
+Nは1以上。処理中にNの値を書き換える。
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -436,11 +436,11 @@ int main(){
 
 ## ダイクストラ法（Dijkstra）
 
-**目的**：非負重みの有向グラフで頂点1からの最短距離を求める
+**目的**：一方通行のルートで、頂点1から各頂点までの最小の移動コストを求める
 
 **全体の時間**：O((N+M) log(N+M))　**メモリ**：O(N+M)
 
-重み ≥ 0。有限の最短距離 < INF、距離+重みがlong long内。
+各ルートを通るコストは0以上。一方通行のルートを扱う。
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -502,7 +502,7 @@ int main(){
 
 **全体の時間**：O(N+M)　**メモリ**：O(N+M)
 
-N M、M本の有向辺a b（1始まり）を入力。閉路があれば−1。
+入力のa→bは、aをbより先に処理する指定。順番を決められない場合は−1を出力する。
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -558,7 +558,7 @@ int main(){
 
 **全体の時間**：O(NW)　**メモリ**：O(W)
 
-N W、各品物の重さ・価値を入力。重さは正整数。価値の合計はlong long内。
+品物の重さは1以上の整数。同じ品物は2回選ばない。入力はN W、各品物の重さと価値の順。
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -588,7 +588,7 @@ int main(){
 
 **全体の時間**：O(HW+Q)　**メモリ**：O(HW)
 
-添字と区間は0始まり。和・加算結果はlong longに収まること。
+盤面の値を途中で書き換えない場合に使う。
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -622,7 +622,7 @@ int main(){
 
 **全体の時間**：O(N+M)　**メモリ**：O(N+M)
 
-頂点番号は入力が1始まり、内部は0始まり。到達不可は−1。
+どのルートも1回の移動として数える。行き来できるルートを扱い、到達できない地点は−1を出力する。
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -670,7 +670,7 @@ int main(){
 
 **全体の時間**：O(N × 2ᴺ)　**メモリ**：O(N)
 
-空集合も含む。Nは典型的には20前後。
+何も選ばない場合も含む。Nが20前後までの規模向け。
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -738,7 +738,7 @@ int main(){
 
 **全体の時間**：O(√N + D log D)　**メモリ**：O(D)
 
-Dは約数の個数。N ≥ 1。
+Nは1以上。Dは約数の個数。
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
@@ -771,7 +771,7 @@ int main(){
 
 **全体の時間**：O(N+Q)　**メモリ**：O(N)
 
-添字と区間は0始まり。和・加算結果はlong longに収まること。
+配列の値を途中で書き換えない場合に使う。
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
