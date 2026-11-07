@@ -749,27 +749,27 @@ ALGORITHM_SECTIONS = {
 
 # 各実装を使うときに確認する条件を、入力に即した短い言葉で示す。
 ALGORITHM_NOTES = {
-    "prefix-1": "⚠︎ 配列の値を途中で書き換えないとき限定！",
-    "prefix-2": "⚠︎ 盤面の値を途中で書き換えないとき限定！",
+    "prefix-1": "⚠︎ 配列の値を途中で書き換えないとき限定",
+    "prefix-2": "⚠︎ 盤面の値を途中で書き換えないとき限定",
     "prefix-3": "",
-    "enumeration-1": "⚠︎ 何も選ばない場合も数える！Nは20前後までが目安。",
-    "enumeration-2": "⚠︎ 同じ値を入れ替えただけの並びは、別の並びとして数えない！",
-    "enumeration-3": "⚠︎ 圧縮後の番号の差は、元の値の差にはならない！",
+    "enumeration-1": "⚠︎ 何も選ばない場合も数える。Nは20前後までが目安。",
+    "enumeration-2": "⚠︎ 同じ値を入れ替えただけの並びは、別の並びとして数えない",
+    "enumeration-3": "⚠︎ 圧縮後の番号の差は、元の値の差にはならない",
     "enumeration-4": "",
-    "answer-search-1": "⚠︎ ある値以上なら必ず条件を満たす問題限定！",
-    "answer-search-2": "⚠︎ 配列の値がすべて0以上のとき限定！",
-    "graph-1": "⚠︎ すべてのルートを同じ1回の移動として数えられるとき限定！",
-    "graph-2": "⚠︎ 各ルートを通るコストがすべて0以上のとき限定！",
+    "answer-search-1": "⚠︎ ある値以上なら必ず条件を満たす問題限定",
+    "answer-search-2": "⚠︎ 配列の値がすべて0以上のとき限定",
+    "graph-1": "⚠︎ すべてのルートを同じ1回の移動として数えられるとき限定",
+    "graph-2": "⚠︎ 各ルートを通るコストがすべて0以上のとき限定",
     "graph-3": "",
     "graph-4": "",
-    "dp-1": "⚠︎ 余りは998244353で計算する！AtCoder Libraryが必要。",
-    "dp-2": "⚠︎ 同じ値を続けて選ぶことはできない！",
-    "dp-3": "⚠︎ 同じ値を続けて選ぶことはできない！tailの中身は、実際に選べる並びとは限らない。",
-    "dp-4": "⚠︎ 重さは0以上の整数限定！",
+    "dp-1": "⚠︎ 余りは998244353で計算する。AtCoder Libraryが必要。",
+    "dp-2": "⚠︎ 同じ値を続けて選ぶことはできない",
+    "dp-3": "⚠︎ 同じ値を続けて選ぶことはできない。tailの中身は、実際に選べる並びとは限らない。",
+    "dp-4": "⚠︎ 重さは0以上の整数限定",
     "number-1": "",
     "number-2": "",
     "number-3": "",
-    "number-4": "⚠︎ 処理後はNの値が変わる！元の値も使うなら先にコピー。",
+    "number-4": "⚠︎ 処理後はNの値が変わる。元の値も使うなら先にコピー。",
 }
 
 
@@ -850,10 +850,10 @@ def generate():
                 lines += ["## "+g["title"], ""]
                 if g["note"] and page != "algo": lines += [g["note"], ""]
                 for item in g["items"]:
-                    desc = item["desc"].replace("添字", "**添字**")
+                    desc = item["desc"]
                     if page == "algo":
                         definition = "（"+item["cost_definition"]+"）" if item.get("cost_definition") else ""
-                        lines += ["**目的**："+desc, "", "全体の時間："+item["time"]+"　メモリ："+item["memory"]+definition, ""]
+                        lines += ["**目的** : "+desc, "", "全体の時間："+item["time"]+"　メモリ："+item["memory"]+definition, ""]
                         for note in [g["note"], item["note"]]:
                             if note: lines += [note, ""]
                         lines += ["```cpp", item["full"].rstrip(), "```", ""]
