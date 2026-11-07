@@ -4,6 +4,8 @@
 
 [入口へ](../README.md)
 
+使用言語：**C++23 (GCC 15.2.0)**。ローカルのコンパイル設定は `-std=gnu++23`。
+
 ## 計算量：制約から見る候補
 
 <div class="table-wrap"><table><thead><tr><th>入力規模</th><th>候補になる計算量</th></tr></thead><tbody><tr><td>N ≲ 10</td><td>O(N × N!)</td></tr><tr><td>N ≲ 20</td><td>O(N × 2ᴺ)</td></tr><tr><td>N ≲ 3×10³</td><td>O(N²)</td></tr><tr><td>N ≲ 2×10⁵</td><td>O(N log N)、O(N)</td></tr><tr><td>値の範囲が10⁹〜10¹⁸</td><td>二分探索・数式など。値を1ずつ列挙しない</td></tr></tbody></table></div><p class="note">制限時間・処理内容・定数倍で変わる目安。秒数の保証ではない。</p>

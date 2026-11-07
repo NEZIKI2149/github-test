@@ -15,14 +15,14 @@
 ### コンパイル例（WSL / Linux、examplesフォルダで実行）
 
 ```sh
-g++ -std=c++17 -O2 -Wall -Wextra bfs.cpp -o bfs
+g++ -std=gnu++23 -O2 -Wall -Wextra bfs.cpp -o bfs
 ./bfs
 ```
 
 ACLの例では、別途ACLのヘッダが必要です。たとえば `~/ac-library/atcoder/dsu` がある場合：
 
 ```sh
-g++ -std=c++17 -O2 -Wall -Wextra -I "$HOME/ac-library" acl_dsu.cpp -o acl_dsu
+g++ -std=gnu++23 -O2 -Wall -Wextra -I "$HOME/ac-library" acl_dsu.cpp -o acl_dsu
 ./acl_dsu
 ```
 

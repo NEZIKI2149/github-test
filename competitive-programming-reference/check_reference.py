@@ -11,6 +11,7 @@ data = json.loads((ROOT / "reference-data.json").read_text(encoding="utf-8"))
 page = (ROOT / "index.html").read_text(encoding="utf-8")
 embedded = re.search(r'<script id="reference-data" type="application/json">(.*?)</script>', page, re.S).group(1)
 assert json.loads(embedded) == data
+assert "C++23 (GCC 15.2.0)" in page and "C++17" not in page
 keys = [g["key"] for g in data["groups"]] + [s["key"] for s in data["limits"]]
 assert len(keys) == len(set(keys))
 assert not (set(keys) & {"search", "main", "source", "sidebar", "theme", "clear", "toast", "reference-data"})

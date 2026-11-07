@@ -4,6 +4,8 @@
 
 [入口へ](../README.md)
 
+使用言語：**C++23 (GCC 15.2.0)**。ローカルのコンパイル設定は `-std=gnu++23`。
+
 **容器**：vector・string・set・map・queue・stack・deque・priority_queue・pair・tuple
 
 **操作関数**：sort・reverse・rotate・fill・unique・二分探索・集計・数値計算・入出力
@@ -4299,7 +4301,7 @@ int main(){
 
 ## cin / cout / bitset / next_permutation：入出力・その他
 
-全体コードはC++17。bits/stdc++.hはGCC系環境向け。
+全体コードはC++23 (GCC 15.2.0)。bits/stdc++.hはGCC系環境向け。
 
 ### 小数点以下k桁で出力する
 

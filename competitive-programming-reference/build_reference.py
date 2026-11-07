@@ -265,7 +265,7 @@ for desc, code, cost, setup, note in [
 ]:
     add(g, desc, code, cost, setup, note)
 
-g = group("std", "io", "cin / cout / bitset / next_permutation：入出力・その他", "全体コードはC++17。bits/stdc++.hはGCC系環境向け。")
+g = group("std", "io", "cin / cout / bitset / next_permutation：入出力・その他", "全体コードはC++23 (GCC 15.2.0)。bits/stdc++.hはGCC系環境向け。")
 add(g, "小数点以下k桁で出力する", "cout << fixed << setprecision(k) << x << endl;", "出力文字数に比例", "double x = sqrt(2.0); int k = 10;")
 add(g, "大量入出力を高速化する", "ios::sync_with_stdio(false);\ncin.tie(nullptr);", "設定 O(1)", "", "mainの先頭、最初の入出力より前に置く。大量出力は'\\n'を使う")
 add(g, "次の辞書順の順列に進める", "bool exists = next_permutation(A.begin(), A.end());", "O(N)", "vector<int> A = {0,1,2};", "最後の並びから呼ぶと最初の並びに戻ってfalse。全列挙は昇順からdo-while")
@@ -797,6 +797,7 @@ def generate():
     docs.mkdir(exist_ok=True)
     for page, info in PAGES.items():
         lines = ["# "+info["title"], "", info["subtitle"], "", "[入口へ](../README.md)", ""]
+        lines += ["使用言語：**C++23 (GCC 15.2.0)**。ローカルのコンパイル設定は `-std=gnu++23`。", ""]
         if page == "limits":
             for section in limits:
                 lines += ["## "+section["title"], "", section["content"], ""]

@@ -4,6 +4,8 @@
 
 [入口へ](../README.md)
 
+使用言語：**C++23 (GCC 15.2.0)**。ローカルのコンパイル設定は `-std=gnu++23`。
+
 **ACLのヘッダが必要です。** ローカルでは `atcoder` フォルダの親を `-I` に指定します。
 
 [公式ドキュメント](https://atcoder.github.io/ac-library/production/document_ja/index.html)

@@ -25,7 +25,9 @@ GitHub Pages公開後に上のURLで閲覧できます。ローカルでは [ind
 
 ## コードの使用
 
-全体コードはC++17を基本とします。`bits/stdc++.h` はGCC系環境向けです。**ACLの例にはAtCoder Libraryのヘッダが別途必要です。** [コンパイル方法](examples/README.md) / [ACL公式ドキュメント](https://atcoder.github.io/ac-library/production/document_ja/index.html)
+使用言語は **C++23 (GCC 15.2.0)**、ローカルのコンパイル設定は **`-std=gnu++23`** を前提とします。[AtCoder公式の言語・コンパイル設定](https://img.atcoder.jp/file/language-update/2025-10/language-list.html)
+
+`bits/stdc++.h` はGCC系環境向けです。**ACLの例にはAtCoder Libraryのヘッダが別途必要です。** [コンパイル方法](examples/README.md) / [ACL公式ドキュメント](https://atcoder.github.io/ac-library/production/document_ja/index.html)
 
 この資料のコードは生成AIを用いて事前作成しています。ABC・ARC・AGCでコピーして使用する場合、コンテスト開始前のWeb公開と、提出コードへの参照URLの添付が必要です。HTMLの全体コードには出典コメントを含めています。公開コミットの時刻が参加するコンテストの開始前であることを確認してください。[AtCoder公式ルール](https://info.atcoder.jp/entry/llm-rules-ja)
 
@@ -45,6 +47,6 @@ python build_reference.py
 python3 validate.py
 ```
 
-検証スクリプトは公式ACLを一時フォルダへ取得します。203件の全体コードを、それぞれの本文を別の名前空間に置いてC++17で一括コンパイルし、入出力設定だけの1件を除く202件を実行します。単独cppファイル7本のコンパイルと、355ケースの境界値・ランダム入力の出力照合も行います。すべての入力や手法を網羅する検証ではありません。
+検証スクリプトは公式ACLを一時フォルダへ取得します。203件の全体コードを、それぞれの本文を別の名前空間に置いてC++23 (GCC 15.2.0)で一括コンパイルし、入出力設定だけの1件を除く202件を実行します。単独cppファイル7本のコンパイルと、355ケースの境界値・ランダム入力の出力照合も行います。すべての入力や手法を網羅する検証ではありません。
 
 GitHub Pagesの初回設定は、[Settings → Pages](https://github.com/NEZIKI2149/github-test/settings/pages)で **Deploy from a branch → master → /(root) → Save**。リポジトリ直下の入口から、この資料へ移動する構成です。

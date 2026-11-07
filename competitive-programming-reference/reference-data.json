@@ -1661,7 +1661,7 @@
       "page": "std",
       "key": "io",
       "title": "cin / cout / bitset / next_permutation：入出力・その他",
-      "note": "全体コードはC++17。bits/stdc++.hはGCC系環境向け。",
+      "note": "全体コードはC++23 (GCC 15.2.0)。bits/stdc++.hはGCC系環境向け。",
       "items": [
         {
           "id": "io-1",

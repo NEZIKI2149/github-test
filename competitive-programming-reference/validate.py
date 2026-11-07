@@ -10,6 +10,10 @@ from collections import deque
 
 ROOT = pathlib.Path(__file__).resolve().parent
 RNG = random.Random(20261108)
+COMPILER_VERSION = subprocess.check_output(["g++", "-dumpfullversion"], text=True).strip()
+if COMPILER_VERSION != "15.2.0":
+    raise RuntimeError(f"対象はGCC 15.2.0です。現在のg++は{COMPILER_VERSION}です。")
+print(f"Compiler: GCC {COMPILER_VERSION}; -std=gnu++23", flush=True)
 
 
 def fetch(url):
@@ -37,7 +41,7 @@ with tempfile.TemporaryDirectory(prefix="cpp-reference-") as directory:
     programs = {}
     for source in sorted((ROOT / "examples").glob("*.cpp")):
         binary = work / source.stem
-        subprocess.run(["g++", "-std=c++17", "-O2", "-Wall", "-Wextra",
+        subprocess.run(["g++", "-std=gnu++23", "-O2", "-Wall", "-Wextra",
                         "-I", str(work), str(source), "-o", str(binary)], check=True)
         programs[source.stem] = binary
 
@@ -154,7 +158,7 @@ with tempfile.TemporaryDirectory(prefix="cpp-reference-") as directory:
     bundle.write_text("\n".join(sorted(includes))+"\nusing namespace std;\n"+"\n".join(namespaces)+
                       "\nint main(){\n"+"\n".join(runs)+"\nreturn 0;\n}\n", encoding="utf-8")
     binary = work / "all-examples"
-    result = subprocess.run(["g++", "-std=c++17", "-O1", "-Werror=return-type", "-I", str(work),
+    result = subprocess.run(["g++", "-std=gnu++23", "-O1", "-Werror=return-type", "-I", str(work),
                              str(bundle), "-o", str(binary)], capture_output=True, text=True)
     assert result.returncode == 0, result.stderr
     subprocess.run([str(binary)], check=True, timeout=20)
