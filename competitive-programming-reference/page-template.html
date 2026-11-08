@@ -190,7 +190,7 @@ function render(){
         }else for(const i of items)rows.push({key:i.id,title:i.desc,page:g.page,group:g.key,groupTitle:g.title,html:librarySection(g,i),label:g.page==='acl'?(searching?'AtCoder Library':''):DATA.groups.findIndex(x=>x.key===g.key)<7?'コンテナ':'操作関数'});
     }
     if(searching||page==='limits')for(const s of DATA.limits)if(!searching||termsMatch(s.title+' '+s.content.replace(/<[^>]*>/g,' ')))rows.push({key:s.key,title:s.title,page:'limits',html:limitSection(s),label:'計算量・メモリ',tool:!!s.tool});
-    if(searching||page==='notes')for(const n of DATA.notes||[])if(!searching||termsMatch(n.title+' '+n.category+' '+n.text+' '+n.at))rows.push({key:n.id,title:n.title,page:'notes',html:noteSection(n),label:n.kind==='updates'?'更新履歴':'制作者メモ'});
+    if(searching||page==='notes')for(const n of DATA.notes||[])if((!searching||n.kind!=='updates')&&(!searching||termsMatch(n.title+' '+n.category+' '+n.text+' '+n.at)))rows.push({key:n.id,title:n.title,page:'notes',html:noteSection(n),label:n.kind==='updates'?'更新履歴':'制作者メモ'});
     const chosen=rows.find(r=>'#'+r.page+'/'+r.key===selectedTocHref);
     selectedTocHref=chosen?'#'+chosen.page+'/'+chosen.key:'';
     if(openGroup===null)openGroup=chosen?.group||'';
