@@ -140,14 +140,15 @@ function memoryEstimate(state){
     }
     return {payload,low,high,estimated:true,assumption};
 }
-function memoryBytes(n){const mb=Number(n)/1e6;return mb.toLocaleString('ja-JP',mb<10?{minimumSignificantDigits:2,maximumSignificantDigits:2}:{maximumFractionDigits:0})+' MB';}
+function memoryNumber(value){return value.toLocaleString('ja-JP',value<10?{minimumSignificantDigits:2,maximumSignificantDigits:2}:{minimumFractionDigits:1,maximumFractionDigits:1});}
+function memoryBytes(n){return memoryNumber(Number(n)/1e6)+' MB';}
 function updateMemory(){
     const result=$('#memory-result');if(!result)return;
     const estimate=memoryEstimate(calcState),help=$('#memory-assumptions');
     if(estimate.unselected){result.textContent='';if(help)help.textContent='';return;}
     if(estimate.error){result.textContent=estimate.error;if(help)help.textContent='';return;}
     const {payload,low,high,estimated,assumption}=estimate,limit=BigInt(calcState.limit)*1000000n;
-    const percent=n=>(Number(n)/Number(limit)*100).toLocaleString('ja-JP',{maximumSignificantDigits:4});
+    const percent=n=>memoryNumber(Number(n)/Number(limit)*100);
     result.innerHTML='使用メモリ量 : '+memoryBytes(high)+' / '+calcState.limit+' MB<br>制限に対する割合 : 約'+percent(high)+'％';
     if(help)help.innerHTML=(high>limit?'<p>推定使用メモリ量がメモリ制限を超えています。</p>':'')+'<p>'+esc(assumption)+'</p>'+(estimated?'<p>64 bit Linux・GCC系の一般的な実装での概算。使用メモリ量と割合には、大きい方の推定値を使っています。実測値や絶対的な上限ではありません。確保処理の管理分や配置の隙間も考慮しているが、ほかの変数・再確保中の一時領域などは別に必要。</p><details><summary>見積もりの前提</summary><p>参照やノードの管理情報、mapのキーと値の間の隙間、メモリ確保の最小単位や管理分を考慮したモデルです。確保処理の違いを見込み、大きい方の推定値を採用しています。</p><p><a href="https://gcc.gnu.org/onlinedocs/gcc-15.2.0/libstdc%2B%2B/api/a00413_source.html" target="_blank" rel="noopener">GCCの木構造の実装</a> · <a href="https://gcc.gnu.org/onlinedocs/gcc-15.2.0/libstdc%2B%2B/api/a18194_source.html" target="_blank" rel="noopener">ハッシュ表の実装</a> · <a href="https://github.com/bminor/glibc/blob/master/malloc/malloc.c" target="_blank" rel="noopener">メモリ確保処理の実装</a></p></details>':'');
 }
