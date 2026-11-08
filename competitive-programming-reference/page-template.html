@@ -103,7 +103,7 @@ function section(g, items){
     return '<section class="section '+(algo?'algo':'')+'" id="'+g.key+'"><h2>'+esc(g.title)+'<a href="#'+g.page+'/'+g.key+'" aria-label="この項目のリンク">#</a></h2>'+(g.note&&!algo?'<p class="section-note">'+esc(g.note)+'</p>':'')+(algo?'':'<div class="operations"><div class="column-head"><span>機能</span><span>コード</span><span>計算量</span><span>展開</span></div>')+items.map(i=>operation(i,algo,g.note)).join('')+(algo?'':'</div>')+'</section>';
 }
 function noteSection(n){return '<section class="section" id="'+esc(n.id)+'"><h2>'+esc(n.title)+'</h2><p class="section-note">'+esc(n.at)+' JST　 /　 '+esc(n.category)+'</p><p>'+esc(n.text)+'</p></section>';}
-function termsMatch(text){const t=text.toLocaleLowerCase();return query.trim().toLocaleLowerCase().split(/\s+/).every(q=>t.includes(q));}
+function termsMatch(text){const t=text.toLocaleLowerCase();return query.trim().toLocaleLowerCase().split(/\s+/).every(q=>q==='素数'?t.replaceAll('要素数','').includes(q):t.includes(q));}
 const calcState={kind:'',dimension:'1',type:'int',keyType:'int',valueType:'int',size:'100000',rows:'2000',cols:'3000',count:'1',limit:'1024',n:'200000'};
 const memoryTypes={char:{label:'char',bytes:1n,align:1n},int:{label:'int',bytes:4n,align:4n},longlong:{label:'long long',bytes:8n,align:8n},double:{label:'double',bytes:8n,align:8n}};
 const memoryKinds=[['','選択してください'],['vector','配列（vector）'],['set','set'],['multiset','multiset'],['map','map'],['unordered_set','unordered_set'],['unordered_map','unordered_map']];
@@ -148,7 +148,7 @@ function memoryEstimate(state){
 function memoryNumber(value){return value.toLocaleString('ja-JP',value<10?{useGrouping:false,minimumSignificantDigits:2,maximumSignificantDigits:2}:{useGrouping:false,minimumFractionDigits:1,maximumFractionDigits:1});}
 function memoryBytes(n){return memoryNumber(Number(n)/1e6)+' MB';}
 function updateMemory(){
-    document.querySelectorAll('[data-scale]').forEach(el=>{const raw=String(calcState[el.dataset.scale]);if(!/^\d+$/.test(raw)||Number(raw)<=0){el.textContent='';return;}const parts=Number(raw).toExponential(1).split('e');el.textContent='≒'+parts[0]+'×10'+superscript(Number(parts[1]));});
+    document.querySelectorAll('[data-scale]').forEach(el=>{const raw=String(calcState[el.dataset.scale]);if(!/^\d+$/.test(raw)||Number(raw)<=0){el.textContent='';return;}const parts=Number(raw).toExponential(1).split('e');const exponent=Number(parts[1]);const digits=Math.round(Number(parts[0])*10);const exact=exponent>=1?BigInt(raw)===BigInt(digits)*10n**BigInt(exponent-1):BigInt(raw)*10n**BigInt(1-exponent)===BigInt(digits);el.textContent=(exact?'＝':'≒')+parts[0]+'×10'+superscript(exponent);});
     const result=$('#memory-result');if(!result)return;
     const estimate=memoryEstimate(calcState),help=$('#memory-assumptions');
     if(estimate.unselected){result.textContent='';if(help)help.textContent='';return;}

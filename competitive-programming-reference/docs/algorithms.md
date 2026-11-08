@@ -743,41 +743,6 @@ int main(){
 
 計算量：O(N+M)　メモリ：O(N+M)
 
-int N, M;
-cin >> N >> M;
-vector<vector<int>> G(N);
-for(int i = 0;i < M;i++){
-    int a, b;
-    cin >> a >> b;
-    a--; b--;
-    G.at(a).push_back(b);
-    G.at(b).push_back(a);
-}
-vector<int> color(N, -1);
-bool ok = true;
-for(int s = 0;s < N;s++){
-    if(color.at(s) != -1){continue;}
-    queue<int> Q;
-    color.at(s) = 0;
-    Q.push(s);
-    while(!Q.empty()){
-        int v = Q.front();
-        Q.pop();
-        for(int i = 0;i < (int)G.at(v).size();i++){
-            int to = G.at(v).at(i);
-            if(color.at(to) == -1){
-                color.at(to) = 1-color.at(v);
-                Q.push(to);
-            }
-            else if(color.at(to) == color.at(v)){
-                ok = false;
-            }
-        }
-    }
-}
-cout << (ok ? "Yes" : "No") << endl;
-
-
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
 #include <bits/stdc++.h>
@@ -914,36 +879,6 @@ int main(){
 
 計算量：O(N+M)　メモリ：O(N+M)
 
-int N, M;
-cin >> N >> M;
-vector<vector<int>> G(N);
-for(int i = 0;i < M;i++){
-    int a, b;
-    cin >> a >> b;
-    a--; b--;
-    G.at(a).push_back(b);
-    G.at(b).push_back(a);
-}
-int start;
-cin >> start;
-start--;
-vector<char> seen(N, false);
-vector<int> st = {start};
-while(!st.empty()){
-    int v = st.back();
-    st.pop_back();
-    if(seen.at(v)){continue;}
-    seen.at(v) = true;
-    cout << v+1 << endl;
-    for(int i = (int)G.at(v).size()-1;i >= 0;i--){
-        int to = G.at(v).at(i);
-        if(!seen.at(to)){
-            st.push_back(to);
-        }
-    }
-}
-
-
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
 #include <bits/stdc++.h>
@@ -1050,22 +985,6 @@ int main(){
 
 計算量：O(N)　メモリ：O(N)
 
-string S;
-cin >> S;
-vector<pair<char,int>> runs;
-for(int i = 0;i < (int)S.size();i++){
-    if(runs.empty() || runs.back().first != S.at(i)){
-        runs.push_back({S.at(i), 1});
-    }
-    else{
-        runs.back().second++;
-    }
-}
-for(int i = 0;i < (int)runs.size();i++){
-    cout << runs.at(i).first << " " << runs.at(i).second << endl;
-}
-
-
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
 #include <bits/stdc++.h>
@@ -1127,41 +1046,6 @@ int main(){
 
 計算量：O(N+M)　メモリ：O(N+M)
 
-int N, M;
-cin >> N >> M;
-vector<vector<int>> G(N);
-for(int i = 0;i < M;i++){
-    int a, b;
-    cin >> a >> b;
-    a--; b--;
-    G.at(a).push_back(b);
-    G.at(b).push_back(a);
-}
-vector<int> component(N, -1);
-int count = 0;
-for(int s = 0;s < N;s++){
-    if(component.at(s) != -1){continue;}
-    vector<int> st = {s};
-    component.at(s) = count;
-    while(!st.empty()){
-        int v = st.back();
-        st.pop_back();
-        for(int i = 0;i < (int)G.at(v).size();i++){
-            int to = G.at(v).at(i);
-            if(component.at(to) == -1){
-                component.at(to) = count;
-                st.push_back(to);
-            }
-        }
-    }
-    count++;
-}
-cout << count << endl;
-for(int v = 0;v < N;v++){
-    cout << component.at(v)+1 << (v+1 == N ? '\n' : ' ');
-}
-
-
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
 #include <bits/stdc++.h>
@@ -1212,33 +1096,7 @@ int main(){
 
 計算量：O(N³+M)　メモリ：O(N²)
 
-int N, M;
-cin >> N >> M;
-const long long INF = 4000000000000000000LL;
-vector<vector<long long>> dist(N, vector<long long>(N, INF));
-for(int v = 0;v < N;v++){dist.at(v).at(v) = 0;}
-for(int i = 0;i < M;i++){
-    int a, b;
-    long long cost;
-    cin >> a >> b >> cost;
-    a--; b--;
-    dist.at(a).at(b) = min(dist.at(a).at(b), cost);
-}
-for(int k = 0;k < N;k++){
-    for(int i = 0;i < N;i++){
-        for(int j = 0;j < N;j++){
-            if(dist.at(i).at(k) == INF || dist.at(k).at(j) == INF){continue;}
-            dist.at(i).at(j) = min(dist.at(i).at(j), dist.at(i).at(k)+dist.at(k).at(j));
-        }
-    }
-}
-for(int i = 0;i < N;i++){
-    for(int j = 0;j < N;j++){
-        cout << (dist.at(i).at(j) == INF ? -1 : dist.at(i).at(j));
-        cout << (j+1 == N ? '\n' : ' ');
-    }
-}
-
+⚠︎ この実装は、各ルートを通るコストが0以上のとき限定
 
 ```cpp
 // Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
