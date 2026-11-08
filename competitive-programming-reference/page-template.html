@@ -53,7 +53,8 @@ aside{top:155px;height:calc(100vh - 155px)}
 .dimension-controls{display:flex;gap:8px;flex-wrap:wrap}.dimension-controls button[aria-pressed="true"]{background:var(--tint);border-color:var(--accent);color:var(--accent)}
 .layout.home{display:block}.layout.home aside{display:none}
 @media(max-width:750px){.mobile-index{margin-top:8px}.mobile-index>div{padding-top:8px}}
-.calculator-section{min-height:calc(100dvh - var(--reference-header-height,155px) - 12px);padding-bottom:48px}
+main>.section{min-height:calc(100dvh - var(--reference-header-height,155px) - 12px);padding-bottom:48px}
+main>.section>h2{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.back-to-index{font:400 12px/1.5 system-ui;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:5px;padding:6px 10px;margin-left:auto;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -201,6 +202,7 @@ function render(){
     if(home){$('#sidebar').innerHTML='';$('#main').innerHTML='<p>カテゴリを選択するか、検索バーを利用してください。</p>';return;}
     $('#main').innerHTML=(mobileIndexOpen?'<div class="mobile-index" role="navigation" aria-label="目次"><div>'+sideHTML+'</div></div>':'')+(chosen?.html||'<div class="empty">'+(rows.length?'目次から項目を選んでください。':'該当する項目がありません。検索語を短くしてください。')+'</div>')+sourceNote();
     document.documentElement.style.setProperty('--reference-header-height',$('header').getBoundingClientRect().height+'px');
+    const heading=$('main>.section>h2');if(heading){const back=document.createElement('button');back.type='button';back.className='back-to-index';back.textContent='目次に戻る';heading.append(back);}
     syncTocHighlight();updateTools();
 }
 function jumpFromHash(preserveIndex=false){
@@ -213,10 +215,19 @@ function jumpFromHash(preserveIndex=false){
     selectedTocHref=target?'#'+page+'/'+target:'';
     render();
     const content=$('main>.section');
-    const top=(isMobile()||content?.classList.contains('calculator-section'))&&target&&content?window.scrollY+content.getBoundingClientRect().top-$('header').getBoundingClientRect().height-12:0;
+    const top=target&&content?window.scrollY+content.getBoundingClientRect().top-$('header').getBoundingClientRect().height-12:0;
     window.scrollTo({top:Math.max(0,top),left:0,behavior:'instant'});
 }
 document.addEventListener('click',e=>{
+    if(e.target.closest('.back-to-index')){
+        const scope=isMobile()?$('.mobile-index'):$('#sidebar');
+        const link=scope&&Array.from(scope.querySelectorAll('.side-link')).find(a=>a.getAttribute('href')===selectedTocHref);
+        if(link){const group=link.closest('.toc-group');if(group){openGroup=group.dataset.group;document.querySelectorAll('.toc-group').forEach(g=>g.open=g.dataset.group===openGroup);}
+            if(isMobile()){window.scrollTo({top:Math.max(0,window.scrollY+link.getBoundingClientRect().top-$('header').getBoundingClientRect().height-12),behavior:'instant'});}
+            else{scope.scrollTo({top:scope.scrollTop+link.getBoundingClientRect().top-scope.getBoundingClientRect().top-12,behavior:'instant'});}
+            link.focus({preventScroll:true});
+        }return;
+    }
     const summary=e.target.closest('.toc-group>summary');if(summary){e.preventDefault();const top=summary.getBoundingClientRect().top;const key=summary.parentElement.dataset.group;openGroup=openGroup===key?'':key;document.querySelectorAll('.toc-group').forEach(g=>{g.open=g.dataset.group===openGroup;});if(isMobile())requestAnimationFrame(()=>{window.scrollBy({top:summary.getBoundingClientRect().top-top,behavior:'instant'});});return;}
     const link=e.target.closest('.side-link');
     if(!link||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey){return;}
