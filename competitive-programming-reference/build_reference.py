@@ -739,10 +739,10 @@ ALGORITHM_SECTIONS = {
     "graph-2": ("dijkstra", "ダイクストラ法（Dijkstra）", "だいくすとらほう"),
     "graph-3": ("grid-bfs", "グリッドBFS", "ぐりっどびーえふえす"),
     "graph-4": ("topological-sort", "トポロジカルソート", "とぽろじかるそーと"),
-    "dp-1": ("stair-dp", "階段DP", "かいだんでぃーぴー"),
+    "dp-1": ("stair-dp", "動的計画法（階段）", "どうてきけいかくほうかいだん"),
     "dp-2": ("lis-quadratic", "最長増加部分列（二重ループ）", "さいちょうぞうかぶぶんれつにじゅうるーぷ"),
     "dp-3": ("lis-binary-search", "最長増加部分列（二分探索）", "さいちょうぞうかぶぶんれつにぶんたんさく"),
-    "dp-4": ("knapsack", "ナップサックDP（0/1）", "なっぷさっくでぃーぴー"),
+    "dp-4": ("knapsack", "動的計画法（ナップザック）", "どうてきけいかくほうなっぷざっく"),
     "number-1": ("divisors", "約数列挙", "やくすうれっきょ"),
     "number-2": ("primality-trial", "素数判定（試し割り）", "そすうはんていためしわり"),
     "number-3": ("sieve", "エラトステネスの篩", "えらとすてねすのふるい"),
@@ -815,7 +815,7 @@ def display_groups():
 PAGES = {
     "std": dict(title="標準ライブラリ", subtitle="容器と操作関数を、名前から引く。", file="standard-library.md"),
     "acl": dict(title="AtCoder Library", subtitle="グループ・区間集計・余りの計算。", file="atcoder-library.md"),
-    "algo": dict(title="定番アルゴリズム・実装", subtitle="名前と機能を1項目ずつ、読みの50音順で掲載。", file="algorithms.md"),
+    "algo": dict(title="アルゴリズム", subtitle="名前と機能を1項目ずつ、読みの50音順で掲載。", file="algorithms.md"),
     "limits": dict(title="計算量・メモリ", subtitle="制約と必要な容量を確認する。", file="complexity-memory.md"),
     "notes": dict(title="更新履歴・制作者メモ", subtitle="公開した更新と制作者メモ。", file="site-notes.md"),
 }

@@ -25,7 +25,7 @@ GitHub Pages公開後に上のURLで閲覧できます。ローカルでは [ind
 |---|---|
 | **[標準ライブラリ](docs/standard-library.md)** | vector・string・set・mapなどの容器と、sort・reverse・二分探索などの操作関数。部分操作を含む主要操作 |
 | **[AtCoder Library](docs/atcoder-library.md)** | 現在はmodint・math/stringなど。DSU・Fenwick Tree・segtreeは制作者が使い方を理解するまで非表示 |
-| **[定番アルゴリズム・実装](docs/algorithms.md)** | 累積和・全探索・座標圧縮・BFS・Dijkstra・DPなど。機能と全体コードが中心 |
+| **[アルゴリズム](docs/algorithms.md)** | 累積和・全探索・座標圧縮・BFS・Dijkstra・DPなど。機能と全体コードが中心 |
 | **[計算量・メモリの目安](docs/complexity-memory.md)** | Nと計算量の対応、型別・二次元配列の容量、メモリ上限との比較 |
 
 ## コードの使用

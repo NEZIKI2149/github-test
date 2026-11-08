@@ -11,7 +11,7 @@
       "file": "atcoder-library.md"
     },
     "algo": {
-      "title": "定番アルゴリズム・実装",
+      "title": "アルゴリズム",
       "subtitle": "名前と機能を1項目ずつ、読みの50音順で掲載。",
       "file": "algorithms.md"
     },
@@ -2524,27 +2524,6 @@
     },
     {
       "page": "algo",
-      "key": "stair-dp",
-      "title": "階段DP",
-      "reading": "かいだんでぃーぴー",
-      "note": "",
-      "items": [
-        {
-          "id": "dp-1",
-          "desc": "1段・2段ずつN段上る方法の数を余りで求める",
-          "code": "dp.at(i) = dp.at(i+1)+dp.at(i+2);",
-          "cost": "時間 O(N) / メモリ O(N)",
-          "note": "⚠︎ 余りは998244353で計算する。AtCoder Libraryが必要。",
-          "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\n#include <atcoder/modint>\nusing namespace std;\nusing mint = atcoder::modint998244353;\n\n// 入力: N (0 <= N <= 10^6 を想定)\n// 出力: 1段/2段ずつN段上る方法の数を998244353で割った余り\nint main(){\n    int N;\n    cin >> N;\n    vector<mint> dp(N+2, 0);\n    dp.at(N) = 1;\n    for(int i = N-1;i >= 0;i--){\n        dp.at(i) = dp.at(i+1) + dp.at(i+2);\n    }\n    cout << dp.at(0).val() << endl;\n}\n",
-          "input": "5\n",
-          "expected": "8\n",
-          "time": "O(N)",
-          "memory": "O(N)"
-        }
-      ]
-    },
-    {
-      "page": "algo",
       "key": "grid-bfs",
       "title": "グリッドBFS",
       "reading": "ぐりっどびーえふえす",
@@ -2755,6 +2734,48 @@
     },
     {
       "page": "algo",
+      "key": "stair-dp",
+      "title": "動的計画法（階段）",
+      "reading": "どうてきけいかくほうかいだん",
+      "note": "",
+      "items": [
+        {
+          "id": "dp-1",
+          "desc": "1段・2段ずつN段上る方法の数を余りで求める",
+          "code": "dp.at(i) = dp.at(i+1)+dp.at(i+2);",
+          "cost": "時間 O(N) / メモリ O(N)",
+          "note": "⚠︎ 余りは998244353で計算する。AtCoder Libraryが必要。",
+          "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\n#include <atcoder/modint>\nusing namespace std;\nusing mint = atcoder::modint998244353;\n\n// 入力: N (0 <= N <= 10^6 を想定)\n// 出力: 1段/2段ずつN段上る方法の数を998244353で割った余り\nint main(){\n    int N;\n    cin >> N;\n    vector<mint> dp(N+2, 0);\n    dp.at(N) = 1;\n    for(int i = N-1;i >= 0;i--){\n        dp.at(i) = dp.at(i+1) + dp.at(i+2);\n    }\n    cout << dp.at(0).val() << endl;\n}\n",
+          "input": "5\n",
+          "expected": "8\n",
+          "time": "O(N)",
+          "memory": "O(N)"
+        }
+      ]
+    },
+    {
+      "page": "algo",
+      "key": "knapsack",
+      "title": "動的計画法（ナップザック）",
+      "reading": "どうてきけいかくほうなっぷざっく",
+      "note": "",
+      "items": [
+        {
+          "id": "dp-4",
+          "desc": "各品物を1個まで選び、重さW以下で価値の和を最大化する",
+          "code": "dp.at(w) = max(dp.at(w), dp.at(w-weight)+value);",
+          "cost": "時間 O(NW) / メモリ O(W)",
+          "note": "⚠︎ 重さは0以上の整数限定",
+          "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    int N, W;\n    cin >> N >> W;\n    vector<long long> dp(W+1, 0);\n    for(int i = 0;i < N;i++){\n        int weight;\n        long long value;\n        cin >> weight >> value;\n        for(int w = W;w >= weight;w--){\n            dp.at(w) = max(dp.at(w), dp.at(w-weight)+value);\n        }\n    }\n    cout << dp.at(W) << endl;\n    return 0;\n}\n",
+          "input": "3 5\n2 3\n3 4\n4 5\n",
+          "expected": "7\n",
+          "time": "O(NW)",
+          "memory": "O(W)"
+        }
+      ]
+    },
+    {
+      "page": "algo",
       "key": "topological-sort",
       "title": "トポロジカルソート",
       "reading": "とぽろじかるそーと",
@@ -2771,27 +2792,6 @@
           "expected": "1\n2\n3\n",
           "time": "O(N+M)",
           "memory": "O(N+M)"
-        }
-      ]
-    },
-    {
-      "page": "algo",
-      "key": "knapsack",
-      "title": "ナップサックDP（0/1）",
-      "reading": "なっぷさっくでぃーぴー",
-      "note": "",
-      "items": [
-        {
-          "id": "dp-4",
-          "desc": "各品物を1個まで選び、重さW以下で価値の和を最大化する",
-          "code": "dp.at(w) = max(dp.at(w), dp.at(w-weight)+value);",
-          "cost": "時間 O(NW) / メモリ O(W)",
-          "note": "⚠︎ 重さは0以上の整数限定",
-          "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    int N, W;\n    cin >> N >> W;\n    vector<long long> dp(W+1, 0);\n    for(int i = 0;i < N;i++){\n        int weight;\n        long long value;\n        cin >> weight >> value;\n        for(int w = W;w >= weight;w--){\n            dp.at(w) = max(dp.at(w), dp.at(w-weight)+value);\n        }\n    }\n    cout << dp.at(W) << endl;\n    return 0;\n}\n",
-          "input": "3 5\n2 3\n3 4\n4 5\n",
-          "expected": "7\n",
-          "time": "O(NW)",
-          "memory": "O(W)"
         }
       ]
     },
@@ -2968,6 +2968,15 @@
     }
   ],
   "notes": [
+    {
+      "id": "20261108-algorithm-labels",
+      "at": "2026-11-08 10:57",
+      "title": "アルゴリズムのカテゴリ名とDPの目次名を整理",
+      "category": "アルゴリズム",
+      "text": "カテゴリ名を「アルゴリズム」に変更しました。階段DPとナップザックDPは「動的計画法（階段）」「動的計画法（ナップザック）」とし、DPの種類が目次で分かる名前にしました。",
+      "published": true,
+      "kind": "updates"
+    },
     {
       "id": "20261108-time-count-labels",
       "at": "2026-11-08 10:31",

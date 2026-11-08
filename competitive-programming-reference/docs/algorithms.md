@@ -1,4 +1,4 @@
-# 定番アルゴリズム・実装
+# アルゴリズム
 
 名前と機能を1項目ずつ、読みの50音順で掲載。
 
@@ -71,35 +71,6 @@ int main(){
         }
     }
     return 0;
-}
-```
-
-## 階段DP
-
-**目的** : 1段・2段ずつN段上る方法の数を余りで求める
-
-計算量：O(N)　メモリ：O(N)
-
-⚠︎ 余りは998244353で計算する。AtCoder Libraryが必要。
-
-```cpp
-// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
-#include <bits/stdc++.h>
-#include <atcoder/modint>
-using namespace std;
-using mint = atcoder::modint998244353;
-
-// 入力: N (0 <= N <= 10^6 を想定)
-// 出力: 1段/2段ずつN段上る方法の数を998244353で割った余り
-int main(){
-    int N;
-    cin >> N;
-    vector<mint> dp(N+2, 0);
-    dp.at(N) = 1;
-    for(int i = N-1;i >= 0;i--){
-        dp.at(i) = dp.at(i+1) + dp.at(i+2);
-    }
-    cout << dp.at(0).val() << endl;
 }
 ```
 
@@ -490,6 +461,65 @@ int main(){
 }
 ```
 
+## 動的計画法（階段）
+
+**目的** : 1段・2段ずつN段上る方法の数を余りで求める
+
+計算量：O(N)　メモリ：O(N)
+
+⚠︎ 余りは998244353で計算する。AtCoder Libraryが必要。
+
+```cpp
+// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
+#include <bits/stdc++.h>
+#include <atcoder/modint>
+using namespace std;
+using mint = atcoder::modint998244353;
+
+// 入力: N (0 <= N <= 10^6 を想定)
+// 出力: 1段/2段ずつN段上る方法の数を998244353で割った余り
+int main(){
+    int N;
+    cin >> N;
+    vector<mint> dp(N+2, 0);
+    dp.at(N) = 1;
+    for(int i = N-1;i >= 0;i--){
+        dp.at(i) = dp.at(i+1) + dp.at(i+2);
+    }
+    cout << dp.at(0).val() << endl;
+}
+```
+
+## 動的計画法（ナップザック）
+
+**目的** : 各品物を1個まで選び、重さW以下で価値の和を最大化する
+
+計算量：O(NW)　メモリ：O(W)
+
+⚠︎ 重さは0以上の整数限定
+
+```cpp
+// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
+#include <bits/stdc++.h>
+using namespace std;
+
+int main(){
+    int N, W;
+    cin >> N >> W;
+    vector<long long> dp(W+1, 0);
+    for(int i = 0;i < N;i++){
+        int weight;
+        long long value;
+        cin >> weight >> value;
+        for(int w = W;w >= weight;w--){
+            dp.at(w) = max(dp.at(w), dp.at(w-weight)+value);
+        }
+    }
+    cout << dp.at(W) << endl;
+    return 0;
+}
+```
+
 ## トポロジカルソート
 
 **目的** : 有向辺の前後関係を守る順番を求める
@@ -540,36 +570,6 @@ int main(){
             cout << order.at(i)+1 << endl;
         }
     }
-    return 0;
-}
-```
-
-## ナップサックDP（0/1）
-
-**目的** : 各品物を1個まで選び、重さW以下で価値の和を最大化する
-
-計算量：O(NW)　メモリ：O(W)
-
-⚠︎ 重さは0以上の整数限定
-
-```cpp
-// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
-#include <bits/stdc++.h>
-using namespace std;
-
-int main(){
-    int N, W;
-    cin >> N >> W;
-    vector<long long> dp(W+1, 0);
-    for(int i = 0;i < N;i++){
-        int weight;
-        long long value;
-        cin >> weight >> value;
-        for(int w = W;w >= weight;w--){
-            dp.at(w) = max(dp.at(w), dp.at(w-weight)+value);
-        }
-    }
-    cout << dp.at(W) << endl;
     return 0;
 }
 ```
