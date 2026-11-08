@@ -737,6 +737,91 @@ int main(){
 }
 ```
 
+## 二部グラフ判定
+
+**目的** : つながっている頂点同士を違う色にして、2色で塗り分けられるか調べる
+
+計算量：O(N+M)　メモリ：O(N+M)
+
+int N, M;
+cin >> N >> M;
+vector<vector<int>> G(N);
+for(int i = 0;i < M;i++){
+    int a, b;
+    cin >> a >> b;
+    a--; b--;
+    G.at(a).push_back(b);
+    G.at(b).push_back(a);
+}
+vector<int> color(N, -1);
+bool ok = true;
+for(int s = 0;s < N;s++){
+    if(color.at(s) != -1){continue;}
+    queue<int> Q;
+    color.at(s) = 0;
+    Q.push(s);
+    while(!Q.empty()){
+        int v = Q.front();
+        Q.pop();
+        for(int i = 0;i < (int)G.at(v).size();i++){
+            int to = G.at(v).at(i);
+            if(color.at(to) == -1){
+                color.at(to) = 1-color.at(v);
+                Q.push(to);
+            }
+            else if(color.at(to) == color.at(v)){
+                ok = false;
+            }
+        }
+    }
+}
+cout << (ok ? "Yes" : "No") << endl;
+
+
+```cpp
+// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
+#include <bits/stdc++.h>
+using namespace std;
+
+int main(){
+    // N M、M本の無向辺（頂点1始まり）。塗り分け可能ならYes。
+    int N, M;
+    cin >> N >> M;
+    vector<vector<int>> G(N);
+    for(int i = 0;i < M;i++){
+        int a, b;
+        cin >> a >> b;
+        a--; b--;
+        G.at(a).push_back(b);
+        G.at(b).push_back(a);
+    }
+    vector<int> color(N, -1);
+    bool ok = true;
+    for(int s = 0;s < N;s++){
+        if(color.at(s) != -1){continue;}
+        queue<int> Q;
+        color.at(s) = 0;
+        Q.push(s);
+        while(!Q.empty()){
+            int v = Q.front();
+            Q.pop();
+            for(int i = 0;i < (int)G.at(v).size();i++){
+                int to = G.at(v).at(i);
+                if(color.at(to) == -1){
+                    color.at(to) = 1-color.at(v);
+                    Q.push(to);
+                }
+                else if(color.at(to) == color.at(v)){
+                    ok = false;
+                }
+            }
+        }
+    }
+    cout << (ok ? "Yes" : "No") << endl;
+    return 0;
+}
+```
+
 ## 幅優先探索（BFS）
 
 **目的** : 無向・重みなしグラフで頂点1からの最短距離を求める
@@ -823,6 +908,81 @@ int main(){
 }
 ```
 
+## 深さ優先探索（DFS）
+
+**目的** : 開始地点から、行ける頂点を順番に調べる
+
+計算量：O(N+M)　メモリ：O(N+M)
+
+int N, M;
+cin >> N >> M;
+vector<vector<int>> G(N);
+for(int i = 0;i < M;i++){
+    int a, b;
+    cin >> a >> b;
+    a--; b--;
+    G.at(a).push_back(b);
+    G.at(b).push_back(a);
+}
+int start;
+cin >> start;
+start--;
+vector<char> seen(N, false);
+vector<int> st = {start};
+seen.at(start) = true;
+while(!st.empty()){
+    int v = st.back();
+    st.pop_back();
+    cout << v+1 << endl;
+    for(int i = (int)G.at(v).size()-1;i >= 0;i--){
+        int to = G.at(v).at(i);
+        if(!seen.at(to)){
+            seen.at(to) = true;
+            st.push_back(to);
+        }
+    }
+}
+
+
+```cpp
+// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
+#include <bits/stdc++.h>
+using namespace std;
+
+int main(){
+    // N M、M本の無向辺（頂点1始まり）、開始頂点。訪問順を出力。
+    int N, M;
+    cin >> N >> M;
+    vector<vector<int>> G(N);
+    for(int i = 0;i < M;i++){
+        int a, b;
+        cin >> a >> b;
+        a--; b--;
+        G.at(a).push_back(b);
+        G.at(b).push_back(a);
+    }
+    int start;
+    cin >> start;
+    start--;
+    vector<char> seen(N, false);
+    vector<int> st = {start};
+    seen.at(start) = true;
+    while(!st.empty()){
+        int v = st.back();
+        st.pop_back();
+        cout << v+1 << endl;
+        for(int i = (int)G.at(v).size()-1;i >= 0;i--){
+            int to = G.at(v).at(i);
+            if(!seen.at(to)){
+                seen.at(to) = true;
+                st.push_back(to);
+            }
+        }
+    }
+    return 0;
+}
+```
+
 ## ペア数の数え上げ（同じ値）
 
 **目的** : 同じ値を持つ添字のペア数を求める
@@ -884,6 +1044,53 @@ int main(){
 }
 ```
 
+## ランレングス圧縮
+
+**目的** : 同じ文字が連続する部分を、文字と個数にまとめる
+
+計算量：O(N)　メモリ：O(N)
+
+string S;
+cin >> S;
+vector<pair<char,int>> runs;
+for(int i = 0;i < (int)S.size();i++){
+    if(runs.empty() || runs.back().first != S.at(i)){
+        runs.push_back({S.at(i), 1});
+    }
+    else{
+        runs.back().second++;
+    }
+}
+for(int i = 0;i < (int)runs.size();i++){
+    cout << runs.at(i).first << " " << runs.at(i).second << endl;
+}
+
+
+```cpp
+// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
+#include <bits/stdc++.h>
+using namespace std;
+
+int main(){
+    // 空白を含まない文字列S。各連続部分の文字と個数を出力。
+    string S;
+    cin >> S;
+    vector<pair<char,int>> runs;
+    for(int i = 0;i < (int)S.size();i++){
+        if(runs.empty() || runs.back().first != S.at(i)){
+            runs.push_back({S.at(i), 1});
+        }
+        else{
+            runs.back().second++;
+        }
+    }
+    for(int i = 0;i < (int)runs.size();i++){
+        cout << runs.at(i).first << " " << runs.at(i).second << endl;
+    }
+    return 0;
+}
+```
+
 ## 累積和
 
 **目的** : 更新なしの配列で、区間の和を繰り返し求める
@@ -909,6 +1116,162 @@ int main(){
         int l, r;
         cin >> l >> r; // 添字l以上r未満
         cout << S.at(r)-S.at(l) << endl;
+    }
+    return 0;
+}
+```
+
+## 連結成分分解（無向グラフ）
+
+**目的** : 道でつながっている頂点ごとにグループ分けする
+
+計算量：O(N+M)　メモリ：O(N+M)
+
+int N, M;
+cin >> N >> M;
+vector<vector<int>> G(N);
+for(int i = 0;i < M;i++){
+    int a, b;
+    cin >> a >> b;
+    a--; b--;
+    G.at(a).push_back(b);
+    G.at(b).push_back(a);
+}
+vector<int> component(N, -1);
+int count = 0;
+for(int s = 0;s < N;s++){
+    if(component.at(s) != -1){continue;}
+    vector<int> st = {s};
+    component.at(s) = count;
+    while(!st.empty()){
+        int v = st.back();
+        st.pop_back();
+        for(int i = 0;i < (int)G.at(v).size();i++){
+            int to = G.at(v).at(i);
+            if(component.at(to) == -1){
+                component.at(to) = count;
+                st.push_back(to);
+            }
+        }
+    }
+    count++;
+}
+cout << count << endl;
+for(int v = 0;v < N;v++){
+    cout << component.at(v)+1 << (v+1 == N ? '\n' : ' ');
+}
+
+
+```cpp
+// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
+#include <bits/stdc++.h>
+using namespace std;
+
+int main(){
+    // N M、M本の無向辺（頂点1始まり）。成分数と各頂点のグループ番号を出力。
+    int N, M;
+    cin >> N >> M;
+    vector<vector<int>> G(N);
+    for(int i = 0;i < M;i++){
+        int a, b;
+        cin >> a >> b;
+        a--; b--;
+        G.at(a).push_back(b);
+        G.at(b).push_back(a);
+    }
+    vector<int> component(N, -1);
+    int count = 0;
+    for(int s = 0;s < N;s++){
+        if(component.at(s) != -1){continue;}
+        vector<int> st = {s};
+        component.at(s) = count;
+        while(!st.empty()){
+            int v = st.back();
+            st.pop_back();
+            for(int i = 0;i < (int)G.at(v).size();i++){
+                int to = G.at(v).at(i);
+                if(component.at(to) == -1){
+                    component.at(to) = count;
+                    st.push_back(to);
+                }
+            }
+        }
+        count++;
+    }
+    cout << count << endl;
+    for(int v = 0;v < N;v++){
+        cout << component.at(v)+1 << (v+1 == N ? '\n' : ' ');
+    }
+    return 0;
+}
+```
+
+## ワーシャルフロイド法
+
+**目的** : すべての頂点の組合せについて、最短距離をまとめて求める
+
+計算量：O(N³+M)　メモリ：O(N²)
+
+int N, M;
+cin >> N >> M;
+const long long INF = 4000000000000000000LL;
+vector<vector<long long>> dist(N, vector<long long>(N, INF));
+for(int v = 0;v < N;v++){dist.at(v).at(v) = 0;}
+for(int i = 0;i < M;i++){
+    int a, b;
+    long long cost;
+    cin >> a >> b >> cost;
+    a--; b--;
+    dist.at(a).at(b) = min(dist.at(a).at(b), cost);
+}
+for(int k = 0;k < N;k++){
+    for(int i = 0;i < N;i++){
+        for(int j = 0;j < N;j++){
+            if(dist.at(i).at(k) == INF || dist.at(k).at(j) == INF){continue;}
+            dist.at(i).at(j) = min(dist.at(i).at(j), dist.at(i).at(k)+dist.at(k).at(j));
+        }
+    }
+}
+for(int i = 0;i < N;i++){
+    for(int j = 0;j < N;j++){
+        cout << (dist.at(i).at(j) == INF ? -1 : dist.at(i).at(j));
+        cout << (j+1 == N ? '\n' : ' ');
+    }
+}
+
+
+```cpp
+// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
+#include <bits/stdc++.h>
+using namespace std;
+
+int main(){
+    // N M、M本の有向辺 a b cost（頂点1始まり）。距離行列を出力、到達不可は-1。有限の距離はINF未満。
+    int N, M;
+    cin >> N >> M;
+    const long long INF = 4000000000000000000LL;
+    vector<vector<long long>> dist(N, vector<long long>(N, INF));
+    for(int v = 0;v < N;v++){dist.at(v).at(v) = 0;}
+    for(int i = 0;i < M;i++){
+        int a, b;
+        long long cost;
+        cin >> a >> b >> cost;
+        a--; b--;
+        dist.at(a).at(b) = min(dist.at(a).at(b), cost);
+    }
+    for(int k = 0;k < N;k++){
+        for(int i = 0;i < N;i++){
+            for(int j = 0;j < N;j++){
+                if(dist.at(i).at(k) == INF || dist.at(k).at(j) == INF){continue;}
+                dist.at(i).at(j) = min(dist.at(i).at(j), dist.at(i).at(k)+dist.at(k).at(j));
+            }
+        }
+    }
+    for(int i = 0;i < N;i++){
+        for(int j = 0;j < N;j++){
+            cout << (dist.at(i).at(j) == INF ? -1 : dist.at(i).at(j));
+            cout << (j+1 == N ? '\n' : ' ');
+        }
     }
     return 0;
 }

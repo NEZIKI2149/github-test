@@ -55,7 +55,7 @@ aside{top:155px;height:calc(100vh - 155px)}
 @media(max-width:750px){.mobile-index{margin-top:8px}.mobile-index>div{padding-top:8px}}
 main>.section{min-height:calc(100dvh - var(--reference-header-height,155px) - 12px);padding-bottom:48px}
 main>.section>h2{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.back-to-index{font:400 12px/1.5 system-ui;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:5px;padding:6px 10px;margin-left:auto;white-space:nowrap}
-.algorithm-level{display:inline-block;width:1.5em;margin-right:4px;font-variant-numeric:tabular-nums}.level-B{color:#808080}.level-C{color:#804000}.level-D{color:#00C0C0}.level-E{color:#0000FF}
+.algorithm-level{display:inline-block;width:1.5em;margin-right:4px;font-variant-numeric:tabular-nums}.algorithm-level{color:inherit}
 </style>
 </head>
 <body>
@@ -173,7 +173,7 @@ let mobileIndexOpen=true;
 const isMobile=()=>matchMedia("(max-width:750px)").matches;
 function librarySection(g,i){return '<section class="section" id="'+i.id+'"><h2>'+esc(i.desc)+'</h2>'+operation(i,false)+'</section>';}
 function limitSection(s){return '<section class="section limits'+(s.tool?' calculator-section':'')+'" id="'+s.key+'"><h2>'+esc(s.title)+'</h2>'+ (s.tool==='time'?timeTool():s.tool==='memory'?memoryTool():s.content)+'</section>';}
-const algorithmLevels={"imos": "C", "sieve": "C", "scc": "E", "grid-bfs": "C", "answer-binary-search": "D", "lis-quadratic": "C", "lis-binary-search": "E", "coordinate-compression": "C", "two-pointers": "C", "permutation-enumeration": "C", "prime-factorization": "C", "primality-trial": "B", "dijkstra": "D", "doubling": "E", "stair-dp": "C", "knapsack": "D", "topological-sort": "D", "prefix-sum-2d": "C", "bfs": "C", "bit-enumeration": "C", "equal-pair-count": "C", "divisors": "B", "prefix-sum": "C"};
+const algorithmLevels={"dfs":"C","connected-components":"C","bipartite":"D","floyd-warshall":"D","run-length":"C","imos": "C", "sieve": "C", "scc": "E", "grid-bfs": "C", "answer-binary-search": "D", "lis-quadratic": "C", "lis-binary-search": "E", "coordinate-compression": "C", "two-pointers": "C", "permutation-enumeration": "C", "prime-factorization": "C", "primality-trial": "B", "dijkstra": "D", "doubling": "E", "stair-dp": "C", "knapsack": "D", "topological-sort": "D", "prefix-sum-2d": "C", "bfs": "C", "bit-enumeration": "C", "equal-pair-count": "C", "divisors": "B", "prefix-sum": "C"};
 function render(){
     query=$('#search').value.trim();const searching=!!query;
     document.querySelectorAll('.tab').forEach(b=>{b.classList.toggle('active',b.dataset.page===page);b.setAttribute('aria-current',b.dataset.page===page?'page':'false');});

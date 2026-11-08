@@ -2862,6 +2862,27 @@
     },
     {
       "page": "algo",
+      "key": "bipartite",
+      "title": "二部グラフ判定",
+      "reading": "にぶぐらふはんてい",
+      "note": "",
+      "items": [
+        {
+          "id": "bipartite-1",
+          "desc": "つながっている頂点同士を違う色にして、2色で塗り分けられるか調べる",
+          "code": "bipartite",
+          "cost": "時間 O(N+M) / メモリ O(N+M)",
+          "note": "int N, M;\ncin >> N >> M;\nvector<vector<int>> G(N);\nfor(int i = 0;i < M;i++){\n    int a, b;\n    cin >> a >> b;\n    a--; b--;\n    G.at(a).push_back(b);\n    G.at(b).push_back(a);\n}\nvector<int> color(N, -1);\nbool ok = true;\nfor(int s = 0;s < N;s++){\n    if(color.at(s) != -1){continue;}\n    queue<int> Q;\n    color.at(s) = 0;\n    Q.push(s);\n    while(!Q.empty()){\n        int v = Q.front();\n        Q.pop();\n        for(int i = 0;i < (int)G.at(v).size();i++){\n            int to = G.at(v).at(i);\n            if(color.at(to) == -1){\n                color.at(to) = 1-color.at(v);\n                Q.push(to);\n            }\n            else if(color.at(to) == color.at(v)){\n                ok = false;\n            }\n        }\n    }\n}\ncout << (ok ? \"Yes\" : \"No\") << endl;\n",
+          "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    // N M、M本の無向辺（頂点1始まり）。塗り分け可能ならYes。\n    int N, M;\n    cin >> N >> M;\n    vector<vector<int>> G(N);\n    for(int i = 0;i < M;i++){\n        int a, b;\n        cin >> a >> b;\n        a--; b--;\n        G.at(a).push_back(b);\n        G.at(b).push_back(a);\n    }\n    vector<int> color(N, -1);\n    bool ok = true;\n    for(int s = 0;s < N;s++){\n        if(color.at(s) != -1){continue;}\n        queue<int> Q;\n        color.at(s) = 0;\n        Q.push(s);\n        while(!Q.empty()){\n            int v = Q.front();\n            Q.pop();\n            for(int i = 0;i < (int)G.at(v).size();i++){\n                int to = G.at(v).at(i);\n                if(color.at(to) == -1){\n                    color.at(to) = 1-color.at(v);\n                    Q.push(to);\n                }\n                else if(color.at(to) == color.at(v)){\n                    ok = false;\n                }\n            }\n        }\n    }\n    cout << (ok ? \"Yes\" : \"No\") << endl;\n    return 0;\n}\n",
+          "input": "",
+          "expected": null,
+          "time": "O(N+M)",
+          "memory": "O(N+M)"
+        }
+      ]
+    },
+    {
+      "page": "algo",
       "key": "bfs",
       "title": "幅優先探索（BFS）",
       "reading": "はばゆうせんたんさく",
@@ -2899,6 +2920,27 @@
           "expected": "2\n",
           "time": "O(N × 2ᴺ)",
           "memory": "O(N)"
+        }
+      ]
+    },
+    {
+      "page": "algo",
+      "key": "dfs",
+      "title": "深さ優先探索（DFS）",
+      "reading": "ふかさゆうせんたんさく",
+      "note": "",
+      "items": [
+        {
+          "id": "dfs-1",
+          "desc": "開始地点から、行ける頂点を順番に調べる",
+          "code": "dfs",
+          "cost": "時間 O(N+M) / メモリ O(N+M)",
+          "note": "int N, M;\ncin >> N >> M;\nvector<vector<int>> G(N);\nfor(int i = 0;i < M;i++){\n    int a, b;\n    cin >> a >> b;\n    a--; b--;\n    G.at(a).push_back(b);\n    G.at(b).push_back(a);\n}\nint start;\ncin >> start;\nstart--;\nvector<char> seen(N, false);\nvector<int> st = {start};\nseen.at(start) = true;\nwhile(!st.empty()){\n    int v = st.back();\n    st.pop_back();\n    cout << v+1 << endl;\n    for(int i = (int)G.at(v).size()-1;i >= 0;i--){\n        int to = G.at(v).at(i);\n        if(!seen.at(to)){\n            seen.at(to) = true;\n            st.push_back(to);\n        }\n    }\n}\n",
+          "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    // N M、M本の無向辺（頂点1始まり）、開始頂点。訪問順を出力。\n    int N, M;\n    cin >> N >> M;\n    vector<vector<int>> G(N);\n    for(int i = 0;i < M;i++){\n        int a, b;\n        cin >> a >> b;\n        a--; b--;\n        G.at(a).push_back(b);\n        G.at(b).push_back(a);\n    }\n    int start;\n    cin >> start;\n    start--;\n    vector<char> seen(N, false);\n    vector<int> st = {start};\n    seen.at(start) = true;\n    while(!st.empty()){\n        int v = st.back();\n        st.pop_back();\n        cout << v+1 << endl;\n        for(int i = (int)G.at(v).size()-1;i >= 0;i--){\n            int to = G.at(v).at(i);\n            if(!seen.at(to)){\n                seen.at(to) = true;\n                st.push_back(to);\n            }\n        }\n    }\n    return 0;\n}\n",
+          "input": "",
+          "expected": null,
+          "time": "O(N+M)",
+          "memory": "O(N+M)"
         }
       ]
     },
@@ -2947,6 +2989,27 @@
     },
     {
       "page": "algo",
+      "key": "run-length",
+      "title": "ランレングス圧縮",
+      "reading": "らんれんぐすあっしゅく",
+      "note": "",
+      "items": [
+        {
+          "id": "run-length-1",
+          "desc": "同じ文字が連続する部分を、文字と個数にまとめる",
+          "code": "run-length",
+          "cost": "時間 O(N) / メモリ O(N)",
+          "note": "string S;\ncin >> S;\nvector<pair<char,int>> runs;\nfor(int i = 0;i < (int)S.size();i++){\n    if(runs.empty() || runs.back().first != S.at(i)){\n        runs.push_back({S.at(i), 1});\n    }\n    else{\n        runs.back().second++;\n    }\n}\nfor(int i = 0;i < (int)runs.size();i++){\n    cout << runs.at(i).first << \" \" << runs.at(i).second << endl;\n}\n",
+          "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    // 空白を含まない文字列S。各連続部分の文字と個数を出力。\n    string S;\n    cin >> S;\n    vector<pair<char,int>> runs;\n    for(int i = 0;i < (int)S.size();i++){\n        if(runs.empty() || runs.back().first != S.at(i)){\n            runs.push_back({S.at(i), 1});\n        }\n        else{\n            runs.back().second++;\n        }\n    }\n    for(int i = 0;i < (int)runs.size();i++){\n        cout << runs.at(i).first << \" \" << runs.at(i).second << endl;\n    }\n    return 0;\n}\n",
+          "input": "",
+          "expected": null,
+          "time": "O(N)",
+          "memory": "O(N)"
+        }
+      ]
+    },
+    {
+      "page": "algo",
       "key": "prefix-sum",
       "title": "累積和",
       "reading": "るいせきわ",
@@ -2963,6 +3026,48 @@
           "expected": "5\n10\n0\n",
           "time": "O(N+Q)",
           "memory": "O(N)"
+        }
+      ]
+    },
+    {
+      "page": "algo",
+      "key": "connected-components",
+      "title": "連結成分分解（無向グラフ）",
+      "reading": "れんけつせいぶんぶんかいむこうぐらふ",
+      "note": "",
+      "items": [
+        {
+          "id": "connected-components-1",
+          "desc": "道でつながっている頂点ごとにグループ分けする",
+          "code": "connected-components",
+          "cost": "時間 O(N+M) / メモリ O(N+M)",
+          "note": "int N, M;\ncin >> N >> M;\nvector<vector<int>> G(N);\nfor(int i = 0;i < M;i++){\n    int a, b;\n    cin >> a >> b;\n    a--; b--;\n    G.at(a).push_back(b);\n    G.at(b).push_back(a);\n}\nvector<int> component(N, -1);\nint count = 0;\nfor(int s = 0;s < N;s++){\n    if(component.at(s) != -1){continue;}\n    vector<int> st = {s};\n    component.at(s) = count;\n    while(!st.empty()){\n        int v = st.back();\n        st.pop_back();\n        for(int i = 0;i < (int)G.at(v).size();i++){\n            int to = G.at(v).at(i);\n            if(component.at(to) == -1){\n                component.at(to) = count;\n                st.push_back(to);\n            }\n        }\n    }\n    count++;\n}\ncout << count << endl;\nfor(int v = 0;v < N;v++){\n    cout << component.at(v)+1 << (v+1 == N ? '\\n' : ' ');\n}\n",
+          "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    // N M、M本の無向辺（頂点1始まり）。成分数と各頂点のグループ番号を出力。\n    int N, M;\n    cin >> N >> M;\n    vector<vector<int>> G(N);\n    for(int i = 0;i < M;i++){\n        int a, b;\n        cin >> a >> b;\n        a--; b--;\n        G.at(a).push_back(b);\n        G.at(b).push_back(a);\n    }\n    vector<int> component(N, -1);\n    int count = 0;\n    for(int s = 0;s < N;s++){\n        if(component.at(s) != -1){continue;}\n        vector<int> st = {s};\n        component.at(s) = count;\n        while(!st.empty()){\n            int v = st.back();\n            st.pop_back();\n            for(int i = 0;i < (int)G.at(v).size();i++){\n                int to = G.at(v).at(i);\n                if(component.at(to) == -1){\n                    component.at(to) = count;\n                    st.push_back(to);\n                }\n            }\n        }\n        count++;\n    }\n    cout << count << endl;\n    for(int v = 0;v < N;v++){\n        cout << component.at(v)+1 << (v+1 == N ? '\\n' : ' ');\n    }\n    return 0;\n}\n",
+          "input": "",
+          "expected": null,
+          "time": "O(N+M)",
+          "memory": "O(N+M)"
+        }
+      ]
+    },
+    {
+      "page": "algo",
+      "key": "floyd-warshall",
+      "title": "ワーシャルフロイド法",
+      "reading": "わーしゃるふろいどほう",
+      "note": "",
+      "items": [
+        {
+          "id": "floyd-warshall-1",
+          "desc": "すべての頂点の組合せについて、最短距離をまとめて求める",
+          "code": "floyd-warshall",
+          "cost": "時間 O(N³+M) / メモリ O(N²)",
+          "note": "int N, M;\ncin >> N >> M;\nconst long long INF = 4000000000000000000LL;\nvector<vector<long long>> dist(N, vector<long long>(N, INF));\nfor(int v = 0;v < N;v++){dist.at(v).at(v) = 0;}\nfor(int i = 0;i < M;i++){\n    int a, b;\n    long long cost;\n    cin >> a >> b >> cost;\n    a--; b--;\n    dist.at(a).at(b) = min(dist.at(a).at(b), cost);\n}\nfor(int k = 0;k < N;k++){\n    for(int i = 0;i < N;i++){\n        for(int j = 0;j < N;j++){\n            if(dist.at(i).at(k) == INF || dist.at(k).at(j) == INF){continue;}\n            dist.at(i).at(j) = min(dist.at(i).at(j), dist.at(i).at(k)+dist.at(k).at(j));\n        }\n    }\n}\nfor(int i = 0;i < N;i++){\n    for(int j = 0;j < N;j++){\n        cout << (dist.at(i).at(j) == INF ? -1 : dist.at(i).at(j));\n        cout << (j+1 == N ? '\\n' : ' ');\n    }\n}\n",
+          "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    // N M、M本の有向辺 a b cost（頂点1始まり）。距離行列を出力、到達不可は-1。有限の距離はINF未満。\n    int N, M;\n    cin >> N >> M;\n    const long long INF = 4000000000000000000LL;\n    vector<vector<long long>> dist(N, vector<long long>(N, INF));\n    for(int v = 0;v < N;v++){dist.at(v).at(v) = 0;}\n    for(int i = 0;i < M;i++){\n        int a, b;\n        long long cost;\n        cin >> a >> b >> cost;\n        a--; b--;\n        dist.at(a).at(b) = min(dist.at(a).at(b), cost);\n    }\n    for(int k = 0;k < N;k++){\n        for(int i = 0;i < N;i++){\n            for(int j = 0;j < N;j++){\n                if(dist.at(i).at(k) == INF || dist.at(k).at(j) == INF){continue;}\n                dist.at(i).at(j) = min(dist.at(i).at(j), dist.at(i).at(k)+dist.at(k).at(j));\n            }\n        }\n    }\n    for(int i = 0;i < N;i++){\n        for(int j = 0;j < N;j++){\n            cout << (dist.at(i).at(j) == INF ? -1 : dist.at(i).at(j));\n            cout << (j+1 == N ? '\\n' : ' ');\n        }\n    }\n    return 0;\n}\n",
+          "input": "",
+          "expected": null,
+          "time": "O(N³+M)",
+          "memory": "O(N²)"
         }
       ]
     }
@@ -3002,6 +3107,15 @@
     }
   ],
   "notes": [
+    {
+      "id": "20261109-five-algorithms",
+      "at": "2026-11-09 02:46",
+      "title": "アルゴリズムを5項目追加し目次の文字色を統一",
+      "category": "アルゴリズム",
+      "text": "DFS・無向グラフの連結成分分解・二部グラフ判定・ワーシャルフロイド法・ランレングス圧縮を追加しました。問題番号のアルファベットを通常の文字色にそろえました。",
+      "published": true,
+      "kind": "updates"
+    },
     {
       "id": "20261109-algo-level-letters",
       "at": "2026-11-09 02:35",
