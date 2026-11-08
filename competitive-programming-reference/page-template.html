@@ -53,6 +53,7 @@ aside{top:155px;height:calc(100vh - 155px)}
 .dimension-controls{display:flex;gap:8px;flex-wrap:wrap}.dimension-controls button[aria-pressed="true"]{background:var(--tint);border-color:var(--accent);color:var(--accent)}
 .layout.home{display:block}.layout.home aside{display:none}
 @media(max-width:750px){.mobile-index{margin-top:8px}.mobile-index>div{padding-top:8px}}
+.calculator-section{min-height:calc(100dvh - var(--reference-header-height,155px) - 12px);padding-bottom:48px}
 </style>
 </head>
 <body>
@@ -169,7 +170,7 @@ let openGroup=null;
 let mobileIndexOpen=true;
 const isMobile=()=>matchMedia("(max-width:750px)").matches;
 function librarySection(g,i){return '<section class="section" id="'+i.id+'"><h2>'+esc(i.desc)+'</h2>'+operation(i,false)+'</section>';}
-function limitSection(s){return '<section class="section limits" id="'+s.key+'"><h2>'+esc(s.title)+'</h2>'+ (s.tool==='time'?timeTool():s.tool==='memory'?memoryTool():s.content)+'</section>';}
+function limitSection(s){return '<section class="section limits'+(s.tool?' calculator-section':'')+'" id="'+s.key+'"><h2>'+esc(s.title)+'</h2>'+ (s.tool==='time'?timeTool():s.tool==='memory'?memoryTool():s.content)+'</section>';}
 function render(){
     query=$('#search').value.trim();const searching=!!query;
     document.querySelectorAll('.tab').forEach(b=>{b.classList.toggle('active',b.dataset.page===page);b.setAttribute('aria-current',b.dataset.page===page?'page':'false');});
@@ -199,6 +200,7 @@ function render(){
     $('#sidebar').innerHTML=sideHTML;
     if(home){$('#sidebar').innerHTML='';$('#main').innerHTML='<p>カテゴリを選択するか、検索バーを利用してください。</p>';return;}
     $('#main').innerHTML=(mobileIndexOpen?'<div class="mobile-index" role="navigation" aria-label="目次"><div>'+sideHTML+'</div></div>':'')+(chosen?.html||'<div class="empty">'+(rows.length?'目次から項目を選んでください。':'該当する項目がありません。検索語を短くしてください。')+'</div>')+sourceNote();
+    document.documentElement.style.setProperty('--reference-header-height',$('header').getBoundingClientRect().height+'px');
     syncTocHighlight();updateTools();
 }
 function jumpFromHash(preserveIndex=false){
@@ -211,7 +213,7 @@ function jumpFromHash(preserveIndex=false){
     selectedTocHref=target?'#'+page+'/'+target:'';
     render();
     const content=$('main>.section');
-    const top=isMobile()&&target&&content?window.scrollY+content.getBoundingClientRect().top-$('header').getBoundingClientRect().height-12:0;
+    const top=(isMobile()||content?.classList.contains('calculator-section'))&&target&&content?window.scrollY+content.getBoundingClientRect().top-$('header').getBoundingClientRect().height-12:0;
     window.scrollTo({top:Math.max(0,top),left:0,behavior:'instant'});
 }
 document.addEventListener('click',e=>{
