@@ -929,15 +929,15 @@ cin >> start;
 start--;
 vector<char> seen(N, false);
 vector<int> st = {start};
-seen.at(start) = true;
 while(!st.empty()){
     int v = st.back();
     st.pop_back();
+    if(seen.at(v)){continue;}
+    seen.at(v) = true;
     cout << v+1 << endl;
     for(int i = (int)G.at(v).size()-1;i >= 0;i--){
         int to = G.at(v).at(i);
         if(!seen.at(to)){
-            seen.at(to) = true;
             st.push_back(to);
         }
     }
@@ -966,15 +966,15 @@ int main(){
     start--;
     vector<char> seen(N, false);
     vector<int> st = {start};
-    seen.at(start) = true;
     while(!st.empty()){
         int v = st.back();
         st.pop_back();
+        if(seen.at(v)){continue;}
+        seen.at(v) = true;
         cout << v+1 << endl;
         for(int i = (int)G.at(v).size()-1;i >= 0;i--){
             int to = G.at(v).at(i);
             if(!seen.at(to)){
-                seen.at(to) = true;
                 st.push_back(to);
             }
         }
