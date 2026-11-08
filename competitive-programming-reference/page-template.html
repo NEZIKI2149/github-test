@@ -55,7 +55,7 @@ aside{top:155px;height:calc(100vh - 155px)}
 @media(max-width:750px){.mobile-index{margin-top:8px}.mobile-index>div{padding-top:8px}}
 main>.section{min-height:calc(100dvh - var(--reference-header-height,155px) - 12px);padding-bottom:48px}
 main>.section>h2{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.back-to-index{font:400 12px/1.5 system-ui;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:5px;padding:6px 10px;margin-left:auto;white-space:nowrap}
-.algorithm-level{display:inline-block;width:1.5em;margin-right:4px;font-variant-numeric:tabular-nums}.algorithm-level{color:inherit}
+.algorithm-link{display:flex;align-items:baseline;justify-content:space-between;gap:12px}.algorithm-name{min-width:0}.algorithm-level{flex:0 0 1em;text-align:right;color:inherit}
 </style>
 </head>
 <body>
@@ -198,7 +198,7 @@ function render(){
         if(r.label!==label){if(currentGroup){sideHTML+='</details>';currentGroup='';}sideHTML+='<div class="side-label">'+esc(r.label)+'</div>';label=r.label;}
         if((r.group||'')!==currentGroup){if(currentGroup)sideHTML+='</details>';currentGroup=r.group||'';if(currentGroup)sideHTML+='<details class="toc-group" data-group="'+currentGroup+'"'+(openGroup===currentGroup?' open':'')+'><summary>'+esc(r.groupTitle)+'</summary>';}
         const level=r.page==='algo'?algorithmLevels[r.key]:'';
-        sideHTML+='<a class="side-link" href="#'+r.page+'/'+r.key+'">'+(level?'<span class="algorithm-level level-'+level+'" aria-label="'+level+'問題からの目安" title="'+level+'問題からの目安">'+level+'</span>':'')+esc(r.title)+'</a>';
+        sideHTML+='<a class="side-link'+(level?' algorithm-link':'')+'" href="#'+r.page+'/'+r.key+'">'+(level?'<span class="algorithm-name">'+esc(r.title)+'</span><span class="algorithm-level level-'+level+'" aria-label="'+level+'問題からの目安" title="'+level+'問題からの目安">'+level+'</span>':esc(r.title))+'</a>';
     }
     if(currentGroup)sideHTML+='</details>';
     $('#sidebar').innerHTML=sideHTML;
