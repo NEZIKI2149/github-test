@@ -3003,6 +3003,15 @@
   ],
   "notes": [
     {
+      "id": "20261108-mobile-toc-spacing",
+      "at": "2026-11-08 23:51",
+      "title": "スマホの目次上部の余白を調整",
+      "category": "サイト全体",
+      "text": "目次の上部に項目間と同程度の余白を設けました。",
+      "published": true,
+      "kind": "updates"
+    },
+    {
       "id": "20261108-mobile-toc-no-close",
       "at": "2026-11-08 23:47",
       "title": "スマホの目次の閉じるボタンを削除",
