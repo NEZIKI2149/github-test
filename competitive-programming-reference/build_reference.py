@@ -702,24 +702,24 @@ def limits_sections():
         rows.append([sci(n), sci(n*math.log2(n)), sci(n*n), sci(n**3)])
     result.append(dict(key="time-count", title="計算量：式にNを入れた規模", content=table(["N / O(N)", "N log₂N", "N²", "N³"], rows) + table(["N", "2ᴺ", "N × 2ᴺ", "N!"], [[str(n), sci(2**n), sci(n*2**n), sci(math.factorial(n))] for n in [10, 15, 20, 25, 30]]) + '<p class="note">実際のCPU命令数ではなく、計算量の式の値。文字列コピーやmap操作などは単純な加算より重い。</p>'))
     result.append(dict(key="type-memory", title="型と配列のメモリ", content=table(["型", "1要素の目安", "10⁵要素", "10⁶要素", "10⁷要素"], [
-        ["char", "1 B", "100 KB", "1 MB", "10 MB"], ["int", "4 B", "400 KB", "4 MB", "40 MB"],
-        ["long long / double", "8 B", "800 KB", "8 MB", "80 MB"], ["pair&lt;int,int&gt;", "通常8 B", "約800 KB", "約8 MB", "約80 MB"]]) + '<p class="note">この表はint=4 B、long long=8 B、double=8 Bの一般的なGCC環境を想定。実際はsizeofで確認。1 KB=10³ B、1 MB=10⁶ B。1 KiB=2¹⁰ B、1 MiB=2²⁰ B。</p>'))
+        ["char", "0.000001 MB", "0.1 MB", "1 MB", "10 MB"], ["int", "0.000004 MB", "0.4 MB", "4 MB", "40 MB"],
+        ["long long / double", "0.000008 MB", "0.8 MB", "8 MB", "80 MB"], ["pair&lt;int,int&gt;", "通常0.000008 MB", "約0.8 MB", "約8 MB", "約80 MB"]]) + '<p class="note">要素本体の容量を、一般的なGCC環境で見積もった表。実際の型のサイズはsizeofで確認できます。</p>'))
     result.append(dict(key="matrix-memory", title="二次元配列のメモリ", content=table(["H × W", "要素数", "int", "long long / double"], [
-        ["10² × 10²", "10⁴", "40 KB", "80 KB"], ["10³ × 10³", "10⁶", "4 MB", "8 MB"],
+        ["10² × 10²", "10⁴", "0.04 MB", "0.08 MB"], ["10³ × 10³", "10⁶", "4 MB", "8 MB"],
         ["2×10³ × 2×10³", "4×10⁶", "16 MB", "32 MB"], ["3×10³ × 3×10³", "9×10⁶", "36 MB", "72 MB"],
         ["5×10³ × 5×10³", "2.5×10⁷", "100 MB", "200 MB"], ["10⁴ × 10⁴", "10⁸", "400 MB", "800 MB"]]) + '<p class="note">要素本体の容量。vector&lt;vector&lt;T&gt;&gt;には行ごとのvector管理領域・確保処理も加わる。大きなローカル固定長配列はスタック上限にも注意し、vectorを使う。</p>'))
-    result.append(dict(key="memory-limit", title="メモリ上限との比較", content=table(["上限", "intだけで使い切る理論要素数", "正方形int配列の理論最大辺長"], [[f"{mb} MiB", f"約{sci(mb*2**20/4)}", str(math.isqrt(mb*2**20//4))] for mb in [256,512,1024]]) + '<p class="note">上限の単位がMiBの場合の理論値であり、安全な確保量ではない。実行環境・他の変数・コピー・管理領域の分を差し引く。MB表記なら10⁶ Bで計算する。</p><p>合計容量 ≈ 配列ごとの「要素数 × sizeof(型)」の合計 + 管理領域。intのN×N配列をコピーすれば本体だけで8N² B。long longのN×N累積和なら約8(N+1)² B。</p>'))
-    result.append(dict(key="memory-extra", title="容器・グラフ・コピーの注意", content=table(["対象", "見積もり"], [
-        ["vector&lt;T&gt;", "確保済みcapacity × sizeof(T) + 管理領域。sizeだけでは正確に見積もれない"],
-        ["vector&lt;vector&lt;T&gt;&gt;", "各行のcapacity × sizeof(T) + H個のvector管理領域 + 各確保の管理領域"],
-        ["map / set / multiset", "ノードごとのポインタ・色などで、値本体より大きくなる。要素数×sizeof(値)だけでは不足"],
+    result.append(dict(key="memory-limit", title="メモリ上限との比較", content=table(["上限", "intだけで使い切る理論要素数", "正方形int配列の理論最大辺長"], [[f"{mb} MB", f"約{sci(mb*10**6/4)}", str(math.isqrt(mb*10**6//4))] for mb in [256,512,1024]]) + '<p class="note">計算機と同じMB基準で、上限を256・512・1024 MBとした理論値。安全な確保量ではない。実行環境・他の変数・コピー・管理領域の分を差し引く。</p><p>合計容量 ≈ 各配列の容量の合計 + 管理領域。intのN×N配列をコピーすれば、本体だけでN² × 0.000008 MB。long longのN×N累積和なら約(N+1)² × 0.000008 MB。</p>'))
+    result.append(dict(key="memory-extra", title="容器・グラフ・コピーの注意", content=table(["対象", "容量の見積もり"], [
+        ["vector&lt;T&gt;", "確保済みcapacity × sizeof(T) ÷ 10⁶ MB + 管理領域。sizeだけでは正確に見積もれない"],
+        ["vector&lt;vector&lt;T&gt;&gt;", "各行のcapacity × sizeof(T) ÷ 10⁶ MB + H個のvector管理領域 + 各確保の管理領域"],
+        ["map / set / multiset", "ノードごとの参照などで、値本体より大きくなる。要素数 × sizeof(値) ÷ 10⁶ MBだけでは不足"],
         ["unordered_map / unordered_set", "要素ノードに加え、バケット配列も必要"],
-        ["無向グラフの隣接リスト", "intの行き先を通常2M個持つ。本体約8M B + N個のvectorなど"],
+        ["無向グラフの隣接リスト", "頂点数N、辺数Mの場合、intの行き先を通常2M個持つ。本体約M × 0.000008 MB + N個のvectorなど"],
         ["vector&lt;bool&gt;", "一般にbit圧縮。通常のbool配列とは扱いが異なる。分かりやすさ重視ならvector&lt;char&gt;"],
         ["関数の引数", "vector&lt;int&gt; Aはコピー。const vector&lt;int&gt;&amp; Aなら読むだけで参照"],
         ["再帰DFS", "呼び出しごとのスタックも消費。深いグラフではstackなどの反復実装を検討"]])))
-    body = 'cout << sizeof(int) << endl;\ncout << sizeof(long long) << endl;\ncout << sizeof(double) << endl;\ncout << sizeof(vector<int>) << endl;'
-    result.append(dict(key="sizeof", title="sizeof：実際の型のサイズを確認", content='<p>型のサイズをB単位で出力する。sizeof(vector&lt;int&gt;)は要素本体を含まない。</p><details class="code-only"><summary>全体コードを開く</summary><pre><code>'+html.escape(program(body))+'</code></pre></details>'))
+    body = 'cout << fixed << setprecision(6);\ncout << sizeof(int) / 1000000.0 << " MB" << endl;\ncout << sizeof(long long) / 1000000.0 << " MB" << endl;\ncout << sizeof(double) / 1000000.0 << " MB" << endl;\ncout << sizeof(vector<int>) / 1000000.0 << " MB" << endl;'
+    result.append(dict(key="sizeof", title="sizeof：実際の型のサイズを確認", content='<p>型本体の容量をMB単位で出力する。sizeof(vector&lt;int&gt;)は要素本体を含まない。</p><details class="code-only"><summary>全体コードを開く</summary><pre><code>'+html.escape(program(body))+'</code></pre></details>'))
     return result
 
 
