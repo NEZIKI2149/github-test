@@ -153,7 +153,7 @@ function updateMemory(){
 function refreshMemory(){const panel=$('#memory-panel');if(panel)panel.innerHTML=memoryToolContent();updateMemory();}
 function timeTool(){return '<div class="calc-fields"><label>Nを選択<select data-calc="n">'+options([[10,'10'],[15,'15'],[20,'20'],[25,'25'],[30,'30'],[100,'10²'],[1000,'10³'],[3000,'3×10³'],[10000,'10⁴'],[200000,'2×10⁵'],[1000000,'10⁶']],calcState.n)+'</select></label></div><div id="time-result" aria-live="polite"></div><p>実行秒数や実際のCPU命令数ではなく、計算量の式にNを入れた値。処理内容や定数倍で実行時間は変わる。</p>';}
 const superscript=n=>String(n).replace(/[0-9-]/g,c=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[Number(c)]||'⁻');
-function scientificLog(log){if(log===0)return '1';let exponent=Math.floor(log),mantissa=Number((10**(log-exponent)).toPrecision(3));if(mantissa>=10){mantissa=1;exponent++;}return '約'+mantissa+'×10'+superscript(exponent);}
+function scientificLog(log){if(log===0)return '1';let exponent=Math.floor(log),mantissa=Number((10**(log-exponent)).toPrecision(3));if(mantissa>=10){mantissa=1;exponent++;}return mantissa+'×10'+superscript(exponent);}
 function updateTools(){
     updateMemory();
     const time=$('#time-result');
