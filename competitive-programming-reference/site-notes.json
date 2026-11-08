@@ -2,6 +2,14 @@
   "timezone": "Asia/Tokyo",
   "updates": [
     {
+      "id": "20261108-container-selection",
+      "at": "2026-11-08 09:36",
+      "title": "メモリ計算機のコンテナ選択を整理",
+      "category": "計算量・メモリ",
+      "text": "配列とvectorを「配列（vector）」に一本化し、選択欄の名称を「コンテナ」に変更しました。初期状態を未選択にし、選ぶまでは次元・数値の入力欄や計算結果を表示しないようにしました。",
+      "published": true
+    },
+    {
       "id": "20261108-memory-containers",
       "at": "2026-11-08 08:02",
       "title": "メモリ計算機に次元切替とコンテナ選択を追加",

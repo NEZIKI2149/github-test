@@ -98,21 +98,24 @@ function section(g, items){
 }
 function noteSection(n){return '<section class="section" id="'+esc(n.id)+'"><h2>'+esc(n.title)+'</h2><p class="section-note">'+esc(n.at)+' JST　 /　 '+esc(n.category)+'</p><p>'+esc(n.text)+'</p></section>';}
 function termsMatch(text){const t=text.toLocaleLowerCase();return query.trim().toLocaleLowerCase().split(/\s+/).every(q=>t.includes(q));}
-const calcState={kind:'array',dimension:'1',type:'int',keyType:'int',valueType:'int',size:'100000',rows:'2000',cols:'3000',count:'1',limit:'1024',n:'200000'};
+const calcState={kind:'',dimension:'1',type:'int',keyType:'int',valueType:'int',size:'100000',rows:'2000',cols:'3000',count:'1',limit:'1024',n:'200000'};
 const memoryTypes={char:{label:'char',bytes:1n,align:1n},int:{label:'int',bytes:4n,align:4n},longlong:{label:'long long',bytes:8n,align:8n},double:{label:'double',bytes:8n,align:8n}};
-const memoryKinds=[['array','配列'],['vector','vector'],['set','set'],['multiset','multiset'],['map','map'],['unordered_set','unordered_set'],['unordered_map','unordered_map']];
+const memoryKinds=[['','選択してください'],['vector','配列（vector）'],['set','set'],['multiset','multiset'],['map','map'],['unordered_set','unordered_set'],['unordered_map','unordered_map']];
 function options(values,current){return values.map(([v,t])=>'<option value="'+v+'"'+(String(v)===current?' selected':'')+'>'+t+'</option>').join('');}
 function memoryField(key,label){return '<label>'+label+'<input data-calc="'+key+'" type="text" inputmode="numeric" maxlength="12" value="'+esc(calcState[key])+'"></label>';}
 function memoryTypeField(key,label){return '<label>'+label+'<select data-calc="'+key+'">'+options(Object.entries(memoryTypes).map(([k,t])=>[k,t.label+'（'+t.bytes+' B）']),calcState[key])+'</select></label>';}
 function memoryToolContent(){
-    const array=['array','vector'].includes(calcState.kind),map=calcState.kind.endsWith('map');
-    return '<div class="calc-fields"><label>計算する容器<select data-calc="kind">'+options(memoryKinds,calcState.kind)+'</select></label></div>'+(array?'<div class="dimension-controls" role="group" aria-label="配列の次元">'+[['1','一次元配列'],['2','二次元配列']].map(([k,t])=>'<button type="button" class="copy" data-dimension="'+k+'" aria-pressed="'+(calcState.dimension===k)+'">'+t+'</button>').join('')+'</div>':'')+'<div class="calc-fields">'+(map?memoryTypeField('keyType','キーの型')+memoryTypeField('valueType','値の型'):memoryTypeField('type','値の型'))+(array&&calcState.dimension==='2'?memoryField('rows','行数')+memoryField('cols','列数'):memoryField('size',map||calcState.kind==='set'||calcState.kind==='unordered_set'?'要素数（異なるキー・値の個数）':'要素数'))+memoryField('count',array?'配列の個数':'容器の個数')+'<label>問題のメモリ制限<select data-calc="limit">'+options([256,512,1024,2048].map(v=>[v,v+' MiB']),calcState.limit)+'</select></label></div><div class="calc-output" id="memory-result" aria-live="polite"></div><div id="memory-assumptions"></div><p>メモリ制限は問題文を確認して選択。1 MB = 10⁶ B、1 MiB = 2²⁰ B。</p>';
+    const array=calcState.kind==='vector',map=calcState.kind.endsWith('map');
+    const selector='<div class="calc-fields"><label>コンテナ<select data-calc="kind">'+options(memoryKinds,calcState.kind)+'</select></label></div>';
+    if(!calcState.kind)return selector;
+    return selector+(array?'<div class="dimension-controls" role="group" aria-label="配列の次元">'+[['1','一次元配列'],['2','二次元配列']].map(([k,t])=>'<button type="button" class="copy" data-dimension="'+k+'" aria-pressed="'+(calcState.dimension===k)+'">'+t+'</button>').join('')+'</div>':'')+'<div class="calc-fields">'+(map?memoryTypeField('keyType','キーの型')+memoryTypeField('valueType','値の型'):memoryTypeField('type','値の型'))+(array&&calcState.dimension==='2'?memoryField('rows','行数')+memoryField('cols','列数'):memoryField('size',map||calcState.kind==='set'||calcState.kind==='unordered_set'?'要素数（異なるキー・値の個数）':'要素数'))+memoryField('count',array?'配列の個数':'コンテナの個数')+'<label>問題のメモリ制限<select data-calc="limit">'+options([256,512,1024,2048].map(v=>[v,v+' MiB']),calcState.limit)+'</select></label></div><div class="calc-output" id="memory-result" aria-live="polite"></div><div id="memory-assumptions"></div><p>メモリ制限は問題文を確認して選択。1 MB = 10⁶ B、1 MiB = 2²⁰ B。</p>';
 }
 function memoryTool(){return '<div id="memory-panel">'+memoryToolContent()+'</div>';}
 const alignBytes=(v,a)=>(v+a-1n)/a*a;
 const allocationBytes=v=>{const n=alignBytes(v+8n,16n);return n<32n?32n:n;};
 function memoryEstimate(state){
-    const array=['array','vector'].includes(state.kind),map=state.kind.endsWith('map'),two=array&&state.dimension==='2';
+    if(!state.kind||!memoryKinds.some(([kind])=>kind===state.kind))return {unselected:true};
+    const array=state.kind==='vector',map=state.kind.endsWith('map'),two=array&&state.dimension==='2';
     const keys=two?['rows','cols','count']:['size','count'];
     if(keys.some(k=>!/^\d{1,12}$/.test(state[k])||BigInt(state[k])<1n))return {error:'要素数・行数・列数・個数には、1以上の整数を入力してください。'};
     const copies=BigInt(state.count),rows=two?BigInt(state.rows):1n,n=two?rows*BigInt(state.cols):BigInt(state.size);
@@ -134,12 +137,13 @@ function memoryEstimate(state){
         low=(allocationBytes(node)*n+allocationBytes(8n*n)+56n)*copies;high=((allocationBytes(node)+16n)*n+allocationBytes(16n*n)+16n+56n)*copies;
         assumption='標準のハッシュ関数を使い、バケット数を要素数の約1〜2倍として見積もる。reserve・rehash・max_load_factorの設定や再確保の途中では、この範囲から外れることがある。';
     }
-    return {payload,low,high,estimated:state.kind!=='array',assumption};
+    return {payload,low,high,estimated:true,assumption};
 }
 function memoryBytes(n){const b=Number(n);return (n<10000n?n.toLocaleString('ja-JP')+' B（':'')+(b/1e6).toLocaleString('ja-JP',{maximumSignificantDigits:5})+' MB / '+(b/2**20).toLocaleString('ja-JP',{maximumSignificantDigits:5})+' MiB'+(n<10000n?'）':'');}
 function updateMemory(){
     const result=$('#memory-result');if(!result)return;
     const estimate=memoryEstimate(calcState),help=$('#memory-assumptions');
+    if(estimate.unselected){result.textContent='';if(help)help.textContent='';return;}
     if(estimate.error){result.textContent=estimate.error;if(help)help.textContent='';return;}
     const {payload,low,high,estimated,assumption}=estimate,limit=BigInt(calcState.limit)*2n**20n;
     const percent=n=>(Number(n)/Number(limit)*100).toLocaleString('ja-JP',{maximumSignificantDigits:4});

@@ -16,7 +16,7 @@
 
 ## メモリ計算機
 
-<p>一次元／二次元と型を選んで配列容量を計算する。vector・set・multiset・map・unordered_set・unordered_mapにも対応し、管理領域込みの推定容量を選択式のメモリ制限と比較する。</p>
+<p>コンテナを選択してメモリ容量を計算する。配列（vector）は一次元／二次元を切り替えられる。set・multiset・map・unordered_set・unordered_mapにも対応し、管理領域込みの推定容量を選択式のメモリ制限と比較する。</p>
 
 ## 型と配列のメモリ
 
