@@ -201,13 +201,13 @@ function render(){
     $('#main').innerHTML=(mobileIndexOpen?'<div class="mobile-index" role="navigation" aria-label="目次"><div>'+sideHTML+'</div></div>':'')+(chosen?.html||'<div class="empty">'+(rows.length?'目次から項目を選んでください。':'該当する項目がありません。検索語を短くしてください。')+'</div>')+sourceNote();
     syncTocHighlight();updateTools();
 }
-function jumpFromHash(){
+function jumpFromHash(preserveIndex=false){
     const [p,key]=decodeURIComponent(location.hash.slice(1)).split('/');
     page=DATA.pages[p]?p:'';
     const g=DATA.groups.find(g=>g.page===page&&(g.key===key||g.items.some(i=>i.id===key)));
     const target=g&&g.page!=='algo'?(g.key===key?undefined:key):key;
-    openGroup=g&&g.page!=='algo'?g.key:isMobile()&&!target?'':null;
-    mobileIndexOpen=!target;
+    if(preserveIndex!==true){openGroup=g&&g.page!=='algo'?g.key:isMobile()&&!target?'':null;}
+    mobileIndexOpen=true;
     selectedTocHref=target?'#'+page+'/'+target:'';
     render();
     const content=$('main>.section');
@@ -221,7 +221,7 @@ document.addEventListener('click',e=>{
     e.preventDefault();
     selectedTocHref=link.getAttribute('href');
     if(location.hash!==selectedTocHref){history.pushState(null,'',selectedTocHref);}
-    jumpFromHash();syncTocHighlight();
+    jumpFromHash(true);syncTocHighlight();
 });
 $('#search').addEventListener('input',()=>{clearTocHighlight();render();});
 $('#clear').addEventListener('click',()=>{clearTocHighlight();$('#search').value='';query='';render();$('#search').focus();});
