@@ -103,7 +103,7 @@ const memoryTypes={char:{label:'char',bytes:1n,align:1n},int:{label:'int',bytes:
 const memoryKinds=[['','選択してください'],['vector','配列（vector）'],['set','set'],['multiset','multiset'],['map','map'],['unordered_set','unordered_set'],['unordered_map','unordered_map']];
 function options(values,current){return values.map(([v,t])=>'<option value="'+v+'"'+(String(v)===current?' selected':'')+'>'+t+'</option>').join('');}
 function memoryField(key,label){return '<label>'+label+'<input data-calc="'+key+'" type="text" inputmode="numeric" maxlength="12" value="'+esc(calcState[key])+'"></label>';}
-function memoryTypeField(key,label){return '<label>'+label+'<select data-calc="'+key+'">'+options(Object.entries(memoryTypes).map(([k,t])=>[k,t.label+'（'+t.bytes+' B）']),calcState[key])+'</select></label>';}
+function memoryTypeField(key,label){return '<label>'+label+'<select data-calc="'+key+'">'+options(Object.entries(memoryTypes).map(([k,t])=>[k,t.label]),calcState[key])+'</select></label>';}
 function memoryToolContent(){
     const array=calcState.kind==='vector',map=calcState.kind.endsWith('map');
     const selector='<div class="calc-fields"><label>コンテナ<select data-calc="kind">'+options(memoryKinds,calcState.kind)+'</select></label></div>';

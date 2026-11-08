@@ -2,6 +2,14 @@
   "timezone": "Asia/Tokyo",
   "updates": [
     {
+      "id": "20261108-type-labels",
+      "at": "2026-11-08 09:40",
+      "title": "メモリ計算機の型名表示を簡略化",
+      "category": "計算量・メモリ",
+      "text": "値・キーの型の選択肢をchar・int・long long・doubleの型名だけにし、1 B・4 B・8 Bの補足を省きました。",
+      "published": true
+    },
+    {
       "id": "20261108-container-selection",
       "at": "2026-11-08 09:36",
       "title": "メモリ計算機のコンテナ選択を整理",
