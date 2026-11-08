@@ -140,7 +140,7 @@ function memoryEstimate(state){
     }
     return {payload,low,high,estimated:true,assumption};
 }
-function memoryBytes(n){return (Number(n)/1e6).toLocaleString('ja-JP',{maximumSignificantDigits:5})+' MB';}
+function memoryBytes(n){const mb=Number(n)/1e6;return mb.toLocaleString('ja-JP',mb<10?{minimumSignificantDigits:2,maximumSignificantDigits:2}:{maximumFractionDigits:0})+' MB';}
 function updateMemory(){
     const result=$('#memory-result');if(!result)return;
     const estimate=memoryEstimate(calcState),help=$('#memory-assumptions');
@@ -195,7 +195,7 @@ function render(){
     }
     if(currentGroup)sideHTML+='</details>';
     $('#sidebar').innerHTML=sideHTML;
-    if(home){$('#sidebar').innerHTML='';$('#main').innerHTML='';return;}
+    if(home){$('#sidebar').innerHTML='';$('#main').innerHTML='<p>カテゴリを選択するか、検索バーを利用してください。</p>';return;}
     $('#main').innerHTML='<details class="mobile-index"'+(mobileIndexOpen?' open':'')+'><summary>このページの目次</summary><div>'+sideHTML+'</div></details>'+(chosen?.html||'<div class="empty">'+(rows.length?'目次から項目を選んでください。':'該当する項目がありません。検索語を短くしてください。')+'</div>')+sourceNote();
     syncTocHighlight();updateTools();
 }
@@ -228,7 +228,7 @@ document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{cle
 document.addEventListener('keydown',e=>{const editing=['INPUT','TEXTAREA'].includes(document.activeElement.tagName)||document.activeElement.isContentEditable;if(e.key==='/'&&!editing){e.preventDefault();$('#search').focus();}if(e.key==='Escape'&&document.activeElement===$('#search')){$('#search').value='';query='';render();$('#search').blur();}});
 document.addEventListener('click',async e=>{const copy=e.target.closest('[data-copy],[data-shortcopy]');if(copy){const short=!!copy.dataset.shortcopy;const item=entries.get(copy.dataset.shortcopy||copy.dataset.copy);const code=short?item.code:item.full;try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(code);}else{const ta=document.createElement('textarea');ta.value=code;ta.style.position='fixed';ta.style.left='-9999px';document.body.append(ta);ta.select();const success=document.execCommand('copy');ta.remove();if(!success)throw Error('copy');}notify(short?'短いコードをコピーしました':'全体コードをコピーしました');}catch{notify('コピーできませんでした。.cppを保存するか、コードを選択してください');}}
 const dl=e.target.closest('[data-download]');if(dl){const item=entries.get(dl.dataset.download);const url=URL.createObjectURL(new Blob([item.full],{type:'text/plain;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download=item.id+'.cpp';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}});
-let lastStandardTheme=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+let lastStandardTheme='dark';
 function applyTheme(theme){
     document.documentElement.dataset.theme=theme;
     $('#poison').setAttribute('aria-pressed',String(theme==='poison'));
