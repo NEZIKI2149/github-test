@@ -52,7 +52,7 @@ aside{top:155px;height:calc(100vh - 155px)}
 .toc-tools{display:grid;gap:8px;padding:0 0 18px;margin:0 0 18px;border-bottom:1px solid var(--line)}.toc-tools .side-link{display:block;border:1px solid var(--line);border-radius:6px;background:var(--paper);padding:10px 12px;margin:0;color:var(--ink);text-align:center}.toc-tools .side-link:hover,.toc-tools .side-link.current{background:var(--tint);border-color:var(--accent);color:var(--accent)}
 .dimension-controls{display:flex;gap:8px;flex-wrap:wrap}.dimension-controls button[aria-pressed="true"]{background:var(--tint);border-color:var(--accent);color:var(--accent)}
 .layout.home{display:block}.layout.home aside{display:none}
-.mobile-index .index-close{display:none}.mobile-index[open] .index-open{display:none}.mobile-index[open] .index-close{display:inline}.mobile-index[open]>summary{list-style:none;text-align:right}
+@media(max-width:750px){.mobile-index{margin-top:0}.mobile-index>div{padding-top:0}}
 </style>
 </head>
 <body>
@@ -198,7 +198,7 @@ function render(){
     if(currentGroup)sideHTML+='</details>';
     $('#sidebar').innerHTML=sideHTML;
     if(home){$('#sidebar').innerHTML='';$('#main').innerHTML='<p>カテゴリを選択するか、検索バーを利用してください。</p>';return;}
-    $('#main').innerHTML='<details class="mobile-index"'+(mobileIndexOpen?' open':'')+'><summary><span class="index-open">目次を開く</span><span class="index-close" aria-label="目次を閉じる">×</span></summary><div>'+sideHTML+'</div></details>'+(chosen?.html||'<div class="empty">'+(rows.length?'目次から項目を選んでください。':'該当する項目がありません。検索語を短くしてください。')+'</div>')+sourceNote();
+    $('#main').innerHTML=(mobileIndexOpen?'<div class="mobile-index" role="navigation" aria-label="目次"><div>'+sideHTML+'</div></div>':'')+(chosen?.html||'<div class="empty">'+(rows.length?'目次から項目を選んでください。':'該当する項目がありません。検索語を短くしてください。')+'</div>')+sourceNote();
     syncTocHighlight();updateTools();
 }
 function jumpFromHash(){
@@ -215,7 +215,6 @@ function jumpFromHash(){
     window.scrollTo({top:Math.max(0,top),left:0,behavior:'instant'});
 }
 document.addEventListener('click',e=>{
-    const outer=e.target.closest('.mobile-index>summary');if(outer){e.preventDefault();mobileIndexOpen=!outer.parentElement.open;outer.parentElement.open=mobileIndexOpen;return;}
     const summary=e.target.closest('.toc-group>summary');if(summary){e.preventDefault();const top=summary.getBoundingClientRect().top;const key=summary.parentElement.dataset.group;openGroup=openGroup===key?'':key;document.querySelectorAll('.toc-group').forEach(g=>{g.open=g.dataset.group===openGroup;});if(isMobile())requestAnimationFrame(()=>{window.scrollBy({top:summary.getBoundingClientRect().top-top,behavior:'instant'});});return;}
     const link=e.target.closest('.side-link');
     if(!link||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey){return;}
