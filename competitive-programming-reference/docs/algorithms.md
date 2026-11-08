@@ -74,6 +74,90 @@ int main(){
 }
 ```
 
+## 強連結成分分解（SCC）
+
+**目的** : 有向グラフを、互いに行き来できる頂点ごとに分ける
+
+計算量：O(N+M)　メモリ：O(N+M)
+
+⚠︎ 有向グラフ限定。グループ番号に意味はなく、実行ごとに順序が変わることがある。
+
+```cpp
+// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
+#include <bits/stdc++.h>
+using namespace std;
+
+int main(){
+    int N, M;
+    cin >> N >> M;
+    vector<vector<int>> G(N), revG(N);
+    for(int i = 0;i < M;i++){
+        int a, b;
+        cin >> a >> b;
+        a--; b--;
+        G.at(a).push_back(b);
+        revG.at(b).push_back(a);
+    }
+    vector<char> seen(N, false);
+    vector<int> order;
+    for(int s = 0;s < N;s++){
+        if(seen.at(s)){
+            continue;
+        }
+        vector<pair<int,int>> st;
+        seen.at(s) = true;
+        st.push_back({s, 0});
+        while(!st.empty()){
+            int v = st.back().first;
+            int &i = st.back().second;
+            if(i < (int)G.at(v).size()){
+                int to = G.at(v).at(i);
+                i++;
+                if(!seen.at(to)){
+                    seen.at(to) = true;
+                    st.push_back({to, 0});
+                }
+            }
+            else{
+                order.push_back(v);
+                st.pop_back();
+            }
+        }
+    }
+    vector<int> component(N, -1);
+    int group_count = 0;
+    for(int i = N-1;i >= 0;i--){
+        int s = order.at(i);
+        if(component.at(s) != -1){
+            continue;
+        }
+        vector<int> st = {s};
+        component.at(s) = group_count;
+        while(!st.empty()){
+            int v = st.back();
+            st.pop_back();
+            for(int j = 0;j < (int)revG.at(v).size();j++){
+                int to = revG.at(v).at(j);
+                if(component.at(to) == -1){
+                    component.at(to) = group_count;
+                    st.push_back(to);
+                }
+            }
+        }
+        group_count++;
+    }
+    cout << group_count << endl;
+    for(int v = 0;v < N;v++){
+        cout << component.at(v)+1;
+        if(v+1 < N){
+            cout << " ";
+        }
+    }
+    cout << endl;
+    return 0;
+}
+```
+
 ## グリッドBFS
 
 **目的** : 壁のある盤面で、上下左右移動の最短距離を求める
@@ -458,6 +542,51 @@ int main(){
             cout << dist.at(i) << endl;
         }
     }
+}
+```
+
+## ダブリング
+
+**目的** : 各頂点から決まった回数だけ移動した先を求める
+
+計算量：前処理 O(N log K) / 質問 O(Q log K)　メモリ：O(N log K)
+
+⚠︎ 移動回数Kは0以上10¹⁸以下。各頂点の移動先が1つに決まるとき限定
+
+```cpp
+// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
+#include <bits/stdc++.h>
+using namespace std;
+
+int main(){
+    int N, Q;
+    cin >> N >> Q;
+    vector<int> next(N);
+    for(int v = 0;v < N;v++){
+        cin >> next.at(v);
+        next.at(v)--;
+    }
+    const int LOG = 61;
+    vector<vector<int>> jump(LOG, vector<int>(N));
+    jump.at(0) = next;
+    for(int bit = 1;bit < LOG;bit++){
+        for(int v = 0;v < N;v++){
+            jump.at(bit).at(v) = jump.at(bit-1).at(jump.at(bit-1).at(v));
+        }
+    }
+    for(int q = 0;q < Q;q++){
+        int v;
+        long long K;
+        cin >> v >> K;
+        v--;
+        for(int bit = 0;bit < LOG;bit++){
+            if((K >> bit) & 1LL){
+                v = jump.at(bit).at(v);
+            }
+        }
+        cout << v+1 << endl;
+    }
+    return 0;
 }
 ```
 

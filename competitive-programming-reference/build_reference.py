@@ -553,6 +553,105 @@ else{
 }
 """, input="3 2\n1 2\n2 3\n", expected="1\n2\n3\n")
 
+add(g, "各頂点から決まった回数だけ移動した先を求める", "jump.at(bit).at(v)", "前処理 O(N log K) / 質問 O(Q log K) / メモリ O(N log K)", note="⚠︎ 移動回数Kは0以上10¹⁸以下。各頂点の移動先が1つに決まるとき限定", body="""
+int N, Q;
+cin >> N >> Q;
+vector<int> next(N);
+for(int v = 0;v < N;v++){
+    cin >> next.at(v);
+    next.at(v)--;
+}
+const int LOG = 61;
+vector<vector<int>> jump(LOG, vector<int>(N));
+jump.at(0) = next;
+for(int bit = 1;bit < LOG;bit++){
+    for(int v = 0;v < N;v++){
+        jump.at(bit).at(v) = jump.at(bit-1).at(jump.at(bit-1).at(v));
+    }
+}
+for(int q = 0;q < Q;q++){
+    int v;
+    long long K;
+    cin >> v >> K;
+    v--;
+    for(int bit = 0;bit < LOG;bit++){
+        if((K >> bit) & 1LL){
+            v = jump.at(bit).at(v);
+        }
+    }
+    cout << v+1 << endl;
+}
+""", input="4 3\n2 3 4 2\n1 0\n1 3\n4 10\n", expected="1\n4\n2\n")
+
+add(g, "有向グラフを、互いに行き来できる頂点ごとに分ける", "component.at(v)", "時間 O(N+M) / メモリ O(N+M)", note="⚠︎ 有向グラフ限定。グループ番号に意味はなく、実行ごとに順序が変わることがある。", body="""
+int N, M;
+cin >> N >> M;
+vector<vector<int>> G(N), revG(N);
+for(int i = 0;i < M;i++){
+    int a, b;
+    cin >> a >> b;
+    a--; b--;
+    G.at(a).push_back(b);
+    revG.at(b).push_back(a);
+}
+vector<char> seen(N, false);
+vector<int> order;
+for(int s = 0;s < N;s++){
+    if(seen.at(s)){
+        continue;
+    }
+    vector<pair<int,int>> st;
+    seen.at(s) = true;
+    st.push_back({s, 0});
+    while(!st.empty()){
+        int v = st.back().first;
+        int &i = st.back().second;
+        if(i < (int)G.at(v).size()){
+            int to = G.at(v).at(i);
+            i++;
+            if(!seen.at(to)){
+                seen.at(to) = true;
+                st.push_back({to, 0});
+            }
+        }
+        else{
+            order.push_back(v);
+            st.pop_back();
+        }
+    }
+}
+vector<int> component(N, -1);
+int group_count = 0;
+for(int i = N-1;i >= 0;i--){
+    int s = order.at(i);
+    if(component.at(s) != -1){
+        continue;
+    }
+    vector<int> st = {s};
+    component.at(s) = group_count;
+    while(!st.empty()){
+        int v = st.back();
+        st.pop_back();
+        for(int j = 0;j < (int)revG.at(v).size();j++){
+            int to = revG.at(v).at(j);
+            if(component.at(to) == -1){
+                component.at(to) = group_count;
+                st.push_back(to);
+            }
+        }
+    }
+    group_count++;
+}
+cout << group_count << endl;
+for(int v = 0;v < N;v++){
+    cout << component.at(v)+1;
+    if(v+1 < N){
+        cout << " ";
+    }
+}
+cout << endl;
+""", input="5 6\n1 2\n2 1\n2 3\n3 4\n4 3\n4 5\n", expected="3\n1 1 2 2 3\n")
+
 g = group("algo", "dp", "DP：階段・LIS・ナップサック")
 add(g, "1段・2段ずつN段上る方法の数を余りで求める", "dp.at(i) = dp.at(i+1)+dp.at(i+2);", "時間 O(N) / メモリ O(N)", body="")
 g["items"][-1].update(full=(ROOT / "examples/acl_modint.cpp").read_text(encoding="utf-8"), input="5\n", expected="8\n", note="法998244353。ACLが必要。")
@@ -736,6 +835,8 @@ ALGORITHM_SECTIONS = {
     "graph-2": ("dijkstra", "ダイクストラ法（Dijkstra）", "だいくすとらほう"),
     "graph-3": ("grid-bfs", "グリッドBFS", "ぐりっどびーえふえす"),
     "graph-4": ("topological-sort", "トポロジカルソート", "とぽろじかるそーと"),
+    "graph-5": ("doubling", "ダブリング", "だぶりんぐ"),
+    "graph-6": ("scc", "強連結成分分解（SCC）", "きょうれんけつせいぶんぶんかい"),
     "dp-1": ("stair-dp", "動的計画法（階段）", "どうてきけいかくほうかいだん"),
     "dp-2": ("lis-quadratic", "最長増加部分列（二重ループ）", "さいちょうぞうかぶぶんれつにじゅうるーぷ"),
     "dp-3": ("lis-binary-search", "最長増加部分列（二分探索）", "さいちょうぞうかぶぶんれつにぶんたんさく"),
@@ -761,6 +862,8 @@ ALGORITHM_NOTES = {
     "graph-2": "⚠︎ 各ルートを通るコストがすべて0以上のとき限定",
     "graph-3": "",
     "graph-4": "",
+    "graph-5": "⚠︎ 移動回数Kは0以上10¹⁸以下。各頂点の移動先が1つに決まるとき限定",
+    "graph-6": "⚠︎ 有向グラフ限定。グループ番号に意味はなく、実行ごとに順序が変わることがある。",
     "dp-1": "⚠︎ 余りは998244353で計算する。AtCoder Libraryが必要。",
     "dp-2": "⚠︎ 同じ値を続けて選ぶことはできない",
     "dp-3": "⚠︎ 同じ値を続けて選ぶことはできない。tailの中身は、実際に選べる並びとは限らない。",
@@ -826,6 +929,10 @@ def generate():
                 item["full"] = "// Reference: " + PUBLIC + "\n" + item["full"]
         if g["key"] == "reverse":
             g["keywords"] = "リバース 逆順 逆転 部分反転 部分リバース 回転"
+        elif g["key"] == "doubling":
+            g["keywords"] = "doubling 2乗前計算 関数合成 K回移動"
+        elif g["key"] == "scc":
+            g["keywords"] = "強連結成分 strongly connected components Kosaraju"
     enrich(groups)
     limits = limits_sections()
     limits.insert(2, dict(key="memory-calculator", title="メモリ計算機", tool="memory", content="<p>コンテナを選択してメモリ容量を計算する。配列（vector）は一次元／二次元を切り替えられる。set・multiset・map・unordered_set・unordered_mapにも対応し、管理領域込みの推定容量を選択式のメモリ制限と比較する。</p>"))

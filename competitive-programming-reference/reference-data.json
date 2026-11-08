@@ -2524,6 +2524,28 @@
     },
     {
       "page": "algo",
+      "key": "scc",
+      "title": "強連結成分分解（SCC）",
+      "reading": "きょうれんけつせいぶんぶんかい",
+      "note": "",
+      "items": [
+        {
+          "id": "graph-6",
+          "desc": "有向グラフを、互いに行き来できる頂点ごとに分ける",
+          "code": "component.at(v)",
+          "cost": "時間 O(N+M) / メモリ O(N+M)",
+          "note": "⚠︎ 有向グラフ限定。グループ番号に意味はなく、実行ごとに順序が変わることがある。",
+          "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    int N, M;\n    cin >> N >> M;\n    vector<vector<int>> G(N), revG(N);\n    for(int i = 0;i < M;i++){\n        int a, b;\n        cin >> a >> b;\n        a--; b--;\n        G.at(a).push_back(b);\n        revG.at(b).push_back(a);\n    }\n    vector<char> seen(N, false);\n    vector<int> order;\n    for(int s = 0;s < N;s++){\n        if(seen.at(s)){\n            continue;\n        }\n        vector<pair<int,int>> st;\n        seen.at(s) = true;\n        st.push_back({s, 0});\n        while(!st.empty()){\n            int v = st.back().first;\n            int &i = st.back().second;\n            if(i < (int)G.at(v).size()){\n                int to = G.at(v).at(i);\n                i++;\n                if(!seen.at(to)){\n                    seen.at(to) = true;\n                    st.push_back({to, 0});\n                }\n            }\n            else{\n                order.push_back(v);\n                st.pop_back();\n            }\n        }\n    }\n    vector<int> component(N, -1);\n    int group_count = 0;\n    for(int i = N-1;i >= 0;i--){\n        int s = order.at(i);\n        if(component.at(s) != -1){\n            continue;\n        }\n        vector<int> st = {s};\n        component.at(s) = group_count;\n        while(!st.empty()){\n            int v = st.back();\n            st.pop_back();\n            for(int j = 0;j < (int)revG.at(v).size();j++){\n                int to = revG.at(v).at(j);\n                if(component.at(to) == -1){\n                    component.at(to) = group_count;\n                    st.push_back(to);\n                }\n            }\n        }\n        group_count++;\n    }\n    cout << group_count << endl;\n    for(int v = 0;v < N;v++){\n        cout << component.at(v)+1;\n        if(v+1 < N){\n            cout << \" \";\n        }\n    }\n    cout << endl;\n    return 0;\n}\n",
+          "input": "5 6\n1 2\n2 1\n2 3\n3 4\n4 3\n4 5\n",
+          "expected": "3\n1 1 2 2 3\n",
+          "time": "O(N+M)",
+          "memory": "O(N+M)"
+        }
+      ],
+      "keywords": "強連結成分 strongly connected components Kosaraju"
+    },
+    {
+      "page": "algo",
       "key": "grid-bfs",
       "title": "グリッドBFS",
       "reading": "ぐりっどびーえふえす",
@@ -2731,6 +2753,28 @@
           "memory": "O(N+M)"
         }
       ]
+    },
+    {
+      "page": "algo",
+      "key": "doubling",
+      "title": "ダブリング",
+      "reading": "だぶりんぐ",
+      "note": "",
+      "items": [
+        {
+          "id": "graph-5",
+          "desc": "各頂点から決まった回数だけ移動した先を求める",
+          "code": "jump.at(bit).at(v)",
+          "cost": "前処理 O(N log K) / 質問 O(Q log K) / メモリ O(N log K)",
+          "note": "⚠︎ 移動回数Kは0以上10¹⁸以下。各頂点の移動先が1つに決まるとき限定",
+          "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    int N, Q;\n    cin >> N >> Q;\n    vector<int> next(N);\n    for(int v = 0;v < N;v++){\n        cin >> next.at(v);\n        next.at(v)--;\n    }\n    const int LOG = 61;\n    vector<vector<int>> jump(LOG, vector<int>(N));\n    jump.at(0) = next;\n    for(int bit = 1;bit < LOG;bit++){\n        for(int v = 0;v < N;v++){\n            jump.at(bit).at(v) = jump.at(bit-1).at(jump.at(bit-1).at(v));\n        }\n    }\n    for(int q = 0;q < Q;q++){\n        int v;\n        long long K;\n        cin >> v >> K;\n        v--;\n        for(int bit = 0;bit < LOG;bit++){\n            if((K >> bit) & 1LL){\n                v = jump.at(bit).at(v);\n            }\n        }\n        cout << v+1 << endl;\n    }\n    return 0;\n}\n",
+          "input": "4 3\n2 3 4 2\n1 0\n1 3\n4 10\n",
+          "expected": "1\n4\n2\n",
+          "time": "前処理 O(N log K) / 質問 O(Q log K)",
+          "memory": "O(N log K)"
+        }
+      ],
+      "keywords": "doubling 2乗前計算 関数合成 K回移動"
     },
     {
       "page": "algo",
@@ -2958,6 +3002,15 @@
     }
   ],
   "notes": [
+    {
+      "id": "20261108-algo-doubling-scc",
+      "at": "2026-11-08 22:57",
+      "title": "アルゴリズムにダブリングと強連結成分分解を追加",
+      "category": "アルゴリズム",
+      "text": "各頂点からK回移動した先を求めるダブリングと、有向グラフを相互に行き来できる頂点ごとに分ける強連結成分分解（SCC）を、独立した項目として五十音順に追加しました。",
+      "published": true,
+      "kind": "updates"
+    },
     {
       "id": "20261108-memory-reference-trim",
       "at": "2026-11-08 12:18",

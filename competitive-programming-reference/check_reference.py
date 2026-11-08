@@ -17,7 +17,7 @@ assert len(keys) == len(set(keys))
 assert not (set(keys) & {"search", "main", "source", "sidebar", "theme", "clear", "toast", "reference-data"})
 items = [i for g in data["groups"] for i in g["items"]]
 algorithms = [g for g in data["groups"] if g["page"] == "algo"]
-assert len(algorithms) == 21
+assert len(algorithms) == 23
 assert all(len(g["items"]) == 1 and g.get("reading") for g in algorithms)
 assert len({g["title"] for g in algorithms}) == len(algorithms)
 import unicodedata
