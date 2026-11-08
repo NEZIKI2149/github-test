@@ -20,31 +20,12 @@
 
 ## 型と配列のメモリ
 
-<div class="table-wrap"><table><thead><tr><th>型</th><th>1要素の目安</th><th>10⁵要素</th><th>10⁶要素</th><th>10⁷要素</th></tr></thead><tbody><tr><td>char</td><td>0.000001 MB</td><td>0.1 MB</td><td>1 MB</td><td>10 MB</td></tr><tr><td>int</td><td>0.000004 MB</td><td>0.4 MB</td><td>4 MB</td><td>40 MB</td></tr><tr><td>long long / double</td><td>0.000008 MB</td><td>0.8 MB</td><td>8 MB</td><td>80 MB</td></tr><tr><td>pair&lt;int,int&gt;</td><td>通常0.000008 MB</td><td>約0.8 MB</td><td>約8 MB</td><td>約80 MB</td></tr></tbody></table></div><p class="note">要素本体の容量を、一般的なGCC環境で見積もった表。実際の型のサイズはsizeofで確認できます。</p>
+<div class="table-wrap"><table><thead><tr><th>型</th><th>1要素の目安</th><th>10⁵要素</th><th>10⁶要素</th><th>10⁷要素</th></tr></thead><tbody><tr><td>char</td><td>0.000001 MB</td><td>0.1 MB</td><td>1 MB</td><td>10 MB</td></tr><tr><td>int</td><td>0.000004 MB</td><td>0.4 MB</td><td>4 MB</td><td>40 MB</td></tr><tr><td>long long / double</td><td>0.000008 MB</td><td>0.8 MB</td><td>8 MB</td><td>80 MB</td></tr><tr><td>pair&lt;int,int&gt;</td><td>通常0.000008 MB</td><td>約0.8 MB</td><td>約8 MB</td><td>約80 MB</td></tr></tbody></table></div>
 
 ## 二次元配列のメモリ
 
-<div class="table-wrap"><table><thead><tr><th>H × W</th><th>要素数</th><th>int</th><th>long long / double</th></tr></thead><tbody><tr><td>10² × 10²</td><td>10⁴</td><td>0.04 MB</td><td>0.08 MB</td></tr><tr><td>10³ × 10³</td><td>10⁶</td><td>4 MB</td><td>8 MB</td></tr><tr><td>2×10³ × 2×10³</td><td>4×10⁶</td><td>16 MB</td><td>32 MB</td></tr><tr><td>3×10³ × 3×10³</td><td>9×10⁶</td><td>36 MB</td><td>72 MB</td></tr><tr><td>5×10³ × 5×10³</td><td>2.5×10⁷</td><td>100 MB</td><td>200 MB</td></tr><tr><td>10⁴ × 10⁴</td><td>10⁸</td><td>400 MB</td><td>800 MB</td></tr></tbody></table></div><p class="note">要素本体の容量。vector&lt;vector&lt;T&gt;&gt;には行ごとのvector管理領域・確保処理も加わる。大きなローカル固定長配列はスタック上限にも注意し、vectorを使う。</p>
-
-## メモリ上限との比較
-
-<div class="table-wrap"><table><thead><tr><th>上限</th><th>intだけで使い切る理論要素数</th><th>正方形int配列の理論最大辺長</th></tr></thead><tbody><tr><td>256 MB</td><td>約6.4×10⁷</td><td>8000</td></tr><tr><td>512 MB</td><td>約1.3×10⁸</td><td>11313</td></tr><tr><td>1024 MB</td><td>約2.6×10⁸</td><td>16000</td></tr></tbody></table></div><p class="note">計算機と同じMB基準で、上限を256・512・1024 MBとした理論値。安全な確保量ではない。実行環境・他の変数・コピー・管理領域の分を差し引く。</p><p>合計容量 ≈ 各配列の容量の合計 + 管理領域。intのN×N配列をコピーすれば、本体だけでN² × 0.000008 MB。long longのN×N累積和なら約(N+1)² × 0.000008 MB。</p>
+<div class="table-wrap"><table><thead><tr><th>H × W</th><th>要素数</th><th>int</th><th>long long / double</th></tr></thead><tbody><tr><td>10² × 10²</td><td>10⁴</td><td>0.04 MB</td><td>0.08 MB</td></tr><tr><td>10³ × 10³</td><td>10⁶</td><td>4 MB</td><td>8 MB</td></tr><tr><td>2×10³ × 2×10³</td><td>4×10⁶</td><td>16 MB</td><td>32 MB</td></tr><tr><td>3×10³ × 3×10³</td><td>9×10⁶</td><td>36 MB</td><td>72 MB</td></tr><tr><td>5×10³ × 5×10³</td><td>2.5×10⁷</td><td>100 MB</td><td>200 MB</td></tr><tr><td>10⁴ × 10⁴</td><td>10⁸</td><td>400 MB</td><td>800 MB</td></tr></tbody></table></div>
 
 ## 容器・グラフ・コピーの注意
 
 <div class="table-wrap"><table><thead><tr><th>対象</th><th>容量の見積もり</th></tr></thead><tbody><tr><td>vector&lt;T&gt;</td><td>確保済みcapacity × sizeof(T) ÷ 10⁶ MB + 管理領域。sizeだけでは正確に見積もれない</td></tr><tr><td>vector&lt;vector&lt;T&gt;&gt;</td><td>各行のcapacity × sizeof(T) ÷ 10⁶ MB + H個のvector管理領域 + 各確保の管理領域</td></tr><tr><td>map / set / multiset</td><td>ノードごとの参照などで、値本体より大きくなる。要素数 × sizeof(値) ÷ 10⁶ MBだけでは不足</td></tr><tr><td>unordered_map / unordered_set</td><td>要素ノードに加え、バケット配列も必要</td></tr><tr><td>無向グラフの隣接リスト</td><td>頂点数N、辺数Mの場合、intの行き先を通常2M個持つ。本体約M × 0.000008 MB + N個のvectorなど</td></tr><tr><td>vector&lt;bool&gt;</td><td>一般にbit圧縮。通常のbool配列とは扱いが異なる。分かりやすさ重視ならvector&lt;char&gt;</td></tr><tr><td>関数の引数</td><td>vector&lt;int&gt; Aはコピー。const vector&lt;int&gt;&amp; Aなら読むだけで参照</td></tr><tr><td>再帰DFS</td><td>呼び出しごとのスタックも消費。深いグラフではstackなどの反復実装を検討</td></tr></tbody></table></div>
-
-## sizeof：実際の型のサイズを確認
-
-<p>型本体の容量をMB単位で出力する。sizeof(vector&lt;int&gt;)は要素本体を含まない。</p><details class="code-only"><summary>全体コードを開く</summary><pre><code>#include &lt;bits/stdc++.h&gt;
-using namespace std;
-
-int main(){
-    cout &lt;&lt; fixed &lt;&lt; setprecision(6);
-    cout &lt;&lt; sizeof(int) / 1000000.0 &lt;&lt; &quot; MB&quot; &lt;&lt; endl;
-    cout &lt;&lt; sizeof(long long) / 1000000.0 &lt;&lt; &quot; MB&quot; &lt;&lt; endl;
-    cout &lt;&lt; sizeof(double) / 1000000.0 &lt;&lt; &quot; MB&quot; &lt;&lt; endl;
-    cout &lt;&lt; sizeof(vector&lt;int&gt;) / 1000000.0 &lt;&lt; &quot; MB&quot; &lt;&lt; endl;
-    return 0;
-}
-</code></pre></details>

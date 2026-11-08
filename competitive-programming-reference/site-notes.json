@@ -2,6 +2,14 @@
   "timezone": "Asia/Tokyo",
   "updates": [
     {
+      "id": "20261108-memory-reference-trim",
+      "at": "2026-11-08 12:18",
+      "title": "メモリの目安ページを整理",
+      "category": "計算量・メモリ",
+      "text": "メモリ上限との比較とsizeofの項目を削除しました。型別・二次元配列の各表の下にあった補足文も取り除きました。",
+      "published": true
+    },
+    {
       "id": "20261108-algorithm-labels",
       "at": "2026-11-08 10:57",
       "title": "アルゴリズムのカテゴリ名とDPの目次名を整理",
