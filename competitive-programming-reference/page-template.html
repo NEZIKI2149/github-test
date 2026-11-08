@@ -52,6 +52,7 @@ aside{top:155px;height:calc(100vh - 155px)}
 .toc-tools{display:grid;gap:8px;padding:0 0 18px;margin:0 0 18px;border-bottom:1px solid var(--line)}.toc-tools .side-link{display:block;border:1px solid var(--line);border-radius:6px;background:var(--paper);padding:10px 12px;margin:0;color:var(--ink);text-align:center}.toc-tools .side-link:hover,.toc-tools .side-link.current{background:var(--tint);border-color:var(--accent);color:var(--accent)}
 .dimension-controls{display:flex;gap:8px;flex-wrap:wrap}.dimension-controls button[aria-pressed="true"]{background:var(--tint);border-color:var(--accent);color:var(--accent)}
 .layout.home{display:block}.layout.home aside{display:none}
+.mobile-index .index-close{display:none}.mobile-index[open] .index-open{display:none}.mobile-index[open] .index-close{display:inline}.mobile-index[open]>summary{list-style:none;text-align:right}
 </style>
 </head>
 <body>
@@ -140,7 +141,7 @@ function memoryEstimate(state){
     }
     return {payload,low,high,estimated:true,assumption};
 }
-function memoryNumber(value){return value.toLocaleString('ja-JP',value<10?{minimumSignificantDigits:2,maximumSignificantDigits:2}:{minimumFractionDigits:1,maximumFractionDigits:1});}
+function memoryNumber(value){return value.toLocaleString('ja-JP',value<10?{useGrouping:false,minimumSignificantDigits:2,maximumSignificantDigits:2}:{useGrouping:false,minimumFractionDigits:1,maximumFractionDigits:1});}
 function memoryBytes(n){return memoryNumber(Number(n)/1e6)+' MB';}
 function updateMemory(){
     const result=$('#memory-result');if(!result)return;
@@ -180,7 +181,7 @@ function render(){
         const items=g.items.filter(i=>!searching||termsMatch(g.title+' '+(g.keywords||'')+' '+(i.keywords||'')+' '+i.desc+' '+i.code+' '+i.note));
         if(g.page==='algo'){
             if(items.length)rows.push({key:g.key,title:g.title,page:g.page,html:section(g,items),label:'五十音順'});
-        }else for(const i of items)rows.push({key:i.id,title:i.desc,page:g.page,group:g.key,groupTitle:g.title,html:librarySection(g,i),label:g.page==='acl'?'AtCoder Library':DATA.groups.findIndex(x=>x.key===g.key)<7?'容器・データを持つもの':'操作関数'});
+        }else for(const i of items)rows.push({key:i.id,title:i.desc,page:g.page,group:g.key,groupTitle:g.title,html:librarySection(g,i),label:g.page==='acl'?(searching?'AtCoder Library':''):DATA.groups.findIndex(x=>x.key===g.key)<7?'コンテナ':'操作関数'});
     }
     if(searching||page==='limits')for(const s of DATA.limits)if(!searching||termsMatch(s.title+' '+s.content.replace(/<[^>]*>/g,' ')))rows.push({key:s.key,title:s.title,page:'limits',html:limitSection(s),label:'計算量・メモリ',tool:!!s.tool});
     if(searching||page==='notes')for(const n of DATA.notes||[])if(!searching||termsMatch(n.title+' '+n.category+' '+n.text+' '+n.at))rows.push({key:n.id,title:n.title,page:'notes',html:noteSection(n),label:n.kind==='updates'?'更新履歴':'制作者メモ'});
@@ -197,7 +198,7 @@ function render(){
     if(currentGroup)sideHTML+='</details>';
     $('#sidebar').innerHTML=sideHTML;
     if(home){$('#sidebar').innerHTML='';$('#main').innerHTML='<p>カテゴリを選択するか、検索バーを利用してください。</p>';return;}
-    $('#main').innerHTML='<details class="mobile-index"'+(mobileIndexOpen?' open':'')+'><summary>このページの目次</summary><div>'+sideHTML+'</div></details>'+(chosen?.html||'<div class="empty">'+(rows.length?'目次から項目を選んでください。':'該当する項目がありません。検索語を短くしてください。')+'</div>')+sourceNote();
+    $('#main').innerHTML='<details class="mobile-index"'+(mobileIndexOpen?' open':'')+'><summary><span class="index-open">目次を開く</span><span class="index-close" aria-label="目次を閉じる">×</span></summary><div>'+sideHTML+'</div></details>'+(chosen?.html||'<div class="empty">'+(rows.length?'目次から項目を選んでください。':'該当する項目がありません。検索語を短くしてください。')+'</div>')+sourceNote();
     syncTocHighlight();updateTools();
 }
 function jumpFromHash(){
