@@ -9,6 +9,35 @@ button{font:inherit;cursor:pointer;color:inherit;touch-action:manipulation}butto
 #app{height:100vh;height:100dvh;display:flex;flex-direction:column;padding:env(safe-area-inset-top) max(7px,env(safe-area-inset-right)) max(4px,env(safe-area-inset-bottom)) max(7px,env(safe-area-inset-left));gap:5px}
 .toolbar{display:flex;align-items:center;gap:5px;flex-shrink:0;min-height:35px}.toolbar a{font-size:12px;color:var(--sub);text-decoration:none;white-space:nowrap;padding:5px}.filename{font-weight:700;font-size:12px;margin-right:auto;white-space:nowrap}
 .toolbar button{border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:6px 9px;font-size:12px;min-height:30px}.toolbar button.primary{background:var(--on);border-color:var(--accent)}
+/* Site-wide header can be revealed without shifting the fixed on-screen keyboard outside the viewport. */
+.site-head{overflow:hidden;max-height:0;visibility:hidden;opacity:0;flex:0 0 auto;border-bottom:0 solid var(--line);transition:max-height .18s ease,opacity .18s ease}
+#app.show-site-head .site-head{max-height:190px;visibility:visible;opacity:1;border-bottom-width:1px}
+.site-topbar{display:flex;align-items:center;gap:9px;padding:6px 3px 8px}
+.site-brand{font-size:15px;font-weight:750;letter-spacing:-.4px;white-space:nowrap;color:var(--ink);text-decoration:none}
+.site-search{flex:1;min-width:0;position:relative;display:flex;align-items:center;gap:5px}
+.site-search input{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:7px;font-size:13px;padding:7px 9px;min-width:0;flex:1;width:100%}
+.site-search button,.site-theme button{background:var(--panel);border:1px solid var(--line);border-radius:6px;white-space:nowrap;padding:6px 8px;font-size:11px;min-height:31px}
+.site-source{font-size:11px;color:var(--accent);white-space:nowrap;text-decoration:none}
+.site-theme{display:flex;gap:4px}
+.site-search-help{display:none;color:var(--sub);font-size:10px;margin:0 0 6px 3px}
+.toolbar #toggle-site-head{white-space:nowrap;color:var(--accent);border-color:var(--accent)}
+:root[data-theme=poison]{color-scheme:light;--bg:#ff00ff;--panel:#00ff00;--code:#00ff00;--ink:#291038;--sub:#4c185e;--line:#8500bd;--accent:#4b006d;--key:#b7ef6e;--special:#8ae53a;--on:#00bbaa}
+@media(orientation:portrait) and (max-width:750px){
+  #app.show-site-head .site-head{max-height:210px}
+  .site-topbar{flex-wrap:wrap;gap:7px}
+  .site-brand{font-size:16px}
+  .site-search{flex:1 1 100%;order:3}
+  .site-source{margin-left:auto}
+  .site-search-help{display:block}
+}
+@media(orientation:landscape) and (max-height:370px){
+  .site-topbar{gap:6px;padding:3px 1px}
+  .site-brand{font-size:12px}
+  .site-search input{padding:4px 7px;font-size:12px}
+  .site-search button,.site-theme button{padding:4px 5px;min-height:26px;font-size:10px}
+  .site-source{font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){.site-head{transition:none}}
 .category-tabs{display:flex;align-items:stretch;gap:18px;width:100%;flex:0 0 auto;min-height:32px;overflow-x:auto;overscroll-behavior-x:contain;touch-action:pan-x;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid var(--line)}
 .category-tabs::-webkit-scrollbar{display:none}
 .category-tabs a{display:flex;align-items:center;flex:0 0 auto;white-space:nowrap;text-decoration:none;color:var(--ink);font-size:12px;font-weight:650;border-bottom:3px solid transparent;padding:4px 0 6px}
@@ -55,8 +84,20 @@ button{font:inherit;cursor:pointer;color:inherit;touch-action:manipulation}butto
 @media (max-width:650px) and (orientation:landscape){:root{--gap:2px}.keyboard{gap:3px}.arrows{flex-basis:78px}.toolbar button{padding:4px 6px}}
 </style></head>
 <body><div id="app">
-<div class="toolbar"><a href="./#algo" aria-label="リファレンスに戻る">‹ リファレンス</a><span class="filename">main.cpp</span><button id="new" type="button">新規</button><button id="undo" type="button" aria-label="元に戻す">↶</button><button id="redo" type="button" aria-label="やり直す">↷</button><button id="paste" class="primary" type="button">貼り付け</button><button id="copy" class="primary" type="button">コピー</button></div>
+<section class="site-head" id="site-head" aria-label="サイトのヘッダー" aria-hidden="true">
+  <div class="site-topbar">
+    <a class="site-brand" href="./">ネジキチートシート</a>
+    <form class="site-search" id="site-search" action="./" method="get" role="search">
+      <input id="site-search-input" type="search" name="q" autocomplete="off" aria-label="全カテゴリから検索" placeholder="ダイクストラ法…">
+      <button type="submit">検索</button>
+    </form>
+    <a class="site-source" href="https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference" target="_blank" rel="noopener">GitHub ↗</a>
+    <div class="site-theme"><button id="site-theme-toggle" type="button" aria-label="明暗の配色を切り替える">明 / 暗</button><button id="site-theme-poison" type="button" aria-label="毒の配色を切り替える">毒</button></div>
+  </div>
+  <p class="site-search-help">関数名でも、日本語でも検索できます。例：reverse／逆順</p>
+</section>
 <nav class="category-tabs" id="category-tabs" aria-label="カテゴリ"><a href="./#std">標準ライブラリ</a><a href="./#acl">AtCoder Library</a><a href="./#algo">アルゴリズム</a><a href="./#limits">計算量・メモリ</a><a href="mobile-editor.html" aria-current="page">スマホエディタ</a><a href="./#notes">更新履歴・メモ</a></nav>
+<div class="toolbar" id="editor-toolbar"><button id="toggle-site-head" type="button" aria-controls="site-head" aria-expanded="false">検索・サイト名 ▾</button><span class="filename">main.cpp</span><button id="new" type="button">新規</button><button id="undo" type="button" aria-label="元に戻す">↶</button><button id="redo" type="button" aria-label="やり直す">↷</button><button id="paste" class="primary" type="button">貼り付け</button><button id="copy" class="primary" type="button">コピー</button></div>
 <textarea id="editor" readonly inputmode="none" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="C++コード。下の画面キーボードで編集"></textarea>
 <div class="hint"><span id="status">自動保存 · C++23</span><span>Ctrl+A 全選択 · Shift+矢印 範囲選択</span></div>
 <div class="kb-navigation" aria-label="縦画面のキーボード表示"><span>JIS配列 · 左右にスワイプ</span><div class="pan-buttons"><button id="pan-left" type="button" aria-label="キーボードの左側を表示">◀ 左</button><button id="fit-keys" type="button" aria-pressed="false">全体表示</button><button id="pan-right" type="button" aria-label="キーボードの右側を表示">右 ▶</button></div></div>
@@ -67,6 +108,44 @@ button{font:inherit;cursor:pointer;color:inherit;touch-action:manipulation}butto
 (function(){
 const TEMPLATE="#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    \n}";
 const KEY="neziki-cpp-mobile-editor-v1";
+const appRoot=document.getElementById("app"),siteHead=document.getElementById("site-head"),siteToggle=document.getElementById("toggle-site-head");
+const siteSearch=document.getElementById("site-search");
+function showSiteHead(open){
+  appRoot.classList.toggle("show-site-head",open);
+  siteHead.setAttribute("aria-hidden",String(!open));
+  siteToggle.setAttribute("aria-expanded",String(open));
+  siteToggle.textContent=open?"検索・サイト名 ▴":"検索・サイト名 ▾";
+  if(!open&&document.activeElement===document.getElementById("site-search-input"))document.activeElement.blur();
+}
+siteToggle.addEventListener("click",function(){showSiteHead(!appRoot.classList.contains("show-site-head"));});
+let touchStart=null;
+function gestureStart(e){if(e.touches&&e.touches.length===1)touchStart={x:e.touches[0].clientX,y:e.touches[0].clientY};else touchStart=null;}
+function gestureEnd(e){
+  if(!touchStart||!e.changedTouches||!e.changedTouches.length)return;
+  const dx=e.changedTouches[0].clientX-touchStart.x,dy=e.changedTouches[0].clientY-touchStart.y;
+  touchStart=null;
+  if(Math.abs(dy)>=36&&Math.abs(dy)>Math.abs(dx)*1.25)showSiteHead(dy>0);
+}
+for(const node of [document.getElementById("category-tabs"),document.getElementById("editor-toolbar"),siteHead]){
+  node.addEventListener("touchstart",gestureStart,{passive:true});
+  node.addEventListener("touchend",gestureEnd,{passive:true});
+  node.addEventListener("touchcancel",function(){touchStart=null;},{passive:true});
+}
+siteSearch.addEventListener("submit",function(){save();});
+let lastNormalTheme="dark";
+try{
+  const savedNormal=localStorage.getItem("cpp-reference-standard-theme");
+  if(savedNormal==="light"||savedNormal==="dark")lastNormalTheme=savedNormal;
+  const savedTheme=localStorage.getItem("cpp-reference-theme");
+  if(savedTheme==="dark"||savedTheme==="light"||savedTheme==="poison")document.documentElement.dataset.theme=savedTheme;
+}catch(_){}
+function setSiteTheme(t){
+  document.documentElement.dataset.theme=t;
+  if(t!=="poison")lastNormalTheme=t;
+  try{localStorage.setItem("cpp-reference-theme",t);localStorage.setItem("cpp-reference-standard-theme",lastNormalTheme);}catch(_){}
+}
+document.getElementById("site-theme-toggle").addEventListener("click",function(){setSiteTheme(lastNormalTheme==="dark"?"light":"dark");});
+document.getElementById("site-theme-poison").addEventListener("click",function(){setSiteTheme(document.documentElement.dataset.theme==="poison"?lastNormalTheme:"poison");});
 // カテゴリ移動時も同一オリジンの保存領域にコードと選択状態を保持する。
 const categoryTabs=document.getElementById("category-tabs");
 const currentCategory=categoryTabs.querySelector('[aria-current="page"]');
@@ -175,7 +254,6 @@ document.getElementById("undo").addEventListener("click",function(){history(fals
 document.getElementById("redo").addEventListener("click",function(){history(true);});
 document.getElementById("new").addEventListener("click",function(){if(code!==TEMPLATE&&!confirm("編集中のコードを初期テンプレートで置き換えますか？"))return;record();code=TEMPLATE;anchor=head=TEMPLATE.indexOf("\n    \n")+5;shift=0;ctrl=false;render();notice("テンプレートに戻しました");});
 editor.addEventListener("keydown",function(e){if(e.key==="Escape"){editor.blur();return;}if(e.ctrlKey||e.metaKey){const k=e.key.toLowerCase();if(["a","c","x","v","z","y"].includes(k)){e.preventDefault();readSelection();shortcut(k);}}});
-try{const theme=localStorage.getItem("cpp-reference-theme");if(theme==="light")document.documentElement.dataset.theme="light";}catch(_){}
 render();
 })();
 </script></body></html>
