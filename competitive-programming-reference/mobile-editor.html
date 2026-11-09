@@ -142,6 +142,51 @@ body{padding-bottom:calc(var(--fixed-keyboard-height,270px) + var(--fixed-naviga
 #editor{caret-color:transparent}
 .caret-measure{position:absolute;left:0;top:0;display:inline-block;width:max-content;white-space:pre;visibility:hidden;pointer-events:none;font:13px/20px "SFMono-Regular",Consolas,monospace;tab-size:4;font-variant-ligatures:none}
 .edit-caret{position:absolute;width:2px;height:20px;background:var(--accent);pointer-events:none;z-index:3;opacity:1;transition:none}
+
+/* Consistent JIS key-cell geometry: every row uses 170 ten-tenths grid units.
+   Legends stay centered; small Shift legends do not push main characters downward. */
+.keyboard-main .key-row{
+  display:grid;
+  grid-template-columns:repeat(170,minmax(0,1fr));
+  column-gap:0;
+  align-items:start;
+}
+#app.fit-keys .keyboard-main .key-row{gap:0}
+.keyboard-main .key{
+  grid-column:span var(--units,10);
+  flex:none;
+  min-width:0;
+  width:auto;
+  margin:0 1px;
+}
+.keyboard-main .key.empty{margin:0}
+.keyboard-main .key.char{position:relative;justify-content:center;align-items:center}
+.keyboard-main .key.char .key-legend{
+  display:block;
+  flex:none;
+  line-height:1;
+  white-space:nowrap;
+}
+.keyboard-main .key.char .upper{
+  position:absolute;
+  top:3px;
+  right:2px;
+  line-height:1;
+  margin:0;
+  pointer-events:none;
+}
+@media(orientation:portrait) and (max-width:750px){
+  .keyboard-main .key.char .upper{top:2px;right:1px}
+  #app.fit-keys .keyboard-main .key-row{gap:0}
+}
+.toolbar #paste,.toolbar #copy{
+  background:var(--panel);
+  border-color:var(--line);
+}
+.toolbar #paste:active,.toolbar #copy:active{
+  background:var(--on);
+  border-color:var(--accent);
+}
 </style></head>
 <body><div id="app" class="fit-keys">
 <section class="site-head" id="site-head" aria-label="サイトのヘッダー">
@@ -157,7 +202,7 @@ body{padding-bottom:calc(var(--fixed-keyboard-height,270px) + var(--fixed-naviga
   <p class="site-search-help">関数名でも、日本語でも検索できます。例：reverse／逆順</p>
 </section>
 <nav class="category-tabs" id="category-tabs" aria-label="カテゴリ"><a href="./#std">標準ライブラリ</a><a href="./#acl">AtCoder Library</a><a href="./#algo">アルゴリズム</a><a href="./#limits">計算量・メモリ</a><a href="mobile-editor.html" aria-current="page">スマホエディタ</a><a href="./#notes">更新履歴・メモ</a></nav>
-<div class="toolbar" id="editor-toolbar"><span class="filename">main.cpp</span><button id="new" type="button">新規</button><button id="undo" type="button" aria-label="元に戻す">↶</button><button id="redo" type="button" aria-label="やり直す">↷</button><button id="paste" class="primary" type="button">貼り付け</button><button id="copy" class="primary" type="button">コピー</button></div>
+<div class="toolbar" id="editor-toolbar"><span class="filename">main.cpp</span><button id="new" type="button">新規</button><button id="undo" type="button" aria-label="元に戻す">↶</button><button id="redo" type="button" aria-label="やり直す">↷</button><button id="paste" type="button">貼り付け</button><button id="copy" type="button">コピー</button></div>
 <div class="editor-frame" id="editor-frame" aria-label="C++コードの編集領域">
   <div class="line-gutter" id="line-gutter" aria-label="タップするとその行に移動"></div>
   <div class="editor-surface">
@@ -308,17 +353,17 @@ function insert(t){replace(t);if(shift===1)shift=0;render();}
 function enter(){const start=code.lastIndexOf("\n",Math.min(anchor,head)-1)+1;const before=code.slice(start,Math.min(anchor,head));const indent=(before.match(/^[ \t]*/)||[""])[0];insert("\n"+indent+(/\{\s*$/.test(before)?"    ":""));}
 function btn(label,val,upper,w,op){
   const b=document.createElement("button");
-  b.type="button";b.className="key"+(op?" special":"")+(op==="shift"||op==="ctrl"?" toggle":"")+(op==="enter"?" enter":"");
-  b.style.setProperty("--w",w||1);b.dataset.op=op||"char";b.dataset.label=label;
+  b.type="button";b.className="key"+(op?" special":" char")+(op==="shift"||op==="ctrl"?" toggle":"")+(op==="enter"?" enter":"");
+  b.style.setProperty("--w",w||1);b.style.setProperty("--units",Math.round((w||1)*10));b.dataset.op=op||"char";b.dataset.label=label;
   if(val!==undefined)b.dataset.value=val;if(upper!==undefined)b.dataset.shift=upper;
   let upperLabel;
   if(upper&&upper!==val&&!op){upperLabel=document.createElement("span");upperLabel.className="upper";upperLabel.textContent=upper;b.appendChild(upperLabel);}
-  const caption=document.createElement("span");caption.textContent=label;b.appendChild(caption);
+  const caption=document.createElement("span");caption.className="key-legend";caption.textContent=label;b.appendChild(caption);
   if(!op)characterKeys.push({button:b,label:caption,upper:upperLabel});
   b.setAttribute("aria-label",label);return b;
 }
 function sp(label,op,w){return btn(label,undefined,undefined,w,op);}function ch(v,u,l){return btn(l||v,v,u,1);}
-function blank(w){const b=document.createElement("div");b.className="key empty";b.style.setProperty("--w",w);return b;}
+function blank(w){const b=document.createElement("div");b.className="key empty";b.style.setProperty("--w",w);b.style.setProperty("--units",Math.round(w*10));return b;}
 const rows=[
 [sp("半/全","ime",1.6),...[["1","!"],["2",'"'],["3","#"],["4","$"],["5","%"],["6","&"],["7","'"],["8","("],["9",")"],["0","0"],["-","="],["^","~"],["¥","|"]].map(function(k){return ch(k[0]==="¥"?"\\":k[0],k[1],k[0]);}),sp("⌫","backspace",2.4)],
 [sp("Tab","tab",2.5),..."QWERTYUIOP".split("").map(function(x){return ch(x.toLowerCase(),x);}),ch("@",String.fromCharCode(96)),ch("[","{"),blank(2.5)],
