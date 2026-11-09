@@ -335,7 +335,20 @@ function render(){
 }
 function record(){undo.push(snap());if(undo.length>150)undo.shift();redo.length=0;}
 function replace(t,s,e){s=s===undefined?Math.min(anchor,head):s;e=e===undefined?Math.max(anchor,head):e;if(s===e&&!t)return;record();code=code.slice(0,s)+t+code.slice(e);anchor=head=s+t.length;render();}
-function backspace(){const s=Math.min(anchor,head),e=Math.max(anchor,head);if(s!==e){replace("");return;}if(!head)return;const c=Array.from(code.slice(0,head)).pop();replace("",head-c.length,head);}
+function backspace(){
+  const s=Math.min(anchor,head),e=Math.max(anchor,head);
+  if(s!==e){replace("");return;}
+  if(!head)return;
+  const lineStart=code.lastIndexOf("\n",head-1)+1;
+  const beforeCursor=code.slice(lineStart,head);
+  // インデント領域に4つ以上の半角スペースが続くときだけ、1段分まとめて戻す。
+  if(/^ +$/.test(beforeCursor)&&beforeCursor.endsWith("    ")){
+    replace("",head-4,head);
+    return;
+  }
+  const c=Array.from(code.slice(0,head)).pop();
+  replace("",head-c.length,head);
+}
 function history(forward){const from=forward?redo:undo,to=forward?undo:redo;if(!from.length)return;to.push(snap());const v=from.pop();code=v.code;anchor=v.anchor;head=v.head;render();}
 function readSelection(){
   const a=editor.selectionStart,b=editor.selectionEnd;
