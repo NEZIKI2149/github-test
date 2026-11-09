@@ -134,6 +134,14 @@ body{padding-bottom:calc(var(--fixed-keyboard-height,270px) + var(--fixed-naviga
   .kb-navigation .nav-arrow{height:28px;min-height:28px;min-width:36px;width:36px}
   .kb-navigation #fit-keys{display:none}
 }
+
+/* Compact cursor controls and a persistent, non-blinking caret matching the code font. */
+.kb-navigation{justify-content:flex-end}
+.kb-controls{margin-left:auto}
+.editor-surface{overflow:hidden}
+#editor{caret-color:transparent}
+.caret-measure{position:absolute;left:0;top:0;display:inline-block;width:max-content;white-space:pre;visibility:hidden;pointer-events:none;font:13px/20px "SFMono-Regular",Consolas,monospace;tab-size:4;font-variant-ligatures:none}
+.edit-caret{position:absolute;width:2px;height:20px;background:var(--accent);pointer-events:none;z-index:3;opacity:1;transition:none}
 </style></head>
 <body><div id="app" class="fit-keys">
 <section class="site-head" id="site-head" aria-label="サイトのヘッダー">
@@ -154,12 +162,13 @@ body{padding-bottom:calc(var(--fixed-keyboard-height,270px) + var(--fixed-naviga
   <div class="line-gutter" id="line-gutter" aria-label="タップするとその行に移動"></div>
   <div class="editor-surface">
     <div class="active-line" id="active-line" aria-hidden="true"></div>
+    <span class="caret-measure" id="caret-measure" aria-hidden="true"></span>
+    <span class="edit-caret" id="edit-caret" aria-hidden="true"></span>
     <textarea id="editor" readonly inputmode="none" wrap="off" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="C++コード。行番号または下の画面キーボードで編集"></textarea>
   </div>
 </div>
 <div class="hint"><span id="status">自動保存 · C++23</span><span>Ctrl+A 全選択 · Shift+矢印 範囲選択</span></div>
 <div class="kb-navigation" id="kb-navigation" aria-label="キーボード操作">
-  <span>JIS配列 · 全体表示</span>
   <div class="kb-controls">
     <button class="key special nav-arrow" id="nav-arrow-left" data-op="arrow" data-direction="left" type="button" aria-label="カーソルを左へ移動">←</button>
     <button class="key special nav-arrow" id="nav-arrow-right" data-op="arrow" data-direction="right" type="button" aria-label="カーソルを右へ移動">→</button>
@@ -201,6 +210,7 @@ function keepCurrentCategoryVisible(){
 requestAnimationFrame(keepCurrentCategoryVisible);
 const editor=document.getElementById("editor"),status=document.getElementById("status"),toast=document.getElementById("toast"),main=document.getElementById("keyboard-main");
 const gutter=document.getElementById("line-gutter"),activeLineMarker=document.getElementById("active-line");
+const editCaret=document.getElementById("edit-caret"),caretMeasure=document.getElementById("caret-measure");
 const characterKeys=[];
 let code=TEMPLATE,anchor=TEMPLATE.indexOf("\n    \n")+5,head=anchor,shift=0,ctrl=false,lastShift=0,timer=null;
 const undo=[],redo=[];
@@ -210,6 +220,25 @@ function notice(t){toast.textContent=t;toast.classList.add("show");clearTimeout(
 function save(){try{localStorage.setItem(KEY,JSON.stringify(snap()));}catch(_){status.textContent="自動保存できません";}}
 window.addEventListener("pagehide",save);
 categoryTabs.addEventListener("click",function(){save();});
+function updateCaret(){
+  const before=code.slice(0,head),line=before.split("\n").length-1;
+  const lineText=before.slice(before.lastIndexOf("\n")+1);
+  // A DOM measurement follows the textarea's actual font metrics, including tabs and wide characters.
+  const style=getComputedStyle(editor);
+  caretMeasure.style.font=style.font;
+  caretMeasure.style.letterSpacing=style.letterSpacing;
+  caretMeasure.style.tabSize=style.tabSize||"4";
+  caretMeasure.textContent=lineText;
+  const width=caretMeasure.getBoundingClientRect().width;
+  const x=editor.offsetLeft+parseFloat(style.paddingLeft||"0")+width-editor.scrollLeft;
+  const y=editor.offsetTop+parseFloat(style.paddingTop||"0")+line*parseFloat(style.lineHeight||"20");
+  editCaret.style.left=x+"px";
+  editCaret.style.top=y+"px";
+  editCaret.style.height=parseFloat(style.lineHeight||"20")+"px";
+  editCaret.style.visibility=(x<editor.offsetLeft||x>editor.offsetLeft+editor.clientWidth)?"hidden":"visible";
+}
+editor.addEventListener("scroll",updateCaret);
+window.addEventListener("resize",updateCaret);
 function drawLines(){
   const lines=code.split("\n");
   const selectionStart=Math.min(anchor,head),selectionEnd=Math.max(anchor,head);
@@ -233,6 +262,7 @@ function drawLines(){
     fragment.appendChild(button);
   }
   gutter.appendChild(fragment);
+  updateCaret();
 }
 gutter.addEventListener("click",function(e){
   const target=e.target.closest(".line-number");
@@ -298,7 +328,17 @@ const rows=[
 ];
 rows.forEach(function(keys,i){const row=document.createElement("div");row.className="key-row row-"+i;keys.forEach(function(key){row.appendChild(key);});main.appendChild(row);});
 // Horizontal cursor keys are located next to the zoom control above the keyboard.
-async function copy(t){try{if(!navigator.clipboard||!navigator.clipboard.writeText)throw Error();await navigator.clipboard.writeText(t);notice("コピーしました");return true;}catch(_){notice("コピーできません。ブラウザの権限を確認してください");return false;}}
+async function copy(t){
+  const oldCode=code,oldAnchor=anchor,oldHead=head;
+  try{
+    if(!navigator.clipboard||!navigator.clipboard.writeText)throw Error();
+    await navigator.clipboard.writeText(t);
+    if(code===oldCode&&anchor===oldAnchor&&head===oldHead&&anchor!==head){
+      anchor=head=Math.max(anchor,head);render();
+    }
+    notice("コピーしました");return true;
+  }catch(_){notice("コピーできません。ブラウザの権限を確認してください");return false;}
+}
 async function paste(){const s=Math.min(anchor,head),e=Math.max(anchor,head);try{if(!navigator.clipboard||!navigator.clipboard.readText)throw Error();const t=await navigator.clipboard.readText();if(!t){notice("クリップボードにテキストがありません");return;}replace(t,s,e);notice(s!==e?"選択範囲を置換しました":"貼り付けました");}catch(_){notice("貼り付けできません。Safariの貼り付け許可を確認してください");}}
 async function shortcut(k){switch(k){
 case "a":anchor=0;head=code.length;render();notice("すべて選択しました");break;
