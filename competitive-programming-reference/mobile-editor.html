@@ -272,21 +272,69 @@ body{padding-bottom:calc(var(--fixed-keyboard-height,270px) + var(--fixed-naviga
 @media(orientation:landscape){
   .kb-navigation .nav-history{height:28px;min-height:28px;min-width:36px;width:36px}
 }
+
+/* Shared geometry with the reference categories, including the small-screen wrap. */
+.reference-header{position:sticky;top:0;z-index:5;background:rgba(21,27,34,.97);border-bottom:1px solid var(--line);font:14px/1.7 system-ui,-apple-system,"Segoe UI","Yu Gothic UI",Meiryo,sans-serif;--paper:var(--panel);--muted:var(--sub)}
+:root[data-theme=light] .reference-header{background:rgba(247,248,250,.97);--line:#dfe5eb}
+:root[data-theme=poison] .reference-header{background:#ff00ff}
+.reference-header form{margin:0}
+.reference-header a{color:inherit;text-decoration:none}
+.reference-header button,.reference-header input{font:inherit;touch-action:manipulation}
+.reference-header .topbar{max-width:1560px;margin:auto;padding:15px 30px;display:flex;align-items:center;gap:24px}
+.reference-header .brand{font-weight:750;letter-spacing:-.5px;font-size:18px;white-space:nowrap}
+.reference-header .search-wrap{flex:1;max-width:650px;position:relative}
+.reference-header .search-wrap input{width:100%;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:10px 68px 10px 14px;color:var(--ink)}
+.reference-header .clear{position:absolute;right:8px;top:6px;border:0;background:none;color:var(--muted);padding:4px 8px}
+.reference-header .source-link{font-size:12px;margin-left:auto;white-space:nowrap}
+.reference-header .theme{border:1px solid var(--line);background:var(--paper);border-radius:6px;padding:6px 10px}
+.reference-header .tabs{max-width:1560px;margin:auto;display:flex;padding:0 30px;gap:22px;overflow-x:auto}
+.reference-header .tab{background:none;border:0;border-bottom:3px solid transparent;white-space:nowrap;padding:10px 0 12px;color:var(--muted);font-weight:650}
+.reference-header .tab.active{border-bottom-color:var(--accent);color:var(--accent)}
+.reference-header .theme-controls{display:flex;align-items:center;gap:8px}
+.reference-header .search-help{font-size:11px;margin:4px 0 0;color:var(--ink)}
+.reference-header .brand{color:inherit;text-decoration:none}
+.reference-header .tab{color:var(--ink)}
+.reference-header .tab.active{color:var(--accent)}
+.reference-header .source-link{color:var(--accent)}
+.reference-header .mobile-editor-link{display:flex;align-items:center}
+.reference-header .search-help{color:var(--ink)}
+@media(max-width:750px){
+  .reference-header .topbar{padding:12px 16px;gap:12px;flex-wrap:wrap}
+  .reference-header .brand{font-size:16px}
+  .reference-header .search-wrap{order:3;flex-basis:100%;max-width:none}
+  .reference-header .source-link{margin-left:auto}
+  .reference-header .tabs{padding:0 16px;gap:20px;font-size:12px}
+}
+/* The fixed dock lays out both rows in normal flow: no measured bottom offsets. */
+#keyboard-dock{position:fixed;left:0;right:0;bottom:0;z-index:12;display:flex;flex-direction:column;background:var(--bg)}
+#keyboard-dock .kb-navigation{position:static;bottom:auto;flex:none;width:100%}
+#keyboard-dock .keyboard{position:static;bottom:auto;flex:none;width:100%;min-height:0}
+body{padding-bottom:calc(var(--fixed-dock-height,310px) + 16px)}
+#app{padding-top:0}
+@media(orientation:landscape) and (min-width:768px) and (min-height:500px){
+  #keyboard-dock{--kh:clamp(48px,7.5dvh,72px)}
+  #keyboard-dock .key{font-size:15px}
+  #keyboard-dock .key.special{font-size:13px}
+  #keyboard-dock .key .upper{font-size:10px}
+  #keyboard-dock .kb-navigation{padding-top:6px;padding-bottom:6px}
+  #keyboard-dock .nav-arrow,#keyboard-dock .nav-history{height:40px;min-height:40px;width:44px;min-width:44px;font-size:21px}
+}
 </style></head>
-<body><div id="app" class="fit-keys">
-<section class="site-head" id="site-head" aria-label="サイトのヘッダー">
-  <div class="site-topbar">
-    <a class="site-brand" href="./">ネジキチートシート</a>
-    <form class="site-search" id="site-search" action="./" method="get" role="search">
-      <input id="site-search-input" type="search" name="q" autocomplete="off" aria-label="全カテゴリから検索" placeholder="ダイクストラ法…">
-      <button type="submit">検索</button>
+<body>
+<header class="reference-header" id="site-head" aria-label="サイトのヘッダー">
+  <div class="topbar">
+    <a class="brand" href="./">ネジキチートシート</a>
+    <form class="search-wrap" id="site-search" action="./" method="get" role="search">
+      <input id="site-search-input" type="search" name="q" autocomplete="off" spellcheck="false" aria-label="全カテゴリから検索" placeholder="ダイクストラ法…">
+      <button class="clear" id="site-search-clear" type="button" aria-label="検索を消す">Esc</button>
+      <p class="search-help">関数名でも、日本語でも検索できます。例：reverse／逆順</p>
     </form>
-    <a class="site-source" href="https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference" target="_blank" rel="noopener">GitHub ↗</a>
-    <div class="site-theme"><button id="site-theme-toggle" type="button" aria-label="明暗の配色を切り替える">明 / 暗</button><button id="site-theme-poison" type="button" aria-label="毒の配色を切り替える">毒</button></div>
+    <a class="source-link" href="https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference" target="_blank" rel="noopener">GitHub ↗</a>
+    <div class="theme-controls"><button class="theme" id="site-theme-toggle" type="button" aria-label="配色を切り替える">明 / 暗</button><button class="theme" id="site-theme-poison" type="button" aria-label="毒の配色を切り替える">毒</button></div>
   </div>
-  <p class="site-search-help">関数名でも、日本語でも検索できます。例：reverse／逆順</p>
-</section>
-<nav class="category-tabs" id="category-tabs" aria-label="カテゴリ"><a href="./#std">標準ライブラリ</a><a href="./#acl">AtCoder Library</a><a href="./#algo">アルゴリズム</a><a href="./#limits">計算量・メモリ</a><a href="mobile-editor.html" aria-current="page">スマホエディタ</a><a href="./#notes">更新履歴・メモ</a></nav>
+  <nav class="tabs" id="category-tabs" aria-label="カテゴリ"><a class="tab" href="./#std">標準ライブラリ</a><a class="tab" href="./#acl">AtCoder Library</a><a class="tab" href="./#algo">アルゴリズム</a><a class="tab" href="./#limits">計算量・メモリ</a><a class="tab mobile-editor-link active" href="mobile-editor.html" aria-current="page">スマホエディタ</a><a class="tab" href="./#notes">更新履歴・メモ</a></nav>
+</header>
+<div id="app" class="fit-keys">
 <div class="toolbar" id="editor-toolbar"><span class="filename">main.cpp</span><button id="new" type="button">新規</button><button id="paste" type="button">貼り付け</button><button id="copy" type="button">コピー</button></div>
 <div class="editor-frame" id="editor-frame" aria-label="C++コードの編集領域">
   <div class="line-gutter" id="line-gutter" aria-label="タップするとその行に移動"></div>
@@ -299,6 +347,7 @@ body{padding-bottom:calc(var(--fixed-keyboard-height,270px) + var(--fixed-naviga
   </div>
 </div>
 <div class="hint"><span id="status">自動保存 · C++23</span><span>Ctrl+A 全選択 · Shift+矢印 範囲選択</span></div>
+<div id="keyboard-dock" role="group" aria-label="画面キーボードと編集操作">
 <div class="kb-navigation" id="kb-navigation" aria-label="キーボード操作">
   <div class="kb-controls">
     <button class="nav-history" id="undo" type="button" aria-label="元に戻す" title="元に戻す">↶</button>
@@ -309,6 +358,7 @@ body{padding-bottom:calc(var(--fixed-keyboard-height,270px) + var(--fixed-naviga
   </div>
 </div>
 <div class="keyboard" id="keyboard" aria-label="JIS配列キーボード"><div class="keyboard-viewport" id="keyboard-viewport"><div id="keyboard-main" class="keyboard-main"></div></div></div>
+</div>
 </div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 <script id="vscode-cpp-engine">
@@ -336,6 +386,9 @@ const TEMPLATE="#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n
 const KEY="neziki-cpp-mobile-editor-v1";
 const siteSearch=document.getElementById("site-search");
 siteSearch.addEventListener("submit",function(){save();});
+const siteSearchInput=document.getElementById("site-search-input");
+document.getElementById("site-search-clear").addEventListener("click",function(){siteSearchInput.value="";siteSearchInput.focus();});
+siteSearchInput.addEventListener("keydown",function(e){if(e.key==="Escape"){e.preventDefault();siteSearchInput.value="";}});
 let lastNormalTheme="dark";
 try{
   const savedNormal=localStorage.getItem("cpp-reference-standard-theme");
@@ -781,19 +834,16 @@ fitButton.addEventListener("click",function(){
   syncKeyboardPadding();
 });
 function syncKeyboardPadding(){
-  const h=keyboard.getBoundingClientRect().height;
-  const nav=kbNavigation;
-  const navH=getComputedStyle(nav).display==="none"?0:nav.getBoundingClientRect().height;
-  document.body.style.setProperty("--fixed-keyboard-height",Math.ceil(h)+"px");
-  document.body.style.setProperty("--fixed-navigation-height",Math.ceil(navH)+"px");
+  const dock=document.getElementById("keyboard-dock");
+  document.body.style.setProperty("--fixed-dock-height",Math.ceil(dock.getBoundingClientRect().height)+"px");
 }
 if(typeof ResizeObserver!=="undefined"){
   const observer=new ResizeObserver(syncKeyboardPadding);
-  observer.observe(keyboard);
-  observer.observe(document.getElementById("kb-navigation"));
+  observer.observe(document.getElementById("keyboard-dock"));
 }
 window.addEventListener("resize",syncKeyboardPadding);
 window.addEventListener("orientationchange",syncKeyboardPadding);
+if(window.visualViewport)window.visualViewport.addEventListener("resize",syncKeyboardPadding);
 requestAnimationFrame(syncKeyboardPadding);
 document.getElementById("copy").addEventListener("click",function(){copy(code);});
 document.getElementById("paste").addEventListener("click",paste);
