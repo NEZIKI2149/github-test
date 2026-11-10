@@ -187,6 +187,62 @@ body{padding-bottom:calc(var(--fixed-keyboard-height,270px) + var(--fixed-naviga
   background:var(--on);
   border-color:var(--accent);
 }
+
+/* JIS stagger: number key 1 at 1.6u, Q at 2.2u, A at 2.6u, Z at 3.1u.
+   Tab uses the upper half and Shift the lower half of the vacant area beside A.
+   The shaped buttons themselves own the entire hit regions (no invisible duplicate keys). */
+.keyboard-main{position:relative;--jis-row-gap:var(--gap)}
+#app.fit-keys .keyboard-main{--jis-row-gap:2px}
+.keyboard-main>.key.shaped-key{
+  position:absolute;
+  left:1px;
+  z-index:4;
+  margin:0;
+  border:0;
+  border-radius:0;
+  padding:0;
+  display:block;
+  background:var(--line);
+  overflow:hidden;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+.keyboard-main>.key.shaped-key::before{
+  content:"";
+  position:absolute;
+  inset:1px;
+  background:var(--special);
+  clip-path:inherit;
+  pointer-events:none;
+}
+.keyboard-main>.key.shaped-key.pressed::before,
+.keyboard-main>.key.shaped-key:active::before{background:var(--on)}
+.keyboard-main>.key.shaped-key .key-legend{
+  position:absolute;
+  left:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:var(--ink);
+  pointer-events:none;
+  width:100%;
+  height:var(--kh);
+  line-height:1;
+}
+.keyboard-main>.key.tab-shape{
+  top:calc(var(--kh) + var(--jis-row-gap));
+  width:calc(15.29411765% - 2px);
+  height:calc(var(--kh)*1.5 + var(--jis-row-gap) - 2px);
+  clip-path:polygon(0 0,84.61538% 0,84.61538% calc(var(--kh) + var(--jis-row-gap)/2),100% calc(var(--kh) + var(--jis-row-gap)/2),100% 100%,0 100%);
+}
+.keyboard-main>.key.tab-shape .key-legend{top:0;width:84.61538%}
+.keyboard-main>.key.shift-shape{
+  top:calc(var(--kh)*2.5 + var(--jis-row-gap)*2 + 2px);
+  width:calc(18.23529412% - 2px);
+  height:calc(var(--kh)*1.5 + var(--jis-row-gap) - 2px);
+  clip-path:polygon(0 0,83.87097% 0,83.87097% calc(var(--kh)/2 + var(--jis-row-gap)/2),100% calc(var(--kh)/2 + var(--jis-row-gap)/2),100% 100%,0 100%);
+}
+.keyboard-main>.key.shift-shape .key-legend{bottom:0}
 </style></head>
 <body><div id="app" class="fit-keys">
 <section class="site-head" id="site-head" aria-label="サイトのヘッダー">
@@ -379,12 +435,20 @@ function sp(label,op,w){return btn(label,undefined,undefined,w,op);}function ch(
 function blank(w){const b=document.createElement("div");b.className="key empty";b.style.setProperty("--w",w);b.style.setProperty("--units",Math.round(w*10));return b;}
 const rows=[
 [sp("半/全","ime",1.6),...[["1","!"],["2",'"'],["3","#"],["4","$"],["5","%"],["6","&"],["7","'"],["8","("],["9",")"],["0","0"],["-","="],["^","~"],["¥","|"]].map(function(k){return ch(k[0]==="¥"?"\\":k[0],k[1],k[0]);}),sp("⌫","backspace",2.4)],
-[sp("Tab","tab",2.5),..."QWERTYUIOP".split("").map(function(x){return ch(x.toLowerCase(),x);}),ch("@",String.fromCharCode(96)),ch("[","{"),blank(2.5)],
-[blank(2),..."ASDFGHJKL".split("").map(function(x){return ch(x.toLowerCase(),x);}),ch(";","+"),ch(":","*"),ch("]","}"),sp("Enter","enter",3)],
-[sp("Shift","shift",2),..."ZXCVBNM".split("").map(function(x){return ch(x.toLowerCase(),x);}),ch(",","<"),ch(".",">"),ch("/","?"),ch("\\","_","ろ"),blank(4)],
+[blank(2.2),..."QWERTYUIOP".split("").map(function(x){return ch(x.toLowerCase(),x);}),ch("@",String.fromCharCode(96)),ch("[","{"),blank(2.8)],
+[blank(2.6),..."ASDFGHJKL".split("").map(function(x){return ch(x.toLowerCase(),x);}),ch(";","+"),ch(":","*"),ch("]","}"),sp("Enter","enter",2.4)],
+[blank(3.1),..."ZXCVBNM".split("").map(function(x){return ch(x.toLowerCase(),x);}),ch(",","<"),ch(".",">"),ch("/","?"),ch("\\","_","ろ"),blank(2.9)],
 [sp("Ctrl","ctrl",2.8),sp("無変換","ime",2),sp("Space","space",5.9),sp("変換","ime",2),sp("かな","ime",1.8),sp("Ctrl","ctrl",2.5)]
 ];
 rows.forEach(function(keys,i){const row=document.createElement("div");row.className="key-row row-"+i;keys.forEach(function(key){row.appendChild(key);});main.appendChild(row);});
+// A段の左の空間を上下に分け、TabとShiftをそれぞれ一体のL字型キーとして配置する。
+// CSSの見た目と実際のタップ領域は同じclip-path形状にする。
+const shapedTab=sp("Tab","tab",1);
+shapedTab.classList.add("shaped-key","tab-shape");
+main.appendChild(shapedTab);
+const shapedShift=sp("Shift","shift",1);
+shapedShift.classList.add("shaped-key","shift-shape");
+main.appendChild(shapedShift);
 // Horizontal cursor keys are located next to the zoom control above the keyboard.
 async function copy(t){
   const oldCode=code,oldAnchor=anchor,oldHead=head;
