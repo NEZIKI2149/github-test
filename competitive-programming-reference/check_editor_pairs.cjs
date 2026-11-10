@@ -52,8 +52,8 @@ const {chromium}=require(process.env.PLAYWRIGHT_PATH||'playwright');
   await reset('');await type('{');await call('enter');await type('(');await type('x');await type(')');await expect('{\n    (x)\n}',9);
   await reset('');await type('(');await page.reload();await page.evaluate(()=>window.vscodeCppHighlighter);await call('backspace');await expect('',0);
   // Exercise the actual JIS Shift+8/9 buttons as well as the editing functions.
-  await reset('');await page.locator('#keyboard-main [data-op="shift"]').click();await page.locator('#keyboard-main [data-value="8"]').click();await expect('()',1);
-  await page.locator('#keyboard-main [data-op="shift"]').click();await page.locator('#keyboard-main [data-value="9"]').click();await expect('()',2);
+  await reset('');await page.locator('#left-shift').click();await page.locator('#keyboard-main [data-value="8"]').click();await expect('()',1);
+  await page.locator('#left-shift').click();await page.locator('#keyboard-main [data-value="9"]').click();await expect('()',2);
   assert.deepEqual(errors,[]);console.log(JSON.stringify({pairAndIndentChecks:count,pageErrors:errors}));
  }finally{await browser.close();fs.unlinkSync(file);fs.rmdirSync(tmp);}
 })().catch(e=>{console.error(e);process.exit(1)});

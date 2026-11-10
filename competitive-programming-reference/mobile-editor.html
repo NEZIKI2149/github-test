@@ -243,6 +243,11 @@ body{padding-bottom:calc(var(--fixed-keyboard-height,270px) + var(--fixed-naviga
   clip-path:polygon(0 0,83.87097% 0,83.87097% calc(var(--kh)/2 + var(--jis-row-gap)/2),100% calc(var(--kh)/2 + var(--jis-row-gap)/2),100% 100%,0 100%);
 }
 .keyboard-main>.key.shift-shape .key-legend{bottom:0}
+/* Enter uses Q/A-row right space; right Shift uses Z/Space-row right space. */
+.keyboard-main>.key.enter-shape{left:auto;right:1px;top:calc(var(--kh) + var(--jis-row-gap));width:calc(16.47058824% - 2px);height:calc(var(--kh)*2 + var(--jis-row-gap));clip-path:polygon(0 0,100% 0,100% 100%,14.28571429% 100%,14.28571429% calc(var(--kh) + var(--jis-row-gap)/2),0 calc(var(--kh) + var(--jis-row-gap)/2))}
+.keyboard-main>.key.enter-shape .key-legend{left:auto;right:0;top:0;width:85.71428571%;height:100%}
+.keyboard-main>.key.right-shift-shape{left:auto;right:1px;top:calc((var(--kh) + var(--jis-row-gap))*3);width:calc(17.05882353% - 2px);height:calc(var(--kh)*2 + var(--jis-row-gap));clip-path:polygon(0 0,100% 0,100% 100%,31.03448276% 100%,31.03448276% calc(var(--kh) + var(--jis-row-gap)/2),0 calc(var(--kh) + var(--jis-row-gap)/2))}
+.keyboard-main>.key.right-shift-shape .key-legend{left:auto;right:0;top:0;width:68.96551724%;height:100%}
 
 /* VS Code-inspired C++ lexical syntax coloring; no external dependencies. */
 :root{--cpp-keyword:#ff7b72;--cpp-type:#4ec9b0;--cpp-string:#a5d6ff;--cpp-number:#b5cea8;--cpp-comment:#8b949e;--cpp-directive:#c586c0;--cpp-function:#d2a8ff}
@@ -3098,7 +3103,7 @@ function blank(w){const b=document.createElement("div");b.className="key empty";
 const rows=[
 [sp("整形","format",1.6),...[["1","!"],["2",'"'],["3","#"],["4","$"],["5","%"],["6","&"],["7","'"],["8","("],["9",")"],["0","0"],["-","="],["^","~"],["¥","|"]].map(function(k){return ch(k[0]==="¥"?"\\":k[0],k[1],k[0]);}),sp("⌫","backspace",2.4)],
 [blank(2.2),..."QWERTYUIOP".split("").map(function(x){return ch(x.toLowerCase(),x);}),ch("@",String.fromCharCode(96)),ch("[","{"),blank(2.8)],
-[blank(2.6),..."ASDFGHJKL".split("").map(function(x){return ch(x.toLowerCase(),x);}),ch(";","+"),ch(":","*"),ch("]","}"),sp("Enter","enter",2.4)],
+[blank(2.6),..."ASDFGHJKL".split("").map(function(x){return ch(x.toLowerCase(),x);}),ch(";","+"),ch(":","*"),ch("]","}"),blank(2.4)],
 [blank(3.1),..."ZXCVBNM".split("").map(function(x){return ch(x.toLowerCase(),x);}),ch(",","<"),ch(".",">"),ch("/","?"),ch("\\","_","ろ"),blank(2.9)],
 [sp("Ctrl","ctrl",4),sp("Space","space",11),blank(2)]
 ];
@@ -3111,7 +3116,17 @@ shapedTab.classList.add("shaped-key","tab-shape");
 main.appendChild(shapedTab);
 const shapedShift=sp("Shift","shift",1);
 shapedShift.classList.add("shaped-key","shift-shape");
+shapedShift.id="left-shift";
 main.appendChild(shapedShift);
+const shapedEnter=sp("Enter","enter",1);
+shapedEnter.id="right-enter";
+shapedEnter.classList.add("shaped-key","enter-shape");
+main.appendChild(shapedEnter);
+const rightShift=sp("Shift","shift",1);
+rightShift.id="right-shift";
+rightShift.setAttribute("aria-label","右Shift");
+rightShift.classList.add("shaped-key","right-shift-shape");
+main.appendChild(rightShift);
 // Horizontal cursor keys are located next to the zoom control above the keyboard.
 function copyWithSelection(text){
   if(!text.length||typeof document.execCommand!=="function")return false;
