@@ -321,6 +321,14 @@ body{padding-bottom:calc(var(--fixed-dock-height,310px) + 16px)}
 }
 /* Keep clipboard feedback above the fixed keyboard instead of underneath it. */
 .toast{bottom:calc(var(--fixed-dock-height,0px) + 12px);z-index:30;pointer-events:none}
+.copy-status{font-size:12px;color:var(--ink);margin:4px 0;overflow-wrap:anywhere}.copy-status:empty{display:none}
+.manual-copy-panel[hidden]{display:none!important}
+.manual-copy-panel{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.65);display:grid;place-items:center;padding:16px}
+.manual-copy-content{width:min(960px,100%);max-height:calc(100dvh - 32px);overflow:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);padding:16px;font-size:14px;line-height:1.6}
+.manual-copy-content h2{font-size:18px;margin:0 0 8px}.manual-copy-content p{margin:0 0 12px}
+#manual-copy-text{display:block;width:100%;height:min(45dvh,420px);min-height:90px;resize:none;background:var(--code);color:var(--ink);border:1px solid var(--line);padding:10px;font:16px/1.6 Consolas,monospace;white-space:pre;overflow:auto;user-select:text;-webkit-user-select:text;-webkit-touch-callout:default;touch-action:auto}
+.manual-copy-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}.manual-copy-actions button{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:6px;min-height:44px;padding:6px 14px}
+body.manual-copy-open #keyboard-dock{display:none}body.manual-copy-open{overflow:hidden}
 </style></head>
 <body>
 <header class="reference-header" id="site-head" aria-label="サイトのヘッダー">
@@ -338,6 +346,7 @@ body{padding-bottom:calc(var(--fixed-dock-height,310px) + 16px)}
 </header>
 <div id="app" class="fit-keys">
 <div class="toolbar" id="editor-toolbar"><span class="filename">main.cpp</span><button id="new" type="button">新規</button><button id="paste" type="button">貼り付け</button><button id="copy" type="button">コピー</button></div>
+<p id="copy-status" class="copy-status" role="status" aria-live="polite"></p>
 <div class="editor-frame" id="editor-frame" aria-label="C++コードの編集領域">
   <div class="line-gutter" id="line-gutter" aria-label="タップするとその行に移動"></div>
   <div class="editor-surface">
@@ -361,6 +370,14 @@ body{padding-bottom:calc(var(--fixed-dock-height,310px) + 16px)}
 </div>
 <div class="keyboard" id="keyboard" aria-label="JIS配列キーボード"><div class="keyboard-viewport" id="keyboard-viewport"><div id="keyboard-main" class="keyboard-main"></div></div></div>
 </div>
+</div>
+<div id="manual-copy-panel" class="manual-copy-panel" role="dialog" aria-modal="true" aria-labelledby="manual-copy-title" hidden>
+  <section class="manual-copy-content">
+    <h2 id="manual-copy-title">コードをコピー</h2>
+    <p>自動コピーが使えないため、この欄を長押しして、標準メニューの「コピー」を選んでください。</p>
+    <textarea id="manual-copy-text" readonly inputmode="none" spellcheck="false" autocapitalize="off" aria-label="長押ししてコピーするコード"></textarea>
+    <div class="manual-copy-actions"><button id="manual-copy-select" type="button">全選択</button><button id="manual-copy-close" type="button">閉じる</button></div>
+  </section>
 </div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 <script id="vscode-cpp-engine">
@@ -3097,7 +3114,7 @@ shapedShift.classList.add("shaped-key","shift-shape");
 main.appendChild(shapedShift);
 // Horizontal cursor keys are located next to the zoom control above the keyboard.
 function copyWithSelection(text){
-  if(typeof document.execCommand!=="function")return false;
+  if(!text.length||typeof document.execCommand!=="function")return false;
   const active=document.activeElement,x=window.scrollX,y=window.scrollY;
   const selection={start:editor.selectionStart,end:editor.selectionEnd,direction:editor.selectionDirection};
   const temporary=document.createElement("textarea");
@@ -3117,25 +3134,56 @@ function copyWithSelection(text){
     if(window.scrollX!==x||window.scrollY!==y)window.scrollTo(x,y);
   }
 }
-async function writeClipboardText(text){
+async function writeClipboardText(text,preferSelection=false){
+  // Toolbar taps need the synchronous method while the touch gesture is active.
+  if(preferSelection&&copyWithSelection(text))return true;
+  let deadline;
   try{
     if(navigator.clipboard&&typeof navigator.clipboard.writeText==="function"){
-      await navigator.clipboard.writeText(text);return true;
+      await Promise.race([
+        navigator.clipboard.writeText(text),
+        new Promise((_,reject)=>{deadline=setTimeout(()=>reject(Error("clipboard timeout")),1500);})
+      ]);return true;
     }
-  }catch(_){}
+  }catch(_){}finally{clearTimeout(deadline);}
   // Also try native selection copying when the async API is present but denied.
-  return copyWithSelection(text);
+  return !preferSelection&&copyWithSelection(text);
 }
-async function copy(t){
+let copyOperation=0,manualReturnFocus=null;
+function reportCopy(message){document.getElementById("copy-status").textContent=message;notice(message);}
+function selectManualCopy(){
+  const field=document.getElementById("manual-copy-text");
+  try{field.focus({preventScroll:true});}catch(_){field.focus();}
+  field.select();field.setSelectionRange(0,field.value.length);
+}
+function showManualCopy(text){
+  manualReturnFocus=document.activeElement;
+  document.getElementById("manual-copy-text").value=text;
+  document.getElementById("manual-copy-panel").hidden=false;
+  document.body.classList.add("manual-copy-open");
+  selectManualCopy();
+}
+function closeManualCopy(){
+  document.getElementById("manual-copy-panel").hidden=true;
+  document.body.classList.remove("manual-copy-open");
+  if(manualReturnFocus&&manualReturnFocus.isConnected){try{manualReturnFocus.focus({preventScroll:true});}catch(_){}}
+  manualReturnFocus=null;
+}
+async function copy(t,options={}){
+  const operation=++copyOperation;
   const oldCode=code,oldAnchor=anchor,oldHead=head;
+  reportCopy("コピー処理中…");
   try{
-    if(!await writeClipboardText(t))throw Error("clipboard write failed");
+    if(!await writeClipboardText(t,!!options.fromToolbar))throw Error("clipboard write failed");
     if(code===oldCode&&anchor===oldAnchor&&head===oldHead&&anchor!==head){
       stopUndoGroup();
       anchor=head=Math.max(anchor,head);render();
     }
-    notice("コピーしました");return true;
-  }catch(_){notice("コピーできませんでした。もう一度「コピー」を押してください");return false;}
+    if(operation===copyOperation)reportCopy("コピーしました");return true;
+  }catch(_){
+    if(operation===copyOperation){reportCopy("自動コピーが使えません。表示された欄を長押ししてコピーしてください");showManualCopy(t);}
+    return false;
+  }
 }
 async function paste(){const s=Math.min(anchor,head),e=Math.max(anchor,head);try{if(!navigator.clipboard||!navigator.clipboard.readText)throw Error();const t=await navigator.clipboard.readText();if(!t){notice("クリップボードにテキストがありません");return;}replace(t,s,e,"paste");notice(s!==e?"選択範囲を置換しました":"貼り付けました");}catch(_){notice("貼り付けできません。Safariの貼り付け許可を確認してください");}}
 async function shortcut(k){stopUndoGroup();switch(k){
@@ -3251,7 +3299,36 @@ window.addEventListener("resize",syncKeyboardPadding);
 window.addEventListener("orientationchange",syncKeyboardPadding);
 if(window.visualViewport)window.visualViewport.addEventListener("resize",syncKeyboardPadding);
 requestAnimationFrame(syncKeyboardPadding);
-document.getElementById("copy").addEventListener("click",function(){copy(code);});
+const copyButton=document.getElementById("copy");
+let copyTouch=null,lastTouchCopy=-Infinity;
+copyButton.addEventListener("touchstart",function(e){
+  if(e.touches.length!==1){copyTouch=null;return;}
+  const t=e.touches[0];copyTouch={id:t.identifier,x:t.clientX,y:t.clientY,moved:false};
+},{passive:true});
+copyButton.addEventListener("touchmove",function(e){
+  if(!copyTouch)return;
+  const t=Array.from(e.touches).find(t=>t.identifier===copyTouch.id);
+  if(!t||Math.abs(t.clientX-copyTouch.x)>9||Math.abs(t.clientY-copyTouch.y)>9)copyTouch.moved=true;
+},{passive:true});
+copyButton.addEventListener("touchcancel",function(){copyTouch=null;lastTouchCopy=performance.now();},{passive:true});
+copyButton.addEventListener("touchend",function(e){
+  const active=copyTouch;copyTouch=null;lastTouchCopy=performance.now();
+  if(!active||active.moved)return;
+  const t=Array.from(e.changedTouches).find(t=>t.identifier===active.id),r=copyButton.getBoundingClientRect();
+  if(!t||Math.abs(t.clientX-active.x)>9||Math.abs(t.clientY-active.y)>9||t.clientX<r.left||t.clientX>r.right||t.clientY<r.top||t.clientY>r.bottom)return;
+  if(e.cancelable)e.preventDefault();
+  copy(code,{fromToolbar:true});
+},{passive:false});
+copyButton.addEventListener("click",function(){if(performance.now()-lastTouchCopy>=800)copy(code,{fromToolbar:true});});
+document.getElementById("manual-copy-select").addEventListener("click",selectManualCopy);
+document.getElementById("manual-copy-close").addEventListener("click",closeManualCopy);
+document.getElementById("manual-copy-panel").addEventListener("keydown",function(e){
+  if(e.key==="Escape"){e.preventDefault();closeManualCopy();return;}
+  if(e.key!=="Tab")return;
+  const field=document.getElementById("manual-copy-text"),last=document.getElementById("manual-copy-close");
+  if(e.shiftKey&&document.activeElement===field){e.preventDefault();last.focus();}
+  else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();field.focus();}
+});
 document.getElementById("paste").addEventListener("click",paste);
 document.getElementById("undo").addEventListener("click",function(){history(false);});
 document.getElementById("redo").addEventListener("click",function(){history(true);});

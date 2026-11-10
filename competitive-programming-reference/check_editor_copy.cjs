@@ -4,7 +4,7 @@ const sample='#include <bits/stdc++.h>\n// 日本語のコメント\nint main(){
 const origin='https://editor.test';
 function instrument(source){
  const hook=`
- window.__copyTest={reset:(text,a=0,h=a)=>{stopRepeat();code=text;anchor=a;head=h;autoPairs=[];undo.length=redo.length=0;stopUndoGroup();ctrl=false;shift=0;render();},
+ window.__copyTest={reset:(text,a=0,h=a)=>{closeManualCopy();stopRepeat();code=text;anchor=a;head=h;autoPairs=[];undo.length=redo.length=0;stopUndoGroup();ctrl=false;shift=0;render();},
  copy:()=>copy(code),state:()=>({code,anchor,head,undo:undo.length})};
  render();
  })();`;
@@ -32,16 +32,16 @@ function instrument(source){
    Object.defineProperty(window.__realClipboard,'writeText',{configurable:true,value:value==='denied'?()=>Promise.reject(new DOMException('expected denial','NotAllowedError')):value==='throws'?()=>{throw Error('expected failure')}:window.__realWrite});
    document.execCommand=function(...args){if(args[0]==='copy')window.__fallbackAttempts++;return window.__realExec.apply(this,args)};
   },value)}
-  async function clickCopy(){await page.locator('#copy').click();await page.waitForFunction(()=>document.getElementById('toast').textContent.startsWith('コピー'));}
+  async function clickCopy(){await page.locator('#copy').click();await page.waitForFunction(()=>document.getElementById('toast').textContent.includes('コピー'));}
   let count=0;
-  await mode('normal');await reset(sample,1,8);await clickCopy();assert.equal(await clipboard(),sample);assert.equal((await state()).head,8);assert.equal((await state()).anchor,8);assert.equal((await state()).code,sample);assert.equal(await page.evaluate(()=>window.__fallbackAttempts),0);count++;
+  await mode('normal');await reset(sample,1,8);await clickCopy();assert.equal(await clipboard(),sample);assert.equal((await state()).head,8);assert.equal((await state()).anchor,8);assert.equal((await state()).code,sample);assert.equal(await page.evaluate(()=>window.__fallbackAttempts),1);count++;
   for(const value of ['denied','missing','throws']){
    await mode(value);await reset(sample,1,8);await clickCopy();await page.waitForFunction(()=>window.__copyTest.state().anchor===window.__copyTest.state().head);
    assert.equal(await clipboard(),sample);assert.equal((await state()).head,8);assert.equal((await state()).code,sample);assert.equal(await page.locator('textarea[aria-hidden="true"]').count(),0);assert.equal((await state()).undo,0);count++;
   }
-  await mode('denied');await reset(sample,1,8);await page.evaluate(()=>{document.execCommand=()=>false;document.getElementById('toast').textContent=''});await clickCopy();await page.waitForFunction(()=>document.getElementById('toast').textContent.includes('できません'));
+  await mode('denied');await reset(sample,1,8);await page.evaluate(()=>{document.execCommand=()=>false;document.getElementById('toast').textContent=''});await clickCopy();await page.waitForFunction(()=>document.getElementById('toast').textContent.includes('使えません'));
   assert.deepEqual(await state(),{code:sample,anchor:1,head:8,undo:0});count++;
-  await mode('denied');await reset(sample,1,8);await page.evaluate(()=>{document.execCommand=()=>{throw Error('expected fallback failure')};document.getElementById('toast').textContent=''});await clickCopy();await page.waitForFunction(()=>document.getElementById('toast').textContent.includes('できません'));
+  await mode('denied');await reset(sample,1,8);await page.evaluate(()=>{document.execCommand=()=>{throw Error('expected fallback failure')};document.getElementById('toast').textContent=''});await clickCopy();await page.waitForFunction(()=>document.getElementById('toast').textContent.includes('使えません'));
   assert.deepEqual(await state(),{code:sample,anchor:1,head:8,undo:0});assert.equal(await page.locator('textarea[aria-hidden="true"]').count(),0);count++;
   await mode('normal');await reset('');await clickCopy();assert.equal(await clipboard(),'');count++;
   await mode('denied');await reset('abcdef',1,4);await page.locator('#keyboard-main [data-op="ctrl"]').click();await page.locator('#keyboard-main [data-value="c"]').click();await page.waitForFunction(()=>!document.querySelector('#keyboard-main [data-op="ctrl"]').classList.contains('pressed'));assert.equal(await clipboard(),'bcd');assert.equal((await state()).code,'abcdef');count++;
