@@ -4101,6 +4101,246 @@
       "text": "更新履歴と制作者メモをソース側で管理できるようにしました。公開フラグを付けた記録だけがサイトに表示されます。",
       "published": true,
       "kind": "updates"
+    },
+    {
+      "id": "20261108-search-hint-meta-contrast",
+      "at": "2026-11-08 05:55",
+      "title": "検索の補助説明とアルゴリズムの文字色を調整",
+      "category": "サイト全体 / アルゴリズム",
+      "text": "関数名でも日本語でも検索できることを、検索欄の近くに簡潔に表示しました。アルゴリズムの計算量や補足説明の文字色も読みやすくしました。",
+      "published": true,
+      "commits": [
+        "db75c836e43e3b888332073374760f6fe1d2e795"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261108-search-example-poison-bold",
+      "at": "2026-11-08 05:45",
+      "title": "検索例と「毒」配色の文字を調整",
+      "category": "サイト全体",
+      "text": "検索欄の入力例をダイクストラ法に変更しました。「毒」配色ではコードや操作ボタンを含むすべての文字を太字にしました。",
+      "published": true,
+      "commits": [
+        "414b4a07724252055a5c742d826a2c1a428ddb5c"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261108-light-toc-separators",
+      "at": "2026-11-08 05:38",
+      "title": "明モードの目次に区切り線を追加",
+      "category": "サイト全体",
+      "text": "明モードの目次に項目間の区切り線を追加しました。「毒」配色では紫の背景上の文字を太字にし、読みやすさを調整しました。",
+      "published": true,
+      "commits": [
+        "bb001914e6cdcdb01c922987e4e331e89fadcfc3"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261108-normal-nav-selective-bold",
+      "at": "2026-11-08 05:30",
+      "title": "目次の文字色と本文の太字を整理",
+      "category": "サイト全体",
+      "text": "目次・カテゴリの文字を通常の読みやすい色にし、本文の太字は項目タイトルを中心に使う形へ整理しました。",
+      "published": true,
+      "commits": [
+        "20abb7e3c27f25f4dabb4843245eb140d59d8ae2"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261108-exact-poison-colors",
+      "at": "2026-11-08 05:22",
+      "title": "「毒」配色の紫と緑を固定",
+      "category": "サイト全体",
+      "text": "「毒」配色の背景や操作面に使う紫を#ff00ff、緑を#00ff00にそろえました。",
+      "published": true,
+      "commits": [
+        "235ddafdaf3090e426f01641a61dc20a4828de3d"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261108-poison-theme",
+      "at": "2026-11-08 05:17",
+      "title": "「毒」配色の切り替えを追加",
+      "category": "サイト全体",
+      "text": "紫と黄緑を使った「毒」配色を追加しました。明・暗の切り替えと併用でき、配色を変えても画面の配置は変わらないようにしました。",
+      "published": true,
+      "commits": [
+        "399b5784c0c103ec865dd0d934d0bd323bd0e432"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261108-nejiki-site-name",
+      "at": "2026-11-08 05:10",
+      "title": "サイト名を「ネジキチートシート」に変更",
+      "category": "サイト全体",
+      "text": "サイト名を「ネジキチートシート」に変更し、旧名称やCONTEST DESKの表記を整理しました。",
+      "published": true,
+      "commits": [
+        "2542310fe19574ecd93862a17c435ce89fa2d54e"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261108-gojuon-toc-label",
+      "at": "2026-11-08 05:04",
+      "title": "アルゴリズム目次に五十音順と表示",
+      "category": "アルゴリズム",
+      "text": "アルゴリズムの目次に「五十音順」の見出しを付け、並び順が分かるようにしました。",
+      "published": true,
+      "commits": [
+        "9978efc80a49ff905cdfe5f11cdb502620720dba"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261108-complexity-label",
+      "at": "2026-11-08 05:01",
+      "title": "「全体の時間」を「計算量」に変更",
+      "category": "アルゴリズム",
+      "text": "アルゴリズムの処理量を示す見出しを「全体の時間」から「計算量」へ変更しました。READMEの説明も同じ表記にそろえました。",
+      "published": true,
+      "commits": [
+        "7bf0ea4c7c5f4b9ab835d3e18505d97394465620"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261108-purpose-index-notation",
+      "at": "2026-11-08 04:56",
+      "title": "目的・注意点・添字の表記を整理",
+      "category": "サイト全体",
+      "text": "目的のコロンの前後に空白を入れ、注意書きの感嘆符を取り除きました。「添字」という語だけを強調していた表示も通常の文字に戻しました。",
+      "published": true,
+      "commits": [
+        "c9bf0c94618a77ac0d10ec03f55d70b70c751446"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261108-concise-algorithm-notes",
+      "at": "2026-11-08 04:48",
+      "title": "計算量の文字の太さと注意書きを調整",
+      "category": "アルゴリズム",
+      "text": "計算量の文字を通常の太さに戻しました。注意書きはアルゴリズムごとに意味のある内容へ絞り、簡潔な文章に整理しました。",
+      "published": true,
+      "commits": [
+        "a806acf8daddb1e6422a4957ddb33283cd0c195d"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261108-plain-conditions-no-intros",
+      "at": "2026-11-08 04:32",
+      "title": "入力条件を平易にし重複する導入文を削除",
+      "category": "サイト全体",
+      "text": "入力条件や注意点を平易な表現に整理しました。各項目に繰り返し表示していた章タイトルや導入文を取り除き、共通の前提はREADMEにまとめました。",
+      "published": true,
+      "commits": [
+        "65269b94cdb698f275ab04e11131cf70bcd92068"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261108-algorithm-purpose-expanded-code",
+      "at": "2026-11-08 04:03",
+      "title": "アルゴリズムの目的・計算量・全体コードを整理",
+      "category": "アルゴリズム / サイト全体",
+      "text": "アルゴリズムを名前、目的、全体の時間・メモリ、展開済みの全体コードの順で表示する形にしました。C++ファイルを保存する操作の表記も分かりやすくしました。",
+      "published": true,
+      "commits": [
+        "ce22fbfc3df5919e387271551d3e5951c74b4376"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261108-chapter-intro-first-item",
+      "at": "2026-11-08 03:34",
+      "title": "章の導入文を最初の項目だけに表示",
+      "category": "サイト全体",
+      "text": "項目を切り替えるたびに繰り返していた章の導入文を、章内の最初の項目を選んだ場合だけに表示するようにしました。",
+      "published": true,
+      "commits": [
+        "13c1e681674ec9f59feb4437245d063150e522e2"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261108-selected-content-only",
+      "at": "2026-11-08 03:27",
+      "title": "選択した項目だけを本文に表示",
+      "category": "サイト全体",
+      "text": "全項目を縦に連続表示する形式から、目次で選んだ項目の本文に切り替える形式へ変更しました。選んだ内容に集中して読めるようにしました。",
+      "published": true,
+      "commits": [
+        "68ce7926dfb3e98fd529efc546ea066edbfc10c0"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261108-toc-click-highlight",
+      "at": "2026-11-08 03:17",
+      "title": "目次で選んだ項目の強調表示を追加",
+      "category": "サイト全体",
+      "text": "各カテゴリでクリックした目次の項目を強調し、どの項目を選んだか分かるようにしました。この時点では本文のスクロール時に強調表示を解除する形式でした。",
+      "published": true,
+      "commits": [
+        "15a36f6a9b131a26e1b23472237adea20507365e"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261108-cpp23-baseline",
+      "at": "2026-11-08 03:03",
+      "title": "掲載コードの前提をC++23へ統一",
+      "category": "サイト全体",
+      "text": "使用言語をC++23（GCC 15.2.0）、コンパイル設定をGNU C++23に統一しました。検証スクリプトも同じ言語設定に合わせました。",
+      "published": true,
+      "commits": [
+        "45d95009e2b1d281cd281ca9357f74a8de42a668"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261108-independent-algorithms-gojuon",
+      "at": "2026-11-08 02:58",
+      "title": "アルゴリズムを独立させ五十音順に整理",
+      "category": "アルゴリズム",
+      "text": "複数の手法をまとめた項目から、アルゴリズムごとの独立した項目へ整理しました。累積和・いもす法なども分け、名前の読みを使った五十音順に並べました。",
+      "published": true,
+      "commits": [
+        "f6b7c468036f571215089e7504f352fd4f199924"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261108-searchable-browser-reference",
+      "at": "2026-11-08 02:19",
+      "title": "検索できるブラウザ版リファレンスを公開",
+      "category": "サイト全体",
+      "text": "参照資料を検索可能なHTML版に作り直しました。標準ライブラリ・ACL・定番アルゴリズム・計算量とメモリを分類し、当時203件の全体コードを掲載しました。コードのコピーとC++ファイルの保存にも対応しました。",
+      "published": true,
+      "commits": [
+        "ded75e99e31f5ac66819fda0eabf37c961b33910"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261108-reference-first-edition",
+      "at": "2026-11-08 00:57",
+      "title": "競プロC++リファレンスの初版を公開",
+      "category": "サイト全体",
+      "text": "標準ライブラリ、定番アルゴリズム、AtCoder Library、計算量の参照資料とC++コード例を公開しました。やりたい操作から書き方を探せる早見表を用意しました。",
+      "published": true,
+      "commits": [
+        "2952edf9c96e9d33e16bd5c095c1b6f49a86bdd6"
+      ],
+      "kind": "updates"
     }
   ],
   "source": "https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference"
