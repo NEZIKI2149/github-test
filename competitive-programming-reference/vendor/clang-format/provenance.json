@@ -1,0 +1,12 @@
+{
+  "version": "23.1.1",
+  "integrity": "sha512-SPA6H8DI/MOJAr0CfpbFBoqI5sfrimu3SlovuAAy36mq9vs9TOkS48lpUsNaPLeZzeQVEGe+pfbJHXKxiroP/g==",
+  "tarball": "https://registry.npmjs.org/@wasm-fmt/clang-format/-/clang-format-23.1.1.tgz",
+  "upstream": "https://github.com/wasm-fmt/clang-format",
+  "files": {
+    "clang-format.js": "cc4e7aa351ad081f4bb8e0fb5a34d53b309206c517ec213a9197b257ba3a2b16",
+    "clang-format-binding.js": "6c4a1c5a07d95746c9712cc022b60eb2b02bc49d656c027df959a59c76a37872",
+    "clang-format.wasm": "49d98626475dd2e22b9a3245b4bc0d7b1310db7f6c30176a89cc58d1e89b75bc",
+    "LICENSE": "4ce6179fd78f8a2afb0f51725507f8f60709e04dc2943de11a4a11d980d69301"
+  }
+}
