@@ -3496,6 +3496,325 @@
   ],
   "notes": [
     {
+      "id": "20261110-right-shift-enter-layout",
+      "at": "2026-11-10 17:46",
+      "title": "右Shiftを追加してEnterを右上へ再配置",
+      "category": "スマホ用エディタ",
+      "text": "右上のQ段・A段の空き領域をEnter、右下のZ段・Space段の空き領域を右Shiftにしました。左右のShiftは共通の状態を使い、拡大表示で右端に寄せたまま記号を入力できます。",
+      "published": true,
+      "commits": [
+        "e1797044477190a1fcb5a86dae2694e8290a8aab"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261110-touch-copy-manual-fallback",
+      "at": "2026-11-10 15:05",
+      "title": "タップによるコピーと長押しコピー欄を追加",
+      "category": "スマホ用エディタ",
+      "text": "上部のコピーをタップ終了から直接実行し、開始・結果をボタン下に表示するようにしました。同期コピーを優先し、APIの応答待ちは最大1.5秒とします。自動コピーが使えない場合は、標準の長押しコピーができる欄を開きます。",
+      "published": true,
+      "commits": [
+        "487824dcc6ae90ed056f9b3a2afc2005ec467ed5"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261110-clipboard-fallback-feedback",
+      "at": "2026-11-10 14:49",
+      "title": "コピーの代替処理と結果表示を追加",
+      "category": "スマホ用エディタ",
+      "text": "Clipboard APIが使えない場合や拒否された場合に、選択テキストを使ったコピーも試すようにしました。結果メッセージを固定キーボードに隠れない位置へ移しました。",
+      "published": true,
+      "commits": [
+        "7a21139fad79d75f2152704431618fbde53d0c9f"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261110-comments-indent-format",
+      "at": "2026-11-10 14:20",
+      "title": "コメント切り替え・複数行インデント・全体整形を追加",
+      "category": "スマホ用エディタ",
+      "text": "Ctrl＋/で選択行のコメントを追加・解除し、Tab／Shift＋Tabで選択行のインデントを変更できるようにしました。数字の1の左に整形ボタンを設け、端末内でコード全体を整形します。各操作はUndo一回で戻せます。",
+      "published": true,
+      "commits": [
+        "add35fac504e832fb7d6bd03a1a53a8aa0e3d3b9"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261110-mobile-editor-label",
+      "at": "2026-11-10 13:59",
+      "title": "カテゴリ名を「スマホ用エディタ」に変更",
+      "category": "スマホ用エディタ",
+      "text": "チートシートとエディタのカテゴリ表示を「スマホエディタ」から「スマホ用エディタ」にそろえました。",
+      "published": true,
+      "commits": [
+        "30bde1b6a6b7ad8bb36d9ef7217d8f49e91d9370"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261110-auto-pairs-indent",
+      "at": "2026-11-10 13:55",
+      "title": "括弧・引用符の補完と改行時のインデントを追加",
+      "category": "スマホ用エディタ",
+      "text": "括弧・引用符をセットで挿入して中にカーソルを置き、自動追加した閉じ側の重複入力を避けるようにしました。空ペアのBackspace削除、選択範囲の囲み、括弧内での改行とインデントにも対応しました。",
+      "published": true,
+      "commits": [
+        "b24ba167b42b874786292432a949a057cbff5455"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261110-stop-orphaned-key-repeat",
+      "at": "2026-11-10 13:43",
+      "title": "長押しの連続削除の停止処理を修正",
+      "category": "スマホ用エディタ",
+      "text": "押したキーと指を追跡し、キー外での指離し、キャンセル、画面回転、アプリ切り替え、別の操作で連続入力を停止するようにしました。停止済みのタイマーから削除を再開しないようにしています。",
+      "published": true,
+      "commits": [
+        "9996e7e4fa3f296ce06fcbeb94053e83a70c0110"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261110-ipad-header-keyboard-dock",
+      "at": "2026-11-10 13:27",
+      "title": "上部配置を統一しiPad横画面のキーを拡大",
+      "category": "スマホ用エディタ",
+      "text": "エディタのサイト名・検索欄・カテゴリを他のカテゴリと同じ配置にそろえました。iPadなどの横画面ではキーを縦に大きくし、編集操作列とキーボードを一つの固定領域にまとめて重なりを防ぎました。",
+      "published": true,
+      "commits": [
+        "2921ce9517fab1c57e71f5b1876d42e27caea00f"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261110-dark-2026-code-colors",
+      "at": "2026-11-10 13:16",
+      "title": "コードの配色をVS CodeのDark 2026に統一",
+      "category": "サイト全体 / スマホ用エディタ",
+      "text": "参照コードとスマホ用エディタに、VS CodeのDark 2026の色定義と内蔵C++文法を組み込みました。ページの配色を切り替えてもコード面は同じ配色を保ち、オフラインでも色分けできます。",
+      "published": true,
+      "commits": [
+        "c6cccabdff0bad5a19e5931eca6bcae4750199d2"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261110-ctrl-backspace",
+      "at": "2026-11-10 12:52",
+      "title": "Ctrl＋Backspaceで直前の単語を削除",
+      "category": "スマホ用エディタ",
+      "text": "Ctrl＋Backspaceで直前の単語・記号・空白のまとまりを削除できるようにしました。選択中は選択範囲を優先し、改行は一つずつ削除します。",
+      "published": true,
+      "commits": [
+        "870e5047fea22e36859c332bb43e705b6529ada0",
+        "1e8e277013ddc41bbf5fb1d7a62c74e63012a030"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261110-grouped-undo",
+      "at": "2026-11-10 12:09",
+      "title": "連続入力・削除をまとめてUndo可能に",
+      "category": "スマホ用エディタ",
+      "text": "同じ単語の連続入力や連続Backspaceを一つの編集単位として扱うようにしました。改行、貼り付け、選択範囲の置換、カーソル移動などで区切り、Undo・Redoしやすくしました。",
+      "published": true,
+      "commits": [
+        "28e1646ca93f9efb2dd024d70a1afdae685e2312",
+        "9b8e0d881e4be69ad95d8f986aab79e3fb141af5"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261110-fixed-undo-redo",
+      "at": "2026-11-10 12:01",
+      "title": "Undo・Redoをキーボード直上へ移動",
+      "category": "スマホ用エディタ",
+      "text": "Undo・Redoを左右カーソルキーと同じ固定操作列へ移しました。長いコードを編集中でも、ページ上部へ戻らず操作できます。",
+      "published": true,
+      "commits": [
+        "a697a83cfdd31a8334c3ed4f59375a1d7c65e044",
+        "73362fd9d4eaaa31850f90aeb103238f93bd6813"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261110-tap-to-caret",
+      "at": "2026-11-10 11:52",
+      "title": "コード本文のタップで編集位置を指定可能に",
+      "category": "スマホ用エディタ",
+      "text": "コード本文をタップすると、タップした行の最も近い文字境界へカーソルを移動するようにしました。インデント、タブ、日本語、絵文字、横スクロール位置を考慮し、ドラッグやスクロールでは編集位置を変えません。",
+      "published": true,
+      "commits": [
+        "3ae22e983b64b81aec3d4da710cfd089fe271428",
+        "e1acddc36ddfef2c6e6e8c301234c1dfdd2dec09"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261110-initial-syntax-highlighting",
+      "at": "2026-11-10 11:38",
+      "title": "エディタのC++コードを色分け",
+      "category": "スマホ用エディタ",
+      "text": "キーワード、型、関数、数値、文字列、コメント、プリプロセッサ命令の色分けを追加しました。入力用の本文と表示レイヤーを連動させ、外部通信なしで表示します。",
+      "published": true,
+      "commits": [
+        "c7d306febb11edeb3c4a5c845046549f1c9dec2d",
+        "7fc39c83ed5572df64402db4dc9accf2d6ab7440"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261110-simplify-keyboard-bottom-row",
+      "at": "2026-11-10 11:14",
+      "title": "不要なキーを省きCtrlとSpaceを拡大",
+      "category": "スマホ用エディタ",
+      "text": "半角／全角、無変換、変換、かな、右Ctrlを省き、最下段を左Ctrlと大きなSpaceに整理しました。数字の1の位置は維持しています。",
+      "published": true,
+      "commits": [
+        "26b70153d8027ce805b2e069e608f86187fc29d3",
+        "d7f59dd0a5d5a3e76f9e2a6dae45b6235e6d58dc"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261110-staggered-jis-shaped-keys",
+      "at": "2026-11-10 10:50",
+      "title": "JIS配列の段差とL字型Tab・Shiftを再現",
+      "category": "スマホ用エディタ",
+      "text": "数字・Q・A・Zの各段にJIS配列の段差を付けました。左側の空き領域をL字型のTabとShiftに割り当て、見た目と実際に押せる領域を一致させました。",
+      "published": true,
+      "commits": [
+        "0b0af56138de0c7f72b89eb6bcd8e5b86018154f",
+        "d3b65c4f156ca7b5b1590d628a281e4da3a28407"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261110-indent-backspace",
+      "at": "2026-11-10 04:57",
+      "title": "Backspaceでインデントを1段戻す操作を追加",
+      "category": "スマホ用エディタ",
+      "text": "行頭のインデント内で、カーソル直前に半角スペースが4個以上続く場合は、Backspace一回で4スペースを削除するようにしました。通常の文字削除と範囲削除は維持します。",
+      "published": true,
+      "commits": [
+        "4d6db4956a71f8c76864b8a6a0c513e888347bab",
+        "63f25ce56c97ba673d4c4b7aaa3e65761e9ed73a"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261109-aligned-key-grid",
+      "at": "2026-11-09 22:43",
+      "title": "文字キーの幅・文字位置・操作ボタンの配色を調整",
+      "category": "スマホ用エディタ",
+      "text": "各段の文字・数字・記号キーの幅をそろえ、文字をキー中央に配置しました。コピー・貼り付けボタンは通常時の強調をなくし、押したときだけ配色が変わるようにしました。",
+      "published": true,
+      "commits": [
+        "aa73b7d0158254c4261c1bd766679d3a2891db91",
+        "f9fc7cc029cded16e6afc2cb31880a8c276d9822"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261109-persistent-caret-copy-selection",
+      "at": "2026-11-09 22:20",
+      "title": "カーソル表示とコピー後の選択解除を追加",
+      "category": "スマホ用エディタ",
+      "text": "編集位置に点滅しない縦線のカーソルを表示するようにしました。コピー成功時は選択範囲を解除して選択末尾へ移動し、失敗時は選択を維持します。",
+      "published": true,
+      "commits": [
+        "1769a8c835a0c3a118597004219c7cc9e42a5df8",
+        "e31e826da95b85a396c21d2067ac9b23d44bfb8e"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261109-selection-lines-cursor-controls",
+      "at": "2026-11-09 22:02",
+      "title": "選択範囲の行表示と左右カーソル操作を改善",
+      "category": "スマホ用エディタ",
+      "text": "範囲選択した行をまとめて強調し、全選択時はすべての行を示すようにしました。上下キーを省き、左右のカーソルキーをキーボード直上の操作列へ移しました。",
+      "published": true,
+      "commits": [
+        "a9af53f1997a7b01af3f4bf238fc1353daf5cd51",
+        "6f23bc1f04ea05fde8bef2d170ecf1db42a0189a"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261109-page-scroll-line-numbers",
+      "at": "2026-11-09 21:43",
+      "title": "ページスクロール・行番号・固定キーボードを整備",
+      "category": "スマホ用エディタ",
+      "text": "コードの行数に応じてページ全体をスクロールし、キーボードは画面下部に固定する形にしました。行番号、現在行の強調、行番号タップによる移動を追加し、縦画面の初期表示を全体表示にしました。Shiftを押した際のキー表記も切り替わります。",
+      "published": true,
+      "commits": [
+        "c7a70116c896ea2548b1a2761cc770df86fe32a8",
+        "bb726893a667bd0589eece367b4476f022d7e31d",
+        "a122355e9cda7dfbed95716254f9b0cbaaafa534"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261109-mobile-search-header",
+      "at": "2026-11-09 21:18",
+      "title": "エディタにサイト名・検索・配色操作を追加",
+      "category": "スマホ用エディタ",
+      "text": "サイト名、検索欄、GitHubリンク、配色切り替えをエディタから利用できるようにしました。検索語を送信すると、チートシートの検索結果へ移動します。",
+      "published": true,
+      "commits": [
+        "ec497f7877ea2a6d09f78e02952b693569e748c4",
+        "c7b7425aae330898a3af820d9cfd4314713836b0",
+        "81c0deeac047bf655eff641765e63e127bc8d75a",
+        "5ae726ab0d51ba267538fff39204386a154920d5"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261109-mobile-category-navigation",
+      "at": "2026-11-09 20:58",
+      "title": "エディタと他カテゴリの移動を改善",
+      "category": "スマホ用エディタ",
+      "text": "エディタにもカテゴリのリンクを設け、移動時に下書きを保存するようにしました。サイト共通のカテゴリ欄では、エディタを更新履歴の前に配置しました。",
+      "published": true,
+      "commits": [
+        "0c009b0ecf4a203bf3c10ac2f5fe18d8667f1fda",
+        "d0afba5dfe6748954764e4d4121c382b8fa3dae9",
+        "6d74bdfc2446e42bea1ddc05bd2675c2300b5bbd"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261109-portrait-keyboard",
+      "at": "2026-11-09 20:45",
+      "title": "縦画面とキーボードの表示切り替えに対応",
+      "category": "スマホ用エディタ",
+      "text": "スマートフォンの縦画面でも編集できるようにしました。左右スクロールでキーを大きく使う表示と、全キーを一度に収める表示を切り替えられます。",
+      "published": true,
+      "commits": [
+        "63974c871d95a94224e422449b9a8a8de5b9f582",
+        "5077d978ca360afa1786786ae6360463dfb1fdd7"
+      ],
+      "kind": "updates"
+    },
+    {
+      "id": "20261109-mobile-editor-launch",
+      "at": "2026-11-09 20:38",
+      "title": "スマホ用C++エディタを公開",
+      "category": "スマホ用エディタ",
+      "text": "JIS配列の画面キーボードを備えたC++エディタの試作版を公開しました。初期テンプレート、コピー・貼り付け、Ctrl系ショートカット、Undo・Redo、端末内の自動保存に対応しました。",
+      "published": true,
+      "commits": [
+        "b1480c79876334102d721e0d0a6dda65c04440e2"
+      ],
+      "kind": "updates"
+    },
+    {
       "id": "20261109-exclude-updates-search",
       "at": "2026-11-09 08:38",
       "title": "更新履歴を検索対象から除外",
