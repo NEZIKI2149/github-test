@@ -243,6 +243,21 @@ body{padding-bottom:calc(var(--fixed-keyboard-height,270px) + var(--fixed-naviga
   clip-path:polygon(0 0,83.87097% 0,83.87097% calc(var(--kh)/2 + var(--jis-row-gap)/2),100% calc(var(--kh)/2 + var(--jis-row-gap)/2),100% 100%,0 100%);
 }
 .keyboard-main>.key.shift-shape .key-legend{bottom:0}
+
+/* VS Code-inspired C++ lexical syntax coloring; no external dependencies. */
+:root{--cpp-keyword:#c586c0;--cpp-type:#4ec9b0;--cpp-string:#ce9178;--cpp-number:#b5cea8;--cpp-comment:#6a9955;--cpp-directive:#c586c0;--cpp-function:#dcdcaa}
+:root[data-theme=light]{--cpp-keyword:#af00db;--cpp-type:#267f99;--cpp-string:#a31515;--cpp-number:#098658;--cpp-comment:#008000;--cpp-directive:#af00db;--cpp-function:#795e26}
+:root[data-theme=poison]{--cpp-keyword:#7b007f;--cpp-type:#005f78;--cpp-string:#9b1f15;--cpp-number:#336b00;--cpp-comment:#265e22;--cpp-directive:#7b007f;--cpp-function:#735000}
+.editor-surface .syntax-layer{position:absolute;top:0;left:0;z-index:0;display:block;box-sizing:border-box;margin:0;padding:9px 10px;border:0;min-width:100%;width:max-content;color:var(--ink);background:transparent;font:13px/20px "SFMono-Regular",Consolas,monospace;font-variant-ligatures:none;white-space:pre;tab-size:4;pointer-events:none;user-select:none;-webkit-user-select:none;-webkit-text-size-adjust:100%;will-change:transform}
+.syntax-layer .cpp-keyword{color:var(--cpp-keyword)}
+.syntax-layer .cpp-type{color:var(--cpp-type)}
+.syntax-layer .cpp-string{color:var(--cpp-string)}
+.syntax-layer .cpp-number{color:var(--cpp-number)}
+.syntax-layer .cpp-comment{color:var(--cpp-comment)}
+.syntax-layer .cpp-directive{color:var(--cpp-directive)}
+.syntax-layer .cpp-function{color:var(--cpp-function)}
+.editor-surface #editor{color:transparent;-webkit-text-fill-color:transparent;position:relative;z-index:1}
+.editor-surface #editor::selection{background:rgba(115,217,196,.32);color:transparent;-webkit-text-fill-color:transparent}
 </style></head>
 <body><div id="app" class="fit-keys">
 <section class="site-head" id="site-head" aria-label="サイトのヘッダー">
@@ -263,6 +278,7 @@ body{padding-bottom:calc(var(--fixed-keyboard-height,270px) + var(--fixed-naviga
   <div class="line-gutter" id="line-gutter" aria-label="タップするとその行に移動"></div>
   <div class="editor-surface">
     <div class="active-line" id="active-line" aria-hidden="true"></div>
+    <pre class="syntax-layer" id="syntax-layer" aria-hidden="true"></pre>
     <span class="caret-measure" id="caret-measure" aria-hidden="true"></span>
     <span class="edit-caret" id="edit-caret" aria-hidden="true"></span>
     <textarea id="editor" readonly inputmode="none" wrap="off" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="C++コード。行番号または下の画面キーボードで編集"></textarea>
@@ -311,8 +327,95 @@ function keepCurrentCategoryVisible(){
 requestAnimationFrame(keepCurrentCategoryVisible);
 const editor=document.getElementById("editor"),status=document.getElementById("status"),toast=document.getElementById("toast"),main=document.getElementById("keyboard-main");
 const gutter=document.getElementById("line-gutter"),activeLineMarker=document.getElementById("active-line");
+const syntaxLayer=document.getElementById("syntax-layer");
 const editCaret=document.getElementById("edit-caret"),caretMeasure=document.getElementById("caret-measure");
 const characterKeys=[];
+
+// Compact self-contained C++ lexer; token concatenation always reproduces the source.
+const CPP_KEYWORDS=new Set(("alignas alignof and and_eq asm auto bitand bitor break case catch class compl concept const consteval constexpr constinit const_cast continue co_await co_return co_yield decltype default delete do dynamic_cast else enum explicit export extern false for friend goto if inline mutable namespace new noexcept not not_eq nullptr operator or or_eq private protected public register reinterpret_cast requires return sizeof static static_assert static_cast struct switch template this thread_local throw true try typedef typeid typename union using virtual volatile while xor xor_eq override final").split(" "));
+const CPP_TYPES=new Set(("bool char char8_t char16_t char32_t double float int long short signed unsigned void wchar_t size_t ssize_t ptrdiff_t int8_t int16_t int32_t int64_t uint8_t uint16_t uint32_t uint64_t string wstring u16string u32string vector array deque list forward_list map multimap set multiset unordered_map unordered_multimap unordered_set unordered_multiset pair tuple optional variant any stack queue priority_queue bitset span string_view iterator const_iterator unique_ptr shared_ptr weak_ptr function size_type").split(" "));
+const CPP_FUNCTIONS=new Set(("main sort stable_sort reverse rotate lower_bound upper_bound binary_search equal_range next_permutation prev_permutation min max min_element max_element swap find count count_if accumulate iota gcd lcm abs sqrt pow ceil floor round begin end rbegin rend push_back emplace_back push emplace pop_back pop insert erase clear resize reserve size empty front back top at substr stoi stoll to_string cin cout cerr printf scanf getline make_pair make_tuple tie").split(" "));
+const CPP_IDENTIFIER=/[A-Za-z_][A-Za-z0-9_]*/y;
+const CPP_NUMBER=/(?:0[xX][0-9a-fA-F']+(?:\.[0-9a-fA-F']*)?(?:[pP][+-]?\d[\d']*)?|0[bB][01']+|\d[\d']*(?:\.\d[\d']*)?(?:[eE][+-]?\d[\d']*)?|\.\d[\d']*(?:[eE][+-]?\d[\d']*)?)(?:[uUlLfFzZ]*)/y;
+const CPP_DIRECTIVE=/#[ \t]*[A-Za-z_]\w*/y;
+const CPP_RAW_START=/(?:u8|[uUL])?R"([^()\\\s]{0,16})\(/y;
+const CPP_LITERAL_START=/(?:u8|[uUL])?["']/y;
+function cppTokens(source){
+  const result=[];let i=0,linePrefix=true,includeHeader=false;
+  function put(type,end){
+    const value=source.slice(i,end),prev=result[result.length-1];
+    if(prev&&prev.type===type)prev.value+=value;
+    else result.push({type:type,value:value});
+    const newline=value.lastIndexOf("\n");
+    if(newline>=0){linePrefix=/^[ \t\r]*$/.test(value.slice(newline+1));includeHeader=false;}
+    else if(!/^[ \t\r]*$/.test(value)){linePrefix=false;}
+    i=end;
+  }
+  function from(re){re.lastIndex=i;return re.exec(source);}
+  while(i<source.length){
+    const c=source[i],n=source[i+1];
+    if(c==="/"&&n==="/"){const end=source.indexOf("\n",i+2);put("comment",end<0?source.length:end);continue;}
+    if(c==="/"&&n==="*"){const end=source.indexOf("*/",i+2);put("comment",end<0?source.length:end+2);continue;}
+    if(linePrefix&&c==="#"){
+      const directive=from(CPP_DIRECTIVE);
+      if(directive){put("directive",i+directive[0].length);includeHeader=/^#[ \t]*(include|include_next|import)\b/.test(directive[0]);continue;}
+    }
+    if(includeHeader&&c==="<"){
+      const end=source.indexOf(">",i+1),newline=source.indexOf("\n",i);
+      if(end>=0&&(newline<0||end<newline)){put("string",end+1);continue;}
+    }
+    const raw=from(CPP_RAW_START);
+    if(raw){
+      const closer=")"+raw[1]+'"',end=source.indexOf(closer,i+raw[0].length);
+      put("string",end<0?source.length:end+closer.length);continue;
+    }
+    const literal=from(CPP_LITERAL_START);
+    if(literal){
+      const quote=literal[0][literal[0].length-1];let j=i+literal[0].length;
+      while(j<source.length){
+        if(source[j]==="\\"){j=Math.min(source.length,j+2);continue;}
+        if(source[j]===quote){j++;break;}
+        if(source[j]==="\n")break;
+        j++;
+      }
+      put("string",j);continue;
+    }
+    if((c>="0"&&c<="9")||(c==="."&&n>="0"&&n<="9")){
+      const number=from(CPP_NUMBER);
+      if(number){put("number",i+number[0].length);continue;}
+    }
+    if(/[A-Za-z_]/.test(c)){
+      const id=from(CPP_IDENTIFIER);
+      if(id){
+        const w=id[0];
+        put(CPP_TYPES.has(w)?"type":CPP_KEYWORDS.has(w)?"keyword":CPP_FUNCTIONS.has(w)?"function":null,i+w.length);continue;
+      }
+    }
+    put(null,i+1);
+  }
+  return result;
+}
+function syncSyntaxScroll(){syntaxLayer.style.transform="translate("+(-editor.scrollLeft)+"px,"+(-editor.scrollTop)+"px)";}
+function renderSyntax(){
+  const st=getComputedStyle(editor);
+  syntaxLayer.style.font=st.font;
+  syntaxLayer.style.lineHeight=st.lineHeight;
+  syntaxLayer.style.letterSpacing=st.letterSpacing;
+  syntaxLayer.style.tabSize=st.tabSize||"4";
+  syntaxLayer.style.padding=st.padding;
+  const fragment=document.createDocumentFragment();
+  for(const token of cppTokens(code)){
+    if(token.type){
+      const span=document.createElement("span");
+      span.className="cpp-"+token.type;
+      span.textContent=token.value;
+      fragment.appendChild(span);
+    }else fragment.appendChild(document.createTextNode(token.value));
+  }
+  syntaxLayer.replaceChildren(fragment);
+  syncSyntaxScroll();
+}
+
 let code=TEMPLATE,anchor=TEMPLATE.indexOf("\n    \n")+5,head=anchor,shift=0,ctrl=false,lastShift=0,timer=null;
 const undo=[],redo=[];
 try{const v=JSON.parse(localStorage.getItem(KEY));if(v&&typeof v.code==="string"){code=v.code;anchor=Math.min(code.length,Math.max(0,Number(v.anchor)||0));head=Math.min(code.length,Math.max(0,Number(v.head)||0));}}catch(_){}
@@ -338,7 +441,7 @@ function updateCaret(){
   editCaret.style.height=parseFloat(style.lineHeight||"20")+"px";
   editCaret.style.visibility=(x<editor.offsetLeft||x>editor.offsetLeft+editor.clientWidth)?"hidden":"visible";
 }
-editor.addEventListener("scroll",updateCaret);
+editor.addEventListener("scroll",function(){syncSyntaxScroll();updateCaret();});
 window.addEventListener("resize",updateCaret);
 function drawLines(){
   const lines=code.split("\n");
@@ -378,6 +481,7 @@ gutter.addEventListener("click",function(e){
 });
 function render(){
   editor.value=code;
+  renderSyntax();
   drawLines();
   try{editor.setSelectionRange(Math.min(anchor,head),Math.max(anchor,head),head<anchor?"backward":"forward");}catch(_){}
   const before=code.slice(0,head),lineStart=before.lastIndexOf("\n")+1;
