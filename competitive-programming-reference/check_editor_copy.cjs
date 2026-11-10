@@ -17,7 +17,7 @@ function instrument(source){
   await context.grantPermissions(['clipboard-read','clipboard-write'],{origin});
   const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
   const source=instrument(fs.readFileSync(path.join(__dirname,'mobile-editor.html'),'utf8'));
-  await page.route(origin+'/**',route=>route.fulfill({status:200,contentType:'text/html; charset=utf-8',body:source}));
+  await page.route(origin+'/**',route=>route.fulfill({status:200,contentType:'text/html; charset=utf-8',body:require('./security_test_utils.cjs').refreshScriptHashes(source)}));
   await page.goto(origin+'/editor');await page.evaluate(()=>window.vscodeCppHighlighter);
   await page.evaluate(()=>{
    window.__realClipboard=navigator.clipboard;window.__realWrite=navigator.clipboard.writeText;

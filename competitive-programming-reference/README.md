@@ -124,3 +124,13 @@ Playwrightが通常の検索先にない場合は `PLAYWRIGHT_PATH` にモジュ
 ## 右Enter・右Shiftの回帰確認
 
 同じPlaywright環境で `KEYS_BROWSER=webkit` または `KEYS_BROWSER=chromium` を指定し、`node check_editor_right_keys.cjs` を実行すると、5種類の画面サイズでのL字型キーの当たり判定、拡大表示・右端スクロールを維持した `>` 入力、左右Shiftの表示連動・ロック、括弧補完、Enterの上下の領域からの改行など15項目を確認します。
+
+## セキュリティ制限と確認
+
+公開する `index.html` と `mobile-editor.html` は、HTMLの先頭にCSPを設定します。ページ内のJavaScriptは内容のSHA-256ハッシュが一致するものだけを許可し、追加のスクリプト、`eval`、埋め込みオブジェクト、`fetch`などの追加通信を禁止します。エディタは端末内の整形と色付けに必要なWebAssemblyだけを追加で許可します。表示や色付けに使うインラインCSSは許可しています。リンクの移動、同一サイトへの検索フォーム、ユーザー操作によるコピー・ファイル保存は利用できます。
+
+HTMLやエディタの生成処理を変更したら、**最後に `python build_reference.py` を実行**してください。`security_policy.py` が両ページのCSPハッシュを更新し、`check_reference.py` が一致と再生成の再現性を確認します。テスト用フックを追加する既存の確認スクリプトも、テスト用HTMLのハッシュを更新します。
+
+`node check_security.cjs` は変更していない公開用HTMLを一時HTTPサーバーで開き、不正URLからの復帰、検索、コピー、色付け、整形、貼り付け相当の文字列表示、未許可スクリプトと通信の遮断を確認します。`SECURITY_BROWSER=webkit` でWebKitも確認できます。Playwrightのパスとブラウザの指定方法は既存の確認と同じです。
+
+CSPは追加の防御であり、脆弱性がないことの保証ではありません。GitHub Pages上ではmetaによる設定のため、`frame-ancestors`の制限は含めていません。自動保存は同じドメインのブラウザ保存領域を使い、秘密情報を保護する保管庫ではありません。

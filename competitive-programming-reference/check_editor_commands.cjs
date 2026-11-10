@@ -10,7 +10,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_PATH||'playwright');
  state:()=>({code,anchor,head,pairs:autoPairs.map(p=>({...p})),undo:undo.length,redo:redo.length}),style:FORMAT_STYLE};
  render();
  })();`;
- fs.writeFileSync(file,source.replace('\nrender();\n})();',hook));
+ fs.writeFileSync(file,require('./security_test_utils.cjs').refreshScriptHashes(source.replace('\nrender();\n})();',hook)));
  const browser=await chromium.launch({headless:true,...(process.env.BROWSER_CHANNEL?{channel:process.env.BROWSER_CHANNEL}:{})});
  try{
   const page=await browser.newPage({viewport:{width:1280,height:846},hasTouch:true}),errors=[],requests=[];

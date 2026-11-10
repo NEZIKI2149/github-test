@@ -11,7 +11,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_PATH||'playwright');
  render();
  })();`;
  assert(source.includes('\nrender();\n})();'));
- fs.writeFileSync(file,source.replace('\nrender();\n})();',hook));
+ fs.writeFileSync(file,require('./security_test_utils.cjs').refreshScriptHashes(source.replace('\nrender();\n})();',hook)));
  const browser=await chromium.launch({headless:true,...(process.env.BROWSER_CHANNEL?{channel:process.env.BROWSER_CHANNEL}:{})});
  try{
   const page=await browser.newPage({viewport:{width:1280,height:846}}),errors=[];page.on('pageerror',e=>errors.push(e.message));

@@ -9,7 +9,7 @@ const sample='#include <bits/stdc++.h>\n// 日本語\nint main(){return 0;}';
   const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
   let source=fs.readFileSync(path.join(__dirname,'mobile-editor.html'),'utf8').replace(/\r\n/g,'\n');
   source=source.replace('\nrender();\n})();',`\nwindow.__touchCopy={reset:()=>{closeManualCopy();stopRepeat();code=${JSON.stringify(sample)};anchor=2;head=8;autoPairs=[];ctrl=false;shift=0;render();document.getElementById('copy-status').textContent='';},state:()=>({code,anchor,head})};\nrender();\n})();`);
-  await page.route('https://editor.test/**',r=>r.fulfill({status:200,contentType:'text/html; charset=utf-8',body:source}));
+  await page.route('https://editor.test/**',r=>r.fulfill({status:200,contentType:'text/html; charset=utf-8',body:require('./security_test_utils.cjs').refreshScriptHashes(source)}));
   await page.goto('https://editor.test/mobile');await page.evaluate(()=>window.vscodeCppHighlighter);await page.clock.install();
   await page.evaluate(()=>{
    window.__realExec=document.execCommand;window.__nativeCopies=[];

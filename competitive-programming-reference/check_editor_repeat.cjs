@@ -7,7 +7,7 @@ const selector='#keyboard-main [data-op="backspace"]';
 function prepare(source,destination){
  const s=fs.readFileSync(source,'utf8').replace(/\r\n/g,'\n');
  const hook='\nwindow.__repeatTest={reset:()=>{stopRepeat();code='+JSON.stringify(sample)+';anchor=head=code.length;ctrl=false;shift=0;render();},value:()=>code};\nrender();\n})();';
- fs.writeFileSync(destination,s.replace('\nrender();\n})();',hook));
+ fs.writeFileSync(destination,require('./security_test_utils.cjs').refreshScriptHashes(s.replace('\nrender();\n})();',hook)));
 }
 async function pointer(page,type,{target=selector,pointerId=11,pointerType='touch',x,y,isPrimary=true,buttons}={}){
  const point=await page.locator(target).evaluate(e=>{const r=e.getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2}});

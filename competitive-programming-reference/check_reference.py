@@ -9,6 +9,10 @@ import tempfile
 ROOT = pathlib.Path(__file__).resolve().parent
 data = json.loads((ROOT / "reference-data.json").read_text(encoding="utf-8"))
 page = (ROOT / "index.html").read_text(encoding="utf-8")
+from security_policy import with_security_policy
+assert page == with_security_policy(page)
+editor = (ROOT / "mobile-editor.html").read_text(encoding="utf-8")
+assert editor == with_security_policy(editor, wasm=True)
 embedded = re.search(r'<script id="reference-data" type="application/json">(.*?)</script>', page, re.S).group(1)
 assert json.loads(embedded) == data
 assert "C++23 (GCC 15.2.0)" in page and "C++17" not in page
@@ -58,7 +62,7 @@ with tempfile.TemporaryDirectory() as tmp:
     script = pathlib.Path(tmp) / "page.js"
     script.write_text(scripts[0], encoding="utf-8")
     subprocess.run(["node", "--check", str(script)], check=True)
-tracked = [ROOT / "index.html", ROOT / "reference-data.json"] + sorted((ROOT / "docs").glob("*.md"))
+tracked = [ROOT / "index.html", ROOT / "mobile-editor.html", ROOT / "reference-data.json"] + sorted((ROOT / "docs").glob("*.md"))
 before = {p: hashlib.sha256(p.read_bytes()).hexdigest() for p in tracked}
 subprocess.run(["python", str(ROOT / "build_reference.py")], check=True)
 assert all(hashlib.sha256(p.read_bytes()).hexdigest() == h for p, h in before.items())

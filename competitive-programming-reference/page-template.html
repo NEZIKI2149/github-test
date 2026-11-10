@@ -215,7 +215,10 @@ function render(){
     syncTocHighlight();updateTools();
 }
 function jumpFromHash(preserveIndex=false){
-    const [p,key]=decodeURIComponent(location.hash.slice(1)).split('/');
+    let decoded;
+    try{decoded=decodeURIComponent(location.hash.slice(1));}
+    catch{decoded='';}
+    const [p,key]=decoded.split('/');
     page=DATA.pages[p]?p:'';
     const g=DATA.groups.find(g=>g.page===page&&(g.key===key||g.items.some(i=>i.id===key)));
     const target=g&&g.page!=='algo'?(g.key===key?undefined:key):key;

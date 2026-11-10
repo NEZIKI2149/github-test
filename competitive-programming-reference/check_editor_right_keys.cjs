@@ -8,7 +8,7 @@ const playwright=require(process.env.PLAYWRIGHT_PATH||'playwright');
   const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
   let source=fs.readFileSync(path.join(__dirname,'mobile-editor.html'),'utf8').replace(/\r\n/g,'\n');
   source=source.replace('\nrender();\n})();',`\nwindow.__keysTest={reset:(text='',cursor=text.length)=>{stopRepeat();code=text;anchor=head=cursor;autoPairs=[];ctrl=false;shift=0;lastShift=0;undo.length=redo.length=0;render();},state:()=>({code,anchor,head,shift,scroll:kbViewport.scrollLeft})};\nrender();\n})();`);
-  await page.route('https://editor.test/**',r=>r.fulfill({status:200,contentType:'text/html; charset=utf-8',body:source}));
+  await page.route('https://editor.test/**',r=>r.fulfill({status:200,contentType:'text/html; charset=utf-8',body:require('./security_test_utils.cjs').refreshScriptHashes(source)}));
   await page.goto('https://editor.test/keys');await page.evaluate(()=>window.vscodeCppHighlighter);
   const reset=(...args)=>page.evaluate(args=>window.__keysTest.reset(...args),args),state=()=>page.evaluate(()=>window.__keysTest.state());
   async function geometry(){return page.evaluate(()=>{
