@@ -790,37 +790,84 @@ case "y":history(true);break;
 default:notice("Ctrl+"+k.toUpperCase()+" は未対応です");
 }ctrl=false;if(shift===1)shift=0;render();}
 function press(b){const op=b.dataset.op;if(op==="shift"){const now=Date.now();shift=shift===2?0:shift===1?(now-lastShift<500?2:0):1;lastShift=now;render();return;}if(op==="ctrl"){ctrl=!ctrl;render();return;}if(op==="arrow"){move(b.dataset.direction);return;}if(op==="ime"){notice("C++の半角入力に固定しています");return;}if(op==="backspace"){if(ctrl)deleteWordLeft();else backspace();return;}if(op==="enter"){enter();return;}if(op==="tab"){insert("    ","tab");return;}if(op==="space"){insert(" ","space");return;}if(op==="char"){const v=b.dataset.value;if(ctrl){shortcut(v.toLowerCase());return;}insert(shift?b.dataset.shift||v:v,"type");}}
-let repeatDelay=null,repeatInterval=null,pending=null;
-function stopRepeat(){clearTimeout(repeatDelay);clearInterval(repeatInterval);repeatDelay=repeatInterval=null;}
+let repeatTimer=null,pending=null,lastPointerActivation=null;
+function stopRepeat(){
+  clearTimeout(repeatTimer);repeatTimer=null;
+  const active=pending;pending=null;
+  if(active){
+    lastPointerActivation={button:active.button,time:performance.now()};
+    try{if(active.surface.hasPointerCapture(active.id))active.surface.releasePointerCapture(active.id);}catch(_){}
+  }
+}
 const keyboard=document.getElementById("keyboard");
 const kbNavigation=document.getElementById("kb-navigation");
-function registerKeyEvents(surface){
-surface.addEventListener("pointerdown",function(e){
-  const b=e.target.closest("button.key");if(!b)return;
-  e.preventDefault();stopRepeat();
-  const oneShotWordDelete=b.dataset.op==="backspace"&&ctrl;
-  if(e.pointerType==="touch"){
-    pending={button:b,id:e.pointerId,x:e.clientX,y:e.clientY,moved:false,repeated:false};
-    if((b.dataset.op==="arrow"||b.dataset.op==="backspace")&&!oneShotWordDelete)repeatDelay=setTimeout(function(){
-      if(!pending||pending.id!==e.pointerId||pending.moved)return;
-      pending.repeated=true;press(b);repeatInterval=setInterval(function(){press(b);},75);
-    },450);
-  }else{
-    press(b);
-    if((b.dataset.op==="arrow"||b.dataset.op==="backspace")&&!oneShotWordDelete)repeatDelay=setTimeout(function(){repeatInterval=setInterval(function(){press(b);},75);},450);
+function activeKeyContains(active,x,y){
+  const r=active.button.getBoundingClientRect();
+  return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom;
+}
+function repeatKey(active){
+  // A callback belongs to one press only. Cancelled/stale callbacks cannot edit.
+  if(pending!==active)return;
+  if(document.hidden||!active.button.isConnected||!activeKeyContains(active,active.x,active.y)){
+    stopRepeat();return;
   }
-});
-surface.addEventListener("pointermove",function(e){
-  if(pending&&pending.id===e.pointerId&&(Math.abs(e.clientX-pending.x)>9||Math.abs(e.clientY-pending.y)>9)){
-    pending.moved=true;stopRepeat();
-  }
-});
-surface.addEventListener("pointerup",function(e){
-  if(pending&&pending.id===e.pointerId){if(!pending.moved&&!pending.repeated)press(pending.button);pending=null;}
+  if(active.button.dataset.op==="backspace"&&anchor===head&&head===0){stopRepeat();return;}
+  active.repeated=true;press(active.button);
+  // Rendering may synchronously cancel this press (e.g. a scroll or blur).
+  if(pending===active)repeatTimer=setTimeout(function(){repeatKey(active);},75);
+}
+function finishKeyPress(e){
+  const active=pending;
+  if(!active||active.id!==e.pointerId)return;
+  const tap=e.type==="pointerup"&&active.touch&&!active.repeated&&activeKeyContains(active,e.clientX,e.clientY);
   stopRepeat();
-});
-["pointercancel","pointerleave"].forEach(function(n){surface.addEventListener(n,function(){pending=null;stopRepeat();});});
-surface.addEventListener("click",function(e){if(e.detail!==0)return;const b=e.target.closest("button.key");if(b)press(b);});
+  if(tap)press(active.button);
+}
+// These listeners also catch release/cancellation outside either keyboard surface.
+document.addEventListener("pointerup",finishKeyPress,true);
+document.addEventListener("pointercancel",finishKeyPress,true);
+document.addEventListener("lostpointercapture",finishKeyPress,true);
+document.addEventListener("pointerdown",stopRepeat,true);
+document.addEventListener("click",stopRepeat,true);
+document.addEventListener("keydown",stopRepeat,true);
+document.addEventListener("pointermove",function(e){
+  const active=pending;if(!active||active.id!==e.pointerId)return;
+  active.x=e.clientX;active.y=e.clientY;
+  if((!active.touch&&e.buttons===0)||!activeKeyContains(active,e.clientX,e.clientY)||
+    (active.touch&&(Math.abs(e.clientX-active.startX)>9||Math.abs(e.clientY-active.startY)>9)))stopRepeat();
+},true);
+document.addEventListener("visibilitychange",stopRepeat);
+document.addEventListener("scroll",stopRepeat,true);
+window.addEventListener("blur",stopRepeat);
+window.addEventListener("pagehide",stopRepeat);
+window.addEventListener("resize",stopRepeat);
+window.addEventListener("orientationchange",stopRepeat);
+window.addEventListener("contextmenu",stopRepeat);
+function registerKeyEvents(surface){
+  surface.addEventListener("pointerdown",function(e){
+    const b=e.target.closest("button.key");
+    if(!b||e.button!==0||e.isPrimary===false)return;
+    e.preventDefault();stopRepeat();
+    const oneShotWordDelete=b.dataset.op==="backspace"&&ctrl;
+    const active={button:b,surface:surface,id:e.pointerId,touch:e.pointerType==="touch",
+      startX:e.clientX,startY:e.clientY,x:e.clientX,y:e.clientY,repeated:false};
+    pending=active;lastPointerActivation={button:b,time:performance.now()};
+    try{surface.setPointerCapture(e.pointerId);}catch(_){}
+    if(!active.touch)press(b);
+    if(pending===active&&(b.dataset.op==="arrow"||b.dataset.op==="backspace")&&!oneShotWordDelete)
+      repeatTimer=setTimeout(function(){repeatKey(active);},450);
+  });
+  surface.addEventListener("pointerleave",function(e){
+    if(pending&&pending.id===e.pointerId)stopRepeat();
+  });
+  surface.addEventListener("click",function(e){
+    if(e.detail!==0)return;
+    const b=e.target.closest("button.key");if(!b)return;
+    stopRepeat();
+    // iOS may synthesize a zero-detail click after a completed pointer tap.
+    if(lastPointerActivation&&lastPointerActivation.button===b&&performance.now()-lastPointerActivation.time<600)return;
+    press(b);
+  });
 }
 registerKeyEvents(keyboard);
 registerKeyEvents(kbNavigation);
