@@ -258,6 +258,20 @@ body{padding-bottom:calc(var(--fixed-keyboard-height,270px) + var(--fixed-naviga
 .syntax-layer .cpp-function{color:var(--cpp-function)}
 .editor-surface #editor{color:transparent;-webkit-text-fill-color:transparent;position:relative;z-index:1}
 .editor-surface #editor::selection{background:rgba(115,217,196,.32);color:transparent;-webkit-text-fill-color:transparent}
+
+/* Undo/Redo remain ordinary click controls so they do not trigger the
+   pointerdown handler reserved for virtual keyboard keys in kb-navigation. */
+.kb-navigation .nav-history{
+  display:flex;align-items:center;justify-content:center;
+  flex:0 0 auto;width:38px;height:31px;min-height:31px;min-width:38px;
+  padding:0;border:1px solid var(--line);border-radius:5px;
+  background:var(--special);color:var(--ink);font-size:21px;
+  line-height:1;touch-action:manipulation;
+}
+.kb-navigation .nav-history:active{background:var(--on);border-color:var(--accent)}
+@media(orientation:landscape){
+  .kb-navigation .nav-history{height:28px;min-height:28px;min-width:36px;width:36px}
+}
 </style></head>
 <body><div id="app" class="fit-keys">
 <section class="site-head" id="site-head" aria-label="サイトのヘッダー">
@@ -273,7 +287,7 @@ body{padding-bottom:calc(var(--fixed-keyboard-height,270px) + var(--fixed-naviga
   <p class="site-search-help">関数名でも、日本語でも検索できます。例：reverse／逆順</p>
 </section>
 <nav class="category-tabs" id="category-tabs" aria-label="カテゴリ"><a href="./#std">標準ライブラリ</a><a href="./#acl">AtCoder Library</a><a href="./#algo">アルゴリズム</a><a href="./#limits">計算量・メモリ</a><a href="mobile-editor.html" aria-current="page">スマホエディタ</a><a href="./#notes">更新履歴・メモ</a></nav>
-<div class="toolbar" id="editor-toolbar"><span class="filename">main.cpp</span><button id="new" type="button">新規</button><button id="undo" type="button" aria-label="元に戻す">↶</button><button id="redo" type="button" aria-label="やり直す">↷</button><button id="paste" type="button">貼り付け</button><button id="copy" type="button">コピー</button></div>
+<div class="toolbar" id="editor-toolbar"><span class="filename">main.cpp</span><button id="new" type="button">新規</button><button id="paste" type="button">貼り付け</button><button id="copy" type="button">コピー</button></div>
 <div class="editor-frame" id="editor-frame" aria-label="C++コードの編集領域">
   <div class="line-gutter" id="line-gutter" aria-label="タップするとその行に移動"></div>
   <div class="editor-surface">
@@ -287,6 +301,8 @@ body{padding-bottom:calc(var(--fixed-keyboard-height,270px) + var(--fixed-naviga
 <div class="hint"><span id="status">自動保存 · C++23</span><span>Ctrl+A 全選択 · Shift+矢印 範囲選択</span></div>
 <div class="kb-navigation" id="kb-navigation" aria-label="キーボード操作">
   <div class="kb-controls">
+    <button class="nav-history" id="undo" type="button" aria-label="元に戻す" title="元に戻す">↶</button>
+    <button class="nav-history" id="redo" type="button" aria-label="やり直す" title="やり直す">↷</button>
     <button class="key special nav-arrow" id="nav-arrow-left" data-op="arrow" data-direction="left" type="button" aria-label="カーソルを左へ移動">←</button>
     <button class="key special nav-arrow" id="nav-arrow-right" data-op="arrow" data-direction="right" type="button" aria-label="カーソルを右へ移動">→</button>
     <button id="fit-keys" type="button" aria-pressed="true">拡大表示</button>
