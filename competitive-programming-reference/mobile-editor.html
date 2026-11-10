@@ -513,12 +513,17 @@ function renderSyntax(){
 
 let code=TEMPLATE,anchor=TEMPLATE.indexOf("\n    \n")+5,head=anchor,shift=0,ctrl=false,lastShift=0,timer=null;
 const undo=[],redo=[];
+let autoPairs=[];
+const AUTO_PAIRS={"(":")","[":"]","{":"}","\"":"\"","'":"'"};
 // Group contiguous edits into undo stops, similar to a desktop code editor.
 const UNDO_MERGE_MS=1600;
 let editGroup=null;
 function stopUndoGroup(){editGroup=null;}
-try{const v=JSON.parse(localStorage.getItem(KEY));if(v&&typeof v.code==="string"){code=v.code;anchor=Math.min(code.length,Math.max(0,Number(v.anchor)||0));head=Math.min(code.length,Math.max(0,Number(v.head)||0));}}catch(_){}
-function snap(){return {code:code,anchor:anchor,head:head};}
+try{const v=JSON.parse(localStorage.getItem(KEY));if(v&&typeof v.code==="string"){code=v.code;anchor=Math.min(code.length,Math.max(0,Number(v.anchor)||0));head=Math.min(code.length,Math.max(0,Number(v.head)||0));autoPairs=validAutoPairs(v.pairs);}}catch(_){}
+function validAutoPairs(pairs){
+  return Array.isArray(pairs)?pairs.filter(p=>p&&Number.isInteger(p.start)&&Number.isInteger(p.end)&&p.start>=0&&p.start<p.end&&p.end<code.length&&AUTO_PAIRS[p.open]===p.close&&code[p.start]===p.open&&code[p.end]===p.close).map(p=>({...p})):[];
+}
+function snap(){return {code:code,anchor:anchor,head:head,pairs:autoPairs.map(p=>({...p}))};}
 function notice(t){toast.textContent=t;toast.classList.add("show");clearTimeout(timer);timer=setTimeout(function(){toast.classList.remove("show");},2400);}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(snap()));}catch(_){status.textContent="自動保存できません";}}
 window.addEventListener("pagehide",save);
@@ -595,7 +600,7 @@ function render(){
 }
 function record(){undo.push(snap());if(undo.length>150)undo.shift();redo.length=0;}
 function editCategory(char){return /^[A-Za-z0-9_]$/.test(char)?"word":"symbol";}
-function replace(t,s,e,kind){
+function replace(t,s,e,kind,options){
   s=s===undefined?Math.min(anchor,head):s;
   e=e===undefined?Math.max(anchor,head):e;
   if(s===e&&!t)return;
@@ -611,8 +616,16 @@ function replace(t,s,e,kind){
     (deleting&&group.kind==="backspace"&&group.cursor===e)
   );
   if(!mergeable)record();
+  const delta=t.length-(e-s);
+  autoPairs=autoPairs.flatMap(p=>{
+    if(options&&options.surround&&s<=p.start&&p.end<e)return [{...p,start:p.start+1,end:p.end+1}];
+    if(s<e&&((s<=p.start&&p.start<e)||(s<=p.end&&p.end<e)))return [];
+    return [{...p,start:p.start>=e?p.start+delta:p.start,end:p.end>=e?p.end+delta:p.end}];
+  });
   code=code.slice(0,s)+t+code.slice(e);
-  anchor=head=s+t.length;
+  if(options&&options.pair)autoPairs.push({start:s,end:s+t.length-1,open:options.pair.open,close:options.pair.close});
+  anchor=options&&options.anchor!==undefined?options.anchor:s+t.length;
+  head=options&&options.head!==undefined?options.head:anchor;
   // Trailing spaces finish the word group. Enter, Tab, paste, cut, selection
   // replacement and deleting a newline are independent, atomic undo steps.
   if(typing)editGroup={kind:category,cursor:head,time:now};
@@ -624,6 +637,9 @@ function backspace(){
   const s=Math.min(anchor,head),e=Math.max(anchor,head);
   if(s!==e){replace("",s,e,"replace");return;}
   if(!head)return;
+  if(autoPairs.some(p=>p.start===head-1&&p.end===head&&code[p.start]===p.open&&code[p.end]===p.close)){
+    replace("",head-1,head+1,"autoPairDelete");return;
+  }
   const lineStart=code.lastIndexOf("\n",head-1)+1;
   const beforeCursor=code.slice(lineStart,head);
   // インデント領域に4つ以上の半角スペースが続くときだけ、1段分まとめて戻す。
@@ -663,7 +679,7 @@ function history(forward){
   const from=forward?redo:undo,to=forward?undo:redo;
   if(!from.length)return;
   to.push(snap());const v=from.pop();
-  code=v.code;anchor=v.anchor;head=v.head;render();
+  code=v.code;anchor=v.anchor;head=v.head;autoPairs=validAutoPairs(v.pairs);render();
 }
 function readSelection(){
   const a=editor.selectionStart,b=editor.selectionEnd;
@@ -733,8 +749,67 @@ editor.addEventListener("click",function(e){
 });
 function vertical(p,d){const start=code.lastIndexOf("\n",p-1)+1,col=p-start;if(d==="up"){if(!start)return 0;const end=start-1,prev=code.lastIndexOf("\n",end-1)+1;return Math.min(prev+col,end);}const end=code.indexOf("\n",p);if(end<0)return code.length;const next=end+1,last=code.indexOf("\n",next);return Math.min(next+col,last<0?code.length:last);}
 function move(d){stopUndoGroup();let p=head;if(!shift&&anchor!==head&&(d==="left"||d==="right"))p=d==="left"?Math.min(anchor,head):Math.max(anchor,head);else if(d==="left")p=Math.max(0,p-1);else if(d==="right")p=Math.min(code.length,p+1);else p=vertical(p,d);if(!shift)anchor=p;head=p;ctrl=false;render();}
-function insert(t,kind){replace(t,undefined,undefined,kind||"type");if(shift===1)shift=0;render();}
-function enter(){const start=code.lastIndexOf("\n",Math.min(anchor,head)-1)+1;const before=code.slice(start,Math.min(anchor,head));const indent=(before.match(/^[ \t]*/)||[""])[0];insert("\n"+indent+(/\{\s*$/.test(before)?"    ":""),"enter");}
+function escapedAt(position){
+  let slashes=0;while(position>0&&code[--position]==="\\")slashes++;
+  return slashes%2===1;
+}
+function inputContext(position){
+  let start=0;
+  for(const token of lexicalCppTokens(code)){
+    const end=start+token.value.length;
+    if(start<position&&position<=end&&(token.type==="string"||token.type==="comment")){
+      if(position<end)return token.type;
+      if(token.type==="comment")return token.value.startsWith("//")||!token.value.endsWith("*/")?"comment":"code";
+      const raw=token.value.match(/^(?:u8|[uUL])?R"([^()\\\s]{0,16})\(/);
+      if(raw)return token.value.endsWith(")"+raw[1]+'"')?"code":"string";
+      const literal=token.value.match(/^(?:u8|[uUL])?(["'])/);
+      if(literal&&token.value.length>literal[0].length&&token.value.endsWith(literal[1])&&!escapedAt(position-1))return "code";
+      return "string";
+    }
+    if(position<end)return "code";
+    start=end;
+  }
+  return "code";
+}
+function typeCharacter(t){
+  const s=Math.min(anchor,head),e=Math.max(anchor,head),close=AUTO_PAIRS[t];
+  if(s!==e&&close){
+    replace(t+code.slice(s,e)+close,s,e,"surround",{anchor:anchor+1,head:head+1,surround:true,pair:{open:t,close:close}});return;
+  }
+  const quote=t==='"'||t==="'";
+  const automatic=s===e&&autoPairs.find(p=>p.end===head&&p.close===t);
+  if(automatic&&(!quote||!escapedAt(head))){
+    stopUndoGroup();autoPairs=autoPairs.filter(p=>p!==automatic);anchor=head=head+1;render();return;
+  }
+  // C++ language rules: brackets can pair in literals; quote rules differ.
+  const context=quote?inputContext(s):"code";
+  const quoteAllowed=!quote||(!escapedAt(s)&&context!=="string"&&(t!=="'"||(context!=="comment"&&!/[\p{L}\p{N}_]/u.test(code[s-1]||""))));
+  const next=code[e]||"";
+  const canCloseBefore=!next||/[\s;:.,=}\])>'"]/.test(next);
+  if(s===e&&close&&quoteAllowed&&canCloseBefore){
+    replace(t+close,s,e,"autoPair",{anchor:s+1,head:s+1,pair:{open:t,close:close}});return;
+  }
+  replace(t,undefined,undefined,"type");
+}
+function insert(t,kind){
+  if((!kind||kind==="type")&&t.length===1)typeCharacter(t);
+  else replace(t,undefined,undefined,kind||"type");
+  if(shift===1)shift=0;render();
+}
+function enter(){
+  const s=Math.min(anchor,head),e=Math.max(anchor,head);
+  const start=code.lastIndexOf("\n",s-1)+1,before=code.slice(start,s);
+  const indent=(before.match(/^[ \t]*/)||[""])[0];
+  const opener=before.trimEnd().slice(-1);
+  const increase="([{".includes(opener)&&!!opener&&inputContext(s)==="code";
+  const innerIndent=indent+(increase?"    ":"");
+  const following=code.slice(e),spaces=(following.match(/^[ \t]*/)||[""])[0];
+  if(increase&&following[spaces.length]===AUTO_PAIRS[opener]){
+    const text="\n"+innerIndent+"\n"+indent,cursor=s+1+innerIndent.length;
+    replace(text,s,e+spaces.length,"enter",{anchor:cursor,head:cursor});
+  }else replace("\n"+innerIndent,s,e,"enter");
+  if(shift===1)shift=0;render();
+}
 function btn(label,val,upper,w,op){
   const b=document.createElement("button");
   b.type="button";b.className="key"+(op?" special":" char")+(op==="shift"||op==="ctrl"?" toggle":"")+(op==="enter"?" enter":"");
@@ -896,7 +971,7 @@ document.getElementById("copy").addEventListener("click",function(){copy(code);}
 document.getElementById("paste").addEventListener("click",paste);
 document.getElementById("undo").addEventListener("click",function(){history(false);});
 document.getElementById("redo").addEventListener("click",function(){history(true);});
-document.getElementById("new").addEventListener("click",function(){if(code!==TEMPLATE&&!confirm("編集中のコードを初期テンプレートで置き換えますか？"))return;stopUndoGroup();record();code=TEMPLATE;anchor=head=TEMPLATE.indexOf("\n    \n")+5;shift=0;ctrl=false;render();notice("テンプレートに戻しました");});
+document.getElementById("new").addEventListener("click",function(){if(code!==TEMPLATE&&!confirm("編集中のコードを初期テンプレートで置き換えますか？"))return;stopUndoGroup();record();code=TEMPLATE;autoPairs=[];anchor=head=TEMPLATE.indexOf("\n    \n")+5;shift=0;ctrl=false;render();notice("テンプレートに戻しました");});
 editor.addEventListener("keydown",function(e){if(e.key==="Escape"){editor.blur();return;}if((e.ctrlKey||e.metaKey)&&e.key==="Backspace"){e.preventDefault();deleteWordLeft();return;}if(e.ctrlKey||e.metaKey){const k=e.key.toLowerCase();if(["a","c","x","v","z","y"].includes(k)){e.preventDefault();readSelection();shortcut(k);}}});
 render();
 })();
