@@ -555,6 +555,30 @@ function backspace(){
   const c=Array.from(code.slice(0,head)).pop();
   replace("",head-c.length,head,"backspace");
 }
+// Ctrl+Backspace removes a preceding identifier, punctuation, or whitespace run.
+// Newlines are each an independent deletion; selections override word deletion.
+function previousCodeCharacter(index){
+  const unit=code.charCodeAt(index-1);
+  return unit>=0xDC00&&unit<=0xDFFF&&index>1?code.slice(index-2,index):code.slice(index-1,index);
+}
+function wordDeleteCategory(char){
+  if(char==="\n"||char==="\r")return "newline";
+  if(char===" "||char==="\t")return "space";
+  if(/^[\p{L}\p{N}\p{M}_]$/u.test(char))return "word";
+  return "symbol";
+}
+function deleteWordLeft(){
+  stopUndoGroup();
+  ctrl=false;
+  const s=Math.min(anchor,head),e=Math.max(anchor,head);
+  if(s!==e){replace("",s,e,"deleteWord");return;}
+  if(!head){render();return;}
+  let start=head;
+  const category=wordDeleteCategory(previousCodeCharacter(start));
+  do{start-=previousCodeCharacter(start).length;}
+  while(start>0&&category!=="newline"&&wordDeleteCategory(previousCodeCharacter(start))===category);
+  replace("",start,head,"deleteWord");
+}
 function history(forward){
   stopUndoGroup();
   const from=forward?redo:undo,to=forward?undo:redo;
@@ -686,7 +710,7 @@ case "z":history(shift>0);break;
 case "y":history(true);break;
 default:notice("Ctrl+"+k.toUpperCase()+" は未対応です");
 }ctrl=false;if(shift===1)shift=0;render();}
-function press(b){const op=b.dataset.op;if(op==="shift"){const now=Date.now();shift=shift===2?0:shift===1?(now-lastShift<500?2:0):1;lastShift=now;render();return;}if(op==="ctrl"){ctrl=!ctrl;render();return;}if(op==="arrow"){move(b.dataset.direction);return;}if(op==="ime"){notice("C++の半角入力に固定しています");return;}if(op==="backspace"){backspace();return;}if(op==="enter"){enter();return;}if(op==="tab"){insert("    ","tab");return;}if(op==="space"){insert(" ","space");return;}if(op==="char"){const v=b.dataset.value;if(ctrl){shortcut(v.toLowerCase());return;}insert(shift?b.dataset.shift||v:v,"type");}}
+function press(b){const op=b.dataset.op;if(op==="shift"){const now=Date.now();shift=shift===2?0:shift===1?(now-lastShift<500?2:0):1;lastShift=now;render();return;}if(op==="ctrl"){ctrl=!ctrl;render();return;}if(op==="arrow"){move(b.dataset.direction);return;}if(op==="ime"){notice("C++の半角入力に固定しています");return;}if(op==="backspace"){if(ctrl)deleteWordLeft();else backspace();return;}if(op==="enter"){enter();return;}if(op==="tab"){insert("    ","tab");return;}if(op==="space"){insert(" ","space");return;}if(op==="char"){const v=b.dataset.value;if(ctrl){shortcut(v.toLowerCase());return;}insert(shift?b.dataset.shift||v:v,"type");}}
 let repeatDelay=null,repeatInterval=null,pending=null;
 function stopRepeat(){clearTimeout(repeatDelay);clearInterval(repeatInterval);repeatDelay=repeatInterval=null;}
 const keyboard=document.getElementById("keyboard");
@@ -695,15 +719,16 @@ function registerKeyEvents(surface){
 surface.addEventListener("pointerdown",function(e){
   const b=e.target.closest("button.key");if(!b)return;
   e.preventDefault();stopRepeat();
+  const oneShotWordDelete=b.dataset.op==="backspace"&&ctrl;
   if(e.pointerType==="touch"){
     pending={button:b,id:e.pointerId,x:e.clientX,y:e.clientY,moved:false,repeated:false};
-    if(b.dataset.op==="arrow"||b.dataset.op==="backspace")repeatDelay=setTimeout(function(){
+    if((b.dataset.op==="arrow"||b.dataset.op==="backspace")&&!oneShotWordDelete)repeatDelay=setTimeout(function(){
       if(!pending||pending.id!==e.pointerId||pending.moved)return;
       pending.repeated=true;press(b);repeatInterval=setInterval(function(){press(b);},75);
     },450);
   }else{
     press(b);
-    if(b.dataset.op==="arrow"||b.dataset.op==="backspace")repeatDelay=setTimeout(function(){repeatInterval=setInterval(function(){press(b);},75);},450);
+    if((b.dataset.op==="arrow"||b.dataset.op==="backspace")&&!oneShotWordDelete)repeatDelay=setTimeout(function(){repeatInterval=setInterval(function(){press(b);},75);},450);
   }
 });
 surface.addEventListener("pointermove",function(e){
@@ -749,7 +774,7 @@ document.getElementById("paste").addEventListener("click",paste);
 document.getElementById("undo").addEventListener("click",function(){history(false);});
 document.getElementById("redo").addEventListener("click",function(){history(true);});
 document.getElementById("new").addEventListener("click",function(){if(code!==TEMPLATE&&!confirm("編集中のコードを初期テンプレートで置き換えますか？"))return;stopUndoGroup();record();code=TEMPLATE;anchor=head=TEMPLATE.indexOf("\n    \n")+5;shift=0;ctrl=false;render();notice("テンプレートに戻しました");});
-editor.addEventListener("keydown",function(e){if(e.key==="Escape"){editor.blur();return;}if(e.ctrlKey||e.metaKey){const k=e.key.toLowerCase();if(["a","c","x","v","z","y"].includes(k)){e.preventDefault();readSelection();shortcut(k);}}});
+editor.addEventListener("keydown",function(e){if(e.key==="Escape"){editor.blur();return;}if((e.ctrlKey||e.metaKey)&&e.key==="Backspace"){e.preventDefault();deleteWordLeft();return;}if(e.ctrlKey||e.metaKey){const k=e.key.toLowerCase();if(["a","c","x","v","z","y"].includes(k)){e.preventDefault();readSelection();shortcut(k);}}});
 render();
 })();
 </script></body></html>
