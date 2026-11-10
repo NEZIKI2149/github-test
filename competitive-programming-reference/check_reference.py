@@ -16,6 +16,28 @@ keys = [g["key"] for g in data["groups"]] + [s["key"] for s in data["limits"]]
 assert len(keys) == len(set(keys))
 assert not (set(keys) & {"search", "main", "source", "sidebar", "theme", "clear", "toast", "reference-data"})
 items = [i for g in data["groups"] for i in g["items"]]
+from html.parser import HTMLParser
+
+class CodeText(HTMLParser):
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.text = []
+
+    def handle_data(self, value):
+        self.text.append(value)
+
+    def handle_starttag(self, tag, attrs):
+        assert tag == "span" and all(key == "style" for key, _ in attrs)
+
+highlighting = json.loads((ROOT / "syntax-highlighting.json").read_text(encoding="utf-8"))
+for item in items:
+    for field in ("code", "full"):
+        parser = CodeText()
+        parser.feed(item[field+"Html"])
+        assert "".join(parser.text) == item[field], (item["id"], field)
+        cached = highlighting["items"][item["id"]][field]
+        assert cached["sha256"] == hashlib.sha256(item[field].encode("utf-8")).hexdigest()
+        assert item[field+"Html"] == cached["html"]
 algorithms = [g for g in data["groups"] if g["page"] == "algo"]
 assert len(algorithms) == 28
 assert all(len(g["items"]) == 1 and g.get("reading") for g in algorithms)

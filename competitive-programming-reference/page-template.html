@@ -58,6 +58,9 @@ main>.section>h2{display:flex;align-items:center;justify-content:space-between;g
 .algorithm-link{display:flex;align-items:baseline;justify-content:space-between;gap:12px}.algorithm-name{min-width:0}.algorithm-level{flex:0 0 1em;text-align:right;color:inherit}
 .algorithm-label{display:flex;justify-content:space-between;gap:12px;letter-spacing:normal;padding-right:9px}.memory-input-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.memory-scale{white-space:nowrap;font-size:12px}
 .tabs .mobile-editor-link{display:flex;align-items:center;border-bottom:3px solid transparent;text-decoration:none;font-weight:650;color:var(--ink);white-space:nowrap;padding:10px 0 12px}.tabs .mobile-editor-link:hover{color:var(--accent)}
+/* Code blocks use the local VS Code Dark 2026 palette in every page theme. */
+pre.cpp-highlight{background:#121314;color:#BBBEBF;padding:14px;border-radius:5px;color-scheme:dark}
+@media print{pre.cpp-highlight{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
 </style>
 </head>
 <body>
@@ -90,14 +93,14 @@ function clearTocHighlight(){
 function notify(message){ $('#toast').textContent=message;$('#toast').classList.add('show');clearTimeout(timer);timer=setTimeout(()=>$('#toast').classList.remove('show'),2200); }
 function sourceNote(){return '<footer><a href="'+DATA.source+'" target="_blank" rel="noopener">公開ソース・共通の前提</a> · <a href="https://info.atcoder.jp/entry/llm-rules-ja" target="_blank" rel="noopener">AtCoderの利用ルール</a></footer>';}
 function fullCode(i){
-    return '<div class="full-code"><div class="code-toolbar"><span>C++23 (GCC 15.2.0) · #include / main() を含む全体コード</span><div class="code-actions"><button type="button" class="copy" data-copy="'+i.id+'">全体コードをコピー</button><button type="button" class="download" data-download="'+i.id+'">C++ファイルを保存</button></div></div><pre><code>'+esc(i.full)+'</code></pre></div>';
+    return '<div class="full-code"><div class="code-toolbar"><span>C++23 (GCC 15.2.0) · #include / main() を含む全体コード</span><div class="code-actions"><button type="button" class="copy" data-copy="'+i.id+'">全体コードをコピー</button><button type="button" class="download" data-download="'+i.id+'">C++ファイルを保存</button></div></div><pre class="cpp-highlight"><code>'+i.fullHtml+'</code></pre></div>';
 }
 function operation(i, algo, groupNote=''){
     if(algo){
         const notes=[groupNote,i.note].filter(Boolean).join(' ');
         return '<article class="algorithm-entry" id="'+i.id+'"><p class="algorithm-purpose"><strong>目的</strong> : '+esc(i.desc)+'</p><p class="algorithm-cost">計算量 '+esc(i.time)+'　 /　 メモリ '+esc(i.memory)+(i.cost_definition?'　（'+esc(i.cost_definition)+'）':'')+'</p>'+(notes?'<p class="section-note">'+esc(notes)+'</p>':'')+fullCode(i)+'</article>';
     }
-    return '<article class="operation-entry" id="'+i.id+'-operation"><p class="algorithm-purpose">機能 : '+esc(i.desc)+'</p><div class="operation-short"><pre><code>'+esc(i.code)+'</code></pre><div class="code-actions"><button type="button" class="copy" data-shortcopy="'+i.id+'">この部分をコピー</button></div></div><p class="operation-cost">計算量 '+esc(i.cost)+'　 /　 追加メモリ '+esc(i.memory)+'</p>'+(i.definitions?'<p class="symbol-definitions">'+esc(i.definitions)+'</p>':'')+(i.note?'<p class="section-note">'+esc(i.note)+'</p>':'')+(i.example?'<pre class="operation-example">'+esc(i.example)+'</pre>':'')+fullCode(i)+'</article>';
+    return '<article class="operation-entry" id="'+i.id+'-operation"><p class="algorithm-purpose">機能 : '+esc(i.desc)+'</p><div class="operation-short"><pre class="cpp-highlight"><code>'+i.codeHtml+'</code></pre><div class="code-actions"><button type="button" class="copy" data-shortcopy="'+i.id+'">この部分をコピー</button></div></div><p class="operation-cost">計算量 '+esc(i.cost)+'　 /　 追加メモリ '+esc(i.memory)+'</p>'+(i.definitions?'<p class="symbol-definitions">'+esc(i.definitions)+'</p>':'')+(i.note?'<p class="section-note">'+esc(i.note)+'</p>':'')+(i.example?'<pre class="operation-example">'+esc(i.example)+'</pre>':'')+fullCode(i)+'</article>';
 }
 function section(g, items){
     const algo=g.page==='algo';

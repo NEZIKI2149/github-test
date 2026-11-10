@@ -1,5 +1,6 @@
 """Python 3: 静的HTMLとMarkdownを同じデータから生成する。外部依存なし。"""
 import html
+import hashlib
 import json
 import math
 import pathlib
@@ -967,6 +968,14 @@ def generate():
     local_notes = json.loads(local_notes_path.read_text(encoding="utf-8")) if local_notes_path.exists() else {"memos": []}
     public_notes = [dict(note, kind="updates") for note in notes["updates"] if note["published"]]
     public_notes += [dict(note, kind="memos") for note in local_notes["memos"] if note["published"]]
+    highlighting = json.loads((ROOT / "syntax-highlighting.json").read_text(encoding="utf-8"))
+    for g in groups:
+        for item in g["items"]:
+            for field in ("code", "full"):
+                cached = highlighting["items"].get(item["id"], {}).get(field)
+                digest = hashlib.sha256(item[field].encode("utf-8")).hexdigest()
+                # New/edited examples remain readable until the optional Node build runs.
+                item[field+"Html"] = cached["html"] if cached and cached["sha256"] == digest else html.escape(item[field], quote=True)
     payload = dict(pages=PAGES, groups=groups, limits=limits, notes=public_notes, source=PUBLIC)
     (ROOT / "reference-data.json").write_text(json.dumps(payload, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
     template = (ROOT / "page-template.html").read_text(encoding="utf-8")
