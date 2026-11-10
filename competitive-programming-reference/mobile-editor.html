@@ -319,6 +319,8 @@ body{padding-bottom:calc(var(--fixed-dock-height,310px) + 16px)}
   #keyboard-dock .kb-navigation{padding-top:6px;padding-bottom:6px}
   #keyboard-dock .nav-arrow,#keyboard-dock .nav-history{height:40px;min-height:40px;width:44px;min-width:44px;font-size:21px}
 }
+/* Keep clipboard feedback above the fixed keyboard instead of underneath it. */
+.toast{bottom:calc(var(--fixed-dock-height,0px) + 12px);z-index:30;pointer-events:none}
 </style></head>
 <body>
 <header class="reference-header" id="site-head" aria-label="サイトのヘッダー">
@@ -3094,17 +3096,46 @@ const shapedShift=sp("Shift","shift",1);
 shapedShift.classList.add("shaped-key","shift-shape");
 main.appendChild(shapedShift);
 // Horizontal cursor keys are located next to the zoom control above the keyboard.
+function copyWithSelection(text){
+  if(typeof document.execCommand!=="function")return false;
+  const active=document.activeElement,x=window.scrollX,y=window.scrollY;
+  const selection={start:editor.selectionStart,end:editor.selectionEnd,direction:editor.selectionDirection};
+  const temporary=document.createElement("textarea");
+  temporary.value=text;temporary.readOnly=true;temporary.tabIndex=-1;
+  temporary.setAttribute("aria-hidden","true");
+  temporary.style.cssText="position:fixed;left:0;top:0;width:1px;height:1px;padding:0;border:0;font-size:16px;opacity:0.01;pointer-events:none";
+  document.body.appendChild(temporary);
+  try{
+    try{temporary.focus({preventScroll:true});}catch(_){temporary.focus();}
+    temporary.select();temporary.setSelectionRange(0,text.length);
+    return document.execCommand("copy")===true;
+  }catch(_){return false;}
+  finally{
+    temporary.remove();
+    try{editor.setSelectionRange(selection.start,selection.end,selection.direction);}catch(_){}
+    if(active&&active.isConnected){try{active.focus({preventScroll:true});}catch(_){active.focus();}}
+    if(window.scrollX!==x||window.scrollY!==y)window.scrollTo(x,y);
+  }
+}
+async function writeClipboardText(text){
+  try{
+    if(navigator.clipboard&&typeof navigator.clipboard.writeText==="function"){
+      await navigator.clipboard.writeText(text);return true;
+    }
+  }catch(_){}
+  // Also try native selection copying when the async API is present but denied.
+  return copyWithSelection(text);
+}
 async function copy(t){
   const oldCode=code,oldAnchor=anchor,oldHead=head;
   try{
-    if(!navigator.clipboard||!navigator.clipboard.writeText)throw Error();
-    await navigator.clipboard.writeText(t);
+    if(!await writeClipboardText(t))throw Error("clipboard write failed");
     if(code===oldCode&&anchor===oldAnchor&&head===oldHead&&anchor!==head){
       stopUndoGroup();
       anchor=head=Math.max(anchor,head);render();
     }
     notice("コピーしました");return true;
-  }catch(_){notice("コピーできません。ブラウザの権限を確認してください");return false;}
+  }catch(_){notice("コピーできませんでした。もう一度「コピー」を押してください");return false;}
 }
 async function paste(){const s=Math.min(anchor,head),e=Math.max(anchor,head);try{if(!navigator.clipboard||!navigator.clipboard.readText)throw Error();const t=await navigator.clipboard.readText();if(!t){notice("クリップボードにテキストがありません");return;}replace(t,s,e,"paste");notice(s!==e?"選択範囲を置換しました":"貼り付けました");}catch(_){notice("貼り付けできません。Safariの貼り付け許可を確認してください");}}
 async function shortcut(k){stopUndoGroup();switch(k){
