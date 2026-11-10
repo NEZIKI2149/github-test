@@ -433,12 +433,14 @@ function btn(label,val,upper,w,op){
 }
 function sp(label,op,w){return btn(label,undefined,undefined,w,op);}function ch(v,u,l){return btn(l||v,v,u,1);}
 function blank(w){const b=document.createElement("div");b.className="key empty";b.style.setProperty("--w",w);b.style.setProperty("--units",Math.round(w*10));return b;}
+// 一番上の左端は空白のままにして、1のJIS位置を維持する。
+// 最下段は左CtrlとSpaceのみ。右側の余白でSpaceの過度な横長化を防ぐ。
 const rows=[
-[sp("半/全","ime",1.6),...[["1","!"],["2",'"'],["3","#"],["4","$"],["5","%"],["6","&"],["7","'"],["8","("],["9",")"],["0","0"],["-","="],["^","~"],["¥","|"]].map(function(k){return ch(k[0]==="¥"?"\\":k[0],k[1],k[0]);}),sp("⌫","backspace",2.4)],
+[blank(1.6),...[["1","!"],["2",'"'],["3","#"],["4","$"],["5","%"],["6","&"],["7","'"],["8","("],["9",")"],["0","0"],["-","="],["^","~"],["¥","|"]].map(function(k){return ch(k[0]==="¥"?"\\":k[0],k[1],k[0]);}),sp("⌫","backspace",2.4)],
 [blank(2.2),..."QWERTYUIOP".split("").map(function(x){return ch(x.toLowerCase(),x);}),ch("@",String.fromCharCode(96)),ch("[","{"),blank(2.8)],
 [blank(2.6),..."ASDFGHJKL".split("").map(function(x){return ch(x.toLowerCase(),x);}),ch(";","+"),ch(":","*"),ch("]","}"),sp("Enter","enter",2.4)],
 [blank(3.1),..."ZXCVBNM".split("").map(function(x){return ch(x.toLowerCase(),x);}),ch(",","<"),ch(".",">"),ch("/","?"),ch("\\","_","ろ"),blank(2.9)],
-[sp("Ctrl","ctrl",2.8),sp("無変換","ime",2),sp("Space","space",5.9),sp("変換","ime",2),sp("かな","ime",1.8),sp("Ctrl","ctrl",2.5)]
+[sp("Ctrl","ctrl",4),sp("Space","space",11),blank(2)]
 ];
 rows.forEach(function(keys,i){const row=document.createElement("div");row.className="key-row row-"+i;keys.forEach(function(key){row.appendChild(key);});main.appendChild(row);});
 // A段の左の空間を上下に分け、TabとShiftをそれぞれ一体のL字型キーとして配置する。
