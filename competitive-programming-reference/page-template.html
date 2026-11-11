@@ -76,6 +76,17 @@ pre.cpp-highlight{background:#121314;color:#BBBEBF;padding:14px;border-radius:5p
 const DATA = JSON.parse(document.getElementById('reference-data').textContent);
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const categoryTabs=document.querySelector('nav.tabs');
+const categoryScrollKey='neziki-category-scroll-v1';
+function saveCategoryScroll(){try{sessionStorage.setItem(categoryScrollKey,String(categoryTabs.scrollLeft));}catch(_){}}
+function restoreCategoryScroll(){
+    try{const saved=sessionStorage.getItem(categoryScrollKey),left=Number(saved);if(saved!==null&&Number.isFinite(left))categoryTabs.scrollLeft=Math.max(0,left);}catch(_){}
+}
+restoreCategoryScroll();
+categoryTabs.addEventListener('scroll',saveCategoryScroll,{passive:true});
+categoryTabs.addEventListener('click',saveCategoryScroll);
+window.addEventListener('pagehide',saveCategoryScroll);
+window.addEventListener('pageshow',restoreCategoryScroll);
 const entries = new Map(DATA.groups.flatMap(g => g.items.map(i => [i.id,i])));
 let page = '', timer, query = '';
 let selectedTocHref = '';
