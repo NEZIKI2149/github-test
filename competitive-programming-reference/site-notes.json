@@ -2,6 +2,14 @@
   "timezone": "Asia/Tokyo",
   "updates": [
     {
+      "id": "20261112-algorithm-level-filter",
+      "at": "2026-11-12 00:18",
+      "title": "アルゴリズム目次に登場目安の絞り込みを追加",
+      "category": "アルゴリズム",
+      "text": "登場目安の下でB・C・D・Eを一つ選び、該当するアルゴリズムだけを表示できるようにしました。「すべて」で全件表示に戻せます。",
+      "published": true
+    },
+    {
       "id": "20261111-security-csp-url",
       "at": "2026-11-11 00:18",
       "title": "不正URLへの対応とセキュリティ制限を追加",
