@@ -56,7 +56,7 @@ aside{top:155px;height:calc(100vh - 155px)}
 main>.section{min-height:calc(100dvh - var(--reference-header-height,155px) - 12px);padding-bottom:48px}
 main>.section>h2{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.back-to-index{font:400 12px/1.5 system-ui;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:5px;padding:6px 10px;margin-left:auto;white-space:nowrap}
 .algorithm-link{display:flex;align-items:baseline;justify-content:space-between;gap:12px}.algorithm-name{min-width:0}.algorithm-level{flex:0 0 1em;text-align:right;color:inherit}
-.algorithm-filter{display:flex;flex-direction:column;align-items:flex-end;gap:5px}.algorithm-level-select{font:inherit;font-size:12px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:5px;padding:5px 6px;min-height:34px;cursor:pointer}.algorithm-label{align-items:flex-start;display:flex;justify-content:space-between;gap:12px;letter-spacing:normal;padding-right:9px}.memory-input-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.memory-scale{white-space:nowrap;font-size:12px}
+.mobile-index .algorithm-label{padding-bottom:0}.algorithm-filter{display:flex;flex-direction:column;align-items:flex-end;gap:5px}.algorithm-level-select{font:inherit;font-size:12px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:5px;padding:5px 6px;min-height:34px;cursor:pointer}.algorithm-label{margin-bottom:0;align-items:flex-start;display:flex;justify-content:space-between;gap:12px;letter-spacing:normal;padding-right:9px}.memory-input-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.memory-scale{white-space:nowrap;font-size:12px}
 .tabs .mobile-editor-link{display:flex;align-items:center;border-bottom:3px solid transparent;text-decoration:none;font-weight:650;color:var(--ink);white-space:nowrap;padding:10px 0 12px}.tabs .mobile-editor-link:hover{color:var(--accent)}
 /* Code blocks use the local VS Code Dark 2026 palette in every page theme. */
 pre.cpp-highlight{background:#121314;color:#BBBEBF;padding:14px;border-radius:5px;color-scheme:dark}
@@ -204,7 +204,7 @@ function render(){
     const tools=rows.filter(r=>r.tool);
     let sideHTML=tools.length?'<div class="toc-tools" aria-label="計算機">'+tools.sort((a,b)=>a.key==='memory-calculator'?-1:b.key==='memory-calculator'?1:0).map(r=>'<a class="side-link" href="#'+r.page+'/'+r.key+'">'+esc(r.title)+'</a>').join('')+'</div>':'',label='',currentGroup='';
     for(const r of rows.filter(r=>!r.tool)){
-        if(r.label!==label){if(currentGroup){sideHTML+='</details>';currentGroup='';}sideHTML+='<div class="side-label'+(r.label==='五十音順'?' algorithm-label':'')+'"><span>'+esc(r.label)+'</span>'+(r.label==='五十音順'?'<span class="algorithm-filter"><span>登場目安</span><select class="algorithm-level-select" aria-label="登場目安で絞り込み">'+['','B','C','D','E'].map(level=>'<option value="'+level+'"'+(algorithmLevel===level?' selected':'')+'>'+(level||'すべて')+'</option>').join('')+'</select></span>':'')+'</div>';label=r.label;}
+        if(r.label!==label){if(currentGroup){sideHTML+='</details>';currentGroup='';}sideHTML+='<div class="side-label'+(r.label==='五十音順'?' algorithm-label':'')+'"><span>'+esc(r.label)+'</span>'+(r.label==='五十音順'?'<span class="algorithm-filter"><span>登場目安</span><select class="algorithm-level-select" aria-label="登場目安で絞り込み">'+'<option value="" hidden'+(!algorithmLevel?' selected':'')+'></option>'+['all','B','C','D','E'].map(level=>'<option value="'+level+'"'+(algorithmLevel===level?' selected':'')+'>'+(level==='all'?'全て':level)+'</option>').join('')+'</select></span>':'')+'</div>';label=r.label;}
         if(!matchesLevel(r))continue;
         if((r.group||'')!==currentGroup){if(currentGroup)sideHTML+='</details>';currentGroup=r.group||'';if(currentGroup)sideHTML+='<details class="toc-group" data-group="'+currentGroup+'"'+(openGroup===currentGroup?' open':'')+'><summary>'+esc(r.groupTitle)+'</summary>';}
         const level=r.page==='algo'?algorithmLevels[r.key]:'';
@@ -255,10 +255,9 @@ document.addEventListener('click',e=>{
 document.addEventListener('change',e=>{
     if(!e.target.matches('.algorithm-level-select'))return;
     algorithmLevel=['B','C','D','E'].includes(e.target.value)?e.target.value:'';
-    const mobile=!!e.target.closest('.mobile-index'),scroll=$('#sidebar').scrollTop;
+    const scroll=$('#sidebar').scrollTop;
+    e.target.blur();
     render();$('#sidebar').scrollTop=scroll;
-    const select=document.querySelector((mobile?'.mobile-index':'#sidebar')+' .algorithm-level-select');
-    if(select)select.focus({preventScroll:true});
 });
 $('#search').addEventListener('input',()=>{clearTocHighlight();render();});
 $('#clear').addEventListener('click',()=>{clearTocHighlight();$('#search').value='';query='';render();$('#search').focus();});
