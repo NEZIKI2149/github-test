@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src &#x27;none&#x27;; script-src &#x27;sha256-2RNoB8bcHrbISiRqBoswZoQTDOvotVf7bIjtJ13CU1s=&#x27;; script-src-attr &#x27;none&#x27;; style-src &#x27;unsafe-inline&#x27;; img-src &#x27;self&#x27; data:; connect-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;self&#x27;">
+<meta http-equiv="Content-Security-Policy" content="default-src &#x27;none&#x27;; script-src &#x27;sha256-RXj8Ia1VFIXrQR/0Wueqwb7DlvCyi6XCErry93PmYiw=&#x27;; script-src-attr &#x27;none&#x27;; style-src &#x27;unsafe-inline&#x27;; img-src &#x27;self&#x27; data:; connect-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;self&#x27;">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <meta name="description" content="C++標準ライブラリ・AtCoder Library・定番アルゴリズム・計算量とメモリの参照資料">
@@ -111,7 +111,7 @@ function noteSection(n){return '<section class="section" id="'+esc(n.id)+'"><h2>
 function termsMatch(text){const t=text.toLocaleLowerCase();return query.trim().toLocaleLowerCase().split(/\s+/).every(q=>q==='素数'?t.replaceAll('要素数','').includes(q):t.includes(q));}
 const calcState={kind:'',dimension:'1',type:'int',keyType:'int',valueType:'int',size:'100000',rows:'2000',cols:'3000',count:'1',limit:'1024',n:'200000'};
 const memoryTypes={char:{label:'char',bytes:1n,align:1n},int:{label:'int',bytes:4n,align:4n},longlong:{label:'long long',bytes:8n,align:8n},double:{label:'double',bytes:8n,align:8n}};
-const memoryKinds=[['','選択してください'],['vector','配列（vector）'],['set','set'],['multiset','multiset'],['map','map'],['unordered_set','unordered_set'],['unordered_map','unordered_map']];
+const memoryKinds=[['','選択してください'],['vector','vector'],['set','set'],['multiset','multiset'],['map','map'],['unordered_set','unordered_set'],['unordered_map','unordered_map']];
 function options(values,current){return values.map(([v,t])=>'<option value="'+v+'"'+(String(v)===current?' selected':'')+'>'+t+'</option>').join('');}
 function memoryField(key,label){return '<label>'+label+'<span class="memory-input-row"><input data-calc="'+key+'" type="text" inputmode="text" autocomplete="off" autocorrect="off" spellcheck="false" maxlength="12" value="'+esc(calcState[key])+'"><span class="memory-scale" data-scale="'+key+'"></span></span></label>';}
 function memoryTypeField(key,label){return '<label>'+label+'<select data-calc="'+key+'">'+options(Object.entries(memoryTypes).map(([k,t])=>[k,t.label]),calcState[key])+'</select></label>';}
