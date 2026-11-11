@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src &#x27;none&#x27;; script-src &#x27;sha256-2v60AOThTsXfRosBjOH1WxNVmSoZu2DrykJRYXy2A+k=&#x27; &#x27;sha256-1kTLd3/EHhyvJhuLZy/5jh+HpFxxxwoj97n7oXZu8VA=&#x27; &#x27;sha256-Ggz5NAFwDzRnitaqjGTkLbK8uCF225UHrNGGccgXdos=&#x27; &#x27;wasm-unsafe-eval&#x27;; script-src-attr &#x27;none&#x27;; style-src &#x27;unsafe-inline&#x27;; img-src &#x27;self&#x27; data:; connect-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;self&#x27;">
+<meta http-equiv="Content-Security-Policy" content="default-src &#x27;none&#x27;; script-src &#x27;sha256-2v60AOThTsXfRosBjOH1WxNVmSoZu2DrykJRYXy2A+k=&#x27; &#x27;sha256-1kTLd3/EHhyvJhuLZy/5jh+HpFxxxwoj97n7oXZu8VA=&#x27; &#x27;sha256-OFoOqnI54ndf0LdV7QveRl0xhWLDXnXUh89VTZk5aCc=&#x27; &#x27;wasm-unsafe-eval&#x27;; script-src-attr &#x27;none&#x27;; style-src &#x27;unsafe-inline&#x27;; img-src &#x27;self&#x27; data:; connect-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;self&#x27;">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#151b22"><title>スマホC++エディタ | ネジキチートシート</title>
 <style>
@@ -336,6 +336,10 @@ body{padding-bottom:calc(var(--fixed-dock-height,310px) + 16px)}
 #manual-copy-text{display:block;width:100%;height:min(45dvh,420px);min-height:90px;resize:none;background:var(--code);color:var(--ink);border:1px solid var(--line);padding:10px;font:16px/1.6 Consolas,monospace;white-space:pre;overflow:auto;user-select:text;-webkit-user-select:text;-webkit-touch-callout:default;touch-action:auto}
 .manual-copy-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}.manual-copy-actions button{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:6px;min-height:44px;padding:6px 14px}
 body.manual-copy-open #keyboard-dock{display:none}body.manual-copy-open{overflow:hidden}
+.kb-controls{width:100%;flex-shrink:1;justify-content:flex-end}
+.kb-navigation .nav-pad{display:flex;align-items:center;justify-content:center;flex:1 1 70px;max-width:90px;min-width:40px;min-height:38px;align-self:stretch;padding:3px 5px;border:1px solid var(--line);border-radius:5px;background:var(--special);font-size:11px;line-height:1.2;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.kb-navigation .nav-pad.active{background:var(--on);border-color:var(--accent)}
+@media(max-width:420px){.kb-controls{gap:4px}.kb-navigation .nav-history,.kb-navigation .nav-arrow{width:30px;min-width:30px}.kb-navigation .nav-pad{font-size:10px}.kb-navigation #fit-keys{padding:4px 6px;font-size:10px}}
 </style></head>
 <body>
 <header class="reference-header" id="site-head" aria-label="サイトのヘッダー">
@@ -368,6 +372,8 @@ body.manual-copy-open #keyboard-dock{display:none}body.manual-copy-open{overflow
 <div id="keyboard-dock" role="group" aria-label="画面キーボードと編集操作">
 <div class="kb-navigation" id="kb-navigation" aria-label="キーボード操作">
   <div class="kb-controls">
+    <button class="nav-pad" id="selection-pad" type="button" aria-label="範囲選択パッド：上下左右にスワイプまたは矢印キーで操作" title="上下左右にスワイプして範囲選択"><span aria-hidden="true">範囲選択</span></button>
+    <button class="nav-pad" id="cursor-pad" type="button" aria-label="カーソル移動パッド：上下左右にスワイプまたは矢印キーで操作" title="上下左右にスワイプしてカーソル移動"><span aria-hidden="true">カーソル<br>移動</span></button>
     <button class="nav-history" id="undo" type="button" aria-label="元に戻す" title="元に戻す">↶</button>
     <button class="nav-history" id="redo" type="button" aria-label="やり直す" title="やり直す">↷</button>
     <button class="key special nav-arrow" id="nav-arrow-left" data-op="arrow" data-direction="left" type="button" aria-label="カーソルを左へ移動">←</button>
@@ -2942,7 +2948,11 @@ editor.addEventListener("click",function(e){
   if(e.detail===0)setTimeout(readSelection,0); // Keyboard/assistive selection.
 });
 function vertical(p,d){const start=code.lastIndexOf("\n",p-1)+1,col=p-start;if(d==="up"){if(!start)return 0;const end=start-1,prev=code.lastIndexOf("\n",end-1)+1;return Math.min(prev+col,end);}const end=code.indexOf("\n",p);if(end<0)return code.length;const next=end+1,last=code.indexOf("\n",next);return Math.min(next+col,last<0?code.length:last);}
-function move(d){stopUndoGroup();let p=head;if(!shift&&anchor!==head&&(d==="left"||d==="right"))p=d==="left"?Math.min(anchor,head):Math.max(anchor,head);else if(d==="left")p=Math.max(0,p-1);else if(d==="right")p=Math.min(code.length,p+1);else p=vertical(p,d);if(!shift)anchor=p;head=p;ctrl=false;render();}
+function horizontal(p,d){
+  if(d==='left'){if(p<=0)return 0;let n=p-1;if(n>0&&/[\uDC00-\uDFFF]/.test(code[n])&&/[\uD800-\uDBFF]/.test(code[n-1]))n--;return n;}
+  if(p>=code.length)return code.length;let n=p+1;if(n<code.length&&/[\uD800-\uDBFF]/.test(code[p])&&/[\uDC00-\uDFFF]/.test(code[n]))n++;return n;
+}
+function move(d,extend=shift>0,draw=true){stopUndoGroup();let p=head;if(!extend&&anchor!==head&&(d==="left"||d==="right"))p=d==="left"?Math.min(anchor,head):Math.max(anchor,head);else if(d==="left"||d==="right")p=horizontal(p,d);else p=vertical(p,d);if(!extend)anchor=p;head=p;ctrl=false;if(draw)render();}
 function escapedAt(position){
   let slashes=0;while(position>0&&code[--position]==="\\")slashes++;
   return slashes%2===1;
@@ -3228,6 +3238,59 @@ function stopRepeat(){
 }
 const keyboard=document.getElementById("keyboard");
 const kbNavigation=document.getElementById("kb-navigation");
+// Independent gesture pads: dragging moves the caret, never edits the code.
+let activePad=null;
+function stopPad(){
+  const active=activePad;activePad=null;if(!active)return;
+  active.button.classList.remove('active');
+  try{if(active.button.hasPointerCapture(active.id))active.button.releasePointerCapture(active.id);}catch(_){}
+}
+function revealPadCaret(){
+  let caret=editCaret.getBoundingClientRect(),box=editor.getBoundingClientRect();
+  if(caret.right>box.right-12)editor.scrollLeft+=caret.right-box.right+12;
+  else if(caret.left<box.left+12)editor.scrollLeft=Math.max(0,editor.scrollLeft+caret.left-box.left-12);
+  updateCaret();caret=editCaret.getBoundingClientRect();
+  const top=document.querySelector('.reference-header').getBoundingClientRect().bottom+8;
+  const bottom=document.getElementById('keyboard-dock').getBoundingClientRect().top-8;
+  if(bottom<=top)return;
+  if(caret.bottom>bottom)window.scrollBy(0,caret.bottom-bottom);
+  else if(caret.top<top)window.scrollBy(0,caret.top-top);
+}
+function moveFromPad(direction,extend,steps=1){
+  for(let i=0;i<steps;i++)move(direction,extend,false);
+  render();revealPadCaret();
+}
+for(const [id,extend] of [['selection-pad',true],['cursor-pad',false]]){
+  const button=document.getElementById(id);
+  button.addEventListener('pointerdown',function(e){
+    if(e.button!==0||e.isPrimary===false)return;
+    e.preventDefault();stopRepeat();stopPad();stopUndoGroup();ctrl=false;
+    activePad={button,id:e.pointerId,x:e.clientX,y:e.clientY,extend};
+    button.classList.add('active');
+    try{button.setPointerCapture(e.pointerId);}catch(_){}
+  });
+  button.addEventListener('keydown',function(e){
+    const direction={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down'}[e.key];
+    if(!direction)return;e.preventDefault();stopPad();stopRepeat();moveFromPad(direction,extend);
+  });
+  button.addEventListener('contextmenu',e=>e.preventDefault());
+}
+document.addEventListener('pointermove',function(e){
+  const active=activePad;if(!active||active.id!==e.pointerId)return;
+  if(e.pointerType==='mouse'&&e.buttons===0){stopPad();return;}
+  e.preventDefault();
+  const dx=e.clientX-active.x,dy=e.clientY-active.y;
+  const horizontalMotion=Math.abs(dx)/12>=Math.abs(dy)/20;
+  const distance=horizontalMotion?dx:dy,unit=horizontalMotion?12:20;
+  const steps=Math.min(50,Math.floor(Math.abs(distance)/unit));if(!steps)return;
+  if(horizontalMotion){active.x+=Math.sign(dx)*steps*unit;active.y=e.clientY;}
+  else{active.y+=Math.sign(dy)*steps*unit;active.x=e.clientX;}
+  moveFromPad(horizontalMotion?(dx<0?'left':'right'):(dy<0?'up':'down'),active.extend,steps);
+},{passive:false});
+document.addEventListener('pointerdown',function(e){if(activePad&&e.pointerId!==activePad.id)stopPad();},true);
+for(const name of ['pointerup','pointercancel','lostpointercapture'])document.addEventListener(name,function(e){if(activePad&&e.pointerId===activePad.id)stopPad();},true);
+for(const name of ['blur','pagehide','resize','orientationchange'])window.addEventListener(name,stopPad);
+document.addEventListener('visibilitychange',function(){if(document.hidden)stopPad();});
 function activeKeyContains(active,x,y){
   const r=active.button.getBoundingClientRect();
   return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom;
