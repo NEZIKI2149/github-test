@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src &#x27;none&#x27;; script-src &#x27;sha256-2v60AOThTsXfRosBjOH1WxNVmSoZu2DrykJRYXy2A+k=&#x27; &#x27;sha256-1kTLd3/EHhyvJhuLZy/5jh+HpFxxxwoj97n7oXZu8VA=&#x27; &#x27;sha256-+O0TuMlemOxUZ3bgkR/cQAegmCTRdTBARavu+64tAG4=&#x27; &#x27;wasm-unsafe-eval&#x27;; script-src-attr &#x27;none&#x27;; style-src &#x27;unsafe-inline&#x27;; img-src &#x27;self&#x27; data:; connect-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;self&#x27;">
+<meta http-equiv="Content-Security-Policy" content="default-src &#x27;none&#x27;; script-src &#x27;sha256-2v60AOThTsXfRosBjOH1WxNVmSoZu2DrykJRYXy2A+k=&#x27; &#x27;sha256-1kTLd3/EHhyvJhuLZy/5jh+HpFxxxwoj97n7oXZu8VA=&#x27; &#x27;sha256-3UMtZzFw9eMTLASTbAAq+bUd2G4ilQV3cpOdFtLLQ80=&#x27; &#x27;wasm-unsafe-eval&#x27;; script-src-attr &#x27;none&#x27;; style-src &#x27;unsafe-inline&#x27;; img-src &#x27;self&#x27; data:; connect-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;self&#x27;">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#151b22"><title>スマホC++エディタ | ネジキチートシート</title>
 <style>
@@ -374,7 +374,7 @@ body.manual-copy-open #keyboard-dock{display:none}body.manual-copy-open{overflow
 <div id="keyboard-dock" role="group" aria-label="画面キーボードと編集操作">
 <div class="kb-navigation" id="kb-navigation" aria-label="キーボード操作">
   <div class="kb-controls">
-    <button class="nav-pad" id="selection-pad" type="button" aria-label="範囲選択パッド：上下左右にスワイプまたは矢印キーで操作" title="上下左右にスワイプして範囲選択"><span aria-hidden="true">範囲選択</span></button>
+    <button class="nav-pad" id="selection-pad" type="button" aria-label="範囲選択パッド：自由にドラッグし、離した位置で範囲を確定。矢印キーでも操作" title="見えないポインターを自由に移動・離して範囲を確定"><span aria-hidden="true">範囲選択</span></button>
     <button class="nav-pad" id="cursor-pad" type="button" aria-label="カーソル移動パッド：自由にドラッグし、離した位置で確定。矢印キーでも操作" title="ドラッグでポインター移動・離して入力位置を確定"><span aria-hidden="true">カーソル<br>移動</span></button>
     <button class="nav-history" id="undo" type="button" aria-label="元に戻す" title="元に戻す">↶</button>
     <button class="nav-history" id="redo" type="button" aria-label="やり直す" title="やり直す">↷</button>
@@ -3240,7 +3240,7 @@ function stopRepeat(){
 }
 const keyboard=document.getElementById("keyboard");
 const kbNavigation=document.getElementById("kb-navigation");
-// Selection extends live; the free cursor pointer commits only on release.
+// Both pads share free pointer coordinates and commit on release; selection hides the pointer.
 let activePad=null;
 const cursorPointer=document.getElementById('cursor-pointer');
 function stopPad(commit=false){
@@ -3248,8 +3248,9 @@ function stopPad(commit=false){
   cursorPointer.hidden=true;editCaret.style.opacity='';
   active.button.classList.remove('active');
   try{if(active.button.hasPointerCapture(active.id))active.button.releasePointerCapture(active.id);}catch(_){}
-  if(commit&&!active.extend&&active.moved){
-    stopUndoGroup();anchor=head=positionFromEditorPoint(active.pointerX,active.pointerY);
+  if(commit&&active.moved){
+    stopUndoGroup();head=positionFromEditorPoint(active.pointerX,active.pointerY);
+    if(!active.extend)anchor=head;
     ctrl=false;shift=0;render();revealPadCaret();
   }
 }
@@ -3257,7 +3258,7 @@ function drawFreePointer(active){
   cursorPointer.style.left=active.pointerX+'px';cursorPointer.style.top=active.pointerY+'px';
 }
 function updateFreePointer(e){
-  const active=activePad;if(!active||active.extend)return;
+  const active=activePad;if(!active)return;
   const dx=e.clientX-active.x,dy=e.clientY-active.y;active.x=e.clientX;active.y=e.clientY;
   if(dx===0&&dy===0)return;
   active.travel+=Math.hypot(dx,dy);if(active.travel>2)active.moved=true;
@@ -3294,11 +3295,11 @@ for(const [id,extend] of [['selection-pad',true],['cursor-pad',false]]){
     if(e.button!==0||e.isPrimary===false)return;
     e.preventDefault();stopRepeat();stopPad();stopUndoGroup();ctrl=false;
     activePad={button,id:e.pointerId,x:e.clientX,y:e.clientY,extend};
-    if(!extend){
+    {
       revealPadCaret();const caret=editCaret.getBoundingClientRect();
       activePad.pointerX=caret.left+caret.width/2;activePad.pointerY=caret.top+caret.height/2;
       activePad.travel=0;activePad.moved=false;
-      drawFreePointer(activePad);cursorPointer.hidden=false;editCaret.style.opacity='0';
+      drawFreePointer(activePad);cursorPointer.hidden=extend;editCaret.style.opacity='0';
     }
     button.classList.add('active');
     try{button.setPointerCapture(e.pointerId);}catch(_){}
@@ -3313,14 +3314,7 @@ document.addEventListener('pointermove',function(e){
   const active=activePad;if(!active||active.id!==e.pointerId)return;
   if(e.pointerType==='mouse'&&e.buttons===0){stopPad();return;}
   e.preventDefault();
-  if(!active.extend){updateFreePointer(e);return;}
-  const dx=e.clientX-active.x,dy=e.clientY-active.y;
-  const horizontalMotion=Math.abs(dx)/12>=Math.abs(dy)/20;
-  const distance=horizontalMotion?dx:dy,unit=horizontalMotion?12:20;
-  const steps=Math.min(50,Math.floor(Math.abs(distance)/unit));if(!steps)return;
-  if(horizontalMotion){active.x+=Math.sign(dx)*steps*unit;active.y=e.clientY;}
-  else{active.y+=Math.sign(dy)*steps*unit;active.x=e.clientX;}
-  moveFromPad(horizontalMotion?(dx<0?'left':'right'):(dy<0?'up':'down'),active.extend,steps);
+  updateFreePointer(e);
 },{passive:false});
 document.addEventListener('pointerdown',function(e){if(activePad&&e.pointerId!==activePad.id)stopPad();},true);
 for(const name of ['pointerup','pointercancel','lostpointercapture'])document.addEventListener(name,function(e){if(activePad&&e.pointerId===activePad.id){if(e.type==='pointerup')updateFreePointer(e);stopPad(e.type==='pointerup');}},true);
