@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src &#x27;none&#x27;; script-src &#x27;sha256-2v60AOThTsXfRosBjOH1WxNVmSoZu2DrykJRYXy2A+k=&#x27; &#x27;sha256-1kTLd3/EHhyvJhuLZy/5jh+HpFxxxwoj97n7oXZu8VA=&#x27; &#x27;sha256-ak9Y6NP7oQGUU7RwjMCjkOWOQrylgdaxgsgB2Qv5N6I=&#x27; &#x27;wasm-unsafe-eval&#x27;; script-src-attr &#x27;none&#x27;; style-src &#x27;unsafe-inline&#x27;; img-src &#x27;self&#x27; data:; connect-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;self&#x27;">
+<meta http-equiv="Content-Security-Policy" content="default-src &#x27;none&#x27;; script-src &#x27;sha256-2v60AOThTsXfRosBjOH1WxNVmSoZu2DrykJRYXy2A+k=&#x27; &#x27;sha256-1kTLd3/EHhyvJhuLZy/5jh+HpFxxxwoj97n7oXZu8VA=&#x27; &#x27;sha256-LWY2o1PLC77VfpQYbvmicqwi2BKWUThLiXDp+spMQsk=&#x27; &#x27;wasm-unsafe-eval&#x27;; script-src-attr &#x27;none&#x27;; style-src &#x27;unsafe-inline&#x27;; img-src &#x27;self&#x27; data:; connect-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;self&#x27;">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#151b22"><title>スマホC++エディタ | ネジキチートシート</title>
 <style>
@@ -2766,6 +2766,7 @@ function drawLines(){
   const lines=code.split("\n");
   const selectionStart=Math.min(anchor,head),selectionEnd=Math.max(anchor,head);
   const selectionActive=selectionStart!==selectionEnd;
+  activeLineMarker.hidden=selectionActive;
   const firstLine=code.slice(0,selectionActive?selectionStart:head).split("\n").length-1;
   // Selection includes the last touched line, including the empty final line after a selected newline.
   const lastLine=selectionActive?code.slice(0,selectionEnd).split("\n").length-1:firstLine;
@@ -2778,7 +2779,7 @@ function drawLines(){
   for(let i=0;i<lines.length;i++){
     const button=document.createElement("button");
     button.type="button";
-    button.className="line-number"+(i>=firstLine&&i<=lastLine?" active":"");
+    button.className="line-number"+(!selectionActive&&i===firstLine?" active":"");
     button.dataset.line=String(i);
     button.textContent=String(i+1);
     button.setAttribute("aria-label",(i+1)+"行目に移動");

@@ -20,6 +20,7 @@ const pw=require(process.env.PLAYWRIGHT_PATH||'playwright');
   await press('cursor-pad','ArrowLeft');assert.equal((await state()).head,2);assert.equal((await state()).anchor,2);
   await reset('a😀b',1);await press('selection-pad','ArrowRight');assert.equal((await state()).head,3);
   await press('selection-pad','ArrowLeft');assert.equal((await state()).head,1);
+  assert.equal(await page.locator('#active-line').isVisible(),true);assert.equal(await page.locator('.line-number.active').count(),1);
   const text='abcdefghijklmnopqrstuvwxyz\nxy\nABCDEFGHIJKLMNOPQRSTUVWXYZ';
   const traces=[];
   // Identical gestures must follow identical free coordinates, visible or hidden.
@@ -35,6 +36,8 @@ const pw=require(process.env.PLAYWRIGHT_PATH||'playwright');
     if(id==='selection-pad'){
      const start=Math.min(5,preview.head),end=Math.max(5,preview.head);
      assert.equal(await page.locator('#selection-layer').isVisible(),start!==end);
+     assert.equal(await page.locator('#active-line').isVisible(),start===end);
+     assert.equal(await page.locator('.line-number.active').count(),start===end?1:0);
      if(start!==end)assert.equal(await page.locator('#selection-layer mark').textContent(),text.slice(start,end));
     }
     assert(Math.abs(preview.pointer.x-initial.x-dx)<1);assert(Math.abs(preview.pointer.y-initial.y-dy)<1);
