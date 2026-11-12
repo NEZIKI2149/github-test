@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src &#x27;none&#x27;; script-src &#x27;sha256-2v60AOThTsXfRosBjOH1WxNVmSoZu2DrykJRYXy2A+k=&#x27; &#x27;sha256-1kTLd3/EHhyvJhuLZy/5jh+HpFxxxwoj97n7oXZu8VA=&#x27; &#x27;sha256-3UMtZzFw9eMTLASTbAAq+bUd2G4ilQV3cpOdFtLLQ80=&#x27; &#x27;wasm-unsafe-eval&#x27;; script-src-attr &#x27;none&#x27;; style-src &#x27;unsafe-inline&#x27;; img-src &#x27;self&#x27; data:; connect-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;self&#x27;">
+<meta http-equiv="Content-Security-Policy" content="default-src &#x27;none&#x27;; script-src &#x27;sha256-2v60AOThTsXfRosBjOH1WxNVmSoZu2DrykJRYXy2A+k=&#x27; &#x27;sha256-1kTLd3/EHhyvJhuLZy/5jh+HpFxxxwoj97n7oXZu8VA=&#x27; &#x27;sha256-ak9Y6NP7oQGUU7RwjMCjkOWOQrylgdaxgsgB2Qv5N6I=&#x27; &#x27;wasm-unsafe-eval&#x27;; script-src-attr &#x27;none&#x27;; style-src &#x27;unsafe-inline&#x27;; img-src &#x27;self&#x27; data:; connect-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;self&#x27;">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#151b22"><title>スマホC++エディタ | ネジキチートシート</title>
 <style>
@@ -341,6 +341,7 @@ body.manual-copy-open #keyboard-dock{display:none}body.manual-copy-open{overflow
 .kb-navigation .nav-pad.active{background:var(--on);border-color:var(--accent)}
 @media(max-width:420px){.kb-controls{gap:4px}.kb-navigation .nav-history,.kb-navigation .nav-arrow{width:30px;min-width:30px}.kb-navigation .nav-pad{font-size:10px}.kb-navigation #fit-keys{padding:4px 6px;font-size:10px}}
 .cursor-pointer{position:fixed;z-index:40;width:16px;height:16px;border:2px solid var(--accent);border-radius:50%;background:var(--bg);box-shadow:0 0 0 2px var(--bg);transform:translate(-50%,-50%);pointer-events:none}.cursor-pointer::before,.cursor-pointer::after{content:"";position:absolute;background:var(--accent)}.cursor-pointer::before{width:2px;height:20px;left:5px;top:-4px}.cursor-pointer::after{height:2px;width:20px;top:5px;left:-4px}.cursor-pointer[hidden]{display:none}
+.selection-layer{color:transparent!important;-webkit-text-fill-color:transparent}.selection-layer[hidden]{display:none}.selection-layer mark{color:transparent;-webkit-text-fill-color:transparent;background:rgba(115,217,196,.32)}
 </style></head>
 <body>
 <header class="reference-header" id="site-head" aria-label="サイトのヘッダー">
@@ -363,6 +364,7 @@ body.manual-copy-open #keyboard-dock{display:none}body.manual-copy-open{overflow
   <div class="line-gutter" id="line-gutter" aria-label="タップするとその行に移動"></div>
   <div class="editor-surface">
     <div class="active-line" id="active-line" aria-hidden="true"></div>
+    <pre class="syntax-layer selection-layer" id="selection-layer" aria-hidden="true" hidden></pre>
     <pre class="syntax-layer" id="syntax-layer" aria-hidden="true"></pre>
     <span class="caret-measure" id="caret-measure" aria-hidden="true"></span>
     <span class="edit-caret" id="edit-caret" aria-hidden="true"></span>
@@ -374,7 +376,7 @@ body.manual-copy-open #keyboard-dock{display:none}body.manual-copy-open{overflow
 <div id="keyboard-dock" role="group" aria-label="画面キーボードと編集操作">
 <div class="kb-navigation" id="kb-navigation" aria-label="キーボード操作">
   <div class="kb-controls">
-    <button class="nav-pad" id="selection-pad" type="button" aria-label="範囲選択パッド：自由にドラッグし、離した位置で範囲を確定。矢印キーでも操作" title="見えないポインターを自由に移動・離して範囲を確定"><span aria-hidden="true">範囲選択</span></button>
+    <button class="nav-pad" id="selection-pad" type="button" aria-label="範囲選択パッド：自由にドラッグしてリアルタイムで範囲選択。矢印キーでも操作" title="ドラッグ中の見えないポインターに合わせて範囲を表示"><span aria-hidden="true">範囲選択</span></button>
     <button class="nav-pad" id="cursor-pad" type="button" aria-label="カーソル移動パッド：自由にドラッグし、離した位置で確定。矢印キーでも操作" title="ドラッグでポインター移動・離して入力位置を確定"><span aria-hidden="true">カーソル<br>移動</span></button>
     <button class="nav-history" id="undo" type="button" aria-label="元に戻す" title="元に戻す">↶</button>
     <button class="nav-history" id="redo" type="button" aria-label="やり直す" title="やり直す">↷</button>
@@ -2616,6 +2618,7 @@ window.addEventListener('pageshow',restoreCategoryScroll);
 const editor=document.getElementById("editor"),status=document.getElementById("status"),toast=document.getElementById("toast"),main=document.getElementById("keyboard-main");
 const gutter=document.getElementById("line-gutter"),activeLineMarker=document.getElementById("active-line");
 const syntaxLayer=document.getElementById("syntax-layer");
+const selectionLayer=document.getElementById('selection-layer');
 const editCaret=document.getElementById("edit-caret"),caretMeasure=document.getElementById("caret-measure");
 const characterKeys=[];
 
@@ -2686,7 +2689,17 @@ function lexicalCppTokens(source){
   }
   return result;
 }
-function syncSyntaxScroll(){syntaxLayer.style.transform="translate("+(-editor.scrollLeft)+"px,"+(-editor.scrollTop)+"px)";}
+function syncSyntaxScroll(){syntaxLayer.style.transform="translate("+(-editor.scrollLeft)+"px,"+(-editor.scrollTop)+"px)";selectionLayer.style.transform=syntaxLayer.style.transform;}
+function renderSelection(){
+  const start=Math.min(anchor,head),end=Math.max(anchor,head);
+  selectionLayer.hidden=start===end;selectionLayer.replaceChildren();
+  if(start===end)return;
+  const style=getComputedStyle(editor);
+  for(const key of ['font','lineHeight','letterSpacing','tabSize','padding'])selectionLayer.style[key]=style[key];
+  const mark=document.createElement('mark');mark.textContent=code.slice(start,end);
+  selectionLayer.append(document.createTextNode(code.slice(0,start)),mark,document.createTextNode(code.slice(end)));
+  selectionLayer.style.transform=syntaxLayer.style.transform;
+}
 function renderSyntax(){
   const st=getComputedStyle(editor);
   syntaxLayer.style.font=st.font;
@@ -2749,6 +2762,7 @@ function updateCaret(){
 editor.addEventListener("scroll",function(){syncSyntaxScroll();updateCaret();});
 window.addEventListener("resize",updateCaret);
 function drawLines(){
+  renderSelection();
   const lines=code.split("\n");
   const selectionStart=Math.min(anchor,head),selectionEnd=Math.max(anchor,head);
   const selectionActive=selectionStart!==selectionEnd;
@@ -3240,7 +3254,7 @@ function stopRepeat(){
 }
 const keyboard=document.getElementById("keyboard");
 const kbNavigation=document.getElementById("kb-navigation");
-// Both pads share free pointer coordinates and commit on release; selection hides the pointer.
+// Both pads share free pointer coordinates; selection previews live without a pointer.
 let activePad=null;
 const cursorPointer=document.getElementById('cursor-pointer');
 function stopPad(commit=false){
@@ -3252,6 +3266,8 @@ function stopPad(commit=false){
     stopUndoGroup();head=positionFromEditorPoint(active.pointerX,active.pointerY);
     if(!active.extend)anchor=head;
     ctrl=false;shift=0;render();revealPadCaret();
+  }else if(active.extend&&active.moved){
+    anchor=active.startAnchor;head=active.startHead;render();
   }
 }
 function drawFreePointer(active){
@@ -3273,6 +3289,10 @@ function updateFreePointer(e){
   else if(y<top&&box.top<top)window.scrollBy(0,-Math.min(top-y,top-box.top));
   active.pointerX=Math.max(left,Math.min(right,x));active.pointerY=Math.max(top,Math.min(Math.max(top,bottom),y));
   drawFreePointer(active);
+  if(active.extend&&active.moved){
+    const target=positionFromEditorPoint(active.pointerX,active.pointerY);
+    if(head!==target){anchor=active.startAnchor;head=target;ctrl=false;shift=0;render();}
+  }
 }
 function revealPadCaret(){
   let caret=editCaret.getBoundingClientRect(),box=editor.getBoundingClientRect();
@@ -3294,7 +3314,7 @@ for(const [id,extend] of [['selection-pad',true],['cursor-pad',false]]){
   button.addEventListener('pointerdown',function(e){
     if(e.button!==0||e.isPrimary===false)return;
     e.preventDefault();stopRepeat();stopPad();stopUndoGroup();ctrl=false;
-    activePad={button,id:e.pointerId,x:e.clientX,y:e.clientY,extend};
+    activePad={button,id:e.pointerId,x:e.clientX,y:e.clientY,extend,startAnchor:anchor,startHead:head};
     {
       revealPadCaret();const caret=editCaret.getBoundingClientRect();
       activePad.pointerX=caret.left+caret.width/2;activePad.pointerY=caret.top+caret.height/2;

@@ -31,7 +31,12 @@ const pw=require(process.env.PLAYWRIGHT_PATH||'playwright');
    const initial=(await state()).pointer,trace=[];
    for(const [dx,dy] of [[3,2],[36,20],[36,40],[-12,20]]){
     await page.mouse.move(x+dx,y+dy,{steps:3});
-    const preview=await state();assert.equal(preview.head,5);assert.equal(preview.anchor,5);
+    const preview=await state();assert.equal(preview.head,id==='selection-pad'?preview.pointer.target:5);assert.equal(preview.anchor,5);
+    if(id==='selection-pad'){
+     const start=Math.min(5,preview.head),end=Math.max(5,preview.head);
+     assert.equal(await page.locator('#selection-layer').isVisible(),start!==end);
+     if(start!==end)assert.equal(await page.locator('#selection-layer mark').textContent(),text.slice(start,end));
+    }
     assert(Math.abs(preview.pointer.x-initial.x-dx)<1);assert(Math.abs(preview.pointer.y-initial.y-dy)<1);
     trace.push(preview.pointer);
    }
@@ -53,7 +58,7 @@ const pw=require(process.env.PLAYWRIGHT_PATH||'playwright');
    await reset('abcdefghijklmnop',3,7);
    await page.locator('#'+id).dispatchEvent('pointerdown',{pointerId:9,pointerType:'touch',isPrimary:true,button:0,clientX:50,clientY:50});
    await page.locator('#'+id).dispatchEvent('pointermove',{pointerId:9,pointerType:'touch',isPrimary:true,buttons:1,clientX:80,clientY:65});
-   assert.equal((await state()).head,7);assert.equal((await state()).anchor,3);
+   const during=await state();assert.equal(during.head,id==='selection-pad'?during.pointer.target:7);assert.equal(during.anchor,3);
    await page.locator('#'+id).dispatchEvent(event,{pointerId:9,pointerType:'touch'});
    assert.equal((await state()).head,7);assert.equal((await state()).anchor,3);assert.equal((await state()).active,false);
    assert.equal(await page.locator('#cursor-pointer').isVisible(),false);
@@ -63,7 +68,7 @@ const pw=require(process.env.PLAYWRIGHT_PATH||'playwright');
   const fire=(type,x)=>page.locator('#selection-pad').dispatchEvent(type,{pointerId:12,pointerType:'touch',isPrimary:true,button:0,buttons:type==='pointerup'?0:1,clientX:x,clientY:50});
   await fire('pointerdown',100);await fire('pointermove',64);
   const reverseTarget=(await state()).pointer.target;assert(reverseTarget<9);
-  assert.equal((await state()).head,9);await fire('pointerup',64);
+  assert.equal((await state()).head,reverseTarget);assert.equal(await page.locator('#selection-layer mark').textContent(),'abcdefghijklmnop'.slice(reverseTarget,9));await fire('pointerup',64);
   assert.equal((await state()).anchor,9);assert.equal((await state()).head,reverseTarget);
   await fire('pointermove',20);assert.equal((await state()).head,reverseTarget);
   for(const width of [320,390,844,1024,1194]){
@@ -73,6 +78,6 @@ const pw=require(process.env.PLAYWRIGHT_PATH||'playwright');
    for(let i=0;i<boxes.length;i++){assert(boxes[i].x>=0);assert(boxes[i].x+boxes[i].width<=width);if(i)assert(boxes[i-1].x+boxes[i-1].width<=boxes[i].x);}
   }
   assert.deepEqual(errors,[]);
-  console.log('PASS '+engine+': identical free trajectories for both pads, hidden selection pointer, release-only commit, reverse selection, cancellation, Unicode, unchanged code, 5 layouts');
+  console.log('PASS '+engine+': identical free trajectories, live selection text highlights, hidden selection pointer, cursor release-only commit, reverse selection, cancellation restore, Unicode, 5 layouts');
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
