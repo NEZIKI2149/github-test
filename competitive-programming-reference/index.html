@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src &#x27;none&#x27;; script-src &#x27;sha256-9Gxttvo9zyiKnE53yU4SgD/akD9dSzu5XEDTOFct4Ws=&#x27;; script-src-attr &#x27;none&#x27;; style-src &#x27;unsafe-inline&#x27;; img-src &#x27;self&#x27; data:; connect-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;self&#x27;">
+<meta http-equiv="Content-Security-Policy" content="default-src &#x27;none&#x27;; script-src &#x27;sha256-PwcRrmOMnO1AcGpgZ9jOVFl7tTDq/VgmZWmodpTltL0=&#x27;; script-src-attr &#x27;none&#x27;; style-src &#x27;unsafe-inline&#x27;; img-src &#x27;self&#x27; data:; connect-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;self&#x27;">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <meta name="description" content="C++標準ライブラリ・AtCoder Library・定番アルゴリズム・計算量とメモリの参照資料">
@@ -62,7 +62,7 @@ main>.section>h2{display:flex;align-items:center;justify-content:space-between;g
 /* Code blocks use the local VS Code Dark 2026 palette in every page theme. */
 pre.cpp-highlight{background:#121314;color:#BBBEBF;padding:14px;border-radius:5px;color-scheme:dark}
 @media print{pre.cpp-highlight{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
-.count-guide{font-weight:400;white-space:nowrap}
+.count-guide{font-weight:400;font-size:12px;text-align:right;margin:14px 14px 4px;white-space:nowrap}#time-result .table-wrap{margin-top:0}
 </style>
 </head>
 <body>
@@ -182,7 +182,7 @@ function scientificLog(log){if(log===0)return '1';let exponent=Math.floor(log),m
 function updateTools(){
     updateMemory();
     const time=$('#time-result');
-    if(time){const n=Number(calcState.n),l=Math.log10(n);let fact=n<101?Array.from({length:n},(_,i)=>Math.log10(i+1)).reduce((a,b)=>a+b,0):(n+.5)*Math.log10(n)-n*Math.LOG10E+.5*Math.log10(2*Math.PI)+Math.LOG10E/(12*n);const values=[['N',l],['N log₂ N',l+Math.log10(Math.log2(n))],['N²',2*l],['N³',3*l],['2ᴺ',n*Math.log10(2)],['N × 2ᴺ',l+n*Math.log10(2)],['N!',fact]];time.innerHTML='<div class="table-wrap"><table><thead><tr><th>計算式</th><th><span class="count-guide">目安：10⁷回程度まで</span><br>計算回数</th></tr></thead><tbody>'+values.map(([name,value])=>'<tr><td>'+name+'</td><td>'+scientificLog(value)+' 回</td></tr>').join('')+'</tbody></table></div>';}
+    if(time){const n=Number(calcState.n),l=Math.log10(n);let fact=n<101?Array.from({length:n},(_,i)=>Math.log10(i+1)).reduce((a,b)=>a+b,0):(n+.5)*Math.log10(n)-n*Math.LOG10E+.5*Math.log10(2*Math.PI)+Math.LOG10E/(12*n);const values=[['N',l],['N log₂ N',l+Math.log10(Math.log2(n))],['N²',2*l],['N³',3*l],['2ᴺ',n*Math.log10(2)],['N × 2ᴺ',l+n*Math.log10(2)],['N!',fact]];time.innerHTML='<div class="count-guide">目安：10⁷回程度まで</div><div class="table-wrap"><table><thead><tr><th>計算式</th><th>計算回数</th></tr></thead><tbody>'+values.map(([name,value])=>'<tr><td>'+name+'</td><td>'+scientificLog(value)+' 回</td></tr>').join('')+'</tbody></table></div>';}
 }
 for(const event of ['input','change'])document.addEventListener(event,e=>{const k=e.target.dataset.calc;if(!k)return;if(event==='input'&&e.target.tagName==='SELECT'||event==='change'&&e.target.tagName==='INPUT')return;calcState[k]=e.target.value;if(k==='kind')refreshMemory();else updateTools();});
 document.addEventListener('click',e=>{const button=e.target.closest('[data-dimension]');if(button){calcState.dimension=button.dataset.dimension;refreshMemory();}});
