@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src &#x27;none&#x27;; script-src 'sha256-2v60AOThTsXfRosBjOH1WxNVmSoZu2DrykJRYXy2A+k=' 'sha256-1kTLd3/EHhyvJhuLZy/5jh+HpFxxxwoj97n7oXZu8VA=' 'sha256-fi7CwypQOextQGR/fdX4jnJKy6hti0tC1xXN2E1UiC4=' 'wasm-unsafe-eval';sha256-2v60AOThTsXfRosBjOH1WxNVmSoZu2DrykJRYXy2A+k=&#x27; &#x27;sha256-1kTLd3/EHhyvJhuLZy/5jh+HpFxxxwoj97n7oXZu8VA=&#x27; &#x27;sha256-LWY2o1PLC77VfpQYbvmicqwi2BKWUThLiXDp+spMQsk=&#x27; &#x27;wasm-unsafe-eval&#x27;; script-src-attr &#x27;none&#x27;; style-src &#x27;unsafe-inline&#x27;; img-src &#x27;self&#x27; data:; connect-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;self&#x27;">
+<meta http-equiv="Content-Security-Policy" content="default-src &#x27;none&#x27;; script-src 'sha256-2v60AOThTsXfRosBjOH1WxNVmSoZu2DrykJRYXy2A+k=' 'sha256-1kTLd3/EHhyvJhuLZy/5jh+HpFxxxwoj97n7oXZu8VA=' 'sha256-DDrJBAtDCR4FXlUGwvc94LDADDXc93p5MQ0YGxG5xGo=' 'wasm-unsafe-eval';sha256-2v60AOThTsXfRosBjOH1WxNVmSoZu2DrykJRYXy2A+k=&#x27; &#x27;sha256-1kTLd3/EHhyvJhuLZy/5jh+HpFxxxwoj97n7oXZu8VA=&#x27; &#x27;sha256-LWY2o1PLC77VfpQYbvmicqwi2BKWUThLiXDp+spMQsk=&#x27; &#x27;wasm-unsafe-eval&#x27;; script-src-attr &#x27;none&#x27;; style-src &#x27;unsafe-inline&#x27;; img-src &#x27;self&#x27; data:; connect-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;self&#x27;">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#151b22"><title>スマホC++エディタ | ネジキチートシート</title>
 <style>
@@ -343,6 +343,7 @@ body.manual-copy-open #keyboard-dock{display:none}body.manual-copy-open{overflow
 .cursor-pointer{position:fixed;z-index:40;width:16px;height:16px;border:2px solid var(--accent);border-radius:50%;background:var(--bg);box-shadow:0 0 0 2px var(--bg);transform:translate(-50%,-50%);pointer-events:none}.cursor-pointer::before,.cursor-pointer::after{content:"";position:absolute;background:var(--accent)}.cursor-pointer::before{width:2px;height:20px;left:5px;top:-4px}.cursor-pointer::after{height:2px;width:20px;top:5px;left:-4px}.cursor-pointer[hidden]{display:none}
 .selection-layer{color:transparent!important;-webkit-text-fill-color:transparent}.selection-layer[hidden]{display:none}.selection-layer mark{color:transparent;-webkit-text-fill-color:transparent;background:rgba(115,217,196,.32)}
 body.screen-keyboard-hidden #editor{caret-color:var(--accent)}body.screen-keyboard-hidden .edit-caret{display:none}body.screen-keyboard-hidden #keyboard-dock{display:none}body.screen-keyboard-hidden{--fixed-dock-height:0px}body.screen-keyboard-hidden .toast{bottom:12px}
+body.desktop-editing .selection-layer{display:none!important}body.desktop-editing .editor-surface #editor::selection{background:Highlight;color:HighlightText;-webkit-text-fill-color:HighlightText}
 </style></head>
 <body>
 <header class="reference-header" id="site-head" aria-label="サイトのヘッダー">
@@ -3470,6 +3471,7 @@ document.getElementById("undo").addEventListener("click",function(){history(fals
 document.getElementById("redo").addEventListener("click",function(){history(true);});
 document.getElementById("new").addEventListener("click",function(){if(code!==TEMPLATE&&!confirm("編集中のコードを初期テンプレートで置き換えますか？"))return;stopUndoGroup();record();code=TEMPLATE;autoPairs=[];anchor=head=TEMPLATE.indexOf("\n    \n")+5;shift=0;ctrl=false;render();notice("テンプレートに戻しました");});
 const desktopEditing=matchMedia('(hover: hover) and (pointer: fine)').matches;
+document.body.classList.toggle('desktop-editing',desktopEditing);
 let screenKeyboardVisible=!desktopEditing;
 const keyboardToggle=document.getElementById('toggle-screen-keyboard');
 function applyKeyboardVisibility(){
