@@ -2,6 +2,14 @@
   "timezone": "Asia/Tokyo",
   "updates": [
     {
+      "id": "20261113-time-count-guide",
+      "at": "2026-11-13 18:41",
+      "title": "計算回数の上に目安を追加",
+      "category": "計算量・メモリ",
+      "text": "計算量計算機の計算回数の上に「目安：10⁷回程度まで」を追加しました。",
+      "published": true
+    },
+    {
       "id": "20261113-selection-highlight-only",
       "at": "2026-11-13 00:24",
       "title": "範囲選択中の行全体の強調を削除",
