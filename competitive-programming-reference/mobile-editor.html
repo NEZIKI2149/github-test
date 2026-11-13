@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src &#x27;none&#x27;; script-src 'sha256-2v60AOThTsXfRosBjOH1WxNVmSoZu2DrykJRYXy2A+k=' 'sha256-1kTLd3/EHhyvJhuLZy/5jh+HpFxxxwoj97n7oXZu8VA=' 'sha256-0XzihzaEeSd+4m6qVEcN2HJBe5N2OLx9FuD4awEJrkI=' 'wasm-unsafe-eval';sha256-2v60AOThTsXfRosBjOH1WxNVmSoZu2DrykJRYXy2A+k=&#x27; &#x27;sha256-1kTLd3/EHhyvJhuLZy/5jh+HpFxxxwoj97n7oXZu8VA=&#x27; &#x27;sha256-LWY2o1PLC77VfpQYbvmicqwi2BKWUThLiXDp+spMQsk=&#x27; &#x27;wasm-unsafe-eval&#x27;; script-src-attr &#x27;none&#x27;; style-src &#x27;unsafe-inline&#x27;; img-src &#x27;self&#x27; data:; connect-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;self&#x27;">
+<meta http-equiv="Content-Security-Policy" content="default-src &#x27;none&#x27;; script-src 'sha256-2v60AOThTsXfRosBjOH1WxNVmSoZu2DrykJRYXy2A+k=' 'sha256-1kTLd3/EHhyvJhuLZy/5jh+HpFxxxwoj97n7oXZu8VA=' 'sha256-yZo0FSNPOWX1ImeHLFxOBVuXhuXyZdVty60R+m04/z8=' 'wasm-unsafe-eval';sha256-2v60AOThTsXfRosBjOH1WxNVmSoZu2DrykJRYXy2A+k=&#x27; &#x27;sha256-1kTLd3/EHhyvJhuLZy/5jh+HpFxxxwoj97n7oXZu8VA=&#x27; &#x27;sha256-LWY2o1PLC77VfpQYbvmicqwi2BKWUThLiXDp+spMQsk=&#x27; &#x27;wasm-unsafe-eval&#x27;; script-src-attr &#x27;none&#x27;; style-src &#x27;unsafe-inline&#x27;; img-src &#x27;self&#x27; data:; connect-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;self&#x27;">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#151b22"><title>スマホC++エディタ | ネジキチートシート</title>
 <style>
@@ -3488,6 +3488,25 @@ function applyKeyboardVisibility(){
 keyboardToggle.addEventListener('click',()=>{screenKeyboardVisible=!screenKeyboardVisible;applyKeyboardVisibility();});
 applyKeyboardVisibility();
 let composing=false;
+let inputFormatTimer;
+function scheduleInputFormat(text){
+  if(!desktopEditing||composing||!/[;}]/.test(text))return;
+  clearTimeout(inputFormatTimer);
+  inputFormatTimer=setTimeout(async()=>{
+    if(composing||formatting)return;
+    const original=code,a=anchor,h=head;
+    try{
+      const formatter=await window.loadCppFormatter();
+      if(composing||code!==original||anchor!==a||head!==h)return;
+      const formatted=formatter.format(original,'main.cpp',FORMAT_STYLE);
+      if(formatted===original)return;
+      const mapping=formattedPositions(original,formatted);
+      const pairs=autoPairs.map(p=>({...p,start:mapping.character(p.start),end:mapping.character(p.end)}));
+      replace(formatted,0,code.length,'format',{anchor:mapping.cursor(a),head:mapping.cursor(h),pairs});
+    }catch(error){console.error('C++ input format:',error);}
+  },180);
+}
+
 function syncNativeInput(){
   if(editor.readOnly||editor.value===code)return;
   const value=editor.value,a=editor.selectionStart,b=editor.selectionEnd,direction=editor.selectionDirection;
@@ -3509,7 +3528,7 @@ editor.addEventListener('input',()=>{
 editor.addEventListener('beforeinput',e=>{
   if(editor.readOnly||composing||e.isComposing||!e.cancelable)return;
   readSelection();
-  if(e.inputType==='insertText'&&e.data){e.preventDefault();insert(e.data,'type');}
+  if(e.inputType==='insertText'&&e.data){e.preventDefault();insert(e.data,'type');scheduleInputFormat(e.data);}
   else if(e.inputType==='insertLineBreak'||e.inputType==='insertParagraph'){e.preventDefault();enter();}
   else if(e.inputType==='deleteContentBackward'&&!desktopEditing){e.preventDefault();backspace();}
 });
@@ -3519,7 +3538,7 @@ editor.addEventListener("keydown",function(e){
   if(e.key==="Escape"){editor.blur();return;}
   if(editor.readOnly&&!e.ctrlKey&&!e.metaKey&&!e.altKey){
     readSelection();
-    if(e.key.length===1){e.preventDefault();insert(e.key,"type");return;}
+    if(e.key.length===1){e.preventDefault();insert(e.key,"type");scheduleInputFormat(e.key);return;}
     if(e.key==="Enter"){e.preventDefault();enter();return;}
     if(e.key==="Backspace"){e.preventDefault();backspace();return;}
   }
