@@ -2,6 +2,14 @@
   "timezone": "Asia/Tokyo",
   "updates": [
     {
+      "id": "20261114-remove-debug",
+      "at": "2026-11-14 12:39",
+      "title": "デバッグ機能を削除",
+      "category": "サイト全体",
+      "text": "デバッグカテゴリ、実行ページ、補助プログラムと配布パッケージを削除しました。",
+      "published": true
+    },
+    {
       "id": "20261114-mobile-external-keyboard",
       "at": "2026-11-14 10:35",
       "title": "モバイルの外付けキーボード入力を改善",
