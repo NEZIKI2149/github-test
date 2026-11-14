@@ -52,6 +52,9 @@ GitHub Pages公開後に上のURLで閲覧できます。ローカルでは [ind
 
 ## コードの使用
 
+**掲載C++サンプルは、複製・改変・競技への提出・再配布・商用利用を無償で許可します。** 適用範囲と第三者ライセンスは[コードの利用許可](CODE-USAGE.md)をご確認ください。短いコードのコピーボタンも参照URLのコメントを付けてコピーします。
+
+
 使用言語は **C++23 (GCC 15.2.0)**、ローカルのコンパイル設定は **`-std=gnu++23`** を前提とします。[AtCoder公式の言語・コンパイル設定](https://img.atcoder.jp/file/language-update/2025-10/language-list.html)
 
 `bits/stdc++.h` はGCC系環境向けです。**ACLの例にはAtCoder Libraryのヘッダが別途必要です。** [コンパイル方法](examples/README.md) / [ACL公式ドキュメント](https://atcoder.github.io/ac-library/production/document_ja/index.html)
