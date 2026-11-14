@@ -8,6 +8,7 @@ import re
 import textwrap
 import unicodedata
 from operation_metadata import enrich
+from license_bundle import with_bundled_licenses
 from security_policy import with_security_policy
 
 ROOT = pathlib.Path(__file__).resolve().parent
@@ -1009,9 +1010,9 @@ for(int i = 1;i < N+1;i++){
     (ROOT / "reference-data.json").write_text(json.dumps(payload, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
     template = (ROOT / "page-template.html").read_text(encoding="utf-8")
     packed = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
-    (ROOT / "index.html").write_text(with_security_policy(template.replace("__REFERENCE_DATA__", packed)), encoding="utf-8")
+    (ROOT / "index.html").write_text(with_security_policy(with_bundled_licenses(template.replace("__REFERENCE_DATA__", packed))), encoding="utf-8")
     editor = ROOT / "mobile-editor.html"
-    editor.write_text(with_security_policy(editor.read_text(encoding="utf-8"), wasm=True), encoding="utf-8")
+    editor.write_text(with_security_policy(with_bundled_licenses(editor.read_text(encoding="utf-8")), wasm=True), encoding="utf-8")
     docs = ROOT / "docs"
     docs.mkdir(exist_ok=True)
     for page, info in PAGES.items():

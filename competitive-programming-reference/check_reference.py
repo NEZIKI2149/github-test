@@ -10,9 +10,10 @@ ROOT = pathlib.Path(__file__).resolve().parent
 data = json.loads((ROOT / "reference-data.json").read_text(encoding="utf-8"))
 page = (ROOT / "index.html").read_text(encoding="utf-8")
 from security_policy import with_security_policy
-assert page == with_security_policy(page)
+from license_bundle import with_bundled_licenses
+assert page == with_security_policy(with_bundled_licenses(page))
 editor = (ROOT / "mobile-editor.html").read_text(encoding="utf-8")
-assert editor == with_security_policy(editor, wasm=True)
+assert editor == with_security_policy(with_bundled_licenses(editor), wasm=True)
 embedded = re.search(r'<script id="reference-data" type="application/json">(.*?)</script>', page, re.S).group(1)
 assert json.loads(embedded) == data
 assert "C++23 (GCC 15.2.0)" in page and "C++17" not in page
