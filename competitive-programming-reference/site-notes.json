@@ -2,6 +2,14 @@
   "timezone": "Asia/Tokyo",
   "updates": [
     {
+      "id": "20261114-desktop-layout-switch",
+      "at": "2026-11-14 10:28",
+      "title": "PC版サイトへの切り替えボタンを追加",
+      "category": "サイト全体",
+      "text": "配色ボタンの下からPC表示に切り替えられるようにしました。設定は保存され、標準表示にも戻せます。PC表示ではエディタも物理キーボード向けの動作になります。",
+      "published": true
+    },
+    {
       "id": "20261113-debug-local-run",
       "at": "2026-11-13 23:01",
       "title": "PC専用のデバッグページを追加",

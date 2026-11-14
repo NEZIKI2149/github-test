@@ -1,7 +1,20 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src &#x27;none&#x27;; script-src 'sha256-2v60AOThTsXfRosBjOH1WxNVmSoZu2DrykJRYXy2A+k=' 'sha256-1kTLd3/EHhyvJhuLZy/5jh+HpFxxxwoj97n7oXZu8VA=' 'sha256-MhYgB3NhFel8u5x8G2L1RPGKpTOnPF2V1bxLk3DimzI=' 'wasm-unsafe-eval';sha256-2v60AOThTsXfRosBjOH1WxNVmSoZu2DrykJRYXy2A+k=&#x27; &#x27;sha256-1kTLd3/EHhyvJhuLZy/5jh+HpFxxxwoj97n7oXZu8VA=&#x27; &#x27;sha256-SOSB2GmVEEMIBCTKCzPME/FERgyrsL+s69PaCB92Eik=&#x27; &#x27;wasm-unsafe-eval&#x27;; script-src-attr &#x27;none&#x27;; style-src &#x27;unsafe-inline&#x27;; img-src &#x27;self&#x27; data:; connect-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;self&#x27;">
+<meta http-equiv="Content-Security-Policy" content="default-src &#x27;none&#x27;; script-src &#x27;sha256-LmJ7O94bH4/5tss6zszcwnuC3IuTNczte9vJBXyPz80=&#x27; &#x27;sha256-2v60AOThTsXfRosBjOH1WxNVmSoZu2DrykJRYXy2A+k=&#x27; &#x27;sha256-1kTLd3/EHhyvJhuLZy/5jh+HpFxxxwoj97n7oXZu8VA=&#x27; &#x27;sha256-dXMAkozxf0bgHKupdGqzH7FyGAUbn/KnbA+YVbBMYPE=&#x27; &#x27;wasm-unsafe-eval&#x27;; script-src-attr &#x27;none&#x27;; style-src &#x27;unsafe-inline&#x27;; img-src &#x27;self&#x27; data:; connect-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;self&#x27;">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<script>(()=>{
+let forced=false;try{forced=localStorage.getItem('neziki-layout-mode')==='desktop';}catch{}
+window.NEZIKI_DESKTOP=forced;
+document.documentElement.dataset.layout=forced?'desktop':'auto';
+if(forced)document.querySelector('meta[name="viewport"]').setAttribute('content','width=1280');
+document.addEventListener('DOMContentLoaded',()=>{
+ const controls=document.querySelector('.theme-controls');if(!controls)return;
+ const button=document.createElement('button');button.type='button';button.className='theme layout-switch';
+ button.textContent=forced?'標準表示に戻す':'PC版サイトに切り替え';button.setAttribute('aria-pressed',String(forced));
+ button.onclick=()=>{try{localStorage.setItem('neziki-layout-mode',forced?'auto':'desktop');location.reload();}catch{alert('表示設定を保存できません。ブラウザの保存設定を確認してください。');}};
+ controls.append(button);
+});
+})();</script>
 <meta name="theme-color" content="#151b22"><title>スマホC++エディタ | ネジキチートシート</title>
 <style>
 :root{color-scheme:dark;--bg:#151b22;--panel:#1c242d;--code:#131a22;--ink:#e5ebf2;--sub:#a7b3c1;--line:#35414e;--accent:#73d9c4;--key:#303b49;--special:#405263;--on:#2a655d;--kh:clamp(25px,8.1dvh,41px);--gap:3px}
@@ -345,6 +358,7 @@ body.manual-copy-open #keyboard-dock{display:none}body.manual-copy-open{overflow
 body.screen-keyboard-hidden #editor{caret-color:var(--accent)}body.screen-keyboard-hidden .edit-caret{display:none}body.screen-keyboard-hidden #keyboard-dock{display:none}body.screen-keyboard-hidden{--fixed-dock-height:0px}body.screen-keyboard-hidden .toast{bottom:12px}
 body.desktop-editing .selection-layer{display:none!important}body.desktop-editing .editor-surface #editor::selection{background:Highlight;color:HighlightText;-webkit-text-fill-color:HighlightText}
 body.desktop-editing.ime-composing .editor-surface #editor{color:#BBBEBF;-webkit-text-fill-color:#BBBEBF;caret-color:var(--accent)}body.desktop-editing.ime-composing .syntax-layer,body.desktop-editing.ime-composing .edit-caret{visibility:hidden!important}
+.theme-controls{display:grid!important;grid-template-columns:1fr auto;gap:6px;width:138px;flex-shrink:0}.theme-controls .layout-switch{grid-column:1/-1;font-size:10px;line-height:1.5;padding:5px;white-space:normal}html[data-layout="desktop"] .pc-only{display:block}html[data-layout="desktop"] .mobile-only{display:none}
 </style></head>
 <body>
 <header class="reference-header" id="site-head" aria-label="サイトのヘッダー">
@@ -3472,7 +3486,7 @@ document.getElementById("paste").addEventListener("click",paste);
 document.getElementById("undo").addEventListener("click",function(){history(false);});
 document.getElementById("redo").addEventListener("click",function(){history(true);});
 document.getElementById("new").addEventListener("click",function(){if(code!==TEMPLATE&&!confirm("編集中のコードを初期テンプレートで置き換えますか？"))return;stopUndoGroup();record();code=TEMPLATE;autoPairs=[];anchor=head=TEMPLATE.indexOf("\n    \n")+5;shift=0;ctrl=false;render();notice("テンプレートに戻しました");});
-const desktopEditing=matchMedia('(hover: hover) and (pointer: fine)').matches;
+const desktopEditing=window.NEZIKI_DESKTOP||matchMedia('(hover: hover) and (pointer: fine)').matches;
 document.body.classList.toggle('desktop-editing',desktopEditing);
 let screenKeyboardVisible=!desktopEditing;
 const keyboardToggle=document.getElementById('toggle-screen-keyboard');
