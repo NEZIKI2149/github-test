@@ -101,7 +101,7 @@ int main(){
 
 ### 階乗の配列を作る
 
-目的 : int型の配列のA.at(i)にiの階乗を入れる
+目的 : int型の配列を、A.at(i)がiの階乗になる初期値で作る
 
 計算量 O(N) / メモリ O(N)
 
@@ -115,10 +115,11 @@ using namespace std;
 int main(){
     int N;
     cin >> N;
-    vector<int> A(N+1, 1);
-    for(int i = 1;i < N+1;i++){
-        A.at(i) = A.at(i-1)*i;
-    }
+    vector<int> A = {
+        1, 1, 2, 6, 24, 120, 720,
+        5040, 40320, 362880, 3628800, 39916800, 479001600
+    };
+    A.resize(N+1);
     for(int i = 1;i < N+1;i++){
         cout << A.at(i) << endl;
     }

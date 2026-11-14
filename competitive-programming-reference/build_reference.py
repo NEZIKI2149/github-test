@@ -976,15 +976,16 @@ def generate():
             full = "// Reference: " + PUBLIC + "\n" + program("""
 int N;
 cin >> N;
-vector<int> A(N+1, 1);
-for(int i = 1;i < N+1;i++){
-    A.at(i) = A.at(i-1)*i;
-}
+vector<int> A = {
+    1, 1, 2, 6, 24, 120, 720,
+    5040, 40320, 362880, 3628800, 39916800, 479001600
+};
+A.resize(N+1);
 for(int i = 1;i < N+1;i++){
     cout << A.at(i) << endl;
 }
 """)
-            g["items"][0]["extras"] = [dict(id="factorial-array", desc="int型の配列のA.at(i)にiの階乗を入れる", time="O(N)", memory="O(N)", note="⚠︎ この実装はNが1以上12以下のとき限定", full=full, fullHtml=html.escape(full, quote=True))]
+            g["items"][0]["extras"] = [dict(id="factorial-array", desc="int型の配列を、A.at(i)がiの階乗になる初期値で作る", time="O(N)", memory="O(N)", note="⚠︎ この実装はNが1以上12以下のとき限定", full=full, fullHtml=html.escape(full, quote=True))]
     enrich(groups)
     limits = limits_sections()
     limits.insert(2, dict(key="memory-calculator", title="メモリ計算機", tool="memory", content="<p>コンテナを選択してメモリ容量を計算する。配列（vector）は一次元／二次元を切り替えられる。set・multiset・map・unordered_set・unordered_mapにも対応し、管理領域込みの推定容量を選択式のメモリ制限と比較する。</p>"))

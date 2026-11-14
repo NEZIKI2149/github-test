@@ -2879,12 +2879,12 @@
           "extras": [
             {
               "id": "factorial-array",
-              "desc": "int型の配列のA.at(i)にiの階乗を入れる",
+              "desc": "int型の配列を、A.at(i)がiの階乗になる初期値で作る",
               "time": "O(N)",
               "memory": "O(N)",
               "note": "⚠︎ この実装はNが1以上12以下のとき限定",
-              "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    int N;\n    cin >> N;\n    vector<int> A(N+1, 1);\n    for(int i = 1;i < N+1;i++){\n        A.at(i) = A.at(i-1)*i;\n    }\n    for(int i = 1;i < N+1;i++){\n        cout << A.at(i) << endl;\n    }\n    return 0;\n}\n",
-              "fullHtml": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include &lt;bits/stdc++.h&gt;\nusing namespace std;\n\nint main(){\n    int N;\n    cin &gt;&gt; N;\n    vector&lt;int&gt; A(N+1, 1);\n    for(int i = 1;i &lt; N+1;i++){\n        A.at(i) = A.at(i-1)*i;\n    }\n    for(int i = 1;i &lt; N+1;i++){\n        cout &lt;&lt; A.at(i) &lt;&lt; endl;\n    }\n    return 0;\n}\n"
+              "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    int N;\n    cin >> N;\n    vector<int> A = {\n        1, 1, 2, 6, 24, 120, 720,\n        5040, 40320, 362880, 3628800, 39916800, 479001600\n    };\n    A.resize(N+1);\n    for(int i = 1;i < N+1;i++){\n        cout << A.at(i) << endl;\n    }\n    return 0;\n}\n",
+              "fullHtml": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include &lt;bits/stdc++.h&gt;\nusing namespace std;\n\nint main(){\n    int N;\n    cin &gt;&gt; N;\n    vector&lt;int&gt; A = {\n        1, 1, 2, 6, 24, 120, 720,\n        5040, 40320, 362880, 3628800, 39916800, 479001600\n    };\n    A.resize(N+1);\n    for(int i = 1;i &lt; N+1;i++){\n        cout &lt;&lt; A.at(i) &lt;&lt; endl;\n    }\n    return 0;\n}\n"
             }
           ],
           "codeHtml": "<span style=\"color:#C9D1D9\">ans</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#D4D4D4\">*=</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#C9D1D9\">i</span><span style=\"color:#BBBEBF\">;</span>",
