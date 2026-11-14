@@ -74,6 +74,31 @@ int main(){
 }
 ```
 
+## 階乗
+
+**目的** : 1からNまでの整数をすべて掛けた値を求める
+
+計算量：O(N)　メモリ：O(1)
+
+⚠︎ この実装はNが0以上20以下のとき限定
+
+```cpp
+// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
+#include <bits/stdc++.h>
+using namespace std;
+
+int main(){
+    int N;
+    cin >> N;
+    long long ans = 1;
+    for(int i = 1;i < N+1;i++){
+        ans *= i;
+    }
+    cout << ans << endl;
+    return 0;
+}
+```
+
 ## 強連結成分分解（SCC）
 
 **目的** : 有向グラフを、互いに行き来できる頂点ごとに分ける

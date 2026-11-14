@@ -2,6 +2,14 @@
   "timezone": "Asia/Tokyo",
   "updates": [
     {
+      "id": "20261114-factorial",
+      "at": "2026-11-14 13:04",
+      "title": "アルゴリズムに階乗を追加",
+      "category": "アルゴリズム",
+      "text": "0以上20以下の整数の階乗をlong longで計算する全体コードを、五十音順・登場目安Bで追加しました。",
+      "published": true
+    },
+    {
       "id": "20261114-remove-debug",
       "at": "2026-11-14 12:39",
       "title": "デバッグ機能を削除",

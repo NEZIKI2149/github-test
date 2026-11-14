@@ -2860,6 +2860,29 @@
     },
     {
       "page": "algo",
+      "key": "factorial",
+      "title": "階乗",
+      "reading": "かいじょう",
+      "note": "",
+      "items": [
+        {
+          "id": "factorial-1",
+          "desc": "1からNまでの整数をすべて掛けた値を求める",
+          "code": "ans *= i;",
+          "cost": "時間 O(N) / メモリ O(1)",
+          "note": "⚠︎ この実装はNが0以上20以下のとき限定",
+          "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    int N;\n    cin >> N;\n    long long ans = 1;\n    for(int i = 1;i < N+1;i++){\n        ans *= i;\n    }\n    cout << ans << endl;\n    return 0;\n}\n",
+          "input": "5\n",
+          "expected": "120\n",
+          "time": "O(N)",
+          "memory": "O(1)",
+          "codeHtml": "<span style=\"color:#C9D1D9\">ans</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#D4D4D4\">*=</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#C9D1D9\">i</span><span style=\"color:#BBBEBF\">;</span>",
+          "fullHtml": "<span style=\"color:#8B949E\">// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference</span>\n<span style=\"color:#C586C0\">#include</span><span style=\"color:#569CD6\"> </span><span style=\"color:#A5D6FF\">&lt;bits/stdc++.h&gt;</span>\n<span style=\"color:#C586C0\">using</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#FF7B72\">namespace</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#4EC9B0\">std</span><span style=\"color:#BBBEBF\">;</span>\n\n<span style=\"color:#FF7B72\">int</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#D2A8FF\">main</span><span style=\"color:#BBBEBF\">(){</span>\n<span style=\"color:#BBBEBF\">    </span><span style=\"color:#FF7B72\">int</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#C9D1D9\">N</span><span style=\"color:#BBBEBF\">;</span>\n<span style=\"color:#BBBEBF\">    </span><span style=\"color:#C9D1D9\">cin</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#D4D4D4\">&gt;&gt;</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#C9D1D9\">N</span><span style=\"color:#BBBEBF\">;</span>\n<span style=\"color:#BBBEBF\">    </span><span style=\"color:#FF7B72\">long</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#FF7B72\">long</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#C9D1D9\">ans</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#D4D4D4\">=</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#B5CEA8\">1</span><span style=\"color:#BBBEBF\">;</span>\n<span style=\"color:#BBBEBF\">    </span><span style=\"color:#C586C0\">for</span><span style=\"color:#BBBEBF\">(</span><span style=\"color:#FF7B72\">int</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#C9D1D9\">i</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#D4D4D4\">=</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#B5CEA8\">1</span><span style=\"color:#BBBEBF\">;</span><span style=\"color:#C9D1D9\">i</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#D4D4D4\">&lt;</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#C9D1D9\">N</span><span style=\"color:#D4D4D4\">+</span><span style=\"color:#B5CEA8\">1</span><span style=\"color:#BBBEBF\">;</span><span style=\"color:#C9D1D9\">i</span><span style=\"color:#D4D4D4\">++</span><span style=\"color:#BBBEBF\">)</span><span style=\"color:#C9D1D9\">{</span>\n<span style=\"color:#C9D1D9\">        ans </span><span style=\"color:#D4D4D4\">*=</span><span style=\"color:#C9D1D9\"> i;</span>\n<span style=\"color:#C9D1D9\">    }</span>\n<span style=\"color:#BBBEBF\">    </span><span style=\"color:#C9D1D9\">cout</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#D4D4D4\">&lt;&lt;</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#C9D1D9\">ans</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#D4D4D4\">&lt;&lt;</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#C9D1D9\">endl</span><span style=\"color:#BBBEBF\">;</span>\n<span style=\"color:#BBBEBF\">    </span><span style=\"color:#C586C0\">return</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#B5CEA8\">0</span><span style=\"color:#BBBEBF\">;</span>\n<span style=\"color:#BBBEBF\">}</span>\n"
+        }
+      ]
+    },
+    {
+      "page": "algo",
       "key": "scc",
       "title": "強連結成分分解（SCC）",
       "reading": "きょうれんけつせいぶんぶんかい",
@@ -3495,6 +3518,15 @@
     }
   ],
   "notes": [
+    {
+      "id": "20261114-factorial",
+      "at": "2026-11-14 13:04",
+      "title": "アルゴリズムに階乗を追加",
+      "category": "アルゴリズム",
+      "text": "0以上20以下の整数の階乗をlong longで計算する全体コードを、五十音順・登場目安Bで追加しました。",
+      "published": true,
+      "kind": "updates"
+    },
     {
       "id": "20261114-remove-debug",
       "at": "2026-11-14 12:39",

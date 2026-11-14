@@ -794,6 +794,17 @@ add(g, 'すべての頂点の組合せについて、最短距離をまとめて
 g = group("algo", 'run-length', 'ランレングス圧縮')
 add(g, '同じ文字が連続する部分を、文字と個数にまとめる', 'run-length', '時間 O(N) / メモリ O(N)', body='// 空白を含まない文字列S。各連続部分の文字と個数を出力。\nstring S;\ncin >> S;\nvector<pair<char,int>> runs;\nfor(int i = 0;i < (int)S.size();i++){\n    if(runs.empty() || runs.back().first != S.at(i)){\n        runs.push_back({S.at(i), 1});\n    }\n    else{\n        runs.back().second++;\n    }\n}\nfor(int i = 0;i < (int)runs.size();i++){\n    cout << runs.at(i).first << " " << runs.at(i).second << endl;\n}\n')
 
+g = group("algo", "factorial", "階乗")
+add(g, "1からNまでの整数をすべて掛けた値を求める", "ans *= i;", "時間 O(N) / メモリ O(1)", body="""
+int N;
+cin >> N;
+long long ans = 1;
+for(int i = 1;i < N+1;i++){
+    ans *= i;
+}
+cout << ans << endl;
+""", input="5\n", expected="120\n")
+
 def table(headers, rows):
     return '<div class="table-wrap"><table><thead><tr>' + ''.join('<th>'+h+'</th>' for h in headers) + '</tr></thead><tbody>' + ''.join('<tr>'+''.join('<td>'+str(v)+'</td>' for v in row)+'</tr>' for row in rows) + '</tbody></table></div>'
 
@@ -835,6 +846,7 @@ def limits_sections():
 # 表示するアルゴリズムは1機能ずつ独立させ、明示した読みで並べる。
 # 元の項目IDはコードや検証データの対応を保つため変更しない。
 ALGORITHM_SECTIONS = {
+    "factorial-1": ("factorial", "階乗", "かいじょう"),
     'dfs-1': ('dfs', '深さ優先探索（DFS）', 'ふかさゆうせんたんさく'),
     'connected-components-1': ('connected-components', '連結成分分解（無向グラフ）', 'れんけつせいぶんぶんかいむこうぐらふ'),
     'bipartite-1': ('bipartite', '二部グラフ判定', 'にぶぐらふはんてい'),
@@ -868,6 +880,7 @@ ALGORITHM_SECTIONS = {
 
 # 各実装を使うときに確認する条件を、入力に即した短い言葉で示す。
 ALGORITHM_NOTES = {
+    "factorial-1": "⚠︎ この実装はNが0以上20以下のとき限定",
     'dfs-1': '',
     'connected-components-1': '',
     'bipartite-1': '',

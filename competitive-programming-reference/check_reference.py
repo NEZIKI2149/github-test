@@ -43,7 +43,7 @@ for item in items:
         assert cached["sha256"] == hashlib.sha256(item[field].encode("utf-8")).hexdigest()
         assert item[field+"Html"] == cached["html"]
 algorithms = [g for g in data["groups"] if g["page"] == "algo"]
-assert len(algorithms) == 28
+assert len(algorithms) == 29
 assert all(len(g["items"]) == 1 and g.get("reading") for g in algorithms)
 assert len({g["title"] for g in algorithms}) == len(algorithms)
 import unicodedata
