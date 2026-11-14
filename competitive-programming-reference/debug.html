@@ -1,18 +1,5 @@
 <!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<script>(()=>{
-let forced=false;try{forced=localStorage.getItem('neziki-layout-mode')==='desktop';}catch{}
-window.NEZIKI_DESKTOP=forced;
-document.documentElement.dataset.layout=forced?'desktop':'auto';
-if(forced)document.querySelector('meta[name="viewport"]').setAttribute('content','width=1280');
-document.addEventListener('DOMContentLoaded',()=>{
- const controls=document.querySelector('.theme-controls');if(!controls)return;
- const button=document.createElement('button');button.type='button';button.className='theme layout-switch';
- button.textContent=forced?'標準表示に戻す':'PC版サイトに切り替え';button.setAttribute('aria-pressed',String(forced));
- button.onclick=()=>{try{localStorage.setItem('neziki-layout-mode',forced?'auto':'desktop');location.reload();}catch{alert('表示設定を保存できません。ブラウザの保存設定を確認してください。');}};
- controls.append(button);
-});
-})();</script><title>デバッグ | ネジキチートシート</title>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>デバッグ | ネジキチートシート</title>
 <style>
 :root{--bg:#f7f8fa;--paper:#fff;--ink:#202c38;--muted:#65727f;--line:#dfe5eb;--accent:#087c72;--tint:#e9f5f2;--code:#f2f5f8;--header:rgba(247,248,250,.97);color-scheme:light}
 :root[data-theme=dark]{--bg:#151b22;--paper:#1c242d;--ink:#e5ebf2;--muted:#a7b3c1;--line:#35414e;--accent:#73d9c4;--tint:#233e3c;--code:#131a22;--header:rgba(21,27,34,.97);color-scheme:dark}
@@ -70,7 +57,7 @@ pre.cpp-highlight{background:#121314;color:#BBBEBF;padding:14px;border-radius:5p
 @media print{pre.cpp-highlight{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
 .count-guide{font-weight:400;font-size:12px;text-align:right;margin:14px 14px 4px;white-space:nowrap}#time-result .table-wrap{margin-top:0}
 
-main{max-width:1200px;margin:auto;padding:24px 30px 80px}main input,main textarea,main button{font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:5px;padding:9px}button:disabled{opacity:.5;cursor:default}#key{width:min(100%,420px)}iframe{width:100%;height:470px;border:1px solid var(--line);border-radius:6px;background:#121314}main textarea{width:100%;height:140px;font-family:Consolas,monospace}main pre{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--code);padding:16px;min-height:55px}main label{display:block;margin:16px 0 6px}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.mobile-only{display:none}.tabs .tab{display:flex;align-items:center;text-decoration:none}.search-wrap{margin:0}@media(max-width:750px){main{padding:25px 16px 60px}}@media(hover:none) and (pointer:coarse){.pc-only{display:none}.mobile-only{display:block}}.theme-controls{display:grid!important;grid-template-columns:1fr auto;gap:6px;width:138px;flex-shrink:0}.theme-controls .layout-switch{grid-column:1/-1;font-size:10px;line-height:1.5;padding:5px;white-space:normal}html[data-layout="desktop"] .pc-only{display:block}html[data-layout="desktop"] .mobile-only{display:none}
+main{max-width:1200px;margin:auto;padding:24px 30px 80px}main input,main textarea,main button{font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:5px;padding:9px}button:disabled{opacity:.5;cursor:default}#key{width:min(100%,420px)}iframe{width:100%;height:470px;border:1px solid var(--line);border-radius:6px;background:#121314}main textarea{width:100%;height:140px;font-family:Consolas,monospace}main pre{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--code);padding:16px;min-height:55px}main label{display:block;margin:16px 0 6px}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.mobile-only{display:none}.tabs .tab{display:flex;align-items:center;text-decoration:none}.search-wrap{margin:0}@media(max-width:750px){main{padding:25px 16px 60px}}@media(hover:none) and (pointer:coarse){.pc-only{display:none}.mobile-only{display:block}}
 </style></head>
 <body><header class="reference-header" id="site-head" aria-label="サイトのヘッダー">
   <div class="topbar">

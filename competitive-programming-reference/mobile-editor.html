@@ -1,20 +1,7 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src &#x27;none&#x27;; script-src &#x27;sha256-LmJ7O94bH4/5tss6zszcwnuC3IuTNczte9vJBXyPz80=&#x27; &#x27;sha256-2v60AOThTsXfRosBjOH1WxNVmSoZu2DrykJRYXy2A+k=&#x27; &#x27;sha256-1kTLd3/EHhyvJhuLZy/5jh+HpFxxxwoj97n7oXZu8VA=&#x27; &#x27;sha256-dXMAkozxf0bgHKupdGqzH7FyGAUbn/KnbA+YVbBMYPE=&#x27; &#x27;wasm-unsafe-eval&#x27;; script-src-attr &#x27;none&#x27;; style-src &#x27;unsafe-inline&#x27;; img-src &#x27;self&#x27; data:; connect-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;self&#x27;">
+<meta http-equiv="Content-Security-Policy" content="default-src &#x27;none&#x27;; script-src &#x27;sha256-2v60AOThTsXfRosBjOH1WxNVmSoZu2DrykJRYXy2A+k=&#x27; &#x27;sha256-1kTLd3/EHhyvJhuLZy/5jh+HpFxxxwoj97n7oXZu8VA=&#x27; &#x27;sha256-i0TDXrsM3CC8+dJA4jZo2VWOXv4h0f5Kqb9iiSriO08=&#x27; &#x27;wasm-unsafe-eval&#x27;; script-src-attr &#x27;none&#x27;; style-src &#x27;unsafe-inline&#x27;; img-src &#x27;self&#x27; data:; connect-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;self&#x27;">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<script>(()=>{
-let forced=false;try{forced=localStorage.getItem('neziki-layout-mode')==='desktop';}catch{}
-window.NEZIKI_DESKTOP=forced;
-document.documentElement.dataset.layout=forced?'desktop':'auto';
-if(forced)document.querySelector('meta[name="viewport"]').setAttribute('content','width=1280');
-document.addEventListener('DOMContentLoaded',()=>{
- const controls=document.querySelector('.theme-controls');if(!controls)return;
- const button=document.createElement('button');button.type='button';button.className='theme layout-switch';
- button.textContent=forced?'標準表示に戻す':'PC版サイトに切り替え';button.setAttribute('aria-pressed',String(forced));
- button.onclick=()=>{try{localStorage.setItem('neziki-layout-mode',forced?'auto':'desktop');location.reload();}catch{alert('表示設定を保存できません。ブラウザの保存設定を確認してください。');}};
- controls.append(button);
-});
-})();</script>
 <meta name="theme-color" content="#151b22"><title>スマホC++エディタ | ネジキチートシート</title>
 <style>
 :root{color-scheme:dark;--bg:#151b22;--panel:#1c242d;--code:#131a22;--ink:#e5ebf2;--sub:#a7b3c1;--line:#35414e;--accent:#73d9c4;--key:#303b49;--special:#405263;--on:#2a655d;--kh:clamp(25px,8.1dvh,41px);--gap:3px}
@@ -358,7 +345,7 @@ body.manual-copy-open #keyboard-dock{display:none}body.manual-copy-open{overflow
 body.screen-keyboard-hidden #editor{caret-color:var(--accent)}body.screen-keyboard-hidden .edit-caret{display:none}body.screen-keyboard-hidden #keyboard-dock{display:none}body.screen-keyboard-hidden{--fixed-dock-height:0px}body.screen-keyboard-hidden .toast{bottom:12px}
 body.desktop-editing .selection-layer{display:none!important}body.desktop-editing .editor-surface #editor::selection{background:Highlight;color:HighlightText;-webkit-text-fill-color:HighlightText}
 body.desktop-editing.ime-composing .editor-surface #editor{color:#BBBEBF;-webkit-text-fill-color:#BBBEBF;caret-color:var(--accent)}body.desktop-editing.ime-composing .syntax-layer,body.desktop-editing.ime-composing .edit-caret{visibility:hidden!important}
-.theme-controls{display:grid!important;grid-template-columns:1fr auto;gap:6px;width:138px;flex-shrink:0}.theme-controls .layout-switch{grid-column:1/-1;font-size:10px;line-height:1.5;padding:5px;white-space:normal}html[data-layout="desktop"] .pc-only{display:block}html[data-layout="desktop"] .mobile-only{display:none}
+
 </style></head>
 <body>
 <header class="reference-header" id="site-head" aria-label="サイトのヘッダー">
@@ -2962,7 +2949,7 @@ function positionFromEditorPoint(clientX,clientY){
 }
 let editorPointer=null;
 editor.addEventListener("pointerdown",function(e){
-  if(!editor.readOnly&&e.pointerType==="mouse")return;
+  if(!editor.readOnly){editorPointer=null;return;}
   if(e.button!==undefined&&e.button!==0)return;
   editorPointer={id:e.pointerId,x:e.clientX,y:e.clientY};
   // Suppress the iOS text loupe/selection menu; browser scrolling remains native.
@@ -3486,12 +3473,13 @@ document.getElementById("paste").addEventListener("click",paste);
 document.getElementById("undo").addEventListener("click",function(){history(false);});
 document.getElementById("redo").addEventListener("click",function(){history(true);});
 document.getElementById("new").addEventListener("click",function(){if(code!==TEMPLATE&&!confirm("編集中のコードを初期テンプレートで置き換えますか？"))return;stopUndoGroup();record();code=TEMPLATE;autoPairs=[];anchor=head=TEMPLATE.indexOf("\n    \n")+5;shift=0;ctrl=false;render();notice("テンプレートに戻しました");});
-const desktopEditing=window.NEZIKI_DESKTOP||matchMedia('(hover: hover) and (pointer: fine)').matches;
+const desktopEditing=matchMedia('(hover: hover) and (pointer: fine)').matches;
 document.body.classList.toggle('desktop-editing',desktopEditing);
 let screenKeyboardVisible=!desktopEditing;
 const keyboardToggle=document.getElementById('toggle-screen-keyboard');
 function applyKeyboardVisibility(){
   document.body.classList.toggle('screen-keyboard-hidden',!screenKeyboardVisible);
+  document.body.classList.toggle('desktop-editing',desktopEditing||!screenKeyboardVisible);
   keyboardToggle.textContent=screenKeyboardVisible?'画面キーボードを隠す':'画面キーボードを表示';
   keyboardToggle.setAttribute('aria-pressed',String(screenKeyboardVisible));
   editor.readOnly=screenKeyboardVisible;
@@ -3504,7 +3492,7 @@ applyKeyboardVisibility();
 let composing=false;
 let inputFormatTimer;
 function scheduleInputFormat(text){
-  if(!desktopEditing||composing||!/[;}]/.test(text))return;
+  if((!desktopEditing&&editor.readOnly)||composing||!/[;}]/.test(text))return;
   clearTimeout(inputFormatTimer);
   inputFormatTimer=setTimeout(async()=>{
     if(composing||formatting)return;
@@ -3530,13 +3518,13 @@ function syncNativeInput(){
 }
 editor.addEventListener('compositionstart',()=>{
   readSelection();composing=true;
-  if(desktopEditing)document.body.classList.add('ime-composing');
+  if(!editor.readOnly)document.body.classList.add('ime-composing');
 });
 editor.addEventListener('compositionend',()=>{
   composing=false;document.body.classList.remove('ime-composing');syncNativeInput();render();
 });
 editor.addEventListener('input',()=>{
-  if(composing){if(desktopEditing)editor.style.height=Math.max(110,editor.value.split('\n').length*20+18)+'px';return;}
+  if(composing){if(!editor.readOnly)editor.style.height=Math.max(110,editor.value.split('\n').length*20+18)+'px';return;}
   syncNativeInput();
 });
 editor.addEventListener('beforeinput',e=>{
@@ -3547,13 +3535,13 @@ editor.addEventListener('beforeinput',e=>{
   else if(e.inputType==='deleteContentBackward'){
     const prefix=code.slice(code.lastIndexOf('\n',head-1)+1,head);
     const indent=anchor===head&&/^ +$/.test(prefix)&&prefix.endsWith('    ');
-    if(!desktopEditing||indent){e.preventDefault();backspace();}
+    if(indent){e.preventDefault();backspace();}
   }
 });
 editor.addEventListener("keydown",function(e){
   if(e.isComposing||composing)return;
   readSelection();
-  if(desktopEditing&&e.ctrlKey&&e.key==="Enter"){e.preventDefault();clearTimeout(inputFormatTimer);formatCode();return;}
+  if((desktopEditing||!editor.readOnly)&&e.ctrlKey&&e.key==="Enter"){e.preventDefault();clearTimeout(inputFormatTimer);formatCode();return;}
   if(e.key==="Escape"){editor.blur();return;}
   if(editor.readOnly&&!e.ctrlKey&&!e.metaKey&&!e.altKey){
     readSelection();

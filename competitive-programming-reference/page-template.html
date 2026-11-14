@@ -3,19 +3,6 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<script>(()=>{
-let forced=false;try{forced=localStorage.getItem('neziki-layout-mode')==='desktop';}catch{}
-window.NEZIKI_DESKTOP=forced;
-document.documentElement.dataset.layout=forced?'desktop':'auto';
-if(forced)document.querySelector('meta[name="viewport"]').setAttribute('content','width=1280');
-document.addEventListener('DOMContentLoaded',()=>{
- const controls=document.querySelector('.theme-controls');if(!controls)return;
- const button=document.createElement('button');button.type='button';button.className='theme layout-switch';
- button.textContent=forced?'標準表示に戻す':'PC版サイトに切り替え';button.setAttribute('aria-pressed',String(forced));
- button.onclick=()=>{try{localStorage.setItem('neziki-layout-mode',forced?'auto':'desktop');location.reload();}catch{alert('表示設定を保存できません。ブラウザの保存設定を確認してください。');}};
- controls.append(button);
-});
-})();</script>
 <meta name="color-scheme" content="light dark">
 <meta name="description" content="C++標準ライブラリ・AtCoder Library・定番アルゴリズム・計算量とメモリの参照資料">
 <title>ネジキチートシート</title>
@@ -75,7 +62,7 @@ main>.section>h2{display:flex;align-items:center;justify-content:space-between;g
 pre.cpp-highlight{background:#121314;color:#BBBEBF;padding:14px;border-radius:5px;color-scheme:dark}
 @media print{pre.cpp-highlight{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
 .count-guide{font-weight:400;font-size:12px;text-align:right;margin:14px 14px 4px;white-space:nowrap}#time-result .table-wrap{margin-top:0}
-.theme-controls{display:grid!important;grid-template-columns:1fr auto;gap:6px;width:138px;flex-shrink:0}.theme-controls .layout-switch{grid-column:1/-1;font-size:10px;line-height:1.5;padding:5px;white-space:normal}html[data-layout="desktop"] .pc-only{display:block}html[data-layout="desktop"] .mobile-only{display:none}
+
 </style>
 </head>
 <body>

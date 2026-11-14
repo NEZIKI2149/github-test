@@ -57,7 +57,7 @@ assert all("#include" in i["full"] and "int main()" in i["full"] and "// Referen
 assert all("万" not in s["content"] and "億" not in s["content"] for s in data["limits"])
 assert any("reverse(A.begin()+l, A.begin()+r);" == i["code"] for i in items)
 scripts = re.findall(r'<script>(.*?)</script>', page, re.S)
-assert len(scripts) == 2
+assert len(scripts) == 1
 with tempfile.TemporaryDirectory() as tmp:
     script = pathlib.Path(tmp) / "page.js"
     script.write_text("\n".join(scripts), encoding="utf-8")
