@@ -2876,6 +2876,17 @@
           "expected": "120\n",
           "time": "O(N)",
           "memory": "O(1)",
+          "extras": [
+            {
+              "id": "factorial-array",
+              "desc": "int型の配列のA.at(i)にiの階乗を入れる",
+              "time": "O(N)",
+              "memory": "O(N)",
+              "note": "⚠︎ この実装はNが1以上12以下のとき限定",
+              "full": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    int N;\n    cin >> N;\n    vector<int> A(N+1, 1);\n    for(int i = 1;i < N+1;i++){\n        A.at(i) = A.at(i-1)*i;\n    }\n    for(int i = 1;i < N+1;i++){\n        cout << A.at(i) << endl;\n    }\n    return 0;\n}\n",
+              "fullHtml": "// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference\n#include &lt;bits/stdc++.h&gt;\nusing namespace std;\n\nint main(){\n    int N;\n    cin &gt;&gt; N;\n    vector&lt;int&gt; A(N+1, 1);\n    for(int i = 1;i &lt; N+1;i++){\n        A.at(i) = A.at(i-1)*i;\n    }\n    for(int i = 1;i &lt; N+1;i++){\n        cout &lt;&lt; A.at(i) &lt;&lt; endl;\n    }\n    return 0;\n}\n"
+            }
+          ],
           "codeHtml": "<span style=\"color:#C9D1D9\">ans</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#D4D4D4\">*=</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#C9D1D9\">i</span><span style=\"color:#BBBEBF\">;</span>",
           "fullHtml": "<span style=\"color:#8B949E\">// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference</span>\n<span style=\"color:#C586C0\">#include</span><span style=\"color:#569CD6\"> </span><span style=\"color:#A5D6FF\">&lt;bits/stdc++.h&gt;</span>\n<span style=\"color:#C586C0\">using</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#FF7B72\">namespace</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#4EC9B0\">std</span><span style=\"color:#BBBEBF\">;</span>\n\n<span style=\"color:#FF7B72\">int</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#D2A8FF\">main</span><span style=\"color:#BBBEBF\">(){</span>\n<span style=\"color:#BBBEBF\">    </span><span style=\"color:#FF7B72\">int</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#C9D1D9\">N</span><span style=\"color:#BBBEBF\">;</span>\n<span style=\"color:#BBBEBF\">    </span><span style=\"color:#C9D1D9\">cin</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#D4D4D4\">&gt;&gt;</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#C9D1D9\">N</span><span style=\"color:#BBBEBF\">;</span>\n<span style=\"color:#BBBEBF\">    </span><span style=\"color:#FF7B72\">long</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#FF7B72\">long</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#C9D1D9\">ans</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#D4D4D4\">=</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#B5CEA8\">1</span><span style=\"color:#BBBEBF\">;</span>\n<span style=\"color:#BBBEBF\">    </span><span style=\"color:#C586C0\">for</span><span style=\"color:#BBBEBF\">(</span><span style=\"color:#FF7B72\">int</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#C9D1D9\">i</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#D4D4D4\">=</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#B5CEA8\">1</span><span style=\"color:#BBBEBF\">;</span><span style=\"color:#C9D1D9\">i</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#D4D4D4\">&lt;</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#C9D1D9\">N</span><span style=\"color:#D4D4D4\">+</span><span style=\"color:#B5CEA8\">1</span><span style=\"color:#BBBEBF\">;</span><span style=\"color:#C9D1D9\">i</span><span style=\"color:#D4D4D4\">++</span><span style=\"color:#BBBEBF\">)</span><span style=\"color:#C9D1D9\">{</span>\n<span style=\"color:#C9D1D9\">        ans </span><span style=\"color:#D4D4D4\">*=</span><span style=\"color:#C9D1D9\"> i;</span>\n<span style=\"color:#C9D1D9\">    }</span>\n<span style=\"color:#BBBEBF\">    </span><span style=\"color:#C9D1D9\">cout</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#D4D4D4\">&lt;&lt;</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#C9D1D9\">ans</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#D4D4D4\">&lt;&lt;</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#C9D1D9\">endl</span><span style=\"color:#BBBEBF\">;</span>\n<span style=\"color:#BBBEBF\">    </span><span style=\"color:#C586C0\">return</span><span style=\"color:#BBBEBF\"> </span><span style=\"color:#B5CEA8\">0</span><span style=\"color:#BBBEBF\">;</span>\n<span style=\"color:#BBBEBF\">}</span>\n"
         }
@@ -3518,6 +3529,15 @@
     }
   ],
   "notes": [
+    {
+      "id": "20261114-factorial-array",
+      "at": "2026-11-14 13:28",
+      "title": "階乗のページに配列のコードを追加",
+      "category": "アルゴリズム",
+      "text": "int型の配列の1番目からN番目までを各添字の階乗で埋める全体コードを、既存コードとは別に追加しました。Nは1以上12以下です。",
+      "published": true,
+      "kind": "updates"
+    },
     {
       "id": "20261114-factorial",
       "at": "2026-11-14 13:04",

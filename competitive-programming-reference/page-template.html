@@ -89,7 +89,7 @@ categoryTabs.addEventListener('scroll',saveCategoryScroll,{passive:true});
 categoryTabs.addEventListener('click',saveCategoryScroll);
 window.addEventListener('pagehide',saveCategoryScroll);
 window.addEventListener('pageshow',restoreCategoryScroll);
-const entries = new Map(DATA.groups.flatMap(g => g.items.map(i => [i.id,i])));
+const entries = new Map(DATA.groups.flatMap(g => g.items.flatMap(i => [i,...(i.extras||[])].map(x=>[x.id,x]))));
 let page = '', timer, query = '';
 let selectedTocHref = '';
 function syncTocHighlight(){
@@ -111,7 +111,7 @@ function fullCode(i){
 function operation(i, algo, groupNote=''){
     if(algo){
         const notes=[groupNote,i.note].filter(Boolean).join(' ');
-        return '<article class="algorithm-entry" id="'+i.id+'"><p class="algorithm-purpose"><strong>目的</strong> : '+esc(i.desc)+'</p><p class="algorithm-cost">計算量 '+esc(i.time)+'　 /　 メモリ '+esc(i.memory)+(i.cost_definition?'　（'+esc(i.cost_definition)+'）':'')+'</p>'+(notes?'<p class="section-note">'+esc(notes)+'</p>':'')+fullCode(i)+'</article>';
+        return '<article class="algorithm-entry" id="'+i.id+'"><p class="algorithm-purpose"><strong>目的</strong> : '+esc(i.desc)+'</p><p class="algorithm-cost">計算量 '+esc(i.time)+'　 /　 メモリ '+esc(i.memory)+(i.cost_definition?'　（'+esc(i.cost_definition)+'）':'')+'</p>'+(notes?'<p class="section-note">'+esc(notes)+'</p>':'')+fullCode(i)+(i.extras||[]).map(extra=>'<h3 style="font-weight:400;margin-top:32px">階乗の配列を作る</h3>'+operation(extra,true)).join('')+'</article>';
     }
     return '<article class="operation-entry" id="'+i.id+'-operation"><p class="algorithm-purpose">機能 : '+esc(i.desc)+'</p><div class="operation-short"><pre class="cpp-highlight"><code>'+i.codeHtml+'</code></pre><div class="code-actions"><button type="button" class="copy" data-shortcopy="'+i.id+'">この部分をコピー</button></div></div><p class="operation-cost">計算量 '+esc(i.cost)+'　 /　 追加メモリ '+esc(i.memory)+'</p>'+(i.definitions?'<p class="symbol-definitions">'+esc(i.definitions)+'</p>':'')+(i.note?'<p class="section-note">'+esc(i.note)+'</p>':'')+(i.example?'<pre class="operation-example">'+esc(i.example)+'</pre>':'')+fullCode(i)+'</article>';
 }

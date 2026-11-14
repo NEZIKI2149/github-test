@@ -971,6 +971,20 @@ def generate():
             g["keywords"] = "doubling 2乗前計算 関数合成 K回移動"
         elif g["key"] == "scc":
             g["keywords"] = "強連結成分 strongly connected components Kosaraju"
+    for g in groups:
+        if g["key"] == "factorial":
+            full = "// Reference: " + PUBLIC + "\n" + program("""
+int N;
+cin >> N;
+vector<int> A(N+1, 1);
+for(int i = 1;i < N+1;i++){
+    A.at(i) = A.at(i-1)*i;
+}
+for(int i = 1;i < N+1;i++){
+    cout << A.at(i) << endl;
+}
+""")
+            g["items"][0]["extras"] = [dict(id="factorial-array", desc="int型の配列のA.at(i)にiの階乗を入れる", time="O(N)", memory="O(N)", note="⚠︎ この実装はNが1以上12以下のとき限定", full=full, fullHtml=html.escape(full, quote=True))]
     enrich(groups)
     limits = limits_sections()
     limits.insert(2, dict(key="memory-calculator", title="メモリ計算機", tool="memory", content="<p>コンテナを選択してメモリ容量を計算する。配列（vector）は一次元／二次元を切り替えられる。set・multiset・map・unordered_set・unordered_mapにも対応し、管理領域込みの推定容量を選択式のメモリ制限と比較する。</p>"))
@@ -1022,6 +1036,8 @@ def generate():
                         for note in [g["note"], item["note"]]:
                             if note: lines += [note, ""]
                         lines += ["```cpp", item["full"].rstrip(), "```", ""]
+                        for extra in item.get("extras", []):
+                            lines += ["### 階乗の配列を作る", "", "目的 : "+extra["desc"], "", "計算量 O(N) / メモリ O(N)", "", extra["note"], "", "```cpp", extra["full"].rstrip(), "```", ""]
                         continue
                     lines += ["### "+desc, "", "計算量："+item["cost"]+" / 追加メモリ："+item["memory"], "", item["definitions"], ""]
                     if page != "algo": lines += ["```cpp", item["code"], "```", ""]

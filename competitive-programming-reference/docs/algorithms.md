@@ -99,6 +99,33 @@ int main(){
 }
 ```
 
+### 階乗の配列を作る
+
+目的 : int型の配列のA.at(i)にiの階乗を入れる
+
+計算量 O(N) / メモリ O(N)
+
+⚠︎ この実装はNが1以上12以下のとき限定
+
+```cpp
+// Reference: https://github.com/NEZIKI2149/github-test/tree/master/competitive-programming-reference
+#include <bits/stdc++.h>
+using namespace std;
+
+int main(){
+    int N;
+    cin >> N;
+    vector<int> A(N+1, 1);
+    for(int i = 1;i < N+1;i++){
+        A.at(i) = A.at(i-1)*i;
+    }
+    for(int i = 1;i < N+1;i++){
+        cout << A.at(i) << endl;
+    }
+    return 0;
+}
+```
+
 ## 強連結成分分解（SCC）
 
 **目的** : 有向グラフを、互いに行き来できる頂点ごとに分ける
