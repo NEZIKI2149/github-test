@@ -3530,6 +3530,15 @@
   ],
   "notes": [
     {
+      "id": "20261115-editor-source-backspace",
+      "at": "2026-11-15 13:49",
+      "title": "参照コメントと空白の削除を調整",
+      "category": "スマホ用エディタ",
+      "text": "新規コードの先頭に参照URLのコメントを追加し、標準ライブラリの部分コピーはコードだけにしました。Backspaceでは直前の4桁ごとのタブ位置まで空白を削除します。",
+      "published": true,
+      "kind": "updates"
+    },
+    {
       "id": "20261114-inline-licenses",
       "at": "2026-11-14 19:40",
       "title": "HTML内に使用部品のライセンスを同梱",

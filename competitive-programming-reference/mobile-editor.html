@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src &#x27;none&#x27;; script-src &#x27;sha256-1kTLd3/EHhyvJhuLZy/5jh+HpFxxxwoj97n7oXZu8VA=&#x27; &#x27;sha256-+QmR2UCBfYUbOVCs7qx1+WzztMEO38f9oYzy/JkjQ9U=&#x27; &#x27;sha256-i0TDXrsM3CC8+dJA4jZo2VWOXv4h0f5Kqb9iiSriO08=&#x27; &#x27;wasm-unsafe-eval&#x27;; script-src-attr &#x27;none&#x27;; style-src &#x27;unsafe-inline&#x27;; img-src &#x27;self&#x27; data:; connect-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;self&#x27;">
+<meta http-equiv="Content-Security-Policy" content="default-src &#x27;none&#x27;; script-src &#x27;sha256-1kTLd3/EHhyvJhuLZy/5jh+HpFxxxwoj97n7oXZu8VA=&#x27; &#x27;sha256-+QmR2UCBfYUbOVCs7qx1+WzztMEO38f9oYzy/JkjQ9U=&#x27; &#x27;sha256-KBdKephjEbHWovuhJTLPby/cNyz2uahVzGSMtjG5F44=&#x27; &#x27;wasm-unsafe-eval&#x27;; script-src-attr &#x27;none&#x27;; style-src &#x27;unsafe-inline&#x27;; img-src &#x27;self&#x27; data:; connect-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;self&#x27;">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#151b22"><title>スマホC++エディタ | ネジキチートシート</title>
 <style>
@@ -2586,7 +2586,7 @@ if(n<lines.length-1)tokens.push({value:'\n'});}return tokens;};})();
 <script>
 "use strict";
 (function(){
-const TEMPLATE="#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    \n}";
+const TEMPLATE="// Reference: https://github.com/NEZIKI2149/github-test\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    \n}";
 const KEY="neziki-cpp-mobile-editor-v1";
 const siteSearch=document.getElementById("site-search");
 siteSearch.addEventListener("submit",function(){save();});
@@ -2854,6 +2854,15 @@ function replace(t,s,e,kind,options){
   else stopUndoGroup();
   render();
 }
+function spacesToPreviousTabStop(){
+  if(anchor!==head)return 0;
+  const prefix=code.slice(code.lastIndexOf("\n",head-1)+1,head);
+  const spaces=prefix.match(/ +$/);
+  if(!spaces)return 0;
+  let column=0;
+  for(const char of prefix)column+=char==="\t"?4-column%4:1;
+  return Math.min(spaces[0].length,column%4||4);
+}
 function backspace(){
   const s=Math.min(anchor,head),e=Math.max(anchor,head);
   if(s!==e){replace("",s,e,"replace");return;}
@@ -2861,11 +2870,9 @@ function backspace(){
   if(autoPairs.some(p=>p.start===head-1&&p.end===head&&code[p.start]===p.open&&code[p.end]===p.close)){
     replace("",head-1,head+1,"autoPairDelete");return;
   }
-  const lineStart=code.lastIndexOf("\n",head-1)+1;
-  const beforeCursor=code.slice(lineStart,head);
-  // インデント領域に4つ以上の半角スペースが続くときだけ、1段分まとめて戻す。
-  if(/^ +$/.test(beforeCursor)&&beforeCursor.endsWith("    ")){
-    replace("",head-4,head,"backspace");
+  const spaces=spacesToPreviousTabStop();
+  if(spaces){
+    replace("",head-spaces,head,"backspace");
     return;
   }
   const c=Array.from(code.slice(0,head)).pop();
@@ -3533,9 +3540,7 @@ editor.addEventListener('beforeinput',e=>{
   if(e.inputType==='insertText'&&e.data){e.preventDefault();insert(e.data,'type');scheduleInputFormat(e.data);}
   else if(e.inputType==='insertLineBreak'||e.inputType==='insertParagraph'){e.preventDefault();enter();}
   else if(e.inputType==='deleteContentBackward'){
-    const prefix=code.slice(code.lastIndexOf('\n',head-1)+1,head);
-    const indent=anchor===head&&/^ +$/.test(prefix)&&prefix.endsWith('    ');
-    if(indent){e.preventDefault();backspace();}
+    if(spacesToPreviousTabStop()){e.preventDefault();backspace();}
   }
 });
 editor.addEventListener("keydown",function(e){
