@@ -331,7 +331,51 @@
       </div>
     </nav>
     <main id="main" tabindex="-1">
-      <article id="subject-b" hidden><h1 tabindex="-1">科目B</h1><p>科目Bの教材は準備中です。</p></article>
+      <article id="subject-b" hidden><h1 tabindex="-1">科目B</h1><p>目次から演習を選んでください。</p></article>
+      <article id="b-1-1" hidden>
+        <h1 tabindex="-1">B-1-1　契約終了後に使われたIDを追う</h1>
+        <p class="context">解答の目安は8〜10分です。</p>
+        <h2>事例</h2>
+        <p>H社は顧客台帳の更新業務を委託し、委託先担当者ごとにIDを発行している。認証とファイル操作の両方に記録されるセッションIDは、ログイン成功後の一連の操作を識別する番号である。ログの時刻基準は共通で、ダウンロードの成功はファイルが取得されたことを示す。操作者の氏名は記録されない。</p>
+        <h2>資料A　契約・権限台帳</h2>
+        <ul>
+          <li>EXT-17は契約K17の担当者に割り当てられ、利用期限は6月30日18:00。顧客台帳のダウンロード権限があり、7月1日09:30時点でIDは有効。</li>
+          <li>EXT-23は別契約の有効なIDで、手順書の閲覧権限を持つ。</li>
+        </ul>
+        <h2>資料B　認証ログ</h2>
+        <table aria-label="7月1日の認証ログ">
+          <thead><tr><th scope="col">時刻</th><th scope="col">ID</th><th scope="col">結果</th><th scope="col">セッションID</th></tr></thead>
+          <tbody>
+            <tr><td>09:01</td><td>EXT-17</td><td>失敗</td><td>なし</td></tr>
+            <tr><td>09:03</td><td>EXT-23</td><td>成功</td><td>S40</td></tr>
+            <tr><td>09:04</td><td>EXT-17</td><td>成功</td><td>S41</td></tr>
+          </tbody>
+        </table>
+        <h2>資料C　ファイル操作ログ</h2>
+        <table aria-label="7月1日のファイル操作ログ">
+          <thead><tr><th scope="col">時刻</th><th scope="col">セッションID</th><th scope="col">対象</th><th scope="col">操作結果</th></tr></thead>
+          <tbody>
+            <tr><td>09:05</td><td>S40</td><td>手順書</td><td>閲覧成功</td></tr>
+            <tr><td>09:06</td><td>S41</td><td>顧客台帳</td><td>ダウンロード成功</td></tr>
+          </tbody>
+        </table>
+        <h2>資料D　手続と処理記録</h2>
+        <p>契約担当は契約台帳に終了を記録する。ID管理者は停止依頼を受けたときだけIDを無効化する。終了情報をID管理者へ通知する手順はない。K17の終了は登録済みで、EXT-17の停止依頼・処理は未登録である。</p>
+        <div data-practice></div>
+        <details>
+          <summary>別のログで解き直す</summary>
+          <p>契約K31の委託先ID EXT-31は8月20日17:00が利用期限で、翌朝も有効だった。EXT-44は別の有効なIDである。</p>
+          <ul>
+            <li>8月21日08:59にEXT-31がS82で、09:00にEXT-44がS83で認証に成功した。</li>
+            <li>同日09:01にS82で配送先一覧のダウンロードに、09:02にS83で作業予定表の閲覧に成功した。</li>
+          </ul>
+          <p>期限後に何がどのIDで取得されたか、突き合わせたログの値を添えて60字以内で答えてください。</p>
+          <details>
+            <summary>模範解答を表示</summary>
+            <p>セッションIDがS82で一致するため、EXT-31で配送先一覧がダウンロードされた。操作時刻に最も近い認証はS83ですが、取得の記録と一致するのはS82です。</p>
+          </details>
+        </details>
+      </article>
       <section id="welcome" hidden><h1 class="home-prompt" tabindex="-1">目次を開いて、読みたい単元を選んでください。</h1></section>
       <article id="intro">
         <h1 tabindex="-1">応用情報の学習ノート</h1>
@@ -2245,13 +2289,17 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
   <script>
     const byId = (id) => document.getElementById(id);
     const lessons = Array.from(document.querySelectorAll("[data-lesson]"));
-    const sections = [byId("welcome"), byId("intro"), byId("subject-b"), ...lessons];
+    const subjectBLesson = byId("b-1-1");
+    const sections = [byId("welcome"), byId("intro"), byId("subject-b"), subjectBLesson, ...lessons];
     const toc = byId("toc");
     const subjectAItems = Array.from(toc.children);
     const subjectBNote = document.createElement("div");
     subjectBNote.innerHTML = `<h2>目次</h2>
       <p>情報セキュリティは必須、残り10分野から4分野を選びます。</p>
-      <p>B-1　情報セキュリティ（必須）</p>
+      <details>
+        <summary>B-1　情報セキュリティ（必須）</summary>
+        <a href="#b-1-1">B-1-1　契約終了後に使われたIDを追う</a>
+      </details>
       <p>B-2　経営戦略・情報戦略</p>
       <p>B-3　プログラミング（アルゴリズム）</p>
       <p>B-4　システムアーキテクチャ</p>
@@ -2269,7 +2317,7 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
     toc.appendChild(tocSpacer);
     toc.addEventListener("click", (event) => {
       const summary = event.target.closest("summary");
-      if (!summary || summary.parentElement.parentElement !== toc || !summary.parentElement.open) return;
+      if (!summary || ![toc, subjectBNote].includes(summary.parentElement.parentElement) || !summary.parentElement.open) return;
       event.preventDefault();
       const position = summary.getBoundingClientRect().top;
       const scrollBefore = toc.scrollTop;
@@ -2316,13 +2364,14 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
 
     const subjectToggle = byId("subject-toggle");
     const [subjectA, subjectB] = subjectToggle.querySelectorAll("span");
+    const isSubjectBPage = (hash) => hash === "subject-b" || hash === subjectBLesson.id;
     subjectToggle.addEventListener("click", () => {
-      location.hash = location.hash === "#subject-b" ? "intro" : "subject-b";
+      location.hash = isSubjectBPage(location.hash.slice(1)) ? "intro" : "subject-b";
     });
 
     function showSection(moveFocus) {
       const hash = location.hash.slice(1);
-      const isSubjectB = hash === "subject-b";
+      const isSubjectB = isSubjectBPage(hash);
       for (const item of subjectAItems) item.hidden = isSubjectB;
       subjectBNote.hidden = !isSubjectB;
       subjectA.toggleAttribute("data-current", !isSubjectB);
@@ -2330,7 +2379,7 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
       subjectToggle.setAttribute("aria-label", isSubjectB
         ? "科目Bを表示中。科目Aに切り替える"
         : "科目Aを表示中。科目Bに切り替える");
-      if (narrowScreen.matches && isSubjectB && moveFocus) setTocOpen(true);
+      if (narrowScreen.matches && moveFocus && isSubjectB) setTocOpen(hash === "subject-b");
       const current = sections.find((section) => section.id === hash && section.id !== "welcome")
         ?? byId(narrowScreen.matches ? "welcome" : "intro");
       for (const section of sections) section.hidden = section !== current;
@@ -2340,7 +2389,7 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
       }
       const chapter = toc.querySelector('a[aria-current="page"]')?.closest("details");
       if (chapter) chapter.open = true;
-      if (!moveFocus || (isSubjectB && narrowScreen.matches)) return;
+      if (!moveFocus || (hash === "subject-b" && narrowScreen.matches)) return;
       const heading = current.querySelector("h1");
       heading.focus({ preventScroll: true });
       heading.scrollIntoView({ block: "start" });
@@ -2556,6 +2605,52 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
     });
 
     const questionSets = {
+      "b-1-1": [
+        {
+          prompt: "1-a　期限後にどのIDでどのファイルが取得されたか。共通するログ項目とその値を含め60字以内で答えてください。",
+          thinkFirst: true,
+          options: [
+            "時刻が近いため、EXT-23で顧客台帳がダウンロードされた",
+            "セッションIDがS41で一致するため、EXT-17で顧客台帳がダウンロードされた",
+            "セッションIDがS40で一致するため、EXT-17で手順書がダウンロードされた"
+          ],
+          answer: 1,
+          explanation: "自己採点の要点は、EXT-17、顧客台帳の取得、S41による照合の3点です。資料Aで期限を確認し、資料Bの09:04と資料Cの09:06をS41でつなぎます。認証成功だけではファイルの取得は分かりません。"
+        },
+        {
+          prompt: "1-b　台帳に記載された担当者本人が取得したと断定できない理由を45字以内で答えてください。",
+          thinkFirst: true,
+          options: [
+            "認証に一度失敗したため、その後の認証は本人の操作ではないから",
+            "認証と取得の時刻が異なり、操作を同じIDに結び付けられないから",
+            "ログは使用IDと操作を示すが、実際に操作した人物は確認できないから"
+          ],
+          answer: 2,
+          explanation: "自己採点の要点は、ログで確認できるのが使用IDと操作までで、操作者は未確認だと書けていることです。資料Aが示すのはIDの割当先で、資料B・Cに操作者の氏名はありません。"
+        },
+        {
+          prompt: "2　契約終了が登録されていたのにIDが無効化されなかった業務上の理由を65字以内で答えてください。",
+          thinkFirst: true,
+          options: [
+            "終了をID管理者に通知する手順がなく、停止依頼を受けてから処理する管理者に依頼が届かなかったから",
+            "契約担当が契約の終了を台帳に登録しなかったため、ID管理者が終了日を確認できなかったから",
+            "ID管理者が停止依頼を受け取った後も、期限内に処理しなかったから"
+          ],
+          answer: 0,
+          explanation: "自己採点の要点は、通知手順がないことと、停止処理には依頼が必要なことの2点です。資料Dでは契約終了は登録済みで、停止依頼と停止処理は未登録です。"
+        },
+        {
+          prompt: "3　現行の担当分担で再発を防ぐには、誰が、どの情報を、いつ渡し、誰がいつ何をするか。80字以内で答えてください。",
+          thinkFirst: true,
+          options: [
+            "ID管理者が委託先に強いパスワードを設定するよう通知し、契約終了後も定期的に変更させる",
+            "契約担当が対象IDと利用期限を事前にID管理者へ通知し、ID管理者が利用期限に合わせて対象IDを無効化する",
+            "契約担当が終了済み契約を月末にまとめて報告し、ID管理者が受領後に対象IDを無効化する"
+          ],
+          answer: 1,
+          explanation: "自己採点の要点は、契約担当が対象IDと期限を事前に通知し、ID管理者が期限に無効化することです。資料Dの終了登録と無効化をつなぐ手順にします。月末にまとめると、利用期限から無効化までIDが使える期間が生じます。"
+        }
+      ],
       "audit-followup": [
         {
           prompt: "監査人がフォローアップで行う作業として適切なものはどれですか。",
@@ -4176,6 +4271,11 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
     }
 
     const template = byId("practice-template");
+    const subjectBPractice = subjectBLesson.querySelector("[data-practice]");
+    const subjectBPracticeContent = template.content.cloneNode(true);
+    subjectBPracticeContent.querySelector(".record").remove();
+    subjectBPractice.append(subjectBPracticeContent);
+    initializeQuiz(subjectBPractice, questionSets[subjectBLesson.id]);
     const studyRecordsKey = "ap-study-note.checks.v1";
     const recordControls = new Map();
 
