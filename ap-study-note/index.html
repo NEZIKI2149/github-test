@@ -103,7 +103,18 @@
     @media (max-width: 760px) {
       .layout { grid-template-columns: 1fr; gap: .8rem; padding-block-start: .8rem; }
       .masthead .context { display: none; }
-      nav { position: fixed; z-index: 1; inset: 4.5rem 1rem .75rem; max-height: none; padding: .6rem .8rem; box-shadow: 0 8px 24px #202d3929; }
+      html:has(#toc:not([hidden])) { overflow: hidden; }
+      nav {
+        position: fixed;
+        z-index: 1;
+        inset: 4.5rem 1rem calc(.75rem + env(safe-area-inset-bottom));
+        align-self: stretch;
+        max-height: none;
+        overflow-y: auto;
+        overscroll-behavior-y: contain;
+        padding: .6rem .8rem;
+        box-shadow: 0 8px 24px #202d3929;
+      }
       .table-wrap th, .table-wrap td { padding-inline: .4rem; }
       main:has(#welcome:not([hidden])) { background: transparent; border: 0; padding: .75rem 0; }
     }
