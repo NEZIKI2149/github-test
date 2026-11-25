@@ -2248,8 +2248,20 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
     const sections = [byId("welcome"), byId("intro"), byId("subject-b"), ...lessons];
     const toc = byId("toc");
     const subjectAItems = Array.from(toc.children);
-    const subjectBNote = document.createElement("p");
-    subjectBNote.textContent = "科目Bの目次は準備中です。";
+    const subjectBNote = document.createElement("div");
+    subjectBNote.innerHTML = `<h2>目次</h2>
+      <p>情報セキュリティは必須、残り10分野から4分野を選びます。</p>
+      <p>B-1　情報セキュリティ（必須）</p>
+      <p>B-2　経営戦略・情報戦略</p>
+      <p>B-3　プログラミング（アルゴリズム）</p>
+      <p>B-4　システムアーキテクチャ</p>
+      <p>B-5　ネットワーク</p>
+      <p>B-6　データベース</p>
+      <p>B-7　組込みシステム開発</p>
+      <p>B-8　情報システム開発</p>
+      <p>B-9　プロジェクトマネジメント</p>
+      <p>B-10　サービスマネジメント</p>
+      <p>B-11　システム監査</p>`;
     subjectBNote.hidden = true;
     toc.appendChild(subjectBNote);
     const tocSpacer = document.createElement("div");
