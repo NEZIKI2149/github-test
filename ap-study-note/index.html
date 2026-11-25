@@ -4,6 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>応用情報の学習ノート｜公開版</title>
+  <script>
+    document.documentElement.dataset.standardTheme = "light";
+    try {
+      const saved = JSON.parse(localStorage.getItem("ap-study-theme"));
+      if (saved?.standard === "dark") document.documentElement.dataset.standardTheme = "dark";
+      document.documentElement.dataset.theme = saved?.poison === true ? "poison" : document.documentElement.dataset.standardTheme;
+    } catch {}
+  </script>
   <style>
     :root {
       color-scheme: light;
@@ -141,13 +149,88 @@
     .progress-dialog h2 { margin: 0; }
     .progress-dialog textarea { display: block; box-sizing: border-box; width: 100%; font: inherit; margin-block: .35rem; }
     #study-png-preview { display: block; width: min(100%, 32rem); height: auto; margin-block: .75rem; border: 1px solid var(--line); }
+    :root { --on-accent: white; --diagram-line: #526b82; --focus: #93611c; }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --background: #151b22;
+      --paper: #1c242d;
+      --ink: #e5ebf2;
+      --muted: #a7b3c1;
+      --line: #35414e;
+      --accent: #73d9c4;
+      --wash: #233e3c;
+      --on-accent: #151b22;
+      --diagram-line: #a7b3c1;
+      --focus: #ffd386;
+    }
+    :root[data-theme="poison"] {
+      --background: #ff00ff;
+      --paper: #00ff00;
+      --ink: #291038;
+      --muted: #4c185e;
+      --line: #8500bd;
+      --accent: #4b006d;
+      --wash: #baff00;
+      --diagram-line: #4b006d;
+      --focus: #291038;
+    }
+    [data-theme="poison"] .masthead { background: var(--background); }
+    [data-theme="poison"] body, [data-theme="poison"] body * { font-weight: 700; }
+    :focus-visible { outline-color: var(--focus); }
+    button, .skip, .panel input, .panel select { background: var(--paper); color: var(--ink); }
+    .brand, .primary, .primary:hover, .bits button[aria-pressed="true"], .controls button[aria-pressed="true"],
+    .theme-controls button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+    .primary:hover { text-decoration: underline; }
+    .cpu-timeline li[data-task="B"] strong { background: var(--wash); }
+    .packet-topology path, .packet-topology rect, .packet-topology circle,
+    .schedule-diagram circle, .schedule-diagram line { stroke: var(--diagram-line); }
+    .schedule-diagram marker path, svg g[fill="#175985"] { fill: var(--accent); }
+    .schedule-diagram .critical-edge { stroke: var(--accent); }
+    [data-theme="dark"] canvas { background: #edf4fb; color: #202d39; }
+    .theme-controls { display: flex; gap: .3rem; margin-left: auto; }
+    .theme-controls button { white-space: nowrap; padding-inline: .55rem; }
+    #toc-toggle { margin-left: 0; }
+    @media (max-width: 480px) {
+      .masthead-inner { gap: .3rem; padding-inline: .5rem; }
+      .masthead strong { font-size: .85rem; line-height: 1.25; }
+      .masthead .brand { padding-inline: .25rem; }
+      .masthead button { padding-inline: .35rem; font-size: .78rem; }
+    }
   </style>
 </head>
 <body>
   <a class="skip" href="#main">本文へ移動</a>
   <header class="masthead">
-    <div class="masthead-inner"><span class="brand">AP</span><strong>応用情報の学習ノート</strong><span class="context">科目A</span><button id="toc-toggle" type="button" aria-controls="toc" aria-expanded="true" hidden>目次を閉じる</button></div>
+    <div class="masthead-inner"><span class="brand">AP</span><strong>応用情報の学習ノート</strong><span class="context">科目A</span>
+      <div class="theme-controls">
+        <button id="theme-toggle" type="button" aria-label="暗い配色" aria-pressed="false">明 / 暗</button>
+        <button id="poison-toggle" type="button" aria-label="毒モード" aria-pressed="false">毒</button>
+      </div>
+      <button id="toc-toggle" type="button" aria-controls="toc" aria-expanded="true" hidden>目次を閉じる</button>
+    </div>
   </header>
+  <script>
+    (() => {
+      const root = document.documentElement;
+      const theme = document.getElementById("theme-toggle");
+      const poison = document.getElementById("poison-toggle");
+      const applyTheme = (standard, usePoison) => {
+        root.dataset.standardTheme = standard;
+        root.dataset.theme = usePoison ? "poison" : standard;
+        theme.setAttribute("aria-pressed", String(root.dataset.theme === "dark"));
+        poison.setAttribute("aria-pressed", String(usePoison));
+      };
+      const saveTheme = (standard, usePoison) => {
+        applyTheme(standard, usePoison);
+        try {
+          localStorage.setItem("ap-study-theme", JSON.stringify({ standard, poison: usePoison }));
+        } catch {}
+      };
+      applyTheme(root.dataset.standardTheme, root.dataset.theme === "poison");
+      theme.addEventListener("click", () => saveTheme(root.dataset.standardTheme === "dark" ? "light" : "dark", false));
+      poison.addEventListener("click", () => saveTheme(root.dataset.standardTheme, root.dataset.theme !== "poison"));
+    })();
+  </script>
   <div class="layout">
     <nav id="toc" aria-label="学習の目次">
       <h2>目次</h2>
