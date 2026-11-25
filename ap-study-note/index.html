@@ -242,6 +242,13 @@
       poison.addEventListener("click", () => saveTheme(root.dataset.standardTheme, root.dataset.theme !== "poison"));
     })();
   </script>
+  <div class="subject-switch" aria-label="科目の切り替え"><a href="#intro" id="subject-a">科目A</a><a href="#subject-b" id="subject-b-link">科目B</a></div>
+  <style>
+    .subject-switch { position: sticky; top: 4rem; z-index: 2; display: flex; gap: .5rem; max-width: 72rem; margin: .6rem auto 0; padding: .2rem clamp(1rem, 4vw, 2rem); background: var(--background); }
+    .subject-switch a { padding: .35rem 1rem; border: 1px solid var(--line); border-radius: .4rem; background: var(--paper); color: var(--ink); text-decoration: none; }
+    .subject-switch a[aria-current="page"] { background: var(--accent); color: var(--on-accent); }
+    @media (max-width: 760px) { .subject-switch { margin-top: .4rem; } nav { top: 7.6rem; } }
+  </style>
   <div class="layout">
     <nav id="toc" aria-label="学習の目次">
       <h2>目次</h2>
@@ -327,6 +334,7 @@
       </div>
     </nav>
     <main id="main" tabindex="-1">
+      <article id="subject-b" hidden><h1 tabindex="-1">科目B</h1><p>科目Bの教材は準備中です。</p></article>
       <section id="welcome" hidden><h1 class="home-prompt" tabindex="-1">目次を開いて、読みたい単元を選んでください。</h1></section>
       <article id="intro">
         <h1 tabindex="-1">応用情報の学習ノート</h1>
@@ -2240,8 +2248,13 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
   <script>
     const byId = (id) => document.getElementById(id);
     const lessons = Array.from(document.querySelectorAll("[data-lesson]"));
-    const sections = [byId("welcome"), byId("intro"), ...lessons];
+    const sections = [byId("welcome"), byId("intro"), byId("subject-b"), ...lessons];
     const toc = byId("toc");
+    const subjectAItems = Array.from(toc.children);
+    const subjectBNote = document.createElement("p");
+    subjectBNote.textContent = "科目Bの目次は準備中です。";
+    subjectBNote.hidden = true;
+    toc.appendChild(subjectBNote);
     const tocSpacer = document.createElement("div");
     tocSpacer.setAttribute("aria-hidden", "true");
     toc.appendChild(tocSpacer);
@@ -2294,6 +2307,14 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
 
     function showSection(moveFocus) {
       const hash = location.hash.slice(1);
+      const isSubjectB = hash === "subject-b";
+      for (const item of subjectAItems) item.hidden = isSubjectB;
+      subjectBNote.hidden = !isSubjectB;
+      byId("subject-a").toggleAttribute("aria-current", !isSubjectB);
+      byId("subject-b-link").toggleAttribute("aria-current", isSubjectB);
+      if (!isSubjectB) byId("subject-a").setAttribute("aria-current", "page");
+      if (isSubjectB) byId("subject-b-link").setAttribute("aria-current", "page");
+      if (narrowScreen.matches && isSubjectB && moveFocus) setTocOpen(true);
       const current = sections.find((section) => section.id === hash && section.id !== "welcome")
         ?? byId(narrowScreen.matches ? "welcome" : "intro");
       for (const section of sections) section.hidden = section !== current;
@@ -2303,7 +2324,7 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
       }
       const chapter = toc.querySelector('a[aria-current="page"]')?.closest("details");
       if (chapter) chapter.open = true;
-      if (!moveFocus) return;
+      if (!moveFocus || (isSubjectB && narrowScreen.matches)) return;
       const heading = current.querySelector("h1");
       heading.focus({ preventScroll: true });
       heading.scrollIntoView({ block: "start" });
