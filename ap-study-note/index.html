@@ -331,6 +331,43 @@
     </nav>
     <main id="main" tabindex="-1">
       <article id="subject-b" hidden><h1 tabindex="-1">科目B</h1><p>目次から演習を選んでください。</p></article>
+      <article id="b-1-4" hidden>
+        <h1 tabindex="-1">B-1-4　バックアップから業務を復旧できるか判断する</h1>
+        <p class="context">解答の目安は12〜15分です。</p>
+        <p>T社の受注管理システムでデータが破損した。担当者は復元に使うコピーと、業務を再開できる時刻を判断する。</p>
+        <h2>資料A　時系列</h2>
+        <ul>
+          <li>09:10に破損が始まり、破損したデータは業務停止まで修正されなかった。</li>
+          <li>09:20に受注業務が停止した。</li>
+          <li>09:35に、影響を受けた環境から切り離した復旧環境で復元を始められる。時刻基準はすべて共通。</li>
+        </ul>
+        <h2>資料B　業務条件と試験</h2>
+        <p>業務停止時刻を基準に、失われ得るデータは15分以内（RPO）、業務再開までの時間は75分以内（RTO）とする。復元後、保存済みの資料と受注件数・合計金額が一致し、試験注文を登録して出荷指示を出せることを確認する。この確認には10分かかり、完了後に業務を再開できる。</p>
+        <h2>資料C　バックアップ候補</h2>
+        <p>「データの時点」はコピーに反映された受注データの時刻。保存時の照合値はコピーとは別に保全されており、コピーの書換えの確認に使う。</p>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="バックアップ候補の表">
+          <table aria-label="バックアップ候補">
+            <thead><tr><th scope="col">候補</th><th scope="col">データの時点</th><th scope="col">保存完了</th><th scope="col">コピーの保全状態</th><th scope="col">復元時間</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">A</th><td>08:50</td><td>08:58</td><td>切り離して保管。照合値と一致。</td><td>20分</td></tr>
+              <tr><th scope="row">B</th><td>09:05</td><td>09:12</td><td>保存後は書換え禁止。照合値と一致。</td><td>45分</td></tr>
+              <tr><th scope="row">C</th><td>09:15</td><td>09:18</td><td>保存後は書換え禁止。照合値と一致。</td><td>15分</td></tr>
+              <tr><th scope="row">D</th><td>09:07</td><td>09:09</td><td>稼働環境から書換え可能。照合値と不一致。</td><td>15分</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h2>資料D　代替運用</h2>
+        <p>安全性と両目標を満たす案がなければ業務責任者に報告し、承認を得て手作業で受注を記録する。手作業はシステムの業務再開時刻やデータの復旧時点の計算には含めない。</p>
+        <div data-practice></div>
+        <details>
+          <summary>復元の条件を変えて解き直す</summary>
+          <p>復元開始が09:40になり、再開前の確認に15分かかる。Bを使った場合の業務再開見込みと、RPO・RTOの達否を答えてください。</p>
+          <details>
+            <summary>模範解答を表示</summary>
+            <p>Bのデータの時点は09:05のままで、損失幅は15分。RPOは達成する。09:40から復元45分と確認15分で10:40に再開する見込みなので、RTOの期限10:35を5分超える。</p>
+          </details>
+        </details>
+      </article>
       <article id="b-1-3" hidden>
         <h1 tabindex="-1">B-1-3　不審メールを受けた後の初動を決める</h1>
         <p class="context">解答の目安は10〜12分です。</p>
@@ -2309,6 +2346,10 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
       </article>
     </main>
   </div>
+  <template id="b-1-4-timeline">
+    <p><strong>停止時刻を基準にした時系列</strong></p>
+    <p>09:05　RPOの境界、Bのデータの時点<br>↓<br>09:10　破損開始<br>↓<br>09:20　業務停止<br>↓<br>09:35　Bの復元開始<br>↓ 復元45分＋確認10分<br>10:30　業務再開見込み<br>↓<br>10:35　RTOの期限</p>
+  </template>
   <template id="practice-template">
     <h2>確認問題</h2>
     <p>1問ずつ解答と解説を確認し、最後に正答数を表示します。</p>
@@ -2366,7 +2407,7 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
   <script>
     const byId = (id) => document.getElementById(id);
     const lessons = Array.from(document.querySelectorAll("[data-lesson]"));
-    const subjectBLessons = ["b-1-1", "b-1-2", "b-1-3"].map(byId);
+    const subjectBLessons = ["b-1-1", "b-1-2", "b-1-3", "b-1-4"].map(byId);
     const sections = [byId("welcome"), byId("intro"), byId("subject-b"), ...subjectBLessons, ...lessons];
     const toc = byId("toc");
     const subjectAItems = Array.from(toc.children);
@@ -2378,6 +2419,7 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
         <a href="#b-1-1">B-1-1　契約終了後に使われたIDを追う</a>
         <a href="#b-1-2">B-1-2　共有リンクの公開範囲を見直す</a>
         <a href="#b-1-3">B-1-3　不審メールを受けた後の初動を決める</a>
+        <a href="#b-1-4">B-1-4　バックアップから業務を復旧できるか判断する</a>
       </details>
       <p>B-2　経営戦略・情報戦略</p>
       <p>B-3　プログラミング（アルゴリズム）</p>
@@ -2686,6 +2728,53 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
     });
 
     const questionSets = {
+      "b-1-4": [
+        {
+          prompt: "1　CとDを候補から外す理由を、それぞれの記録を使って80字以内で答えてください。",
+          thinkFirst: true,
+          options: [
+            "CとDはどちらも破損開始後に保存が完了したから",
+            "Cは破損開始後のデータを保存し、Dは保存時の照合値と一致しないから",
+            "Cは復元が遅く、Dは業務停止後のデータだから"
+          ],
+          answer: 1,
+          explanation: "資料A・Cより、Cは保存後の書換えから保護されていても、元データの破損を含みます。Dはコピーの健全性を確認できません。不一致の原因までは特定できません。"
+        },
+        {
+          prompt: "2　採用する候補、失われ得るデータの時間幅、業務再開見込みを80字以内で答えてください。",
+          thinkFirst: true,
+          options: [
+            "A。損失幅は30分で10:05再開見込み",
+            "B。保存完了から停止まで8分で、10:20再開見込み",
+            "B。09:20－09:05で損失幅は15分。09:35から復元45分と確認10分で10:30再開見込み"
+          ],
+          answer: 2,
+          explanation: "資料A〜Cより、BはRPO15分をちょうど満たし、RTOの期限10:35にも間に合います。Aは10:05に再開できても、損失幅30分でRPO未達です。Bの保存完了は09:12ですが、復旧時点は09:05です。",
+          solutionId: "b-1-4-timeline"
+        },
+        {
+          prompt: "3　復元結果を業務に使えるか確かめるため、何を照合し、どの操作を試すか75字以内で答えてください。",
+          thinkFirst: true,
+          options: [
+            "受注件数と合計金額を保存済み資料と照合し、試験注文の登録から出荷指示まで実行できるか確認する",
+            "保存時の照合値と一致することを確かめ、復旧環境へのログインだけを試す",
+            "受注件数と金額を照合し、操作の確認は業務再開後に行う"
+          ],
+          answer: 0,
+          explanation: "資料Bの再開条件は、復元データの照合と、注文登録から出荷指示までの業務操作の確認です。"
+        },
+        {
+          prompt: "4　復元開始が09:50に遅れました。AとBがそれぞれ満たせない目標と、当面の対応を90字以内で答えてください。",
+          thinkFirst: true,
+          options: [
+            "AはRTO未達、BはRPO未達。最新のCで復元する",
+            "Aは損失幅30分でRPO未達。Bは再開10:45でRTO未達。業務責任者に報告し、承認を得て手作業で受注を記録する",
+            "Aは10:20に再開できるため両目標を満たす。Aを使って通常運用を再開する"
+          ],
+          answer: 1,
+          explanation: "資料A〜Dより、Aは09:50から復元20分と確認10分で10:20、Bは復元45分と確認10分で10:45再開です。復元開始が遅れても、コピーが反映するデータの時点は変わりません。"
+        }
+      ],
       "b-1-3": [
         {
           prompt: "1　最初に保護するアカウントと、その根拠を65字以内で答えてください。",
