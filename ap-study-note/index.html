@@ -332,6 +332,47 @@
     </nav>
     <main id="main" tabindex="-1">
       <article id="subject-b" hidden><h1 tabindex="-1">科目B</h1><p>目次から演習を選んでください。</p></article>
+      <article id="b-1-2" hidden>
+        <h1 tabindex="-1">B-1-2　共有リンクの公開範囲を見直す</h1>
+        <p class="context">解答の目安は8〜10分です。</p>
+        <h2>事例</h2>
+        <p>M社は配送委託先に当日の配送表をクラウドで共有している。配送表には配送先情報が含まれ、公開範囲の点検で設定の不備が見つかった。</p>
+        <h2>資料A　業務上の許可</h2>
+        <p>M社の担当者は配送表を編集できる。委託先では担当P・Qだけが各自の登録アカウントで閲覧できる。委託先の他の社員、その他の社外者、未認証の利用者には閲覧を許可しない。</p>
+        <h2>資料B　共有サービスの仕様</h2>
+        <ul>
+          <li>親フォルダーから継承したグループ権限、ファイルへの個別付与、共有リンクのうち、どれか一つが閲覧を許可すれば開ける。</li>
+          <li>「リンクを知っている全員」はログインせず閲覧できる。リンクを無効化しても、継承権限や個別付与は残る。</li>
+          <li>配送表だけで権限継承を解除できる。解除すると親フォルダーからの権限が配送表から外れる。</li>
+          <li>閲覧の成功・拒否を記録する。未認証の場合、利用者IDは記録しない。</li>
+        </ul>
+        <h2>資料C　配送表の設定</h2>
+        <ul>
+          <li>親フォルダーの配送連絡グループは閲覧権限を持ち、配送表にもその権限が継承される。グループにはP・Qと担当外のRが所属する。</li>
+          <li>M社担当者には配送表の編集権限を直接付与済み。P・Qへの個別付与はない。</li>
+          <li>公開リンクL1は09:00から10:00の点検時まで「リンクを知っている全員」で有効だった。</li>
+        </ul>
+        <h2>資料D　取得できた閲覧ログ</h2>
+        <table aria-label="取得できた閲覧ログ">
+          <thead><tr><th scope="col">時刻</th><th scope="col">対象</th><th scope="col">経路</th><th scope="col">利用者</th><th scope="col">結果</th></tr></thead>
+          <tbody>
+            <tr><td>09:12</td><td>配送表</td><td>L1</td><td>未認証</td><td>閲覧成功</td></tr>
+            <tr><td>09:24</td><td>配送表</td><td>グループ権限</td><td>Q</td><td>閲覧成功</td></tr>
+            <tr><td>09:35</td><td>手順案内</td><td>L2</td><td>R</td><td>閲覧成功</td></tr>
+          </tbody>
+        </table>
+        <p>09:40〜09:50のログは収集障害で欠落している。取得できた記録にRの配送表閲覧成功は見当たらない。</p>
+        <div data-practice></div>
+        <details>
+          <summary>別の設定で解き直す</summary>
+          <p>元の設定からL1を無効化し、Rを配送連絡グループから外した。ただし、Rには配送表への個別の閲覧権限が付与されている。P・Qはグループに残っている。</p>
+          <p>Rがまだ閲覧できる理由と、P・Qの閲覧を維持する最小の変更を答えてください。</p>
+          <details>
+            <summary>模範解答を表示</summary>
+            <p>Rへの個別付与が残るため、その付与を削除する。P・Qはグループ経由で閲覧を続けられる。</p>
+          </details>
+        </details>
+      </article>
       <article id="b-1-1" hidden>
         <h1 tabindex="-1">B-1-1　契約終了後に使われたIDを追う</h1>
         <p class="context">解答の目安は8〜10分です。</p>
@@ -2289,8 +2330,8 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
   <script>
     const byId = (id) => document.getElementById(id);
     const lessons = Array.from(document.querySelectorAll("[data-lesson]"));
-    const subjectBLesson = byId("b-1-1");
-    const sections = [byId("welcome"), byId("intro"), byId("subject-b"), subjectBLesson, ...lessons];
+    const subjectBLessons = ["b-1-1", "b-1-2"].map(byId);
+    const sections = [byId("welcome"), byId("intro"), byId("subject-b"), ...subjectBLessons, ...lessons];
     const toc = byId("toc");
     const subjectAItems = Array.from(toc.children);
     const subjectBNote = document.createElement("div");
@@ -2299,6 +2340,7 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
       <details>
         <summary>B-1　情報セキュリティ（必須）</summary>
         <a href="#b-1-1">B-1-1　契約終了後に使われたIDを追う</a>
+        <a href="#b-1-2">B-1-2　共有リンクの公開範囲を見直す</a>
       </details>
       <p>B-2　経営戦略・情報戦略</p>
       <p>B-3　プログラミング（アルゴリズム）</p>
@@ -2364,7 +2406,7 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
 
     const subjectToggle = byId("subject-toggle");
     const [subjectA, subjectB] = subjectToggle.querySelectorAll("span");
-    const isSubjectBPage = (hash) => hash === "subject-b" || hash === subjectBLesson.id;
+    const isSubjectBPage = (hash) => hash === "subject-b" || subjectBLessons.some(({ id }) => id === hash);
     subjectToggle.addEventListener("click", () => {
       location.hash = isSubjectBPage(location.hash.slice(1)) ? "intro" : "subject-b";
     });
@@ -2605,6 +2647,52 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
     });
 
     const questionSets = {
+      "b-1-2": [
+        {
+          prompt: "1　許可範囲外の人が配送表を閲覧できる二つの経路を、対象者と経路を挙げて65字以内で答えてください。",
+          thinkFirst: true,
+          options: [
+            "Rは配送表への個別付与で、リンクを知る人はログインせずL1で閲覧できる",
+            "Rは親フォルダーから継承したグループ権限で、リンクを知る人はログインせずL1で閲覧できる",
+            "Rは親フォルダーから継承したグループ権限で、L1はP・Qだけがログインして閲覧できる"
+          ],
+          answer: 1,
+          explanation: "資料Aでは社外の許可対象はP・Qだけです。資料B・Cから、Rと継承権限、リンク保有者と未認証閲覧の両方を挙げられれば正答です。"
+        },
+        {
+          prompt: "2　配送表の未認証閲覧について確認できた事実と、Rの閲覧の有無を確定できない理由を80字以内で答えてください。",
+          thinkFirst: true,
+          options: [
+            "09:12にL1で未認証の閲覧が成功した。利用者IDが記録されず、一部の時間帯はログも欠落しているため、Rが閲覧したかは確定できない",
+            "09:12の閲覧成功はRによるものだ。Rは配送連絡グループに所属し、配送表を閲覧できるからだ",
+            "Rの閲覧成功は09:35に記録されており、配送表が閲覧されたことを確認できる"
+          ],
+          answer: 0,
+          explanation: "資料Dの09:12が未認証の閲覧成功です。利用者IDの記録がなく、09:40〜09:50はログも欠落しています。09:35のRの記録は別ファイルです。"
+        },
+        {
+          prompt: "3　必要な業務を継続できるよう、配送表に行う設定変更を85字以内で答えてください。",
+          thinkFirst: true,
+          options: [
+            "L1を無効化し、P・QとRのグループ閲覧権限およびM社担当者の編集権限を維持する",
+            "L1を無効化して権限継承を解除し、M社担当者だけが編集できるようにする",
+            "L1を無効化し、配送表の権限継承を解除する。P・Qの登録アカウントに閲覧権限を個別付与し、M社担当者の編集権限を維持する"
+          ],
+          answer: 2,
+          explanation: "資料Bでは権限がどれか一つあれば閲覧できます。L1の無効化と継承解除の両方に加え、資料Aで必要なP・Qの閲覧とM社担当者の編集を残します。"
+        },
+        {
+          prompt: "4　設定変更後、業務を続けられ、過剰な閲覧もできなくなったことを確かめる試験を90字以内で答えてください。",
+          thinkFirst: true,
+          options: [
+            "P・Qは閲覧可かつ編集不可、M社担当者は編集可と確認する。Rでログインした場合と、未ログインで旧L1を開いた場合は配送表を閲覧できないことを確認する",
+            "Rでログインした場合と未ログインで旧L1を開いた場合に、どちらも配送表を閲覧できないことだけを確認する",
+            "P・Qは閲覧可かつ編集不可、M社担当者は編集可と確認し、Rでログインした場合の拒否だけを確かめる"
+          ],
+          answer: 0,
+          explanation: "資料Aの許可側と拒否側を両方検証します。資料B・Cで分かった二つの経路に対応させ、Rのログインと未ログインでの旧L1は別々に試します。"
+        }
+      ],
       "b-1-1": [
         {
           prompt: "1-a　期限後にどのIDでどのファイルが取得されたか。共通するログ項目とその値を含め60字以内で答えてください。",
@@ -4271,11 +4359,13 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
     }
 
     const template = byId("practice-template");
-    const subjectBPractice = subjectBLesson.querySelector("[data-practice]");
-    const subjectBPracticeContent = template.content.cloneNode(true);
-    subjectBPracticeContent.querySelector(".record").remove();
-    subjectBPractice.append(subjectBPracticeContent);
-    initializeQuiz(subjectBPractice, questionSets[subjectBLesson.id]);
+    for (const lesson of subjectBLessons) {
+      const practice = lesson.querySelector("[data-practice]");
+      const content = template.content.cloneNode(true);
+      content.querySelector(".record").remove();
+      practice.append(content);
+      initializeQuiz(practice, questionSets[lesson.id]);
+    }
     const studyRecordsKey = "ap-study-note.checks.v1";
     const recordControls = new Map();
 
