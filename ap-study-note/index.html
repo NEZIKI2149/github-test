@@ -1,0 +1,2607 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>応用情報の学習ノート｜公開版</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #202d39;
+      --muted: #4f6070;
+      --accent: #174f85;
+      --line: #d4dee8;
+      --paper: #fff;
+      --wash: #edf4fb;
+      --background: #f4f7fa;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--ink);
+      font: 1rem/1.85 "Yu Gothic UI", Meiryo, system-ui, sans-serif;
+    }
+    a { color: var(--accent); text-underline-offset: .18em; }
+    button, input { font: inherit; }
+    :focus-visible { outline: 3px solid #93611c; outline-offset: 3px; }
+    [hidden] { display: none !important; }
+    .skip { position: absolute; left: 1rem; top: -5rem; z-index: 1; background: white; padding: .5rem 1rem; }
+    .skip:focus { top: .5rem; }
+    .masthead { position: sticky; top: 0; z-index: 2; background: var(--paper); border-bottom: 1px solid var(--line); }
+    .masthead-inner, .layout { max-width: 72rem; margin: auto; padding-inline: clamp(1rem, 4vw, 2rem); }
+    .masthead-inner { display: flex; align-items: center; gap: .6rem; min-height: 4rem; }
+    .brand { background: var(--accent); color: white; border-radius: .45rem; padding: .15rem .55rem; font-weight: 750; }
+    .masthead strong { font-size: clamp(1rem, 4vw, 1.2rem); }
+    .layout { display: grid; grid-template-columns: 16rem minmax(0, 1fr); gap: 1.5rem; padding-block: 1.8rem 3rem; }
+    #toc-toggle { margin-left: auto; flex: none; font-size: .875rem; }
+    .layout.toc-closed { grid-template-columns: minmax(0, 1fr); max-width: 60rem; }
+    nav { position: sticky; top: 5rem; max-height: calc(100dvh - 6rem); overflow: auto; align-self: start; border: 1px solid var(--line); background: var(--paper); border-radius: .8rem; padding: .9rem; }
+    nav h2 { font-size: 1rem; margin: 0 0 .4rem; }
+    nav a, nav summary { display: block; padding: .45rem .6rem; border-radius: .4rem; font-size: .94rem; }
+    nav summary { display: list-item; cursor: pointer; }
+    nav a { text-decoration: none; }
+    nav details a { margin-left: .8rem; }
+    nav a:hover, nav a[aria-current="page"] { background: var(--wash); text-decoration: underline; }
+    nav a[aria-current="page"] { font-weight: 700; }
+    main { min-width: 0; background: var(--paper); border: 1px solid var(--line); border-radius: 1rem; padding: clamp(1.05rem, 4vw, 3rem); scroll-margin-top: 4.5rem; }
+    main:focus, h1:focus { outline: none; }
+    h1, h2, h3 { line-height: 1.45; overflow-wrap: anywhere; }
+    h1 { margin: .25rem 0 1.1rem; font-size: clamp(1.65rem, 4vw, 2.4rem); scroll-margin-top: 5rem; }
+    .home-prompt { margin: 0; font-size: 1rem; font-weight: 400; line-height: 1.85; }
+    h2 { margin: 2.2rem 0 .8rem; font-size: clamp(1.2rem, 3vw, 1.45rem); }
+    h3 { margin: 1.1rem 0 .4rem; font-size: 1.05rem; }
+    p { margin: .65rem 0; }
+    ul, ol { padding-left: 1.45rem; }
+    li + li { margin-top: .35rem; }
+    .context, .note { color: var(--muted); font-size: .9rem; }
+    .lead { background: var(--wash); border-left: 4px solid var(--accent); padding: .8rem 1rem; margin: 0 0 1rem; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin: .6rem 0; font-variant-numeric: tabular-nums; }
+    th, td { border-bottom: 1px solid var(--line); padding: .5rem .65rem; text-align: left; }
+    thead th, .weights th { background: var(--wash); }
+    .weights td { text-align: center; }
+    .panel { border: 1px solid var(--line); border-radius: .75rem; padding: .8rem 1rem 1rem; margin-top: 1rem; }
+    .panel h3 { margin-top: 0; }
+    .controls { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .65rem; }
+    button, .action {
+      display: inline-block; border: 1px solid #9fb4c7; border-radius: .45rem; padding: .4rem .75rem;
+      min-height: 2.75rem; background: white; color: var(--ink); cursor: pointer; text-decoration: none;
+    }
+    button:hover, .action:hover { background: var(--wash); }
+    button:disabled { opacity: .56; cursor: default; }
+    .primary { background: var(--accent); border-color: var(--accent); color: white; }
+    .primary:hover { background: #123e68; }
+    .bits { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .45rem; max-width: 22rem; margin: .7rem 0; }
+    .bits button { padding: .3rem .1rem; }
+    .bits button[aria-pressed="true"] { color: white; background: var(--accent); border-color: var(--accent); }
+    .bit-value { display: block; font: 700 1.3rem/1.3 Consolas, monospace; }
+    .number { font: 700 1.2rem/1.5 Consolas, monospace; font-variant-numeric: tabular-nums; }
+    .controls + [role="status"] { margin-top: .75rem; }
+    fieldset { min-width: 0; margin: 1rem 0 0; border: 0; padding: 0; }
+    legend { padding: 0; font-weight: 700; }
+    .option { display: flex; gap: .6rem; align-items: baseline; padding: .45rem .65rem; margin-top: .4rem; border: 1px solid var(--line); border-radius: .4rem; }
+    .option:has(input:checked) { background: var(--wash); border-color: var(--accent); }
+    input[type="radio"], input[type="checkbox"] { accent-color: var(--accent); margin: 0; }
+    .feedback { background: var(--wash); border-radius: .4rem; padding: .5rem .75rem; }
+    .record, .sources { border-top: 1px solid var(--line); margin-top: 1.8rem; padding-top: 1rem; }
+    .record label { display: inline-flex; align-items: center; min-height: 2.75rem; gap: .5rem; margin-right: 1rem; }
+    .sources { font-size: .9rem; }
+    .sources a { display: inline-block; margin-right: .9rem; }
+    .panel input[type="text"], .panel input[type="number"], .panel select { width: min(100%, 23rem); display: block; padding: .4rem .6rem; border: 1px solid #9fb4c7; border-radius: .4rem; font: inherit; }
+    .input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); gap: .7rem; }
+    .reading { overflow-wrap: anywhere; }
+    .lesson-links { display: flex; flex-wrap: wrap; gap: .65rem 1.25rem; margin-top: 1.5rem; }
+    @media (max-width: 760px) {
+      .layout { grid-template-columns: 1fr; gap: .8rem; padding-block-start: .8rem; }
+      .masthead .context { display: none; }
+      nav { position: fixed; z-index: 1; inset: 4.5rem 1rem auto; max-height: min(55dvh, 24rem); padding: .6rem .8rem; box-shadow: 0 8px 24px #202d3929; }
+      .table-wrap th, .table-wrap td { padding-inline: .4rem; }
+      main:has(#welcome:not([hidden])) { background: transparent; border: 0; padding: .75rem 0; }
+    }
+    #inspection[data-view="recall"] .actual-bad > *,
+    #inspection[data-view="precision"] tr > :nth-child(2) { background: var(--wash); outline: 1px solid var(--accent); outline-offset: -1px; }
+    .controls button[aria-pressed="true"] { background: var(--accent); color: white; }
+    .roc { display: block; width: min(100%, 25rem); height: auto; font: 14px sans-serif; }
+    .cpu-figure { margin: .8rem 0; }
+    .cpu-timeline { position: relative; display: grid; list-style: none; padding: 0 0 1.35rem; margin: .4rem .8rem .6rem 0; }
+    .cpu-timeline li { position: relative; min-width: 0; margin: 0; text-align: center; }
+    .cpu-timeline strong { display: block; padding-block: .2rem; border: solid var(--line); border-width: 1px 0 1px 1px; background: var(--wash); }
+    .cpu-timeline li:nth-last-child(2) strong { border-right-width: 1px; }
+    .cpu-timeline li[data-task="B"] strong { background: #dceae5; }
+    .cpu-timeline span, .cpu-timeline li.cpu-timeline-end { position: absolute; top: calc(100% - 1.25rem); font-size: .78rem; }
+    .cpu-timeline span { top: 100%; left: 0; transform: translateX(-30%); }
+    .cpu-timeline li.cpu-timeline-end { left: 100%; transform: translateX(-30%); }
+    .aggregate-sql { max-width: 100%; white-space: pre-wrap; overflow-wrap: anywhere; padding: .7rem .8rem; background: var(--wash); border: 1px solid var(--line); border-radius: .4rem; font-size: .88rem; }
+    .packet-topology { display: block; width: min(100%, 32rem); height: auto; margin-block: .75rem; }
+    .packet-topology text { fill: var(--ink); font-size: 12px; text-anchor: middle; }
+    .packet-topology path, .packet-topology rect, .packet-topology circle { stroke: #526b82; }
+    .packet-topology path { fill: none; }
+    .packet-topology rect, .packet-topology circle { fill: var(--paper); }
+    .packet-topology .packet-lan { fill: var(--wash); }
+    .packet-topology .packet-router { fill: none; }
+    .packet-topology .packet-focus { stroke: var(--accent); stroke-width: 3; }
+    .packet-topology .packet-reply { font-weight: bold; }
+    .packet-headers, .packet-headers div { padding: .45rem .55rem; border: 1px solid var(--line); border-radius: .35rem; }
+    .packet-headers div { margin-top: .35rem; }
+    .packet-example:has([value="local"]:checked) .packet-remote,
+    .packet-example:has([value="remote"]:checked) .packet-local { display: none; }
+    .schedule-diagram { display: block; width: min(100%, 31rem); height: auto; margin-block: .6rem; }
+    .schedule-diagram text { fill: var(--ink); font-size: 14px; text-anchor: middle; }
+    .schedule-diagram circle { fill: var(--paper); stroke: #526b82; stroke-width: 1.5; }
+    .schedule-diagram line { stroke: #526b82; stroke-width: 1.5; }
+    .schedule-diagram .critical-edge { stroke: #14638b; stroke-width: 3; }
+    .schedule-diagram .schedule-time { font-weight: bold; }
+    #availability pre { max-width: 100%; overflow-x: auto; font-size: .8rem; line-height: 1.5; }
+    #availability .connection-diagram { font-family: Consolas, monospace; }
+    #availability .connection-diagram mark { background: var(--wash); color: inherit; outline: 1px solid currentColor; }
+    .progress-dialog { box-sizing: border-box; width: min(42rem, calc(100% - 1.5rem)); max-height: 90dvh; padding: 1rem; border: 1px solid var(--line); border-radius: .75rem; color: var(--ink); background: var(--paper); }
+    .progress-dialog::backdrop { background: #202d3966; }
+    .progress-dialog header { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
+    .progress-dialog h2 { margin: 0; }
+    .progress-dialog textarea { display: block; box-sizing: border-box; width: 100%; font: inherit; margin-block: .35rem; }
+    #study-png-preview { display: block; width: min(100%, 32rem); height: auto; margin-block: .75rem; border: 1px solid var(--line); }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">本文へ移動</a>
+  <header class="masthead">
+    <div class="masthead-inner"><span class="brand">AP</span><strong>応用情報の学習ノート</strong><span class="context">科目A</span><button id="toc-toggle" type="button" aria-controls="toc" aria-expanded="true" hidden>目次を閉じる</button></div>
+  </header>
+  <div class="layout">
+    <nav id="toc" aria-label="学習の目次">
+      <h2>目次</h2>
+      <a href="#intro">トップ</a>
+      <details open>
+        <summary>第1章　2進数と情報の表現</summary>
+        <a href="#binary">1-1　ビットと桁の重み</a>
+        <a href="#radix">1-2　2進数・10進数・16進数の変換</a>
+      </details>
+      <details><summary>第2章　アルゴリズムとプログラミング</summary>
+        <a href="#stack-and-queue">2-3　スタックとキュー</a>
+      </details>
+      <details><summary>第3章　ハードウェアとOS</summary>
+        <a href="#cpu-scheduling">3-6　プロセスとCPUスケジューリング</a>
+      </details>
+      <details><summary>第4章　データベース</summary>
+        <a href="#sql-aggregation">4-6　グループ化と集計</a>
+      </details>
+      <details><summary>第5章　ネットワークと通信</summary>
+        <a href="#packet-delivery">5-1　パケットが届くまで</a>
+      </details>
+      <details><summary>第6章　情報セキュリティ</summary>
+        <a href="#message-authentication">6-3　ハッシュ・メッセージ認証・デジタル署名</a>
+      </details>
+      <details><summary>第7章　システム設計・開発・テスト</summary>
+        <a href="#interface-design">7-3　システム構成とインタフェース設計</a>
+        <a href="#test-case-design">7-8　仕様から作るテストケース</a>
+      </details>
+      <details><summary>第8章　プロジェクトマネジメント</summary>
+        <a href="#critical-path">8-4　作業の依存関係とクリティカルパス</a>
+      </details>
+      <details><summary>第9章　システム構成・性能・信頼性</summary>
+        <a href="#availability">9-8　直列・並列構成の稼働率</a>
+      </details>
+      <details><summary>第10章　ITサービス運用と監査</summary>
+        <a href="#audit">10-10　システム監査の計画と証拠</a>
+      </details>
+      <details><summary>第11章　経営戦略・情報戦略・調達</summary>
+        <a href="#procurement-selection">11-11　提案の評価と調達先の選定</a>
+      </details>
+      <details><summary>第12章　企業活動・会計・法務</summary>
+        <a href="#break-even">12-6　損益分岐点と目標利益</a>
+      </details>
+      <details><summary>第13章　確率・統計・AI</summary>
+        <a href="#classification">13-12　判定結果の表から分類性能を読む</a>
+      </details>
+      <p id="progress" class="note" aria-live="polite">学習済み 0 / 15単元</p>
+      <div class="controls">
+        <button type="button" id="study-png-open">進捗をPNG画像にする</button>
+        <button type="button" id="study-transfer-open">学習記録の引き継ぎ</button>
+      </div>
+    </nav>
+    <main id="main" tabindex="-1">
+      <section id="welcome" hidden><h1 class="home-prompt" tabindex="-1">目次を開いて、読みたい単元を選んでください。</h1></section>
+      <article id="intro">
+        <h1 tabindex="-1">応用情報の学習ノート</h1>
+        <p>目次から読みたい単元を選んでください。各ページの最後に確認問題があります。</p>
+      </article>
+      <article id="binary" data-lesson>
+        <p class="context">第1章　2進数と情報の表現</p>
+        <h1 tabindex="-1">1-1　ビットと桁の重み</h1>
+        <p class="lead"><strong>2進数の1桁をビットと呼びます。1個のビットを0から1に変えると、その桁の重みだけ値が増えます。</strong></p>
+        <h2>1ビットを変えると、いくつ増える？</h2>
+        <p>2進数では2個集まると左隣の桁に1つ繰り上がります。そのため右端から順に、桁の重みは1、2、4、8と倍になります。1がある桁の重みを足すと、ビット列の値が分かります。</p>
+        <p>たとえば <strong>1001<sub>2</sub> ＝ 8 ＋ 1 ＝ 9</strong>。右から3桁目を1にすると 1101<sub>2</sub> になり、値は13です。変えたのは4の位だけなので、差は4です。逆に1から0に戻せば4減ります。</p>
+        <div class="panel" id="bit-panel" hidden>
+          <h3>4ビットで整数を作る</h3>
+          <p>お題は10進数の <strong id="target">6</strong> です。足したい重みのボタンを押してください。</p>
+          <div id="bits" class="bits" role="group" aria-label="ビットの切り替え"></div>
+          <p id="bit-reading" class="number" role="status"></p>
+          <div class="controls"><button type="button" id="check-bits">答え合わせ</button><button type="button" id="next-target">次のお題</button><button type="button" id="clear-bits">全部0に戻す</button></div>
+          <p id="bit-feedback" role="status" hidden></p>
+        </div>
+        <h2>桁を入れ替えると、式はどう変わる？</h2>
+        <p>2ビットの 10<sub>2</sub> は十進数の2です。左右を入れ替えた 01<sub>2</sub> は1です。同じ1でも、置かれた場所で値が変わります。</p>
+        <p>左のビットを <var>a</var>、右を <var>b</var> とします。どちらも0か1です。左の桁には2、右には1を掛けるので、<strong>元の値は 2<var>a</var> ＋ <var>b</var>、入替え後は 2<var>b</var> ＋ <var>a</var></strong> です。</p>
+        <p>元の値 <var>x</var> だけが分かるときは、<var>x</var> ＝ 2<var>a</var> ＋ <var>b</var> を2で割ります。<strong>整数の商が左の桁、余りが右の桁</strong>です。たとえば <var>x</var> ＝ 2 なら商は1、余りは0。入替え後の式は 2 × 0 ＋ 1 ＝ 1 になります。</p>
+        <p class="note"><a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/ps6vr70000010d6y-att/2023r05a_ap_am_qs.pdf">桁の入替えの出題例（IPA 令和5年度秋期・午前 問1）</a></p>
+        <h2>計算結果を収めるには何ビット必要？</h2>
+        <p>符号なし整数では、すべての桁が0のときの値は0です。8ビットなら各桁に2通りあるので、組合せは256通り、値の範囲は0〜255です。一般に <strong><var>n</var> ビットで 2<sup><var>n</var></sup> 通り、最大値は 2<sup><var>n</var></sup> − 1</strong> です。</p>
+        <p>たとえば4ビットの最大値15を2個足すと30です。4ビットの上限15を超えますが、5ビットの上限31には収まります。必要なのは5ビットです。</p>
+        <p><var>n</var> ビットでも同じです。最大値同士の和は 2 × (2<sup><var>n</var></sup> − 1) ＝ 2<sup><var>n</var>＋1</sup> − 2。これは <var>n</var> ビットの上限を超え、<var>n</var>＋1 ビットの上限より1小さいので、<strong>必要な幅はちょうど <var>n</var>＋1 ビット</strong>です（<var>n</var> は1以上）。</p>
+        <div data-practice></div>
+        <div class="lesson-links"><a href="#intro">トップに戻る</a><a href="#radix">1-2　2進数・10進数・16進数の変換</a></div>
+        <footer class="sources">
+          <a href="https://learn.ichikou.jp/ap/ch01-1.html">参考教材の1-1</a>
+          <a href="https://www.ipa.go.jp/shiken/syllabus/gaiyou.html">IPA 試験要綱・シラバス</a>
+        </footer>
+      </article>
+      <article id="radix" data-lesson>
+        <p class="context">第1章　2進数と情報の表現</p>
+        <h1 tabindex="-1">1-2　2進数・10進数・16進数の変換</h1>
+        <p class="lead"><strong>表記が変わっても、桁ごとの重みを足した値は同じです。小数を含む2進数と16進数は、小数点を起点に4ビットずつまとめて変換できます。</strong></p>
+        <h2>2で割ると右端のビットが分かる</h2>
+        <p>整数 <var>n</var> を2で割ると、<var>n</var> ＝ 2 × <var>q</var> ＋ <var>r</var> と書けます。<var>q</var> が商、<var>r</var> が余りです。2倍すると2進数の桁が1つ左にずれて右端が0になるので、余りの0または1が元の数の右端に入ります。</p>
+        <p>商 <var>q</var> は、元の数から右端のビットを取り除いた値です。次に <var>q</var> を2で割ると、元の数の2の位が分かります。同じ操作を商が0になるまで繰り返し、<strong>記録した余りを最後から最初へ読む</strong>と完成です。</p>
+        <div class="table-wrap"><table>
+          <caption>38を2進数に直す</caption>
+          <thead><tr><th scope="col">割られる数</th><th scope="col">商</th><th scope="col">余り</th><th scope="col">確定する位</th></tr></thead>
+          <tbody>
+            <tr><td>38</td><td>19</td><td>0</td><td>1</td></tr><tr><td>19</td><td>9</td><td>1</td><td>2</td></tr>
+            <tr><td>9</td><td>4</td><td>1</td><td>4</td></tr><tr><td>4</td><td>2</td><td>0</td><td>8</td></tr>
+            <tr><td>2</td><td>1</td><td>0</td><td>16</td></tr><tr><td>1</td><td>0</td><td>1</td><td>32</td></tr>
+          </tbody>
+        </table></div>
+        <p>下から読むと <strong>100110<sub>2</sub></strong>。32 ＋ 4 ＋ 2 ＝ 38で検算できます。元の値が0なら、変換結果も0です。</p>
+        <form class="panel" id="division" hidden>
+          <h3>割り算を1回ずつ進める</h3>
+          <label>10進数（0〜65535）<input id="decimal-input" type="number" min="0" max="65535" step="1" value="38" required></label>
+          <div class="controls"><button id="divide-step" type="submit">次の割り算</button><button type="reset">手順をやり直す</button></div>
+          <ol id="division-steps"></ol>
+          <p id="division-result" role="status"></p>
+        </form>
+        <h2>16進数1桁は2進数4桁に対応する</h2>
+        <p>4ビットで表せるのは0〜15の16通りです。16進数では10〜15を A〜F で表します。4ビット左に移ると重みが16倍になるので、<strong>整数部は右端から4桁ずつ</strong>区切れば、各組を16進数の1桁として読めます。</p>
+        <p><strong>100000010<sub>2</sub> ＝ 0001 0000 0010<sub>2</sub> ＝ 102<sub>16</sub></strong>。逆変換では1、0、2をそれぞれ4ビットに戻します。中央の 0000 を省くと、左の1の重みが変わります。値が変わらないのは、整数の左端に0を補うときです。</p>
+        <h2>小数点の右側も、桁の重みで読む</h2>
+        <p>2進数では右へ移るたびに重みが半分になります。小数点のすぐ右は 1/2、その次は 1/4、その次は 1/8 の位です。16進数なら右へ移るたびに重みが 1/16 になり、最初の小数の桁は 1/16 の位です。</p>
+        <p><strong>整数部は小数点から左へ、小数部は右へ</strong>4桁ずつ区切ります。不足分は整数部の左端、小数部の右端に0を補います。.1<sub>2</sub> を .1000<sub>2</sub> にしても1は 1/2 の位にあります。.0001<sub>2</sub> にすると1は 1/16 の位に移ります。</p>
+        <p><strong>101101.1<sub>2</sub> ＝ 0010 1101 . 1000<sub>2</sub> ＝ 2D.8<sub>16</sub></strong>。10進数に直すと 2 × 16 ＋ 13 ＋ 8/16 ＝ 45.5 です。逆に 2D.8<sub>16</sub> を2進数に戻すときは、小数点を残して各桁を4ビットに展開します。</p>
+        <form class="panel" id="binary-to-hex" hidden>
+          <h3>4ビットごとの対応を見る</h3>
+          <label>2進数（例 101.01）<input id="binary-input" type="text" maxlength="65" pattern="[01]{1,32}([.][01]{1,32})?" value="101.01" required></label>
+          <p class="note">整数部と小数部はそれぞれ32桁までです。1未満の値は 0.101 のように入力します。</p>
+          <div class="controls"><button type="submit">16進数に変換</button></div>
+          <p id="hex-result" class="reading" role="status"></p>
+        </form>
+        <h2>10進小数からは、2倍して左の桁から決める</h2>
+        <p>0以上1未満の小数を2倍すると、1/2 の位が整数の位置に移ります。その<strong>整数部分の0か1を記録し、残った小数部分をまた2倍</strong>します。得られた数字を、取り出した順に小数点の右へ並べます。</p>
+        <ol>
+          <li>0.625 × 2 ＝ 1.25 → 1を記録し、0.25を残す。</li>
+          <li>0.25 × 2 ＝ 0.5 → 0を記録し、0.5を残す。</li>
+          <li>0.5 × 2 ＝ 1.0 → 1を記録し、残りが0なので終了。</li>
+        </ol>
+        <p><strong>0.625<sub>10</sub> ＝ 0.101<sub>2</sub></strong>。1/2 ＋ 1/8 ＝ 0.625 で確かめられます。整数部がある値は、整数部と小数部をそれぞれ変換してからつなぎます。</p>
+        <details>
+          <summary>発展　8進数と26進数にも応用する</summary>
+          <p>8は2の3乗なので、8進数1桁は2進数3桁に対応します。たとえば 25<sub>8</sub> は 010 101<sub>2</sub> です。</p>
+          <p>基数が26なら整数を26で割り、余りを逆順に読みます。A＝0、B＝1、…、Z＝25と指定された場合、94 ÷ 26 の商は3、余りは16です。3と16はDとQに対応するので、94<sub>10</sub> は DQ になります。</p>
+        </details>
+        <div data-practice></div>
+        <div class="lesson-links"><a href="#binary">1-1　ビットと桁の重み</a></div>
+        <footer class="sources"><a href="https://www.ipa.go.jp/shiken/syllabus/gaiyou.html">IPA 試験要綱・シラバス</a><a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/2016h28.html">IPA 平成28年度春期・応用情報・午前 問2</a></footer>
+      </article>
+      <article id="stack-and-queue" data-lesson>
+        <p class="context">第2章　アルゴリズムとプログラミング</p>
+        <h1 tabindex="-1">2-3　スタックとキュー</h1>
+        <p class="lead"><strong>スタックは最後に入れた値から、キューは最初に入れた値から取り出します。</strong> どこから取り出すかを決めて、一手ずつ追います。</p>
+        <h2>同じ操作列を、スタックとキューに適用する</h2>
+        <p>スタックは<strong>後入れ先出し（LIFO）</strong>で、追加も取出しも頂上から。キューは<strong>先入れ先出し（FIFO）</strong>で、末尾に追加し、先頭から取り出します。A、B、Cを順に入れ、1件取り出し、Dを入れて、もう1件取り出してみましょう。</p>
+        <div class="panel" id="stack-queue-example">
+          <p data-structure-operation>開始時点</p>
+          <div class="input-grid" aria-live="polite" aria-atomic="true">
+            <p>スタック（底 → 頂上）<br><strong data-stack-view>空</strong><br>取り出した順 <span data-stack-output>なし</span></p>
+            <p>キュー（先頭 → 末尾）<br><strong data-queue-view>空</strong><br>取り出した順 <span data-queue-output>なし</span></p>
+          </div>
+          <div class="controls">
+            <button type="button" data-structure-back disabled>前の操作</button>
+            <button type="button" data-structure-next>次の操作</button>
+          </div>
+        </div>
+        <h2>逆ポーランド表記を、スタックで計算する</h2>
+        <p>逆ポーランド表記（後置記法）は、演算子を二つの値の後に置きます。値は頂上に積み、演算子を読んだら頂上から順に右の値、左の値を取り出します。<strong>後に取り出した値を左に置いて計算し、結果はスタックに戻します。</strong></p>
+        <div class="table-wrap"><table>
+          <caption>8 3 − 2 × の計算</caption>
+          <thead><tr><th scope="col">読んだ要素</th><th scope="col">操作</th><th scope="col">操作後（底→頂上）</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">8</th><td>8を積む</td><td>[8]</td></tr>
+            <tr><th scope="row">3</th><td>3を積む</td><td>[8, 3]</td></tr>
+            <tr><th scope="row">−</th><td>右が3、左が8。8−3＝5を積む</td><td>[5]</td></tr>
+            <tr><th scope="row">2</th><td>2を積む</td><td>[5, 2]</td></tr>
+            <tr><th scope="row">×</th><td>右が2、左が5。5×2＝10を積む</td><td>[10]</td></tr>
+          </tbody>
+        </table></div>
+        <h2>中置式を逆ポーランド表記に直す</h2>
+        <p>「左の式の後置表記、右の式の後置表記、演算子」の順につなぎます。<code>A − B × C</code>では掛け算が先なので<code>A B C × −</code>。<code>(A − B) × C</code>では括弧が先なので<code>A B − C ×</code>です。同じ優先順位の引き算は左から計算するため、<code>A − B − C</code>は<code>A B − C −</code>になります。</p>
+        <p>括弧のない加減乗除をプログラムで変換する場合は、値はすぐ出力し、演算子をスタックに置きます。新しい演算子が来たら、頂上の<strong>同じか高い優先順位</strong>の演算子を先に取り出して出力し、新しい演算子を積みます。入力の末尾で、残った演算子を頂上から出力します。</p>
+        <details><summary>A ＋ B × C の変換を追う</summary>
+          <div class="table-wrap"><table>
+          <caption>演算子を取り出す時点</caption>
+          <thead><tr><th scope="col">読んだ要素</th><th scope="col">演算子スタック（底→頂上）</th><th scope="col">出力</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">A</th><td>空</td><td>A</td></tr>
+            <tr><th scope="row">＋</th><td>[＋]</td><td>A</td></tr>
+            <tr><th scope="row">B</th><td>[＋]</td><td>A B</td></tr>
+            <tr><th scope="row">×</th><td>[＋, ×]</td><td>A B</td></tr>
+            <tr><th scope="row">C</th><td>[＋, ×]</td><td>A B C</td></tr>
+            <tr><th scope="row">入力終了</th><td>空</td><td>A B C × ＋</td></tr>
+          </tbody>
+        </table></div>
+        </details>
+        <h2>リングバッファの添字と未読順を分ける</h2>
+        <p>容量4の配列の末尾に達したら先頭に戻ります。<code>read</code>は先頭の未読データ、<code>write</code>は次に書く位置、<code>count</code>は未読件数です。成功した操作では該当の添字を<code>(添字 + 1) % 4</code>で進めます。追加で件数を1増やし、取出しで1減らします。</p>
+        <div class="table-wrap"><table>
+          <caption>物理上の位置と論理上の未読順</caption>
+          <thead><tr><th scope="col">状態</th><th scope="col">添字0</th><th scope="col">添字1</th><th scope="col">添字2</th><th scope="col">添字3</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">初期状態</th><td>空き</td><td>空き</td><td>A</td><td>B</td></tr>
+            <tr><th scope="row">Cを追加</th><td>C</td><td>空き</td><td>A</td><td>B</td></tr>
+            <tr><th scope="row">Aを取出し</th><td>C</td><td>空き</td><td>A（読取り済み）</td><td>B</td></tr>
+          </tbody>
+        </table></div>
+        <p>初めの位置は<code>read=2, write=0, count=2</code>です。Cを追加すると未読はA→B→C。Aを取り出すと<code>read=3, write=1, count=2</code>で、未読はB→Cです。配列に残ったAは未読に含めません。</p>
+        <p>この方式では<code>count == 0</code>なら取出しを、<code>count == 4</code>なら書込みを拒否し、位置も件数もそのままです。空でも満杯でも<code>read == write</code>になり得るので、添字とは別に件数を見ます。</p>
+        <div data-practice></div>
+        <template id="stack-postfix-conversion">
+          <ol><li>左の差を <code>A B −</code> と表します。</li><li>右の和を <code>C D ＋</code> と表します。</li><li>左、右の順に並べて最後に <code>÷</code> を置きます。</li></ol>
+        </template>
+        <template id="stack-postfix-evaluation">
+          <div class="table-wrap"><table>
+          <caption>18 6 − 2 1 ＋ ÷ の途中経過</caption>
+          <thead><tr><th scope="col">読んだ要素</th><th scope="col">操作</th><th scope="col">操作後（底→頂上）</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">18</th><td>18を積む</td><td>[18]</td></tr>
+            <tr><th scope="row">6</th><td>6を積む</td><td>[18, 6]</td></tr>
+            <tr><th scope="row">−</th><td>右6・左18から12を積む</td><td>[12]</td></tr>
+            <tr><th scope="row">2</th><td>2を積む</td><td>[12, 2]</td></tr>
+            <tr><th scope="row">1</th><td>1を積む</td><td>[12, 2, 1]</td></tr>
+            <tr><th scope="row">＋</th><td>右1・左2から3を積む</td><td>[12, 3]</td></tr>
+            <tr><th scope="row">÷</th><td>右3・左12から4を積む</td><td>[4]</td></tr>
+          </tbody>
+        </table></div>
+        </template>
+        <template id="queue-ring-trace">
+          <div class="table-wrap"><table>
+          <caption>各操作の後の位置と未読順</caption>
+          <thead><tr><th scope="col">操作</th><th scope="col">read</th><th scope="col">write</th><th scope="col">count</th><th scope="col">未読順</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">初期状態</th><td>3</td><td>1</td><td>2</td><td>A→B</td></tr>
+            <tr><th scope="row">Aを取出し</th><td>0</td><td>1</td><td>1</td><td>B</td></tr>
+            <tr><th scope="row">Cを追加</th><td>0</td><td>2</td><td>2</td><td>B→C</td></tr>
+            <tr><th scope="row">Dを追加</th><td>0</td><td>3</td><td>3</td><td>B→C→D</td></tr>
+            <tr><th scope="row">Eを追加</th><td>0</td><td>0</td><td>4</td><td>B→C→D→E</td></tr>
+          </tbody>
+        </table></div>
+        </template>
+        <template id="stack-operator-trace">
+          <div class="table-wrap"><table>
+          <caption>同じ優先順位の演算子を先に出力する</caption>
+          <thead><tr><th scope="col">読んだ要素</th><th scope="col">演算子スタック（底→頂上）</th><th scope="col">出力</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">A</th><td>空</td><td>A</td></tr>
+            <tr><th scope="row">最初の −</th><td>[−]</td><td>A</td></tr>
+            <tr><th scope="row">B</th><td>[−]</td><td>A B</td></tr>
+            <tr><th scope="row">次の −</th><td>[−]（今読んだ方）</td><td>A B −</td></tr>
+            <tr><th scope="row">C</th><td>[−]</td><td>A B − C</td></tr>
+            <tr><th scope="row">入力終了</th><td>空</td><td>A B − C −</td></tr>
+          </tbody>
+        </table></div>
+        </template>
+        <template id="queue-full-trace">
+          <div class="table-wrap"><table>
+          <caption>満杯から空きを作る</caption>
+          <thead><tr><th scope="col">操作</th><th scope="col">read</th><th scope="col">write</th><th scope="col">count</th><th scope="col">未読順</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">初期状態</th><td>0</td><td>0</td><td>4</td><td>B→C→D→E</td></tr>
+            <tr><th scope="row">Fの追加を拒否</th><td>0</td><td>0</td><td>4</td><td>B→C→D→E</td></tr>
+            <tr><th scope="row">Bを取出し</th><td>1</td><td>0</td><td>3</td><td>C→D→E</td></tr>
+            <tr><th scope="row">Fを追加</th><td>1</td><td>1</td><td>4</td><td>C→D→E→F</td></tr>
+          </tbody>
+        </table></div>
+        </template>
+        <footer class="sources">
+          <a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/m42obm000000afqx-att/2024r06a_ap_am_qs.pdf">IPA 令和6年度秋期・午前 問3</a>
+          <a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/ps6vr70000010d6y-att/2023r05a_ap_am_qs.pdf">IPA 令和5年度秋期・午前 問3</a>
+          <a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000002e6g-att/2013h25h_ap_pm_cmnt.pdf">IPA 平成25年度春期・午後 問2 採点講評</a>
+          <a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt80000009sgk-att/2022r04h_ap_pm_ans.pdf">IPA 令和4年度春期・午後 問7 解答例</a>
+        </footer>
+      </article>
+      <article id="cpu-scheduling" data-lesson>
+        <p class="context">第3章　ハードウェアとOS</p>
+        <h1 tabindex="-1">3-6　プロセスとCPUスケジューリング</h1>
+        <p class="lead"><strong>CPUを割り当てる時刻ごとに、実行できるタスクを並べ、方式のルールに従って次を選びます。</strong></p>
+        <h2>CPUを割り当てられる状態を見分ける</h2>
+        <p><strong>プロセス</strong>は実行中のプログラムを管理する単位です。<strong>スレッド</strong>は、プロセスの中でCPUを割り当てられる実行の流れです。ここでは、スケジューリングの対象をタスクと呼びます。</p>
+        <p>プログラムは、OSの機能を呼び出す<strong>システムコール</strong>を使います。例えば、データの読込みがその場で完了せず、入出力を待つ間は待ち状態です。入出力が完了すると実行可能状態になり、次のCPU割当てを受けられます。</p>
+        <div class="table-wrap"><table>
+          <caption>タスクの状態遷移</caption>
+          <thead><tr><th scope="col">現在</th><th scope="col">きっかけ</th><th scope="col">遷移先</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">実行可能状態</th><td>CPU割当て</td><td>実行状態</td></tr>
+            <tr><th scope="row">実行状態</th><td>時間切れで中断</td><td>実行可能状態</td></tr>
+            <tr><th scope="row">実行状態</th><td>入出力要求で待つ</td><td>待ち状態</td></tr>
+            <tr><th scope="row">待ち状態</th><td>入出力完了</td><td>実行可能状態</td></tr>
+          </tbody>
+        </table></div>
+        <p>OSが実行中のタスクを中断してCPUを取り上げることを<strong>プリエンプション</strong>と呼びます。時間切れで中断されても、入出力待ちなどがなければ実行可能状態に戻ります。</p>
+        <h2>方式によって、次のタスクの選び方が変わる</h2>
+        <div class="table-wrap"><table>
+          <caption>CPUの割当て規則</caption>
+          <thead><tr><th scope="col">方式</th><th scope="col">次に選ぶ対象</th><th scope="col">実行中に新しいタスクが来た場合</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">到着順（FCFS）</th><td>実行可能な中で早く到着したもの</td><td>実行中の処理を続ける</td></tr>
+            <tr><th scope="row">処理時間順（非プリエンプティブなSJF）</th><td>CPUが空いた時点で、到着済みの中で処理時間が最短のもの</td><td>短い処理が到着しても中断しない</td></tr>
+            <tr><th scope="row">ラウンドロビン</th><td>実行可能なタスクの列の先頭</td><td>時間枠までは続け、時間切れで未完了なら列の末尾に戻す</td></tr>
+            <tr><th scope="row">プリエンプティブな優先度順</th><td>実行可能な中で優先度が最も高いもの</td><td>より高い優先度の処理が実行可能になると切り替える</td></tr>
+          </tbody>
+        </table></div>
+        <div class="table-wrap"><table>
+          <caption>到着順と処理時間順を比べる例</caption>
+          <thead><tr><th scope="col">タスク</th><th scope="col">到着時刻（秒）</th><th scope="col">CPU処理時間（秒）</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">A</th><td>0</td><td>4</td></tr>
+            <tr><th scope="row">B</th><td>1</td><td>3</td></tr>
+            <tr><th scope="row">C</th><td>2</td><td>1</td></tr>
+          </tbody>
+        </table></div>
+        <p>CPUは1台で、切替え時間と入出力待ちはないとします。時刻0にはAしかいないので、どちらの方式でもAから始まります。時刻4にCPUが空いたときはBとCが候補です。到着順ではBを、処理時間順ではCを先に選びます。</p>
+        <figure class="cpu-figure">
+          <figcaption>到着順（秒）</figcaption>
+          <ol class="cpu-timeline" style="grid-template-columns:minmax(0,4fr) minmax(0,3fr) minmax(0,1fr)" aria-label="CPU実行順">
+            <li data-task="A" aria-label="A、0から4秒"><strong aria-hidden="true">A</strong><span aria-hidden="true">0</span></li>
+            <li data-task="B" aria-label="B、4から7秒"><strong aria-hidden="true">B</strong><span aria-hidden="true">4</span></li>
+            <li data-task="C" aria-label="C、7から8秒"><strong aria-hidden="true">C</strong><span aria-hidden="true">7</span></li>
+            <li class="cpu-timeline-end" aria-hidden="true">8</li>
+          </ol>
+        </figure>
+        <figure class="cpu-figure">
+          <figcaption>処理時間順（秒）</figcaption>
+          <ol class="cpu-timeline" style="grid-template-columns:minmax(0,4fr) minmax(0,1fr) minmax(0,3fr)" aria-label="CPU実行順">
+            <li data-task="A" aria-label="A、0から4秒"><strong aria-hidden="true">A</strong><span aria-hidden="true">0</span></li>
+            <li data-task="C" aria-label="C、4から5秒"><strong aria-hidden="true">C</strong><span aria-hidden="true">4</span></li>
+            <li data-task="B" aria-label="B、5から8秒"><strong aria-hidden="true">B</strong><span aria-hidden="true">5</span></li>
+            <li class="cpu-timeline-end" aria-hidden="true">8</li>
+          </ol>
+        </figure>
+        <p>Aの区間［0,4）は時刻0に始まり時刻4に終わる長さ4秒の区間です。CPUが空いた時刻ちょうどに到着したタスクも候補に含めます。</p>
+        <h3>待ち時間と、到着から完了するまでの時間を数える</h3>
+        <p>処理時間順のBは時刻1に到着し、時刻5に開始、時刻8に完了します。<strong>ターンアラウンドタイムは8−1＝7秒</strong>。CPU割当て待ち時間は5−1＝4秒です。中断された場合は、実行可能状態で待った区間をすべて足します。入出力待ちがない例では、ターンアラウンドタイムからCPU処理時間を引いて求めることもできます。</p>
+        <div data-practice></div>
+        <template id="cpu-state-solution"><div class="table-wrap"><table>
+          <caption>タスクの状態遷移</caption>
+          <thead><tr><th scope="col">現在</th><th scope="col">きっかけ</th><th scope="col">遷移先</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">実行可能状態</th><td>CPU割当て</td><td>実行状態</td></tr>
+            <tr><th scope="row">実行状態</th><td><strong>時間切れで中断</strong></td><td><strong>実行可能状態</strong></td></tr>
+            <tr><th scope="row">実行状態</th><td>入出力要求で待つ</td><td>待ち状態</td></tr>
+            <tr><th scope="row">待ち状態</th><td>入出力完了</td><td>実行可能状態</td></tr>
+          </tbody>
+        </table></div></template>
+        <template id="cpu-sjf-input"><div class="table-wrap"><table>
+          <caption>処理時間順の入力</caption>
+          <thead><tr><th scope="col">タスク</th><th scope="col">到着時刻（秒）</th><th scope="col">CPU処理時間（秒）</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">A</th><td>0</td><td>3</td></tr>
+            <tr><th scope="row">B</th><td>1</td><td>6</td></tr>
+            <tr><th scope="row">C</th><td>3</td><td>2</td></tr>
+            <tr><th scope="row">D</th><td>4</td><td>3</td></tr>
+            <tr><th scope="row">E</th><td>5</td><td>1</td></tr>
+          </tbody>
+        </table></div></template>
+        <template id="cpu-sjf-solution"><figure class="cpu-figure">
+          <figcaption>処理時間順の実行結果（秒）</figcaption>
+          <ol class="cpu-timeline" style="grid-template-columns:minmax(0,3fr) minmax(0,2fr) minmax(0,1fr) minmax(0,3fr) minmax(0,6fr)" aria-label="CPU実行順">
+            <li data-task="A" aria-label="A、0から3秒"><strong aria-hidden="true">A</strong><span aria-hidden="true">0</span></li>
+            <li data-task="C" aria-label="C、3から5秒"><strong aria-hidden="true">C</strong><span aria-hidden="true">3</span></li>
+            <li data-task="E" aria-label="E、5から6秒"><strong aria-hidden="true">E</strong><span aria-hidden="true">5</span></li>
+            <li data-task="D" aria-label="D、6から9秒"><strong aria-hidden="true">D</strong><span aria-hidden="true">6</span></li>
+            <li data-task="B" aria-label="B、9から15秒"><strong aria-hidden="true">B</strong><span aria-hidden="true">9</span></li>
+            <li class="cpu-timeline-end" aria-hidden="true">15</li>
+          </ol>
+        </figure></template>
+        <template id="cpu-rr-input"><div class="table-wrap"><table>
+          <caption>ラウンドロビンの入力</caption>
+          <thead><tr><th scope="col">タスク</th><th scope="col">到着時刻（秒）</th><th scope="col">CPU処理時間（秒）</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">A</th><td>0</td><td>5</td></tr>
+            <tr><th scope="row">B</th><td>1</td><td>3</td></tr>
+            <tr><th scope="row">C</th><td>2</td><td>1</td></tr>
+          </tbody>
+        </table></div></template>
+        <template id="cpu-rr-solution"><figure class="cpu-figure">
+          <figcaption>ラウンドロビンの実行結果（秒）</figcaption>
+          <ol class="cpu-timeline" style="grid-template-columns:minmax(0,2fr) minmax(0,2fr) minmax(0,1fr) minmax(0,2fr) minmax(0,1fr) minmax(0,1fr)" aria-label="CPU実行順">
+            <li data-task="A" aria-label="A、0から2秒"><strong aria-hidden="true">A</strong><span aria-hidden="true">0</span></li>
+            <li data-task="B" aria-label="B、2から4秒"><strong aria-hidden="true">B</strong><span aria-hidden="true">2</span></li>
+            <li data-task="C" aria-label="C、4から5秒"><strong aria-hidden="true">C</strong><span aria-hidden="true">4</span></li>
+            <li data-task="A" aria-label="A、5から7秒"><strong aria-hidden="true">A</strong><span aria-hidden="true">5</span></li>
+            <li data-task="B" aria-label="B、7から8秒"><strong aria-hidden="true">B</strong><span aria-hidden="true">7</span></li>
+            <li data-task="A" aria-label="A、8から9秒"><strong aria-hidden="true">A</strong><span aria-hidden="true">8</span></li>
+            <li class="cpu-timeline-end" aria-hidden="true">9</li>
+          </ol>
+        </figure></template>
+        <template id="cpu-priority-solution">
+          <figure class="cpu-figure">
+          <figcaption>Aが5ミリ秒周期（ミリ秒）</figcaption>
+          <ol class="cpu-timeline" style="grid-template-columns:minmax(0,2fr) minmax(0,3fr) minmax(0,2fr) minmax(0,2fr)" aria-label="CPU実行順">
+            <li data-task="A" aria-label="A、0から2ミリ秒"><strong aria-hidden="true">A</strong><span aria-hidden="true">0</span></li>
+            <li data-task="B" aria-label="B、2から5ミリ秒"><strong aria-hidden="true">B</strong><span aria-hidden="true">2</span></li>
+            <li data-task="A" aria-label="A、5から7ミリ秒"><strong aria-hidden="true">A</strong><span aria-hidden="true">5</span></li>
+            <li data-task="B" aria-label="B、7から9ミリ秒"><strong aria-hidden="true">B</strong><span aria-hidden="true">7</span></li>
+            <li class="cpu-timeline-end" aria-hidden="true">9</li>
+          </ol>
+        </figure>
+          <p>時刻0ではBの残りは5、Aが再び到着する時刻5では残り2。時刻9に完了します。</p>
+          <figure class="cpu-figure">
+          <figcaption>Aが4ミリ秒周期（ミリ秒）</figcaption>
+          <ol class="cpu-timeline" style="grid-template-columns:minmax(0,2fr) minmax(0,2fr) minmax(0,2fr) minmax(0,2fr) minmax(0,2fr) minmax(0,1fr)" aria-label="CPU実行順">
+            <li data-task="A" aria-label="A、0から2ミリ秒"><strong aria-hidden="true">A</strong><span aria-hidden="true">0</span></li>
+            <li data-task="B" aria-label="B、2から4ミリ秒"><strong aria-hidden="true">B</strong><span aria-hidden="true">2</span></li>
+            <li data-task="A" aria-label="A、4から6ミリ秒"><strong aria-hidden="true">A</strong><span aria-hidden="true">4</span></li>
+            <li data-task="B" aria-label="B、6から8ミリ秒"><strong aria-hidden="true">B</strong><span aria-hidden="true">6</span></li>
+            <li data-task="A" aria-label="A、8から10ミリ秒"><strong aria-hidden="true">A</strong><span aria-hidden="true">8</span></li>
+            <li data-task="B" aria-label="B、10から11ミリ秒"><strong aria-hidden="true">B</strong><span aria-hidden="true">10</span></li>
+            <li class="cpu-timeline-end" aria-hidden="true">11</li>
+          </ol>
+        </figure>
+          <p>時刻0ではBの残りは5、Aが到着する時刻4で残り3、時刻8で残り1。締切りの時刻9にはまだ1ミリ秒分残っています。</p>
+        </template>
+        <footer class="sources">
+          <a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/nl10bi0000009lh8-att/2025r07h_ap_am_qs.pdf">IPA 令和7年度春期・午前 問14</a>
+          <a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/nl10bi0000009lh8-att/2025r07a_ap_am_qs.pdf">IPA 令和7年度秋期・午前 問15</a>
+          <a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/ps6vr70000010d6y-att/2023r05a_ap_am_qs.pdf">IPA 令和5年度秋期・午前 問17</a>
+        </footer>
+      </article>
+      <article id="sql-aggregation" data-lesson>
+        <p class="context">第4章　データベース</p>
+        <h1 tabindex="-1">4-6　グループ化と集計</h1>
+        <p class="lead"><strong>どの明細を集計するか、何を結果の1行にするか、集計後にどのグループを残すか。</strong> SQLを書くときは、この三つを順に決めます。</p>
+        <h2>「合計100円以上」は、どの段階で判定する？</h2>
+        <p><code>sales_log</code>の1行は1件の明細です。店舗は<code>store_id</code>、月は<code>sale_month</code>、売上（SALE）と返品（RETURN）の区分は<code>entry_type</code>、金額は<code>amount</code>に入っています。5月の売上だけを店舗別に足し、合計100円以上の店舗を出します。</p>
+        <div class="table-wrap"><table>
+          <caption>5月の明細</caption>
+          <thead><tr><th scope="col">店舗</th><th scope="col">月</th><th scope="col">区分</th><th scope="col">金額（円）</th></tr></thead>
+          <tbody>
+            <tr><td>A</td><td>2025-05</td><td>SALE</td><td>60</td></tr>
+            <tr><td>A</td><td>2025-05</td><td>SALE</td><td>60</td></tr>
+            <tr><td>A</td><td>2025-05</td><td>RETURN</td><td>−50</td></tr>
+            <tr><td>B</td><td>2025-05</td><td>SALE</td><td>100</td></tr>
+            <tr><td>C</td><td>2025-05</td><td>SALE</td><td>90</td></tr>
+          </tbody>
+        </table></div>
+        <pre class="aggregate-sql"><code>SELECT store_id, SUM(amount) AS total_amount
+FROM sales_log
+WHERE sale_month = '2025-05' AND entry_type = 'SALE'
+GROUP BY store_id
+HAVING SUM(amount) &gt;= 100;</code></pre>
+        <details><summary>明細から結果までの3段階を確認する</summary>
+          <p><strong>WHERE</strong>で5月の売上明細だけを残します。Aの返品はここで落ちます。</p>
+          <div class="table-wrap"><table>
+          <caption>WHERE後の明細</caption>
+          <thead><tr><th scope="col">店舗</th><th scope="col">月</th><th scope="col">区分</th><th scope="col">金額（円）</th></tr></thead>
+          <tbody>
+            <tr><td>A</td><td>2025-05</td><td>SALE</td><td>60</td></tr>
+            <tr><td>A</td><td>2025-05</td><td>SALE</td><td>60</td></tr>
+            <tr><td>B</td><td>2025-05</td><td>SALE</td><td>100</td></tr>
+            <tr><td>C</td><td>2025-05</td><td>SALE</td><td>90</td></tr>
+          </tbody>
+        </table></div>
+          <p><strong>GROUP BY</strong>で店舗ごとにまとめ、<code>SUM(amount)</code>で金額を足します。</p>
+          <div class="table-wrap"><table>
+          <caption>店舗別の合計</caption>
+          <thead><tr><th scope="col">店舗</th><th scope="col">合計（円）</th></tr></thead>
+          <tbody>
+            <tr><td>A</td><td>120</td></tr>
+            <tr><td>B</td><td>100</td></tr>
+            <tr><td>C</td><td>90</td></tr>
+          </tbody>
+        </table></div>
+          <p><strong>HAVING</strong>で合計100円以上の店舗を残します。</p>
+          <div class="table-wrap"><table>
+          <caption>最終結果</caption>
+          <thead><tr><th scope="col">店舗</th><th scope="col">合計（円）</th></tr></thead>
+          <tbody>
+            <tr><td>A</td><td>120</td></tr>
+            <tr><td>B</td><td>100</td></tr>
+          </tbody>
+        </table></div>
+          <p>明細側に <code>WHERE amount &gt;= 100</code> の条件をかけると、Aの60円が2行とも落ち、店舗Aの合計120円を拾えません。結果の並び順も指定したいときは <code>ORDER BY</code> を使います。</p>
+        </details>
+        <h2>行数と、金額が入っている件数を数え分ける</h2>
+        <p>同じ店舗に、計上済み70円・50円と、金額未確定の<code>NULL</code>があるとします。</p>
+        <dl>
+          <dt><strong><code>COUNT(*)</code> は3</strong></dt><dd>金額がNULLの行も含め、すべての行を数えます。</dd>
+          <dt><strong><code>COUNT(amount)</code> は2</strong></dt><dd>金額がNULL以外の行を数えます。</dd>
+          <dt><strong><code>SUM(amount)</code> は120、<code>AVG(amount)</code> は60</strong></dt><dd>金額が入っている2件だけを足し、平均もその2件で計算します。</dd>
+        </dl>
+        <p>全明細の金額がNULLなら、<code>COUNT(amount)</code>は0、合計と平均はNULLです。このグループは<code>HAVING SUM(amount) &gt;= 100</code>を満たしません。WHEREで明細がすべて落ちた店舗には、グループ自体ができません。</p>
+        <h3>結果の1行は何を表す？</h3>
+        <p><code>GROUP BY store_id</code>では店舗ごとに1行です。<code>GROUP BY store_id, sale_month</code>では店舗と月の組ごとに1行です。A・4月が80円、A・5月が120円なら、店舗別ではAが200円の1行、店舗・月別では80円と120円の2行になります。</p>
+        <div data-practice></div>
+        <template id="aggregate-months">
+          <pre class="aggregate-sql"><code>SELECT store_id, sale_month, SUM(amount) AS total_amount
+FROM sales_log
+WHERE entry_type = 'SALE'
+GROUP BY store_id, sale_month
+HAVING SUM(amount) &gt;= 100;</code></pre>
+          <div class="table-wrap"><table>
+          <caption>売上明細（すべてSALE）</caption>
+          <thead><tr><th scope="col">店舗</th><th scope="col">月</th><th scope="col">売上（円）</th></tr></thead>
+          <tbody>
+            <tr><td>A</td><td>2025-04</td><td>80</td></tr>
+            <tr><td>A</td><td>2025-05</td><td>60</td></tr>
+            <tr><td>A</td><td>2025-05</td><td>60</td></tr>
+            <tr><td>B</td><td>2025-04</td><td>30</td></tr>
+            <tr><td>B</td><td>2025-05</td><td>100</td></tr>
+          </tbody>
+        </table></div>
+        </template>
+        <template id="aggregate-months-result">
+          <div class="table-wrap"><table>
+          <caption>店舗・月ごとの合計と判定</caption>
+          <thead><tr><th scope="col">店舗</th><th scope="col">月</th><th scope="col">合計（円）</th><th scope="col">結果</th></tr></thead>
+          <tbody>
+            <tr><td>A</td><td>2025-04</td><td>80</td><td>除外</td></tr>
+            <tr><td>A</td><td>2025-05</td><td>120</td><td>採用</td></tr>
+            <tr><td>B</td><td>2025-04</td><td>30</td><td>除外</td></tr>
+            <tr><td>B</td><td>2025-05</td><td>100</td><td>採用</td></tr>
+          </tbody>
+        </table></div>
+        </template>
+        <template id="aggregate-fill"><pre class="aggregate-sql"><code>SELECT store_id, COUNT(amount) AS priced_sales, SUM(amount) AS total_amount
+FROM sales_log
+WHERE (a)
+GROUP BY store_id
+HAVING (b);</code></pre></template>
+        <template id="aggregate-query-result"><pre class="aggregate-sql"><code>SELECT store_id, COUNT(amount) AS priced_sales, SUM(amount) AS total_amount
+FROM sales_log
+WHERE sale_month = '2025-06' AND entry_type = 'SALE'
+GROUP BY store_id
+HAVING COUNT(amount) &gt;= 2 AND SUM(amount) &gt;= 150;</code></pre></template>
+        <template id="aggregate-june">
+          <pre class="aggregate-sql"><code>SELECT store_id, COUNT(amount) AS priced_sales, SUM(amount) AS total_amount
+FROM sales_log
+WHERE sale_month = '2025-06' AND entry_type = 'SALE'
+GROUP BY store_id
+HAVING COUNT(amount) &gt;= 2 AND SUM(amount) &gt;= 150;</code></pre>
+          <div class="table-wrap"><table>
+          <caption>集計前の明細</caption>
+          <thead><tr><th scope="col">店舗</th><th scope="col">月</th><th scope="col">区分</th><th scope="col">金額（円）</th></tr></thead>
+          <tbody>
+            <tr><td>A</td><td>2025-06</td><td>SALE</td><td>90</td></tr>
+            <tr><td>A</td><td>2025-06</td><td>SALE</td><td>60</td></tr>
+            <tr><td>A</td><td>2025-06</td><td>RETURN</td><td>−40</td></tr>
+            <tr><td>B</td><td>2025-06</td><td>SALE</td><td>80</td></tr>
+            <tr><td>B</td><td>2025-06</td><td>SALE</td><td>NULL</td></tr>
+            <tr><td>B</td><td>2025-06</td><td>SALE</td><td>80</td></tr>
+            <tr><td>C</td><td>2025-06</td><td>SALE</td><td>160</td></tr>
+            <tr><td>C</td><td>2025-06</td><td>SALE</td><td>NULL</td></tr>
+            <tr><td>D</td><td>2025-06</td><td>SALE</td><td>70</td></tr>
+            <tr><td>D</td><td>2025-06</td><td>SALE</td><td>70</td></tr>
+            <tr><td>E</td><td>2025-05</td><td>SALE</td><td>200</td></tr>
+          </tbody>
+        </table></div>
+        </template>
+        <template id="aggregate-june-result">
+          <div class="table-wrap"><table>
+          <caption>WHERE後の対象明細</caption>
+          <thead><tr><th scope="col">店舗</th><th scope="col">月</th><th scope="col">区分</th><th scope="col">金額（円）</th></tr></thead>
+          <tbody>
+            <tr><td>A</td><td>2025-06</td><td>SALE</td><td>90</td></tr>
+            <tr><td>A</td><td>2025-06</td><td>SALE</td><td>60</td></tr>
+            <tr><td>B</td><td>2025-06</td><td>SALE</td><td>80</td></tr>
+            <tr><td>B</td><td>2025-06</td><td>SALE</td><td>NULL</td></tr>
+            <tr><td>B</td><td>2025-06</td><td>SALE</td><td>80</td></tr>
+            <tr><td>C</td><td>2025-06</td><td>SALE</td><td>160</td></tr>
+            <tr><td>C</td><td>2025-06</td><td>SALE</td><td>NULL</td></tr>
+            <tr><td>D</td><td>2025-06</td><td>SALE</td><td>70</td></tr>
+            <tr><td>D</td><td>2025-06</td><td>SALE</td><td>70</td></tr>
+          </tbody>
+        </table></div>
+          <div class="table-wrap"><table>
+          <caption>店舗別の集計とHAVINGの判定</caption>
+          <thead><tr><th scope="col">店舗</th><th scope="col">金額確定件数</th><th scope="col">合計（円）</th><th scope="col">結果</th></tr></thead>
+          <tbody>
+            <tr><td>A</td><td>2</td><td>150</td><td>採用</td></tr>
+            <tr><td>B</td><td>2</td><td>160</td><td>採用</td></tr>
+            <tr><td>C</td><td>1</td><td>160</td><td>件数不足</td></tr>
+            <tr><td>D</td><td>2</td><td>140</td><td>合計額不足</td></tr>
+          </tbody>
+        </table></div>
+          <p>Eは5月分しかないため、WHERE後に明細が残らず、店舗別の集計にも現れません。</p>
+        </template>
+        <footer class="sources">
+          <a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/m42obm000000afqx-att/2024r06a_ap_am_qs.pdf">IPA 令和6年度秋期・午前 問30</a>
+          <a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/nl10bi0000009lh8-att/2025r07h_ap_pm_qs.pdf">IPA 令和7年度春期・午後 問6</a>
+        </footer>
+      </article>
+      <article id="packet-delivery" data-lesson>
+        <p class="context">第5章　ネットワークと通信</p>
+        <h1 tabindex="-1">5-1　パケットが届くまで</h1>
+        <p class="lead"><strong>宛先IPは最終端末、宛先MACはそのLANでフレームを渡す相手を指します。</strong> ルータを越えると、次の区間用にフレームが作り直されます。</p>
+        <h2>同じフレームの中に、役割の違う宛先がある</h2>
+        <div class="packet-headers">イーサネットフレーム <strong>宛先MAC</strong>
+          <div>IPv4パケット <strong>宛先IP</strong>
+            <div>TCPセグメント <strong>宛先ポート番号</strong>
+              <div>データ</div>
+            </div>
+          </div>
+        </div>
+        <p>TCPで送る例です。外側のイーサネットには次に受け取る機器のMACアドレス、内側のIPv4には最終端末のIPアドレスがあります。さらに内側のTCPにあるポート番号は、最終端末の中でデータを受け取る口を指定します。</p>
+        <h2>同じLANと別のLANで、宛先MACを比べる</h2>
+        <svg class="packet-topology" viewBox="0 0 360 144" role="img" aria-label="端末Aと端末BはスイッチSを経由してRのR-L側へ接続。R-R側には端末Cが接続。">
+          <rect class="packet-lan" x="4" y="21" width="189" height="91" rx="6"/>
+          <rect class="packet-lan" x="227" y="21" width="128" height="91" rx="6"/>
+          <text x="58" y="15">LAN1（左）</text><text x="298" y="15">LAN2（右）</text>
+          <path d="M84 49H93V71H100 M84 92H93V71 M178 71H195 M222 71H260"/>
+          <rect x="12" y="37" width="72" height="24" rx="4"/><text x="48" y="53">端末A</text>
+          <rect x="12" y="80" width="72" height="24" rx="4"/><text x="48" y="96">端末B</text>
+          <rect x="100" y="59" width="78" height="24" rx="4"/><text x="139" y="75">スイッチS</text>
+          <rect x="260" y="59" width="85" height="24" rx="4"/><text x="302.5" y="75">端末C</text>
+          <rect class="packet-router" x="183" y="48" width="52" height="46" rx="4"/>
+          <text x="209" y="41">ルータR</text>
+          <circle cx="195" cy="71" r="5"/><circle cx="223" cy="71" r="5"/>
+          <text x="195" y="87">R-L</text><text x="223" y="87">R-R</text>
+
+        </svg>
+        <div class="table-wrap"><table>
+          <caption>例題のアドレス</caption>
+          <thead><tr><th scope="col">機器</th><th scope="col">LAN</th><th scope="col">IPv4アドレス</th><th scope="col">MACの略号</th></tr></thead>
+          <tbody><tr><th scope="row">A</th><td>左</td><td>192.168.10.10</td><td>MAC-A</td></tr>
+          <tr><th scope="row">B</th><td>左</td><td>192.168.10.11</td><td>MAC-B</td></tr>
+          <tr><th scope="row">R-L</th><td>左</td><td>192.168.10.1</td><td>MAC-L</td></tr>
+          <tr><th scope="row">R-R</th><td>右</td><td>192.168.20.1</td><td>MAC-R</td></tr>
+          <tr><th scope="row">C</th><td>右</td><td>192.168.20.30</td><td>MAC-C</td></tr></tbody>
+        </table></div>
+        <p>各LANのプレフィックス長は /24 です。デフォルトゲートウェイは、ほかに合う経路がないときに端末が頼るルータです。この例ではAとBはR-L、CはR-Rを使います。宛先側のMACはARPで解決済みで、NATによるアドレス変換はありません。</p>
+        <fieldset class="packet-example">
+          <legend>端末Aからどこへ送る？</legend>
+          <div class="controls">
+            <label class="option"><input type="radio" name="packet-example" value="local" checked> 同じLANのB</label>
+            <label class="option"><input type="radio" name="packet-example" value="remote"> 別のLANのC</label>
+          </div>
+          <div class="packet-local">
+            <p>観測地点は左LANです。Aから出るフレームの宛先は何でしょうか。</p>
+            <details><summary>左LANのアドレスを確認する</summary>
+              <p><strong>IPはA → B、MACはMAC-A → MAC-B</strong>。同じLANなので宛先端末BのMACを使います。スイッチは宛先MACを見て転送し、送信元・宛先MACは変えません。</p>
+            </details>
+          </div>
+          <div class="packet-remote">
+            <p>左LANでAが送るフレームと、右LANでルータが送り直すフレームを比べます。</p>
+            <details><summary>左LANのアドレスを確認する</summary>
+              <p><strong>IPはA → C、MACはMAC-A → MAC-L</strong>。Aは、同じLANにあるルータの入口R-Lにフレームを渡します。</p>
+            </details>
+            <details><summary>右LANのアドレスを確認する</summary>
+              <p><strong>IPはA → C、MACはMAC-R → MAC-C</strong>。ルータはパケットの宛先IPを見て出力先を選び、R-RからCに渡すフレームを作ります。</p>
+            </details>
+          </div>
+        </fieldset>
+        <p>NATがないので、ルータを越えても送信元・宛先IPは同じです。中継時にはTTL（転送できる残りの回数）などは更新されます。</p>
+        <h2>プリンタとの通信を追う</h2>
+        <div data-practice></div>
+        <template id="packet-header-solution"><div class="packet-headers">イーサネットフレーム <strong>宛先MAC</strong>
+          <div>IPv4パケット <strong>宛先IP</strong>
+            <div>TCPセグメント <strong>宛先ポート番号</strong>
+              <div>データ</div>
+            </div>
+          </div>
+        </div></template>
+        <template id="packet-printer-case">
+          <svg class="packet-topology" viewBox="0 0 360 144" role="img" aria-label="PCとプリンタLはスイッチを経由してGのG1側へ接続。G2側にはプリンタRが接続。">
+          <rect class="packet-lan" x="4" y="21" width="189" height="91" rx="6"/>
+          <rect class="packet-lan" x="227" y="21" width="128" height="91" rx="6"/>
+          <text x="58" y="15">LAN1（左）</text><text x="298" y="15">LAN2（右）</text>
+          <path d="M84 49H93V71H100 M84 92H93V71 M178 71H195 M222 71H260"/>
+          <rect x="12" y="37" width="72" height="24" rx="4"/><text x="48" y="53">PC</text>
+          <rect x="12" y="80" width="72" height="24" rx="4"/><text x="48" y="96">プリンタL</text>
+          <rect x="100" y="59" width="78" height="24" rx="4"/><text x="139" y="75">スイッチ</text>
+          <rect x="260" y="59" width="85" height="24" rx="4"/><text x="302.5" y="75">プリンタR</text>
+          <rect class="packet-router" x="183" y="48" width="52" height="46" rx="4"/>
+          <text x="209" y="41">ルータG</text>
+          <circle cx="195" cy="71" r="5"/><circle cx="223" cy="71" r="5"/>
+          <text x="195" y="87">G1</text><text x="223" y="87">G2</text>
+
+        </svg>
+          <div class="table-wrap"><table>
+          <caption>プリンタ事例のアドレス</caption>
+          <thead><tr><th scope="col">機器</th><th scope="col">IPv4アドレス</th><th scope="col">MACの略号</th></tr></thead>
+          <tbody><tr><th scope="row">PC</th><td>192.168.30.10</td><td>MAC-P</td></tr>
+          <tr><th scope="row">プリンタL</th><td>192.168.30.20</td><td>MAC-LP</td></tr>
+          <tr><th scope="row">G1</th><td>192.168.30.1</td><td>MAC-G1</td></tr>
+          <tr><th scope="row">G2</th><td>192.168.40.1</td><td>MAC-G2</td></tr>
+          <tr><th scope="row">プリンタR</th><td>192.168.40.20</td><td>MAC-RP</td></tr></tbody>
+        </table></div>
+          <p>LAN1は192.168.30.0/24、LAN2は192.168.40.0/24。各端末は自分と同じLANにあるGのインタフェースをデフォルトゲートウェイに使います。ARPによるアドレス解決は済んでおり、NATはありません。</p>
+        </template>
+        <template id="packet-remote-solution">
+          <svg class="packet-topology" viewBox="0 0 360 144" role="img" aria-label="PCとプリンタLはスイッチを経由してGのG1側へ接続。G2側にはプリンタRが接続。">
+          <rect class="packet-lan" x="4" y="21" width="189" height="91" rx="6"/>
+          <rect class="packet-lan" x="227" y="21" width="128" height="91" rx="6"/>
+          <text x="58" y="15">LAN1（左）</text><text x="298" y="15">LAN2（右）</text>
+          <path d="M84 49H93V71H100 M84 92H93V71 M178 71H195 M222 71H260"/>
+          <rect x="12" y="37" width="72" height="24" rx="4"/><text x="48" y="53">PC</text>
+          <rect x="12" y="80" width="72" height="24" rx="4"/><text x="48" y="96">プリンタL</text>
+          <rect x="100" y="59" width="78" height="24" rx="4"/><text x="139" y="75">スイッチ</text>
+          <rect class="packet-focus" x="260" y="59" width="85" height="24" rx="4"/><text x="302.5" y="75">プリンタR</text>
+          <rect class="packet-router" x="183" y="48" width="52" height="46" rx="4"/>
+          <text x="209" y="41">ルータG</text>
+          <circle class="packet-focus" cx="195" cy="71" r="5"/><circle cx="223" cy="71" r="5"/>
+          <text x="195" y="87">G1</text><text x="223" y="87">G2</text>
+
+        </svg>
+          <p><strong>最終宛先はプリンタR、LAN1で渡す先はG1</strong>です。</p>
+        </template>
+        <template id="packet-reply-solution">
+          <svg class="packet-topology" viewBox="0 0 360 144" role="img" aria-label="PCとプリンタLはスイッチを経由してGのG1側へ接続。G2側にはプリンタRが接続。プリンタRからPCへ返信。">
+          <rect class="packet-lan" x="4" y="21" width="189" height="91" rx="6"/>
+          <rect class="packet-lan" x="227" y="21" width="128" height="91" rx="6"/>
+          <text x="58" y="15">LAN1（左）</text><text x="298" y="15">LAN2（右）</text>
+          <path d="M84 49H93V71H100 M84 92H93V71 M178 71H195 M222 71H260"/>
+          <rect x="12" y="37" width="72" height="24" rx="4"/><text x="48" y="53">PC</text>
+          <rect x="12" y="80" width="72" height="24" rx="4"/><text x="48" y="96">プリンタL</text>
+          <rect x="100" y="59" width="78" height="24" rx="4"/><text x="139" y="75">スイッチ</text>
+          <rect class="packet-focus" x="260" y="59" width="85" height="24" rx="4"/><text x="302.5" y="75">プリンタR</text>
+          <rect class="packet-router" x="183" y="48" width="52" height="46" rx="4"/>
+          <text x="209" y="41">ルータG</text>
+          <circle class="packet-focus" cx="195" cy="71" r="5"/><circle cx="223" cy="71" r="5"/>
+          <text x="195" y="87">G1</text><text x="223" y="87">G2</text>
+          <text class="packet-reply" x="180" y="133">← プリンタRからPCへの返信</text>
+        </svg>
+          <p>強調したプリンタRがLAN2で送り、G1がLAN1で送り直します。返信の宛先IPはどちらの区間でもPCの192.168.30.10です。</p>
+        </template>
+        <footer class="sources">
+          <a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/ps6vr70000010d6y-att/2023r05h_ap_am_qs.pdf">IPA 令和5年度春期・午前 問33</a>
+          <a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/nl10bi0000009lh8-att/2025r07h_ap_pm_qs.pdf">IPA 令和7年度春期・午後 問5</a>
+        </footer>
+      </article>
+<article id="message-authentication" data-lesson>
+        <p class="context">第6章　情報セキュリティ</p>
+        <h1 tabindex="-1">6-3　ハッシュ・メッセージ認証・デジタル署名</h1>
+        <p class="lead"><strong>検証結果を読むときは、文書から計算した値を何と照合したか、どの鍵を使ったかを確かめます。</strong></p>
+        <h2>ハッシュ値が一致すると、何が分かる？</h2>
+        <p><strong>ハッシュ値</strong>は、文書などのデータから計算した固定長の値です。出版部の文書を受け取った読者は、文書から計算した値を、正規の文書を基にした照合値と比べます。</p>
+        <figure class="panel">
+          <div class="input-grid">
+            <div><strong>受け取った文書</strong><br>ハッシュ関数で値を計算する</div>
+            <div><strong>正規の文書に対応する値</strong><br>信頼できる経路から取得する</div>
+          </div>
+          <figcaption>二つの値を比較する</figcaption>
+        </figure>
+        <p>安全な暗号学的ハッシュ関数を使い、信頼できる照合値と一致すれば、内容が正規の文書と同じだと判断する根拠になります。</p>
+        <details>
+          <summary>同じ配布画面の文書と照合値が変わっていた場合</summary>
+          <p>画面の掲載値と一致しても、確かめられたのは取得した文書とその掲載値が対応することまでです。発行元が別の信頼できる経路で知らせた値があれば、そちらと照合して正規の版と一致するかを確かめられます。</p>
+        </details>
+        <h2>MACは送信側と受信側が同じ鍵を使う</h2>
+        <p><strong>MAC（メッセージ認証コード／メッセージ認証符号）</strong>は、本文と秘密の共有鍵から計算する値です。HMACは、暗号学的ハッシュ関数を使うMACの方式の一つです。</p>
+        <figure class="panel">
+          <div class="input-grid">
+            <div><strong>送信側</strong><br>本文と共有鍵からMACを計算</div>
+            <div><strong>送るもの</strong><br>本文とMAC</div>
+            <div><strong>受信側</strong><br>受け取った本文と同じ共有鍵でMACを再計算し、届いた値と照合</div>
+          </div>
+        </figure>
+        <p>例えば、受注システムと在庫システムが、共有鍵を使って通知内容を確認できます。共有鍵を持つ受信側も同じ方式でMACを作成できるため、第三者にも署名者を検証してもらう用途ではデジタル署名を使います。本文を秘匿する必要があれば暗号化を行います。</p>
+        <h2>デジタル署名は、署名者の公開鍵で検証する</h2>
+        <p>出版部は自分の秘密鍵で文書に署名します。読者は、<strong>出版部の鍵であると確認済みの公開鍵</strong>で、届いた文書と署名を検証します。</p>
+        <figure class="panel">
+          <div class="input-grid">
+            <div><strong>署名者・出版部</strong><br>出版部の秘密鍵で文書に署名</div>
+            <div><strong>配布物</strong><br>文書と署名</div>
+            <div><strong>検証者・読者</strong><br>事前に確認した出版部の公開鍵で、文書と署名を検証</div>
+          </div>
+          <figcaption>公開鍵の持ち主は、配布画面とは別に信頼できる方法で確認する</figcaption>
+        </figure>
+        <p>署名が有効なら、検証に使った公開鍵と対になる秘密鍵で、その内容に対して署名されたと判断できます。出版部の文書だと判断するには、公開鍵が出版部のものだと確認でき、秘密鍵が適切に管理されていることが前提です。文書だけが変わると、元の署名を正規の公開鍵で検証しても通りません。</p>
+        <div data-practice></div>
+        <template id="signature-verification-solution">
+          <ol>
+            <li><strong>出版部</strong>が出版部の秘密鍵で文書に署名する。</li>
+            <li><strong>読者</strong>が出版部のものと確認済みの公開鍵を用意する。</li>
+            <li>その公開鍵で、<strong>受け取った文書と署名</strong>を検証する。</li>
+          </ol>
+        </template>
+        <footer class="sources">
+          <a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/ps6vr70000010d6y-att/2023r05h_ap_am_qs.pdf">IPA 応用情報 令和5年度春期・午前 問38</a>
+          <a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt80000008smf-att/2022r04a_sc_am2_qs.pdf">IPA 情報処理安全確保支援士 令和4年度秋期・午前Ⅱ 問1</a>
+        </footer>
+      </article>
+      <article id="interface-design" data-lesson>
+        <p class="context">第7章　システム設計・開発・テスト</p>
+        <h1 tabindex="-1">7-3　システム構成とインタフェース設計</h1>
+        <p class="lead"><strong>システムを機能で分けたら、境界を越えて渡すものと、相手からどんな結果が返るかを決めます。</strong></p>
+        <h2>注文を受ける機能と、在庫を確保する機能を分ける</h2>
+        <p>通販サイトと実店舗が、同じ倉庫の在庫を使うとします。通販の画面は注文内容を入力・表示し、注文受付は注文番号や受注状態を管理します。倉庫の在庫管理は別システムで、通販と実店舗から届く在庫確保の依頼を受け、引当可能数を更新します。</p>
+        <ol>
+          <li><strong>画面（表示層）</strong>が注文内容を受け取り、注文受付に渡します。</li>
+          <li><strong>注文受付（業務処理層）</strong>が注文番号を管理し、在庫の確保を依頼します。</li>
+          <li><strong>在庫管理（外部システム）</strong>が、在庫データを管理する層を通じて在庫を確認し、足りれば確保します。同じ商品では確認から確保までの間に別の依頼が割り込まないようにすると、最後の1個は片方にだけ確保されます。</li>
+        </ol>
+        <p>この構成でのシステム境界は、注文受付と在庫管理の間です。在庫管理側のデータをどんな手順で更新するかは在庫管理が担当し、注文受付は公開された呼出し口（API）を使います。</p>
+        <h2>在庫確保APIの取り決めを読む</h2>
+        <div class="table-wrap"><table>
+          <caption>1注文につき1商品を確保する場合の取り決め</caption>
+          <thead><tr><th scope="col">項目</th><th scope="col">注文受付と在庫管理の取り決め</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">入力</th><td>注文番号、商品コード、確保したい数量</td></tr>
+            <tr><th scope="row">事前条件</th><td>商品コードが登録済みで、数量は1以上の整数</td></tr>
+            <tr><th scope="row">成功結果</th><td>在庫を確保し、確保番号を返す</td></tr>
+            <tr><th scope="row">失敗結果</th><td>入力不正と在庫不足を区別して返す。いずれも在庫は確保しない</td></tr>
+          </tbody>
+        </table></div>
+        <p>在庫不足は業務上の結果なので、購入者に案内できます。一方、通信が途切れて応答が届かなかった場合、注文受付には在庫確保の成否が分かりません。在庫管理が確保を終えた直後に応答だけが失われることもあるためです。</p>
+        <details><summary>応答が届かなかったとき、何を取り決める？</summary>
+          <p>注文受付が同じ注文番号・同じ依頼内容で送り直したとき、在庫管理は処理済みなら保存した結果を返します。初回と再送で確保を二度行わないように、注文番号ごとの処理結果の記録と在庫の更新をまとめて行います。同じ注文番号で内容が違う依頼はエラーにします。</p>
+        </details>
+        <h2>今すぐ結果が要るか、後から受け取れるか</h2>
+        <p><strong>同期</strong>では、注文受付が在庫確保の結果を待ち、成功・失敗を画面に返します。<strong>非同期</strong>では、依頼を受け付けた時点で画面に「処理中」を返し、実際に確保できたかどうかは後で通知するか、照会できるようにします。</p>
+        <p>非同期なら、依頼の受理と確保の成功を区別し、最終結果に元の依頼と同じ<strong>注文番号</strong>を含めます。複数の注文が並行しても、どの注文を確定・取消しにするか判断できます。</p>
+        <div data-practice></div>
+      </article>
+      <article id="test-case-design" data-lesson>
+        <p class="context">第7章　システム設計・開発・テスト</p>
+        <h1 tabindex="-1">7-8　仕様から作るテストケース</h1>
+        <p class="lead"><strong>仕様を読んで、試す入力と、その入力で返るべき結果をセットにします。</strong> 複数の条件があるときは、調べたい条件だけで結果が変わるように、ほかの入力を選びます。</p>
+        <h2>受理と拒否が切り替わる値を試す</h2>
+        <p>予約人数は1人以上6人以下の整数とします。範囲内なら受理、範囲外なら拒否します。内部のコードを参照せず、仕様に基づいて入出力を検証するのが<strong>ブラックボックステスト</strong>です。</p>
+        <div class="table-wrap"><table>
+           <caption>入力のグループ</caption>
+           <thead><tr><th scope="col">範囲</th><th scope="col">0以下</th><th scope="col">1〜6</th><th scope="col">7以上</th></tr></thead>
+           <tbody><tr><th scope="row">代表値</th><td>−2</td><td>3</td><td>9</td></tr></tbody>
+         </table></div>
+        <p>仕様上の扱いが同じ範囲に分け、各範囲から代表値を選ぶ方法が<strong>同値分割</strong>です。上限や下限の判定を調べたいときは、受理と拒否が切り替わる付近を選ぶ<strong>境界値分析（限界値分析）</strong>を使います。0・1・6・7人では、どの結果になるでしょうか。</p>
+        <details><summary>期待結果を確認する</summary>
+          <div class="table-wrap"><table>
+           <caption>予約人数の期待結果</caption>
+           <thead><tr><th scope="col">仕様</th><th scope="col">0人</th><th scope="col">1人</th><th scope="col">6人</th><th scope="col">7人</th></tr></thead>
+           <tbody><tr><th scope="row">1人以上6人以下</th><td>拒否</td><td>受理</td><td>受理</td><td>拒否</td></tr>
+           <tr><th scope="row">1人以上6人未満</th><td>拒否</td><td>受理</td><td>拒否</td><td>拒否</td></tr></tbody>
+         </table></div>
+          <p>上限を「6人未満」に変えると、この4件では<strong>6人だけ</strong>が拒否に変わります。新仕様で上限側の切替えを確かめるなら、5人で受理、6人で拒否を試します。</p>
+        </details>
+        <h2>複数の条件を判定表から読む</h2>
+        <p>予約受付では、空席がなければ「満席」。空席があり、会員確認が済んでいなければ「会員確認が必要」。両方を満たせば「予約成立」です。<strong>デシジョンテーブル（判定表）</strong>では、条件の組合せと結果を対応させます。ここでは1列が1つの規則です。</p>
+        <div class="table-wrap"><table>
+           <caption>予約受付の判定表</caption>
+           <thead><tr><th scope="col">条件・結果</th><th scope="col">規則1</th><th scope="col">規則2</th><th scope="col">規則3</th></tr></thead>
+           <tbody><tr><th scope="row">空席あり</th><td>いいえ</td><td>はい</td><td>はい</td></tr>
+           <tr><th scope="row">会員確認済み</th><td>どちらでも</td><td>いいえ</td><td>はい</td></tr>
+           <tr><th scope="row">期待結果</th><td>満席</td><td>会員確認が必要</td><td>予約成立</td></tr></tbody>
+         </table></div>
+        <p>「どちらでも」は、会員確認の有無に関係なく同じ結果になるという意味です。各規則を一度ずつ試すなら規則1はどちらか一方で足ります。満席時の結果が会員確認の有無で変わらないことも確かめたい場合は、両方を試します。</p>
+        <h2>複数の条件では、調べる境界を一つに絞る</h2>
+        <p>設備貸出しで、セットAの数量を <var>x</var>、セットBの数量を <var>y</var> とします。数量は整数で、Aは1〜6個、Bは1〜8個、合計10個以下なら受付です。どれか一つでも範囲を外れると「受付不可」を返します。</p>
+        <p>合計の境界を試すなら、個別数量はどちらも許容範囲に収めます。例えばAを5個に固定すると、Bが5個なら合計10個で受付、6個なら合計11個で受付不可です。合計10個が<strong>境界上の点（オンポイント）</strong>、反対側の隣接値の11個が<strong>オフポイント</strong>です。仕様が「10個未満」なら、境界上の10個が受付不可となり、反対側の隣接値は9個になります。</p>
+        <div data-practice></div>
+        <template id="case-decision-table">
+          <div class="table-wrap"><table>
+           <caption>予約受付の判定表</caption>
+           <thead><tr><th scope="col">条件・結果</th><th scope="col">規則1</th><th scope="col">規則2</th><th scope="col">規則3</th></tr></thead>
+           <tbody><tr><th scope="row">空席あり</th><td>いいえ</td><td>はい</td><td>はい</td></tr>
+           <tr><th scope="row">会員確認済み</th><td>どちらでも</td><td>いいえ</td><td>はい</td></tr>
+           <tr><th scope="row">期待結果</th><td>満席</td><td>会員確認が必要</td><td>予約成立</td></tr></tbody>
+         </table></div>
+        </template>
+        <template id="case-sum-solution">
+          <p>仕様の条件は 1≦x≦6、1≦y≦8、x＋y≦10 です。太字の結果は、仕様と誤実装で異なります。</p>
+          <div class="table-wrap"><table>
+           <caption>合計上限をまたぐ2件</caption>
+           <thead><tr><th scope="col">入力 (x, y)</th><th scope="col">xの範囲</th><th scope="col">yの範囲</th><th scope="col">合計上限</th><th scope="col">仕様</th><th scope="col">誤実装</th></tr></thead>
+           <tbody><tr><th scope="row">(4, 6)</th><td>範囲内</td><td>範囲内</td><td>10で適合</td><td><strong>受付</strong></td><td><strong>受付不可</strong></td></tr>
+           <tr><th scope="row">(4, 7)</th><td>範囲内</td><td>範囲内</td><td>11で違反</td><td>受付不可</td><td>受付不可</td></tr></tbody>
+         </table></div>
+        </template>
+        <template id="case-quantity-solution">
+          <p>仕様の条件は 1≦x≦6、1≦y≦8、x＋y≦10 です。太字の結果は、仕様と誤実装で異なります。</p>
+          <div class="table-wrap"><table>
+           <caption>セットAの上限を試す入力</caption>
+           <thead><tr><th scope="col">入力 (x, y)</th><th scope="col">xの範囲</th><th scope="col">yの範囲</th><th scope="col">合計上限</th><th scope="col">仕様</th><th scope="col">誤実装</th></tr></thead>
+           <tbody><tr><th scope="row">(6, 2)</th><td>範囲内</td><td>範囲内</td><td>8で適合</td><td><strong>受付</strong></td><td><strong>受付不可</strong></td></tr>
+           <tr><th scope="row">(7, 2)</th><td>範囲外</td><td>範囲内</td><td>9で適合</td><td>受付不可</td><td>受付不可</td></tr>
+           <tr><th scope="row">(6, 5)</th><td>範囲内</td><td>範囲内</td><td>11で違反</td><td>受付不可</td><td>受付不可</td></tr>
+           <tr><th scope="row">(7, 5)</th><td>範囲外</td><td>範囲内</td><td>12で違反</td><td>受付不可</td><td>受付不可</td></tr></tbody>
+         </table></div>
+        </template>
+        <footer class="sources">
+          <a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000fqpm-att/2017h29a_ap_pm_qs.pdf">IPA 平成29年度秋期・午後 問8</a>
+          <a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000fqpm-att/2017h29a_ap_pm_ans.pdf">IPA 解答例・出題趣旨</a>
+        </footer>
+      </article>
+      <article id="critical-path" data-lesson>
+        <p class="context">第8章　プロジェクトマネジメント</p>
+        <h1 tabindex="-1">8-4　作業の依存関係とクリティカルパス</h1>
+        <p class="lead"><strong>合流点では、最後の先行作業が終わるまで次に進めません。</strong> 図の合流を順に追うと、全体の完了日を求められます。</p>
+        <h2>合流では、最後に終わる作業を待つ</h2>
+        <p>アローダイアグラムでは、丸は作業の開始・完了の節目（結合点）、矢印は作業です。破線は所要0日の<strong>ダミー作業</strong>で、先後関係を表します。破線の先へ進むには、破線の始点に到達している必要があります。</p>
+        <svg class="schedule-diagram" viewBox="0 0 344 174" role="img" aria-label="設計の後に開発と手引きを並行し、両方の完了後に受入れを行う。">
+          <defs><marker id="schedule-example-arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L7 3.5 L0 7 Z" fill="#526b82"/></marker></defs>
+          <line x1="35.0" y1="82.0" x2="76.0" y2="82.0" marker-end="url(#schedule-example-arrow)"/><text x="59" y="68">設計 2日</text>
+          <line x1="101.8" y1="74.8" x2="154.5" y2="39.4" marker-end="url(#schedule-example-arrow)"/><text x="125" y="46">開発 4日</text>
+          <line x1="101.8" y1="89.2" x2="154.5" y2="124.6" marker-end="url(#schedule-example-arrow)"/><text x="125" y="130">手引き 3日</text>
+          <line x1="177.2" y1="39.1" x2="219.3" y2="72.7" stroke-dasharray="4 3" marker-end="url(#schedule-example-arrow)"/><text x="209" y="44">0日</text>
+          <line x1="177.2" y1="124.9" x2="219.3" y2="91.3" stroke-dasharray="4 3" marker-end="url(#schedule-example-arrow)"/><text x="209" y="130">0日</text>
+          <line x1="244.0" y1="82.0" x2="308.0" y2="82.0" marker-end="url(#schedule-example-arrow)"/><text x="272" y="69">受入れ 1日</text>
+          <circle cx="22" cy="82" r="12"/><text x="22" y="87">1</text>
+          <circle cx="91" cy="82" r="12"/><text x="91" y="87">2</text>
+          <circle cx="167" cy="31" r="12"/><text x="167" y="36">3</text>
+          <circle cx="167" cy="133" r="12"/><text x="167" y="138">4</text>
+          <circle cx="231" cy="82" r="12"/><text x="231" y="87">5</text>
+          <circle cx="323" cy="82" r="12"/><text x="323" y="87">6</text>
+        </svg>
+        <p>設計2日の後、開発4日と手引き作成3日を並行できます。開始から数えて開発は経過6日、手引きは経過5日で完了します。受入れは両方を待って経過6日から始まるので、全体は<strong>7日</strong>。全体の完了時期を決める最長経路「設計 → 開発 → 受入れ」が<strong>クリティカルパス</strong>です。</p>
+        <details><summary>手引きが1日、2日延びた場合</summary>
+          <p>1日延びると両方が経過6日に終わります。全体は7日のままで、クリティカルパスは2本です。2日延びると受入れが手引きの完了を経過7日まで待ち、全体は8日かかります。</p>
+        </details>
+        <h2>左から最早、右から最遅を計算する</h2>
+        <ol>
+          <li><strong>最早結合点時刻。</strong> 開始点に0を置き、入る矢印ごとに「始点の最早時刻 ＋ 所要日数」を求め、最大値を置きます。</li>
+          <li><strong>最遅結合点時刻。</strong> 終点に最短完了時刻を置き、右から戻ります。出る矢印ごとに「終点の最遅時刻 − 所要日数」を求め、最小値を置きます。破線も0日として含めます。</li>
+          <li><strong>総余裕。</strong> 作業の最遅開始時刻から最早開始時刻を引きます。最早開始は矢印の始点の最早時刻、最遅開始は終点の最遅時刻から所要日数を引いた値です。総余裕0の作業を開始点から終了点までつなぐとクリティカルパスになります。</li>
+        </ol>
+        <p>手引きは経過2日から始められ、受入れ開始の経過6日までに3日で終えればよいので、最遅開始は経過3日、総余裕は1日です。</p>
+        <h3>経過日数を「何日目」に直す</h3>
+        <p>開始日を1日目とする問題では、開始時刻に1を足します。経過3日から始める4日間の作業は、4日目に開始し、7日目の終了時点に完了します。</p>
+        <p>確認問題では、店舗の在庫連携改修を扱います。Aは連携仕様の確定、Bは検証データの準備、Cは店舗画面の改修、Dは連携処理の改修、Eは結合テストです。</p>
+        <div data-practice></div>
+        <template id="schedule-question">
+          <svg class="schedule-diagram" viewBox="0 0 344 174" role="img" aria-label="Aは1から2へ3日、Bは1から3へ5日、破線は2から3へ0日、Cは2から4へ4日、Dは3から4へ5日、Eは4から5へ2日。">
+          <defs><marker id="schedule-base-arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L7 3.5 L0 7 Z" fill="#526b82"/></marker></defs>
+          <line x1="33.5" y1="76.0" x2="98.7" y2="41.9" marker-end="url(#schedule-base-arrow)"/><text x="60" y="46">A 3日</text>
+          <line x1="33.5" y1="88.1" x2="98.8" y2="122.9" marker-end="url(#schedule-base-arrow)"/><text x="60" y="128">B 5日</text>
+          <line x1="112.0" y1="48.0" x2="112.0" y2="115.0" stroke-dasharray="4 3" marker-end="url(#schedule-base-arrow)"/><text x="94" y="85">0日</text>
+          <line x1="124.0" y1="40.0" x2="212.1" y2="76.3" marker-end="url(#schedule-base-arrow)"/><text x="175" y="46">C 4日</text>
+          <line x1="124.0" y1="125.0" x2="212.2" y2="87.8" marker-end="url(#schedule-base-arrow)"/><text x="173" y="132">D 5日</text>
+          <line x1="239.0" y1="82.0" x2="305.0" y2="82.0" marker-end="url(#schedule-base-arrow)"/><text x="273" y="70">E 2日</text>
+          <circle cx="22" cy="82" r="12"/><text x="22" y="87">1</text>
+          <circle cx="112" cy="35" r="12"/><text x="112" y="40">2</text>
+          <circle cx="112" cy="130" r="12"/><text x="112" y="135">3</text>
+          <circle cx="226" cy="82" r="12"/><text x="226" y="87">4</text>
+          <circle cx="320" cy="82" r="12"/><text x="320" y="87">5</text>
+        </svg>
+          <p>破線はダミー作業です。並行作業に要員の制約はありません。</p>
+        </template>
+        <template id="schedule-early"><p><strong>最早時刻。太線は B → D → E。</strong></p>
+        <svg class="schedule-diagram" viewBox="0 0 344 174" role="img" aria-label="最早時刻は結合点1から順に0、3、5、10、12日。太線はB、D、E。">
+          <defs><marker id="schedule-early-arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L7 3.5 L0 7 Z" fill="#526b82"/></marker></defs>
+          <line x1="33.5" y1="76.0" x2="98.7" y2="41.9" marker-end="url(#schedule-early-arrow)"/><text x="60" y="46">A 3日</text>
+          <line x1="33.5" y1="88.1" x2="98.8" y2="122.9" class="critical-edge" marker-end="url(#schedule-early-arrow)"/><text x="60" y="128">B 5日</text>
+          <line x1="112.0" y1="48.0" x2="112.0" y2="115.0" stroke-dasharray="4 3" marker-end="url(#schedule-early-arrow)"/><text x="94" y="85">0日</text>
+          <line x1="124.0" y1="40.0" x2="212.1" y2="76.3" marker-end="url(#schedule-early-arrow)"/><text x="175" y="46">C 4日</text>
+          <line x1="124.0" y1="125.0" x2="212.2" y2="87.8" class="critical-edge" marker-end="url(#schedule-early-arrow)"/><text x="173" y="132">D 5日</text>
+          <line x1="239.0" y1="82.0" x2="305.0" y2="82.0" class="critical-edge" marker-end="url(#schedule-early-arrow)"/><text x="273" y="70">E 2日</text>
+          <circle cx="22" cy="82" r="12"/><text x="22" y="87">1</text><text class="schedule-time" x="22" y="113">0日</text>
+          <circle cx="112" cy="35" r="12"/><text x="112" y="40">2</text><text class="schedule-time" x="112" y="15">3日</text>
+          <circle cx="112" cy="130" r="12"/><text x="112" y="135">3</text><text class="schedule-time" x="112" y="161">5日</text>
+          <circle cx="226" cy="82" r="12"/><text x="226" y="87">4</text><text class="schedule-time" x="226" y="113">10日</text>
+          <circle cx="320" cy="82" r="12"/><text x="320" y="87">5</text><text class="schedule-time" x="320" y="113">12日</text>
+        </svg>
+        </template>
+        <template id="schedule-late"><p><strong>最遅時刻。Cは結合点④までに終えます。</strong></p>
+        <svg class="schedule-diagram" viewBox="0 0 344 174" role="img" aria-label="最遅時刻は結合点1から順に0、5、5、10、12日。">
+          <defs><marker id="schedule-late-arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L7 3.5 L0 7 Z" fill="#526b82"/></marker></defs>
+          <line x1="33.5" y1="76.0" x2="98.7" y2="41.9" marker-end="url(#schedule-late-arrow)"/><text x="60" y="46">A 3日</text>
+          <line x1="33.5" y1="88.1" x2="98.8" y2="122.9" marker-end="url(#schedule-late-arrow)"/><text x="60" y="128">B 5日</text>
+          <line x1="112.0" y1="48.0" x2="112.0" y2="115.0" stroke-dasharray="4 3" marker-end="url(#schedule-late-arrow)"/><text x="94" y="85">0日</text>
+          <line x1="124.0" y1="40.0" x2="212.1" y2="76.3" marker-end="url(#schedule-late-arrow)"/><text x="175" y="46">C 4日</text>
+          <line x1="124.0" y1="125.0" x2="212.2" y2="87.8" marker-end="url(#schedule-late-arrow)"/><text x="173" y="132">D 5日</text>
+          <line x1="239.0" y1="82.0" x2="305.0" y2="82.0" marker-end="url(#schedule-late-arrow)"/><text x="273" y="70">E 2日</text>
+          <circle cx="22" cy="82" r="12"/><text x="22" y="87">1</text><text class="schedule-time" x="22" y="113">0日</text>
+          <circle cx="112" cy="35" r="12"/><text x="112" y="40">2</text><text class="schedule-time" x="112" y="15">5日</text>
+          <circle cx="112" cy="130" r="12"/><text x="112" y="135">3</text><text class="schedule-time" x="112" y="161">5日</text>
+          <circle cx="226" cy="82" r="12"/><text x="226" y="87">4</text><text class="schedule-time" x="226" y="113">10日</text>
+          <circle cx="320" cy="82" r="12"/><text x="320" y="87">5</text><text class="schedule-time" x="320" y="113">12日</text>
+        </svg>
+        </template>
+        <template id="schedule-delay"><p><strong>Cが8日になったときの最早時刻。太線は A → C → E。</strong></p>
+        <svg class="schedule-diagram" viewBox="0 0 344 174" role="img" aria-label="Cが8日になったとき、最早時刻は結合点1から順に0、3、5、11、13日。太線はA、C、E。">
+          <defs><marker id="schedule-delay-arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L7 3.5 L0 7 Z" fill="#526b82"/></marker></defs>
+          <line x1="33.5" y1="76.0" x2="98.7" y2="41.9" class="critical-edge" marker-end="url(#schedule-delay-arrow)"/><text x="60" y="46">A 3日</text>
+          <line x1="33.5" y1="88.1" x2="98.8" y2="122.9" marker-end="url(#schedule-delay-arrow)"/><text x="60" y="128">B 5日</text>
+          <line x1="112.0" y1="48.0" x2="112.0" y2="115.0" stroke-dasharray="4 3" marker-end="url(#schedule-delay-arrow)"/><text x="94" y="85">0日</text>
+          <line x1="124.0" y1="40.0" x2="212.1" y2="76.3" class="critical-edge" marker-end="url(#schedule-delay-arrow)"/><text x="175" y="46">C 8日</text>
+          <line x1="124.0" y1="125.0" x2="212.2" y2="87.8" marker-end="url(#schedule-delay-arrow)"/><text x="173" y="132">D 5日</text>
+          <line x1="239.0" y1="82.0" x2="305.0" y2="82.0" class="critical-edge" marker-end="url(#schedule-delay-arrow)"/><text x="273" y="70">E 2日</text>
+          <circle cx="22" cy="82" r="12"/><text x="22" y="87">1</text><text class="schedule-time" x="22" y="113">0日</text>
+          <circle cx="112" cy="35" r="12"/><text x="112" y="40">2</text><text class="schedule-time" x="112" y="15">3日</text>
+          <circle cx="112" cy="130" r="12"/><text x="112" y="135">3</text><text class="schedule-time" x="112" y="161">5日</text>
+          <circle cx="226" cy="82" r="12"/><text x="226" y="87">4</text><text class="schedule-time" x="226" y="113">11日</text>
+          <circle cx="320" cy="82" r="12"/><text x="320" y="87">5</text><text class="schedule-time" x="320" y="113">13日</text>
+        </svg>
+        </template>
+        <footer class="sources">
+          <a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000002h5m-att/2012h24a_ap_am_qs.pdf">IPA 平成24年度秋期・午前 問52</a>
+          <a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/nl10bi0000009lh8-att/2025r07h_ap_pm_qs.pdf">IPA 令和7年度春期・午後 問9</a>
+        </footer>
+      </article>
+      <article id="availability" data-lesson>
+        <p class="context">第9章　システム構成・性能・信頼性</p>
+        <h1 tabindex="-1">9-8　直列・並列構成の稼働率</h1>
+        <p class="lead"><strong>構成図を見たら、サービスが動き続けるために必要な装置を考えてから式を作ります。</strong></p>
+        <p>ここでの稼働率は、ある時点で装置が利用できる確率です。各装置の稼働・停止は互いに独立で、切替えは即時、利用できる経路が1本あれば処理できるとします。</p>
+        <h2>両方必要なら、稼働率を掛ける</h2>
+        <pre aria-label="入力から装置A、装置Bを順に通って出力">入力 ── [A] ── [B] ── 出力</pre>
+        <p>AとBの両方が必要な<strong>直列</strong>構成です。それぞれ90％で稼働するなら、全体は 0.9 × 0.9 ＝ <strong>81％</strong>。どちらかが止まるとサービスも止まります。</p>
+        <h2>どちらか1本で足りるなら、停止する場合から考える</h2>
+        <pre aria-label="入力から二本の回線のどちらかを通って出力">       ┌── [回線A] ──┐
+入力 ──┤             ├── 出力
+       └── [回線B] ──┘</pre>
+        <p>各回線の稼働率は90％、停止する確率は10％です。通信が止まるのは両方が停止するときだけ。停止確率は 0.1 × 0.1 ＝ 0.01 なので、稼働率は 1 − 0.01 ＝ <strong>99％</strong>です。</p>
+        <div class="table-wrap"><table>
+          <caption>二つの回線の状態</caption>
+          <thead><tr><th scope="col">回線A</th><th scope="col">回線B</th><th scope="col">通信</th></tr></thead>
+          <tbody><tr><td>稼働</td><td>稼働</td><td>可能</td></tr><tr><td>稼働</td><td>停止</td><td>可能</td></tr><tr><td>停止</td><td>稼働</td><td>可能</td></tr><tr><td>停止</td><td>停止</td><td>停止</td></tr></tbody>
+        </table></div>
+        <p>90％を単純に足すと、「両方とも稼働」を二度数えることになります。</p>
+        <h2>共通ルータは一台だけ</h2>
+        <pre aria-label="二本の回線の合流後に共通ルータがある">       ┌── [回線A] ──┐
+入力 ──┤             ├── [ルータ] ── 出力
+       └── [回線B] ──┘</pre>
+        <p>上の回線に、稼働率99％の共通ルータを1台加えます。回線部分の99％とルータの99％の両方が必要なので、全体は 0.99 × 0.99 ＝ <strong>98.01％</strong>です。</p>
+        <p>ルータが止まると両経路が同時に使えません。各経路に同じルータを入れてから経路同士を独立として計算すると、その共通の停止を正しく扱えません。</p>
+        <h2>稼働率の数値がなくても比べる</h2>
+        <p>同じ稼働率 <var>p</var> の装置を使い、0＜<var>p</var>＜1 とします。直列2台は <var>p</var>² で、単体の <var>p</var> より低くなります。どちらか1台で足りる並列2台は 1 − (1 − <var>p</var>)² で、単体より高くなります。</p>
+        <p>混合構成では、まず経路ごとの稼働条件を読み、まとめてから全体を考えます。「常にどちらが高いか」は一つの数値だけで判断せず、式の差や、片方だけ使える状態があるかを確かめます。</p>
+        <h3>式とグラフを結び付ける</h3>
+        <p>横軸に装置単体の稼働率、縦軸に全体の稼働率を取ります。まず <var>p</var>＝0 と1の端点、次に <var>p</var>＝0.5 の値を確かめます。共通装置が必須なら、全体の稼働率が共通装置単体を上回ることはありません。端点や代表点が同じ候補は、式や稼働条件で区別します。</p>
+        <div data-practice></div>
+        <template id="availability-ranking">
+          <p>INは入力、OUTは出力です。箱一つが装置一台を表します。</p>
+          <dl>
+            <dt>構成A</dt>
+            <dd><pre class="connection-diagram" role="img" aria-label="構成A。INから1、2の順につながりOUTに至る。">IN ── [1] ── [2] ── OUT</pre></dd>
+            <dt>構成B</dt>
+            <dd><pre class="connection-diagram" role="img" aria-label="構成B。上の枝に1と2、下の枝に3があり、OUTの手前で合流する。">     ┌─ [1] ── [2] ─┐
+IN ──┤              ├── OUT
+     └─ [3] ────────┘</pre></dd>
+            <dt>構成C</dt>
+            <dd><pre class="connection-diagram" role="img" aria-label="構成C。上の枝に1と2、下の枝に3と4があり、OUTの手前で合流する。">     ┌─ [1] ── [2] ─┐
+IN ──┤              ├── OUT
+     └─ [3] ── [4] ─┘</pre></dd>
+          </dl>
+        </template>
+        <template id="availability-ranking-solution">
+          <table>
+            <caption>入力から出力までつながる条件</caption>
+            <thead><tr><th scope="col">構成</th><th scope="col">稼働条件</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">A</th><td><strong>1と2</strong>が両方稼働</td></tr>
+              <tr><th scope="row">B</th><td><strong>1と2</strong>が両方稼働、または<strong>3</strong>が稼働</td></tr>
+              <tr><th scope="row">C</th><td><strong>1と2</strong>が両方稼働、または<strong>3と4</strong>が両方稼働</td></tr>
+            </tbody>
+          </table>
+        </template>
+        <template id="availability-graphs">
+          <p>L1〜L3は回線、GWはゲートウェイです。</p>
+          <pre class="connection-diagram" role="img" aria-label="INからL1、L2、L3の三つに分岐し、合流した後に一台のGWを経由してOUTに至る。">     ┌─ [L1] ─┐
+IN ──┼─ [L2] ─┼─ [GW] ─ OUT
+     └─ [L3] ─┘</pre>
+          <p>横軸は装置単体の稼働率 p、縦軸はシステムの稼働率です。破線は y＝p を表します。</p>
+          <div class="availability-graphs"></div>
+        </template>
+        <template id="availability-graphs-solution">
+          <pre class="connection-diagram" role="img" aria-label="回線の合流後にある共通ゲートウェイGWを強調した図。">     ┌─ [L1] ─┐
+IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
+     └─ [L3] ─┘</pre>
+          <p><strong>3本の回線が合流した先で、必ずGWを通ります。</strong> 回線部分の稼働率を求め、共通のGWの稼働率 p を一度だけ掛けます。</p>
+        </template>
+        <footer class="sources">
+          <a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/m42obm000000afqx-att/2024r06a_ap_am_qs.pdf">IPA 令和6年度秋期・午前 問14</a>
+          <a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/nl10bi0000009lh8-att/2025r07h_ap_am_qs.pdf">IPA 令和7年度春期・午前 問13</a>
+        </footer>
+      </article>
+      <article id="audit" data-lesson>
+        <p class="context">第10章　ITサービス運用と監査</p>
+        <h1 tabindex="-1">10-10　システム監査の計画と証拠</h1>
+        <p class="lead"><strong>実施された変更がすべて事前承認されたかを調べるなら、実際に本番へ反映した記録から調べます。</strong></p>
+        <h2>申請2件に承認があれば、全件を調べたことになる？</h2>
+        <p>受注システムの規程では、利用者が使う本番環境に変更を反映する前に、運用責任者の承認が必要です。緊急時にもこの規程を適用します。月曜日に受注システムへ反映した変更を監査します。</p>
+        <table>
+          <caption>承認済みの申請</caption>
+          <thead><tr><th scope="col">変更ID</th><th scope="col">対象</th><th scope="col">承認時刻</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">C21</th><td>送料計算</td><td>月曜 09:10</td></tr>
+            <tr><th scope="row">C22</th><td>帳票出力</td><td>月曜 11:05</td></tr>
+          </tbody>
+        </table>
+        <p>申請にはどちらも運用責任者の承認があります。実際に反映された変更は、この2件で全部でしょうか。</p>
+        <details>
+          <summary>本番反映履歴を開く</summary>
+          <table>
+            <caption>月曜日の本番反映履歴</caption>
+            <thead><tr><th scope="col">変更ID</th><th scope="col">対象</th><th scope="col">反映時刻</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">C21</th><td>送料計算</td><td>月曜 09:40</td></tr>
+              <tr><th scope="row">C22</th><td>帳票出力</td><td>月曜 10:50</td></tr>
+              <tr><th scope="row">C23</th><td>通知設定</td><td>月曜 14:00</td></tr>
+            </tbody>
+          </table>
+          <p>実施された変更は3件です。承認済みの申請から調べ始めると、一覧にないC23が照合の対象から漏れます。履歴の各行を起点に、同じ変更IDの申請を探しましょう。</p>
+        </details>
+        <h2>同じ変更IDを探し、承認と反映の時刻を比べる</h2>
+        <p>この例では、反映履歴が全件を自動記録し、申請台帳は未承認や過去の申請も含めて検索できます。両方の時刻は同じ時計を基準にしています。</p>
+        <details><summary>C21の照合結果</summary><p>09:10に承認され、09:40に反映されました。<strong>事前承認</strong>を確認できます。</p></details>
+        <details><summary>C22の照合結果</summary><p>10:50に反映され、承認は11:05でした。現在の状態は「承認済み」ですが、実際には反映の15分後の<strong>事後承認</strong>です。</p></details>
+        <details><summary>C23の照合結果</summary><p>14:00の反映に対応する申請が、台帳全体を検索しても見つかりません。<strong>申請なし</strong>です。承認済み一覧だけを見た場合に言えるのは、「事前承認を確認できない」までです。</p></details>
+        <h2>監査計画で調べる対象と証拠を決める</h2>
+        <p>この監査で確かめたいのは、本番変更が事前に承認されたかです。未承認の変更が入るリスクを考え、規程を<strong>判断基準</strong>にし、受注システムの月曜日の本番変更を<strong>監査範囲</strong>にします。監査人は実施や承認に関わっていない人から選び、記録に基づいて判断します。</p>
+        <dl>
+          <dt><strong>質問</strong></dt><dd>担当者に手順と記録の保管先を聞きます。説明を手掛かりに、実際の記録を集めます。</dd>
+          <dt><strong>閲覧</strong></dt><dd>規程、反映履歴、個別申請を読み、要求された手順と記録を照合します。</dd>
+          <dt><strong>観察</strong></dt><dd>担当者が承認を確認してから反映する様子を見ます。確認できるのは、その場で見た手順です。</dd>
+          <dt><strong>再実施</strong></dt><dd>運用担当者が行った月次照合を、監査人が元の記録でやり直し、見落としがないか確かめます。</dd>
+          <dt><strong>ウォークスルー</strong></dt><dd>一つの変更を例に、申請の入力から承認、本番反映、結果の記録までを順にたどります。各工程で担当者が何を確認し、どの記録に残すかを、書類や画面を使って確かめます。運用担当者が行った照合の結果を検証したい場合は、その照合をやり直す再実施が該当します。</dd>
+        </dl>
+        <h3>3,000件から30件を選ぶなら？</h3>
+        <p>調べる対象全体を<strong>母集団</strong>と呼びます。四半期全体の運用状況を調べるなら、全3,000件から無作為に抽出する方法があります。休日や夜間の変更を重点的に調べたいなら、その条件に当てはまる変更を選びます。30件で例外がゼロでも、全3,000件の遵守を断定するには証拠が足りません。</p>
+        <p>手動反映が履歴に載らない場合は、手動反映の記録も集めて母集団を補います。元の履歴から抽出する件数だけを増やしても、載っていない変更は選べません。</p>
+        <h2>倉庫システムの記録で確かめる</h2>
+        <p>同じ規程で、木曜日に本番へ反映した変更を調べます。木曜日の反映履歴と、木曜終了時点の申請台帳を見比べてください。</p>
+        <div class="input-grid">
+          <table>
+            <caption>木曜の反映履歴</caption>
+            <thead><tr><th scope="col">変更ID</th><th scope="col">反映時刻</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">W31</th><td>08:45</td></tr>
+              <tr><th scope="row">W32</th><td>11:20</td></tr>
+              <tr><th scope="row">W33</th><td>16:10</td></tr>
+            </tbody>
+          </table>
+          <table>
+            <caption>申請台帳</caption>
+            <thead><tr><th scope="col">変更ID</th><th scope="col">承認日時</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">W32</th><td>木曜 11:35</td></tr>
+              <tr><th scope="row">W34</th><td>木曜 13:00</td></tr>
+              <tr><th scope="row">W31</th><td>水曜 17:30</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div data-practice></div>
+      </article>
+      <article id="procurement-selection" data-lesson>
+        <p class="context">第11章　経営戦略・情報戦略・調達</p>
+        <h1 tabindex="-1">11-11　提案の評価と調達先の選定</h1>
+        <p class="lead"><strong>まず必須条件で候補を絞り、条件を満たした提案の総合点を比べます。</strong></p>
+        <h2>どの会社を採点に進める？</h2>
+        <p>受注システムの旧環境は9月末で利用を終えます。新環境への移行は9月30日までに完了することが必須で、当日の完了も条件を満たします。適合した提案は機能点に0.6、費用点に0.4を掛けて合計します。どちらも100点満点で、費用点が高いほど、導入と3年間の運用にかかる費用の評価が有利です。</p>
+        <div class="table-wrap">
+          <table>
+            <caption>受注システムの移行提案</caption>
+            <thead><tr><th scope="col">提案</th><th scope="col">移行完了日</th><th scope="col">機能点</th><th scope="col">費用点</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">A社</th><td>9月26日</td><td>80</td><td>95</td></tr>
+              <tr><th scope="row">B社</th><td>9月30日</td><td>90</td><td>85</td></tr>
+              <tr><th scope="row">C社</th><td>10月2日</td><td>98</td><td>92</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <details>
+          <summary>採点対象を確かめる</summary>
+          <p>A社とB社です。C社は移行が10月2日になるため候補から外れます。A社はB社より早く移行できますが、早期完了への加点は選定規則にありません。</p>
+        </details>
+        <h2>機能と費用の差を、重みを掛けて比べる</h2>
+        <p>各項目に、重視する度合いを表す「重み」を掛けて足す方法を<strong>加重総和法</strong>と呼びます。今回、A社とB社のどちらが上位になるでしょうか。</p>
+        <details>
+          <summary>総合点と選定理由を確かめる</summary>
+          <table>
+            <thead><tr><th scope="col">提案</th><th scope="col">機能 × 0.6</th><th scope="col">費用 × 0.4</th><th scope="col">総合点</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">A社</th><td>48</td><td>38</td><td>86</td></tr>
+              <tr><th scope="row">B社</th><td>54</td><td>34</td><td>88</td></tr>
+            </tbody>
+          </table>
+          <p><strong>B社を選びます。</strong> 費用でA社が4点上回る一方、機能でB社が6点上回るため、総合ではB社が2点上です。B社の提案で移行当日の連絡責任者が未確定なら、選定記録に得点と理由を残し、契約前に責任者を確認します。</p>
+        </details>
+        <h2>C社も9月30日に移行できるとしたら？</h2>
+        <p>最初からC社の移行完了日が9月30日だったとします。ほかの条件を同じにすると、選定結果はどう変わるでしょうか。</p>
+        <details>
+          <summary>変更後の選定結果を確かめる</summary>
+          <p>C社が候補に入り、98 × 0.6 ＋ 92 × 0.4 ＝ <strong>95.6点</strong>で首位になります。重みと項目別得点が変わっていないので、A社86点とB社88点はそのまま比較に使えます。</p>
+        </details>
+        <h2>店舗の問い合わせ窓口を選ぶ</h2>
+        <p>各店舗は週末も営業しており、障害連絡を平日と同じように受け付けたいと考えています。発注側は4社を5項目で評価しました。評価点は1〜5点で、高いほど有利です。休日対応と受付品質を重視し、項目ごとの評価点に表の重みを掛けた合計が最大の会社を選びます。サービス水準を確保するため、評価点が2点以下の項目が一つでもある会社は候補から外します。</p>
+        <div class="table-wrap">
+          <table>
+            <caption>問い合わせ窓口の提案評価</caption>
+            <thead><tr><th scope="col">評価項目</th><th scope="col">重み</th><th scope="col">D社</th><th scope="col">E社</th><th scope="col">F社</th><th scope="col">G社</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">休日対応</th><td>3</td><td>4</td><td>5</td><td>5</td><td>3</td></tr>
+              <tr><th scope="row">受付品質</th><td>2</td><td>4</td><td>5</td><td>3</td><td>4</td></tr>
+              <tr><th scope="row">費用</th><td>1.5</td><td>3</td><td>2</td><td>3</td><td>4</td></tr>
+              <tr><th scope="row">引継ぎ計画</th><td>1</td><td>4</td><td>5</td><td>3</td><td>4</td></tr>
+              <tr><th scope="row">報告内容</th><td>0.5</td><td>4</td><td>5</td><td>3</td><td>4</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div data-practice></div>
+        <footer class="sources"><a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/nl10bi0000009lh8-att/2025r07h_ap_pm_qs.pdf">IPA 令和7年度春期・午後 問9</a></footer>
+        <template id="procurement-calculation">
+          <div class="table-wrap">
+            <table>
+              <caption>各社の判定と計算</caption>
+              <thead><tr><th scope="col">提案</th><th scope="col">判定と内訳</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">D社</th><td>適合。12 ＋ 8 ＋ 4.5 ＋ 4 ＋ 2 ＝ <strong>30.5点</strong></td></tr>
+                <tr><th scope="row">E社</th><td>費用が2点なので除外。単純に加重総和を計算すると35.5点</td></tr>
+                <tr><th scope="row">F社</th><td>適合。15 ＋ 6 ＋ 4.5 ＋ 3 ＋ 1.5 ＝ 30点</td></tr>
+                <tr><th scope="row">G社</th><td>適合。9 ＋ 8 ＋ 6 ＋ 4 ＋ 2 ＝ 29点</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>D社は休日対応でF社に3点劣りますが、受付品質、引継ぎ計画、報告内容で計3.5点上回ります。差し引き0.5点でD社が上位です。すべての会社に同じ重みを使うので、重みを百分率に直さずに合計を比べられます。</p>
+        </template>
+      </article>
+      <article id="break-even" data-lesson>
+        <p class="context">第12章　企業活動・会計・法務</p>
+        <h1 tabindex="-1">12-6　損益分岐点と目標利益</h1>
+        <p class="lead"><strong>売上から変動費を引いた残りで固定費を回収します。その残りが固定費と等しくなるところが損益分岐点です。</strong></p>
+        <h2>1個売ると、固定費をいくら回収できる？</h2>
+        <p>単価3,000円の商品を考えます。販売に伴って増える費用は1個当たり1,800円、販売数によらずかかる固定費は月24万円です。単価と1個当たり変動費は一定とします。1個売ると、売上は3,000円、変動費は1,800円増えます。差額の<strong>1,200円が1個当たりの限界利益</strong>です。</p>
+        <p class="panel">月の利益 ＝ 1,200円 × 販売数量 − 24万円</p>
+        <p>0個なら24万円の赤字。200個売ると限界利益が24万円に達し、利益はちょうどゼロです。<strong>損益分岐点は200個、売上高では60万円。最初に黒字になるのは201個</strong>です。</p>
+        <h3>月6万円の利益を出すには？</h3>
+        <p>固定費24万円に加え、目標利益の6万円まで稼ぐので、必要な限界利益は30万円。30万円 ÷ 1,200円 ＝ <strong>250個</strong>です。</p>
+        <details>
+          <summary>単価が2,800円に下がった場合</summary>
+          <p>1個当たり限界利益が1,000円になるため、利益6万円には300個必要です。目標を6万500円以上にすると、計算上は300.5個。整数の販売数量を切り上げて<strong>301個</strong>です。300個の利益は6万円、301個なら6万1,000円です。</p>
+        </details>
+        <h2>売上高と変動費率で計算する</h2>
+        <p>単価3,000円に対し変動費が1,800円なので、売上の60％が変動費に当たります。残り40％を<strong>限界利益率</strong>と呼びます。固定費の回収と利益に回る割合です。</p>
+        <p class="panel">利益 ＝ 売上高 × 限界利益率 − 固定費<br>限界利益率 ＝ 1 − 変動費率</p>
+        <p>利益ゼロなら24万円 ÷ 0.4 ＝ <strong>売上60万円</strong>。利益6万円なら（24万円 ＋ 6万円）÷ 0.4 ＝ <strong>売上75万円</strong>です。先ほどの200個、250個にそれぞれ単価3,000円を掛けても求められます。</p>
+        <h3>変動費率が書かれていないとき</h3>
+        <p>同じ期間に、売上400万円なら20万円の損失、売上500万円なら10万円の利益だとします。固定費と変動費率は共通です。二つの利益の式を引くと固定費が消えます。売上の増加100万円に対し、利益は10万円 −（−20万円）＝ 30万円増えたので、限界利益率は30％、変動費率は70％です。</p>
+        <h2>利益が同じ2社でも、売上が動くと差がつく</h2>
+        <p>売上が増減したとき、利益の変化額は<strong>売上の変化額 × 限界利益率</strong>です。限界利益率が高いほど、同額の売上増でも利益は大きく伸び、売上減では大きく減ります。損益分岐点の売上高を比較するときは、固定費を限界利益率で割ります。</p>
+        <canvas id="profit-graph" width="360" height="200" style="display:block;width:min(100%,360px);height:auto" role="img" aria-label="横軸が売上高、縦軸が利益。売上0万円では利益マイナス24万円。売上60万円で利益ゼロとなり、売上75万円で利益6万円。"></canvas>
+        <p>図の傾きは限界利益率40％です。売上ゼロで利益は−24万円、横軸と交わる60万円が損益分岐点です。</p>
+        <p>黒字の会社では、現在の売上が何％減ると利益ゼロになるかも計算できます。この<strong>安全余裕率</strong>は「（現在の売上高 − 損益分岐点売上高）÷ 現在の売上高」です。</p>
+        <div data-practice></div>
+        <template id="break-even-comparison">
+          <div class="table-wrap">
+            <table>
+              <caption>現在の月次実績（万円）</caption>
+              <thead><tr><th scope="col">項目</th><th scope="col">X社</th><th scope="col">Y社</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">売上高</th><td>1,000</td><td>1,000</td></tr>
+                <tr><th scope="row">変動費</th><td>600</td><td>750</td></tr>
+                <tr><th scope="row">固定費</th><td>320</td><td>170</td></tr>
+                <tr><th scope="row">利益</th><td>80</td><td>80</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </template>
+        <footer class="sources">
+          <a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/ps6vr70000010d6y-att/2023r05h_ap_am_qs.pdf">IPA 令和5年度春期・午前 問77</a>
+          <a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/nl10bi0000009lh8-att/2025r07h_ap_am_qs.pdf">IPA 令和7年度春期・午前 問77</a>
+          <a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/m42obm000000afqx-att/2024r06a_ap_am_qs.pdf">IPA 令和6年度秋期・午前 問77</a>
+        </footer>
+      </article>
+      <article id="classification" data-lesson>
+        <p class="context">第13章　確率・統計・AI</p>
+        <h1 tabindex="-1">13-12　判定結果の表から分類性能を読む</h1>
+        <p class="lead"><strong>「不良品をどれだけ拾えたか」と「警報がどれだけ当たったか」では、割る相手が変わります。</strong></p>
+        <h2>同じ16個が、なぜ80％にも約25％にもなる？</h2>
+        <p>工場で製品1,000個を機械に通し、その後、人が全品の良否を確かめました。機械が不良と判定すると警報が出ます。次の表で、実際の不良品のうち警報が出た割合と、警報が出た製品のうち実際に不良だった割合を比べてみましょう。</p>
+        <div class="controls" aria-label="表で確かめる問い">
+          <button type="button" data-view="recall" aria-pressed="true">不良品をどれだけ拾えた？</button>
+          <button type="button" data-view="precision" aria-pressed="false">警報はどれだけ当たった？</button>
+        </div>
+        <table id="inspection" data-view="recall">
+          <thead><tr><th scope="col">実際の状態</th><th scope="col">警報あり</th><th scope="col">警報なし</th><th scope="col">合計</th></tr></thead>
+          <tbody><tr class="actual-bad"><th scope="row">不良品</th><td><strong>16</strong></td><td>4</td><td>20</td></tr>
+          <tr><th scope="row">良品</th><td>49</td><td>931</td><td>980</td></tr>
+          <tr><th scope="row">合計</th><td>65</td><td>935</td><td>1,000</td></tr></tbody>
+        </table>
+        <p id="inspection-answer" role="status">「不良品」の行を読みます。実際の不良品20個のうち16個を拾えたので、16 ÷ 20 ＝ 80％です。</p>
+        <h2>問いから指標を選ぶ</h2>
+        <p>実際の状態と予測を突き合わせた表を<strong>混同行列</strong>と呼びます。今回の「陽性」は見つけたい対象の不良品です。警報を出した内訳は、正しく拾った16個（真陽性、TP）と誤警報49個（偽陽性、FP）。警報を出さなかった内訳は、見逃した4個（偽陰性、FN）と正しく通した931個（真陰性、TN）です。</p>
+        <dl>
+          <dt><strong>再現率</strong></dt><dd>実際の不良品をどれだけ拾えたか。TP ÷ (TP＋FN) ＝ 16/20 ＝ 80％。</dd>
+          <dt><strong>適合率</strong></dt><dd>警報のうち、本当に不良だった割合。TP ÷ (TP＋FP) ＝ 16/65 ≒ 24.6％。</dd>
+          <dt><strong>偽陽性率</strong></dt><dd>実際の良品のうち、誤って警報が出た割合。FP ÷ (FP＋TN) ＝ 49/980 ＝ 5％。49/65を計算すると「警報のうち誤警報だった割合」になります。</dd>
+          <dt><strong>正解率</strong></dt><dd>全製品のうち、正しく判定した割合。(TP＋TN) ÷ 全件 ＝ 947/1,000 ＝ 94.7％。全品を良品として通すだけでも98％になりますが、その場合、不良品は20個すべて出荷されます。</dd>
+          <dt><strong>F値（F1）</strong></dt><dd>適合率と再現率を調和平均でまとめた値で、どちらかが低いと値が下がります。件数から求めると 2TP ÷ (2TP＋FP＋FN) ＝ 32/85 ≒ 37.6％です。</dd>
+        </dl>
+        <h2>警報を減らすと、何個見逃す？</h2>
+        <p>機械は製品ごとに「不良らしさ」を採点し、点数がしきい値以上なら警報を出します。上の表を設定Aとします。同じ製品でしきい値を上げた設定Bでは、不良品12個と良品8個に警報が出ました。実際の不良品は20個です。Bで見逃すのは何個でしょうか。</p>
+        <details><summary>見逃し件数と設定の選び方を確かめる</summary>
+          <p>Bの見逃しは20 − 12 ＝ <strong>8個</strong>です。</p>
+          <table><thead><tr><th>設定</th><th>見逃し</th><th>誤警報</th><th>再現率</th><th>偽陽性率</th></tr></thead>
+          <tbody><tr><th>A</th><td>4個</td><td>49個</td><td>80％</td><td>5％</td></tr><tr><th>B</th><td>8個</td><td>8個</td><td>60％</td><td>約0.82％</td></tr></tbody></table>
+          <p>「見逃しは最大5個」ならA、「誤警報は最大10個」ならBを選びます。両方の条件を同時に満たすには、別の候補が必要です。</p>
+        </details>
+        <h3>ROC曲線では、設定一つが点一つになる</h3>
+        <p>横軸は偽陽性率、縦軸は真陽性率（再現率）です。図はROC曲線のうち、設定AとBに当たる2点を拡大したものです。AからBへ移ると左に動く分だけ誤警報が減り、下に動く分だけ不良品を拾いにくくなります。</p>
+        <svg class="roc" viewBox="0 0 340 208" role="img" aria-label="ROC曲線上の2点。Aは偽陽性率5％、再現率80％。Bは偽陽性率約0.82％、再現率60％。">
+          <text x="6" y="17">再現率</text><path d="M52 30V160H304 M52 56H252 M52 82H85" fill="none" stroke="#8195a5"/>
+          <g text-anchor="end"><text x="46" y="61">80％</text><text x="46" y="87">60％</text><text x="46" y="164">0％</text></g>
+          <g stroke="#8195a5" stroke-dasharray="3 3"><path d="M252 56V160 M85 82V160"/></g>
+          <g fill="#175985"><circle cx="252" cy="56" r="5"/><circle cx="85" cy="82" r="5"/></g>
+          <text x="261" y="53">A</text><text x="95" y="79">B</text><text x="50" y="179">0</text><text x="69" y="179">0.82％</text><text x="242" y="179">5％</text><text x="236" y="202">偽陽性率</text>
+        </svg>
+        <h2>出荷遅延の予測を評価する</h2>
+        <p>今度の陽性は「出荷が遅延する注文」です。設定Cでの予測を示します。最初の3問ではこの表を使います。最後の1問は、別の事例の文章から割合の分母を判断します。</p>
+        <table><thead><tr><th>設定Cの予測</th><th>実際に遅延</th><th>実際に予定どおり</th></tr></thead>
+          <tbody><tr><th>遅延と予測</th><td>18</td><td>12</td></tr><tr><th>予定どおりと予測</th><td>6</td><td>64</td></tr></tbody></table>
+        <div data-practice></div>
+      </article>
+    </main>
+  </div>
+  <template id="practice-template">
+    <h2>確認問題</h2>
+    <p>1問ずつ解答と解説を確認し、最後に正答数を表示します。</p>
+    <div class="panel">
+      <p data-quiz-position class="context"></p>
+      <form>
+        <div data-question-context tabindex="-1" hidden></div>
+        <fieldset>
+          <legend tabindex="-1"></legend>
+          <p data-think-first hidden>頭の中で答えを一文にしてから、選択肢を開いてください。</p>
+          <div data-options></div>
+        </fieldset>
+        <div class="controls"><button type="button" data-reveal hidden>選択肢を表示</button><button type="submit" class="primary">解答する</button><button type="button" data-next hidden>次の問題</button></div>
+      </form>
+      <p class="feedback" data-feedback role="status" hidden></p>
+      <div data-solution></div>
+      <div data-result hidden><p data-score class="number" tabindex="-1"></p><button type="button" data-retry>もう一度解く</button></div>
+    </div>
+    <div class="record">
+      <label><input data-done type="checkbox"> 学習済み</label>
+      <label><input data-review type="checkbox"> 復習したい</label>
+      <p data-storage class="note" role="status">チェックはこのブラウザに保存します。</p>
+    </div>
+  </template>
+  <dialog id="study-png-dialog" class="progress-dialog" aria-labelledby="study-png-title">
+    <header><h2 id="study-png-title">学習進捗の画像</h2><form method="dialog"><button>閉じる</button></form></header>
+    <img id="study-png-preview" alt="応用情報の学習進捗">
+    <a id="study-png-download" class="action primary" download="応用情報-学習進捗.png">PNGを保存</a>
+  </dialog>
+  <dialog id="study-transfer-dialog" class="progress-dialog" aria-labelledby="study-transfer-title">
+    <header><h2 id="study-transfer-title">学習記録の引き継ぎ</h2><form method="dialog"><button>閉じる</button></form></header>
+    <p>「学習済み」と「復習したい」のチェックを文字列で引き継ぎます。</p>
+    <h3>この端末から出力</h3>
+    <label for="study-transfer-output">引き継ぎ文字列</label>
+    <textarea id="study-transfer-output" rows="3" readonly spellcheck="false"></textarea>
+    <button type="button" id="study-transfer-copy">文字列をコピー</button>
+    <p id="study-copy-status" role="status"></p>
+    <h3>別端末の記録を読み込む</h3>
+    <label for="study-transfer-input">引き継ぎ文字列を貼り付け</label>
+    <textarea id="study-transfer-input" rows="3" maxlength="10000" spellcheck="false" autocapitalize="off"></textarea>
+    <div class="controls">
+      <button type="button" id="study-transfer-merge">この端末の記録と統合</button>
+      <button type="button" id="study-transfer-overwrite">この端末に上書き</button>
+    </div>
+    <section id="study-transfer-preview" hidden>
+      <h3 id="study-transfer-preview-title" tabindex="-1">適用前の確認</h3>
+      <p id="study-transfer-summary"></p>
+      <div class="controls">
+        <button type="button" id="study-transfer-apply" class="primary">この内容で適用</button>
+        <button type="button" id="study-transfer-cancel">キャンセル</button>
+      </div>
+    </section>
+    <p id="study-transfer-status" role="status"></p>
+  </dialog>
+  <script>
+    const byId = (id) => document.getElementById(id);
+    const lessons = Array.from(document.querySelectorAll("[data-lesson]"));
+    const sections = [byId("welcome"), byId("intro"), ...lessons];
+    const toc = byId("toc");
+    const tocToggle = byId("toc-toggle");
+    const navLinks = Array.from(toc.querySelectorAll("a"));
+    const narrowScreen = window.matchMedia("(max-width: 760px)");
+
+    function setTocOpen(open) {
+      toc.hidden = !open;
+      toc.closest(".layout").classList.toggle("toc-closed", !open);
+      tocToggle.setAttribute("aria-expanded", String(open));
+      tocToggle.textContent = open ? "目次を閉じる" : "目次を開く";
+    }
+
+    setTocOpen(!narrowScreen.matches);
+    tocToggle.hidden = false;
+    tocToggle.addEventListener("click", () => setTocOpen(toc.hidden));
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || toc.hidden || !narrowScreen.matches) return;
+      setTocOpen(false);
+      tocToggle.focus();
+    });
+    narrowScreen.addEventListener("change", (event) => {
+      if (event.matches && toc.contains(document.activeElement)) tocToggle.focus();
+      setTocOpen(!event.matches);
+      showSection(false);
+    });
+
+    function showSection(moveFocus) {
+      const hash = location.hash.slice(1);
+      const current = sections.find((section) => section.id === hash && section.id !== "welcome")
+        ?? byId(narrowScreen.matches ? "welcome" : "intro");
+      for (const section of sections) section.hidden = section !== current;
+      for (const link of navLinks) {
+        if (link.hash === "#" + current.id) link.setAttribute("aria-current", "page");
+        else link.removeAttribute("aria-current");
+      }
+      const chapter = toc.querySelector('a[aria-current="page"]')?.closest("details");
+      if (chapter) chapter.open = true;
+      if (!moveFocus) return;
+      const heading = current.querySelector("h1");
+      heading.focus({ preventScroll: true });
+      heading.scrollIntoView({ block: "start" });
+    }
+
+    showSection(Boolean(location.hash));
+    window.addEventListener("hashchange", () => showSection(true));
+    document.querySelector(".skip").addEventListener("click", (event) => {
+      event.preventDefault();
+      byId("main").focus();
+    });
+    for (const link of navLinks) {
+      link.addEventListener("click", () => {
+        if (narrowScreen.matches) setTocOpen(false);
+        if (link.hash === location.hash) showSection(true);
+      });
+    }
+
+
+    const weights = [8, 4, 2, 1];
+    const targets = [6, 11, 9, 15, 0];
+    let targetIndex = 0;
+    const bitButtons = weights.map((weight) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.setAttribute("aria-pressed", "false");
+      button.setAttribute("aria-label", weight + "の位");
+      button.innerHTML = '<span class="bit-value">0</span><span>' + weight + 'の位</span>';
+      byId("bits").append(button);
+      button.addEventListener("click", () => {
+        const on = button.getAttribute("aria-pressed") === "true";
+        button.setAttribute("aria-pressed", String(!on));
+        renderBits();
+      });
+      return button;
+    });
+    function renderBits() {
+      let sum = 0;
+      const digits = bitButtons.map((button, index) => {
+        const on = button.getAttribute("aria-pressed") === "true";
+        const digit = on ? "1" : "0";
+        button.firstElementChild.textContent = digit;
+        if (on) sum += weights[index];
+        return digit;
+      });
+      byId("bit-reading").textContent = digits.join("") + "₂ ＝ " + sum + "₁₀";
+      byId("bit-feedback").hidden = true;
+      return sum;
+    }
+    function clearBits() {
+      for (const button of bitButtons) button.setAttribute("aria-pressed", "false");
+      renderBits();
+    }
+    byId("clear-bits").addEventListener("click", clearBits);
+    byId("next-target").addEventListener("click", () => {
+      targetIndex = (targetIndex + 1) % targets.length;
+      byId("target").textContent = targets[targetIndex];
+      clearBits();
+      bitButtons[0].focus();
+    });
+    byId("check-bits").addEventListener("click", () => {
+      const sum = renderBits();
+      const target = targets[targetIndex];
+      const feedback = byId("bit-feedback");
+      feedback.textContent = sum === target
+        ? "正解です。"
+        : "今は" + sum + "です。重みの合計が" + target + "になるように選び直してください。";
+      feedback.hidden = false;
+    });
+    renderBits();
+    byId("bit-panel").hidden = false;
+
+    let dividend = null;
+    let remainders = [];
+    function resetDivision() {
+      dividend = null;
+      remainders = [];
+      byId("division-steps").replaceChildren();
+      byId("division-result").textContent = "";
+      byId("divide-step").disabled = false;
+    }
+    byId("decimal-input").addEventListener("input", resetDivision);
+    byId("division").addEventListener("reset", (event) => {
+      event.preventDefault();
+      resetDivision();
+    });
+    byId("division").addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (byId("divide-step").disabled) return;
+      const value = dividend ?? byId("decimal-input").valueAsNumber;
+      if (!Number.isInteger(value) || value < 0 || value > 65535) return;
+      const quotient = Math.floor(value / 2);
+      const remainder = value % 2;
+      const weight = 2 ** remainders.length;
+      const row = document.createElement("li");
+      row.textContent = value + " ÷ 2 ＝ 商 " + quotient + "、余り " + remainder + "（" + weight + "の位）";
+      byId("division-steps").append(row);
+      remainders.unshift(remainder);
+      dividend = quotient;
+      byId("divide-step").disabled = quotient === 0;
+      byId("division-result").textContent = quotient === 0
+        ? "変換結果は " + remainders.join("") + "₂ です。"
+        : "右から " + remainders.length + " 桁が確定しました。";
+    });
+    byId("division").hidden = false;
+
+    function convertToHex(event) {
+      event?.preventDefault();
+      const digits = byId("binary-input").value;
+      if (!/^[01]{1,32}(\.[01]{1,32})?$/.test(digits)) return;
+
+      const [integer, fraction] = digits.split(".");
+      const integerGroups = integer.padStart(Math.ceil(integer.length / 4) * 4, "0").match(/.{4}/g);
+      const fractionGroups = fraction
+        ? fraction.padEnd(Math.ceil(fraction.length / 4) * 4, "0").match(/.{4}/g)
+        : [];
+      const toHexDigit = (group) => parseInt(group, 2).toString(16).toUpperCase();
+      let grouped = integerGroups.join(" ");
+      let converted = integerGroups.map(toHexDigit).join("");
+      if (fractionGroups.length) {
+        grouped += " . " + fractionGroups.join(" ");
+        converted += "." + fractionGroups.map(toHexDigit).join("");
+      }
+      byId("hex-result").textContent = grouped + "₂ ＝ " + converted + "₁₆";
+    }
+    byId("binary-to-hex").addEventListener("submit", convertToHex);
+    byId("binary-input").addEventListener("input", () => { byId("hex-result").textContent = ""; });
+    convertToHex();
+    byId("binary-to-hex").hidden = false;
+
+    const viewButtons = document.querySelectorAll("#classification button[data-view]");
+    for (const button of viewButtons) {
+      button.addEventListener("click", () => {
+        byId("inspection").dataset.view = button.dataset.view;
+        for (const choice of viewButtons) choice.setAttribute("aria-pressed", String(choice === button));
+        byId("inspection-answer").textContent = button.dataset.view === "recall"
+          ? "「不良品」の行を読みます。実際の不良品20個のうち16個を拾えたので、16 ÷ 20 ＝ 80％です。"
+          : "「警報あり」の列を読みます。警報65個のうち本当に不良だったのは16個なので、16 ÷ 65 ≒ 24.6％です。";
+      });
+    }
+
+    const profitGraph = byId("profit-graph").getContext("2d");
+    if (profitGraph) {
+      profitGraph.font = '14px sans-serif';
+      profitGraph.fillStyle = "#263849";
+      profitGraph.fillText("利益（万円）", 8, 18);
+      profitGraph.fillText("売上高（万円）", 244, 191);
+      profitGraph.fillText("0", 48, 88);
+      profitGraph.fillText("60", 216, 116);
+      profitGraph.fillText("75", 258, 116);
+      profitGraph.fillText("−24", 24, 169);
+      profitGraph.fillText("6", 48, 78);
+      profitGraph.strokeStyle = "#8195a5";
+      profitGraph.beginPath();
+      profitGraph.moveTo(61, 28);
+      profitGraph.lineTo(61, 174);
+      profitGraph.moveTo(61, 96);
+      profitGraph.lineTo(329, 96);
+      profitGraph.stroke();
+      profitGraph.setLineDash([3, 3]);
+      profitGraph.beginPath();
+      profitGraph.moveTo(61, 78);
+      profitGraph.lineTo(271, 78);
+      profitGraph.lineTo(271, 96);
+      profitGraph.stroke();
+      profitGraph.setLineDash([]);
+      profitGraph.strokeStyle = "#175985";
+      profitGraph.lineWidth = 2;
+      profitGraph.beginPath();
+      profitGraph.moveTo(61, 168);
+      profitGraph.lineTo(313, 60);
+      profitGraph.stroke();
+      profitGraph.fillStyle = "#175985";
+      for (const [x, y] of [[61, 168], [229, 96], [271, 78]]) {
+        profitGraph.beginPath();
+        profitGraph.arc(x, y, 4, 0, 2 * Math.PI);
+        profitGraph.fill();
+      }
+    }
+
+    const structureExample = byId("stack-queue-example");
+    const structureBack = structureExample.querySelector("[data-structure-back]");
+    const structureNext = structureExample.querySelector("[data-structure-next]");
+    const structureSteps = [
+      ["開始時点", "", "", "", ""],
+      ["Aを入れる", "A", "A", "", ""],
+      ["Bを入れる", "A → B", "A → B", "", ""],
+      ["Cを入れる", "A → B → C", "A → B → C", "", ""],
+      ["1件取り出す", "A → B", "B → C", "C", "A"],
+      ["Dを入れる", "A → B → D", "B → C → D", "C", "A"],
+      ["もう1件取り出す", "A → B", "C → D", "C → D", "A → B"]
+    ];
+    let structureStep = 0;
+
+    function showStructureStep() {
+      const [operation, stack, queue, stackOutput, queueOutput] = structureSteps[structureStep];
+      structureExample.querySelector("[data-structure-operation]").textContent = operation;
+      structureExample.querySelector("[data-stack-view]").textContent = stack || "空";
+      structureExample.querySelector("[data-queue-view]").textContent = queue || "空";
+      structureExample.querySelector("[data-stack-output]").textContent = stackOutput || "なし";
+      structureExample.querySelector("[data-queue-output]").textContent = queueOutput || "なし";
+      structureBack.disabled = structureStep === 0;
+      structureNext.disabled = structureStep === structureSteps.length - 1;
+    }
+
+    structureBack.addEventListener("click", () => {
+      structureStep -= 1;
+      showStructureStep();
+    });
+    structureNext.addEventListener("click", () => {
+      structureStep += 1;
+      showStructureStep();
+    });
+
+    const questionSets = {
+      "stack-and-queue": [
+        {
+          prompt: "(A − B) ÷ (C ＋ D) の逆ポーランド表記はどれですか。",
+          options: ["A B − C ÷ D ＋", "A B − C D ＋ ÷", "A B C D ＋ ÷ −", "C D ＋ A B − ÷"],
+          answer: 1,
+          explanation: "割る数は右の和、割られる数は左の差です。最後の選択肢ではこの順序が逆になっています。",
+          solutionId: "stack-postfix-conversion"
+        },
+        {
+          context: "逆ポーランド表記の式 18 6 − 2 1 ＋ ÷ を計算します。除算は実数として扱います。",
+          prompt: "最後にスタックに残る値はどれですか。",
+          options: ["−4", "1/4", "4", "6"],
+          answer: 2,
+          explanation: "−では18−6＝12、＋では2＋1＝3を積みます。÷では先に取り出す3が右、後に取り出す12が左なので、12÷3＝4です。",
+          solutionId: "stack-postfix-evaluation"
+        },
+        {
+          context: "容量4のリングバッファで、read=3、write=1、count=2。添字3にA、添字0にBがあります。1件取り出し、C、D、Eを順に追加します。操作が成功した添字は一つ進め、3の次は0に戻します。",
+          prompt: "最初に取り出す値、最終状態、先頭からの未読順の組はどれですか。",
+          options: [
+            "B。read=0、write=0、count=4。A→C→D→E",
+            "A。read=0、write=4、count=4。B→C→D→E",
+            "A。read=0、write=0、count=0。未読なし",
+            "A。read=0、write=0、count=4。B→C→D→E"
+          ],
+          answer: 3,
+          explanation: "先頭のAを取り出すとreadが0に戻ります。C、D、Eは添字1、2、3に入り、writeも0に戻ります。未読が4件あるので満杯です。",
+          solutionId: "queue-ring-trace"
+        },
+        {
+          context: "括弧のない加減乗除を扱います。すべて左結合で、同じ優先順位の演算は左から計算します。変換処理は、値ならそのまま出力します。演算子なら「スタックが空でなく、(a) が成立する間、頂上から取り出して出力する。その後、今回の演算子を積む」とします。入力の末尾では、残った演算子を頂上から出力します。",
+          prompt: "(a) に入る条件と、A − B − C を変換した結果を答えてください。",
+          thinkFirst: true,
+          options: [
+            "頂上の優先順位が今回以上。A B − C −",
+            "頂上の優先順位が今回より高い。A B C − −",
+            "頂上の優先順位が今回より低い。A B C − −",
+            "頂上の優先順位が今回以上。A B C − −"
+          ],
+          answer: 0,
+          explanation: "2個目の − を読んだ時点で最初の − を出力します。優先順位が同じ場合も取り出すことで、(A−B)−C の順を保てます。",
+          solutionId: "stack-operator-trace"
+        },
+        {
+          context: "容量4のリングバッファでは、read（読取り位置）とwrite（次の書込み位置）が空でも満杯でも一致し得ます。countは未読件数です。未読を上書きせず、空きができたら再び書き込めるようにします。",
+          prompt: "書込みを拒否する条件と、拒否時の動作を答えてください。",
+          thinkFirst: true,
+          options: [
+            "read == write なら拒否し、位置と件数はそのまま。",
+            "count == 4 でも書き込み、未読の先頭を上書きする。",
+            "count == 4 なら拒否し、位置と件数はそのまま。",
+            "count == 4 なら拒否するが、writeを一つ進める。"
+          ],
+          answer: 2,
+          explanation: "未読が容量と同じ4件なら空きがありません。書かなかったときは位置も件数も更新しません。満杯のB→C→D→EからBを読み取れば、空いた位置にFを書けます。",
+          solutionId: "queue-full-trace"
+        }
+      ],
+      "cpu-scheduling": [
+        {
+          context: "タスクAはCPUで実行中に時間枠を使い切りました。処理はまだ残っており、入出力待ちはありません。",
+          prompt: "OSがAを中断した直後、Aはどの状態になりますか。",
+          options: ["実行状態のまま", "待ち状態", "実行可能状態", "終了状態"],
+          answer: 2,
+          explanation: "CPUは取り上げられましたが、割り当てられれば続きから実行できます。Aは実行可能状態です。",
+          solutionId: "cpu-state-solution"
+        },
+        {
+          context: "CPUは1台です。空いた時刻に到着済みのタスクのうち、処理時間が最短のものを選び、中断せず完了まで実行します。同じ処理時間なら早く着いた方を選びます。切替え時間や入出力待ちはありません。",
+          contextId: "cpu-sjf-input",
+          prompt: "Bのターンアラウンドタイムは何秒ですか。",
+          options: ["8秒", "9秒", "14秒", "15秒"],
+          answer: 2,
+          explanation: "時刻3ではBより短いC、時刻5ではB・Dより短いEを選びます。その後D、Bの順です。Bは時刻1に到着し時刻15に完了するので15−1＝14秒。8秒は割当て待ち、9秒は実行開始時刻、15秒は完了時刻です。",
+          solutionId: "cpu-sjf-solution"
+        },
+        {
+          context: "CPUは1台で、ラウンドロビンの時間枠は2秒です。枠を使い切って未完了なら列の末尾へ戻します。時間切れと到着が同時なら、新しいタスクを先に列へ追加します。切替え時間や入出力待ちはありません。",
+          contextId: "cpu-rr-input",
+          prompt: "BがCPUの割当てを待った時間の合計は何秒ですか。",
+          options: ["1秒", "3秒", "4秒", "7秒"],
+          answer: 2,
+          explanation: "時刻2の列はB・C・Aです。Bは到着した時刻1から最初に実行する時刻2まで1秒、中断した時刻4から再開する時刻7まで3秒待つので、合計4秒です。7秒は到着から完了までの時間です。",
+          solutionId: "cpu-rr-solution"
+        },
+        {
+          context: "時刻0にAとBが同時に到着します。CPUは1台。優先度の高いAの処理が新たに到着するたび、Bを中断してAを先に実行します。Aは1回につき2ミリ秒で、以後も同じ周期で到着します。Bに必要な処理は5ミリ秒、締切りは時刻9ミリ秒です。時刻9ちょうどの完了も可とし、切替え時間や入出力待ちはありません。",
+          prompt: "Aの周期を5ミリ秒とする案と4ミリ秒とする案のうち、Bが締切りに間に合うのはどれですか。",
+          options: ["周期4の案だけ", "どちらの案も間に合う", "どちらの案も間に合わない", "周期5の案だけ"],
+          answer: 3,
+          explanation: "周期5では、Bは時刻2〜5と7〜9で計5ミリ秒実行でき、時刻9に完了します。周期4では時刻9までに4ミリ秒しか実行できず、時刻11に完了します。",
+          solutionId: "cpu-priority-solution"
+        }
+      ],
+      "sql-aggregation": [
+        {
+          context: "ある店舗の明細が3件あり、amount は80円、40円、NULLです。",
+          prompt: "COUNT(*)、COUNT(amount)、AVG(amount) の結果を、この順で選んでください。",
+          options: ["3、3、40", "2、2、60", "3、2、60", "3、2、40"],
+          answer: 2,
+          explanation: "明細は3行ですが、金額があるのは2行です。平均は (80＋40)÷2＝60円です。"
+        },
+        {
+          contextId: "aggregate-months",
+          prompt: "このSQLの結果に残る行はどれですか。行の並び順は問いません。",
+          options: [
+            "A・4月 80円、A・5月 120円、B・5月 100円",
+            "A・5月 120円、B・5月 100円",
+            "A 200円、B 130円",
+            "A・5月 120円だけ"
+          ],
+          answer: 1,
+          explanation: "店舗と月の組ごとに明細をまとめます。HAVING の条件は100円以上なので、100円ちょうどのB・5月も残ります。",
+          solutionId: "aggregate-months-result"
+        },
+        {
+          context: "2025年6月の売上行（SALE）を店舗別に集計します。金額が確定した売上が2件以上あり、その金額の合計が150円以上の店舗を出します。金額未確定の売上行にはNULLが入り、返品はRETURNで記録されています。",
+          contextId: "aggregate-fill",
+          prompt: "SQLの (a) と (b) に入れる条件を答えてください。",
+          thinkFirst: true,
+          thinkFirstPrompt: "明細を残す条件とグループを残す条件を考えてから、選択肢を表示してください。",
+          options: [
+            "(a) sale_month = '2025-06' AND entry_type = 'SALE' AND amount >= 150 ／ (b) COUNT(amount) >= 2",
+            "(a) sale_month = '2025-06' AND entry_type = 'SALE' ／ (b) COUNT(*) >= 2 AND SUM(amount) >= 150",
+            "(a) sale_month = '2025-06' AND entry_type = 'SALE' ／ (b) COUNT(amount) >= 2 OR SUM(amount) >= 150",
+            "(a) sale_month = '2025-06' AND entry_type = 'SALE' ／ (b) COUNT(amount) >= 2 AND SUM(amount) >= 150"
+          ],
+          answer: 3,
+          explanation: "WHEREで6月の売上明細を残します。金額が確定した件数と合計は店舗ごとに求めるのでHAVINGに置き、両方を満たす条件をANDでつなぎます。",
+          solutionId: "aggregate-query-result"
+        },
+        {
+          context: "次の明細に、示されたSQLを実行します。",
+          contextId: "aggregate-june",
+          prompt: "結果に残る店舗と、除外される店舗の理由を考えてください。どの店舗が残りますか。",
+          thinkFirst: true,
+          thinkFirstPrompt: "店舗ごとの金額確定件数と合計を出してから、選択肢を表示してください。",
+          options: ["A・B", "A・B・C", "Bのみ", "A・B・D"],
+          answer: 0,
+          explanation: "Aは返品を除いて2件・150円、BはNULLを金額確定件数から除いて2件・160円です。Cは確定1件、Dは合計140円で除外されます。Eは対象月の明細がありません。",
+          solutionId: "aggregate-june-result"
+        }
+      ],
+      "packet-delivery": [
+        {
+          context: "TCPのデータをIPv4パケットに入れ、イーサネットフレームで送ります。",
+          prompt: "フレームを外側のヘッダから内側に向かって読むと、宛先情報はどの順に現れますか。",
+          options: ["宛先IP → 宛先MAC → 宛先ポート番号", "宛先MAC → 宛先IP → 宛先ポート番号", "宛先MAC → 宛先ポート番号 → 宛先IP", "宛先ポート番号 → 宛先IP → 宛先MAC"],
+          answer: 1,
+          explanation: "宛先MACはイーサネット、宛先IPはIPv4、宛先ポート番号はTCPのヘッダにあります。",
+          solutionId: "packet-header-solution"
+        },
+        {
+          context: "PCが同じLANのプリンタLに印刷データを送ります。PCからスイッチへ向かうフレームを観測します。",
+          contextId: "packet-printer-case",
+          prompt: "宛先IPと宛先MACの組はどれですか。",
+          options: ["192.168.30.20、MAC-G1", "192.168.30.20、スイッチのMAC", "192.168.30.20、MAC-LP", "192.168.30.1、MAC-LP"],
+          answer: 2,
+          explanation: "同じLANなのでIPもMACも宛先はプリンタLです。ケーブルで最初につながる相手がスイッチでも、スイッチはフレームを転送する側です。"
+        },
+        {
+          context: "PCが別LANのプリンタRに印刷データを送ります。PCからスイッチへ向かうフレームを観測します。",
+          contextId: "packet-printer-case",
+          prompt: "宛先IPと宛先MACの組はどれですか。",
+          options: ["192.168.40.20、MAC-G1", "192.168.40.20、MAC-RP", "192.168.30.1、MAC-G1", "192.168.40.20、MAC-G2"],
+          answer: 0,
+          explanation: "IPの最終宛先はプリンタRです。LAN1から出すためにまずフレームを渡すのは、ルータのLAN1側のG1です。G2は別LANにあります。",
+          solutionId: "packet-remote-solution"
+        },
+        {
+          context: "今度はプリンタRがPCへ返信します。LAN2でプリンタRが送ったフレームと、LAN1でルータGが送ったフレームを観測します。",
+          contextId: "packet-printer-case",
+          prompt: "両区間の送信元→宛先MACと、返信パケットの宛先IPを答えてください。",
+          thinkFirst: true,
+          thinkFirstPrompt: "LAN2とLAN1のMACの組、返信の宛先IPを考えてから、選択肢を表示してください。",
+          options: [
+            "LAN2はMAC-G2→MAC-RP、LAN1はMAC-P→MAC-G1。宛先IPは両区間で192.168.40.20。",
+            "LAN2はMAC-RP→MAC-G2、LAN1はMAC-G2→MAC-P。宛先IPは両区間で192.168.30.10。",
+            "LAN2はMAC-RP→MAC-G2、LAN1はMAC-G1→MAC-P。宛先IPはLAN2で192.168.40.1、LAN1で192.168.30.10。",
+            "LAN2はMAC-RP→MAC-G2、LAN1はMAC-G1→MAC-P。宛先IPは両区間で192.168.30.10。"
+          ],
+          answer: 3,
+          explanation: "返信ではLAN2をプリンタRからG2へ進み、ルータはLAN1側のG1からPCへ新しいフレームを送ります。PCがパケットの最終宛先なので、ルータを越えても宛先IPはPCのままです。",
+          solutionId: "packet-reply-solution"
+        }
+      ],
+      "test-case-design": [
+        {
+          context: "機材の貸出日数は3日以上9日未満の整数です。範囲内なら受理、範囲外なら拒否します。",
+          prompt: "下限と上限の両方で、受理と拒否が切り替わる隣接値を試す組はどれですか。",
+          options: ["2日拒否／3日受理、8日受理／9日拒否", "2日拒否／3日拒否、8日受理／9日拒否", "2日拒否／3日受理、8日受理／9日受理", "4日受理／5日受理、6日受理／7日受理"],
+          answer: 0,
+          explanation: "下限の「3日以上」は3日を含み、上限の「9日未満」は9日を含みません。受理する整数は3〜8日で、切替えは2日と3日、8日と9日の間です。"
+        },
+        {
+          context: "空席なし・会員確認済みと、空席あり・会員確認済みの2件を試し、どちらも表どおりの結果でした。",
+          contextId: "case-decision-table",
+          prompt: "まだ試していない規則を確認するには、どのケースを追加しますか。",
+          options: ["空席なし・会員未確認 → 満席", "空席あり・会員未確認 → 予約成立", "空席あり・会員未確認 → 会員確認が必要", "空席あり・会員確認済み → 予約成立"],
+          answer: 2,
+          explanation: "実施済みのケースは規則1と規則3です。空席あり・会員未確認を試し、「会員確認が必要」が返ることを確かめれば規則2を確認できます。空席なし・会員未確認は、組合せが違っても規則1です。"
+        },
+        {
+          context: "設備貸出しの受付では、セットAが1〜6個、セットBが1〜8個で、合計が10個以下の場合に受付します。数量は整数で、一つでも条件を外れると「受付不可」です。実装では合計の条件だけが、誤って「10個未満」になっています。",
+          prompt: "Aを4個に固定し、合計の境界上と、そのすぐ外側を1件ずつ試します。入力 (A, B) と仕様上の期待結果を答えてください。",
+          thinkFirst: true,
+          thinkFirstPrompt: "入力2件とそれぞれの期待結果を考えてから、選択肢を表示してください。",
+          options: ["(4, 5) → 受付、(4, 6) → 受付", "(4, 6) → 受付、(4, 7) → 受付不可", "(4, 7) → 受付不可、(4, 8) → 受付不可", "(4, 6) → 受付不可、(4, 7) → 受付"],
+          answer: 1,
+          explanation: "合計10個の (4, 6) が境界上、合計11個の (4, 7) がすぐ外側です。どちらもAとBの個別範囲は満たしています。合計9個と10個でも誤実装は検出できますが、この設問では境界上と外側の組を求めています。",
+          solutionId: "case-sum-solution"
+        },
+        {
+          context: "設備貸出しの受付では、セットAが1〜6個、セットBが1〜8個で、合計が10個以下の場合に受付します。数量は整数で、一つでも条件を外れると「受付不可」です。実装ではAの上限だけが、誤って「6個未満」になっています。",
+          prompt: "Bを同じ値に固定し、Aの上限だけをまたいで誤実装を検出します。入力 (A, B) と仕様上の期待結果を答えてください。",
+          thinkFirst: true,
+          thinkFirstPrompt: "入力2件とそれぞれの期待結果を考えてから、選択肢を表示してください。",
+          options: ["(6, 5) → 受付不可、(7, 5) → 受付不可", "(6, 2) → 受付不可、(7, 2) → 受付", "(4, 2) → 受付、(5, 2) → 受付", "(6, 2) → 受付、(7, 2) → 受付不可"],
+          answer: 3,
+          explanation: "(6, 2) と (7, 2) はBの範囲と合計上限を満たすので、Aだけを試せます。Bを5個にすると、Aが6個でも7個でも合計上限を超えて拒否され、Aの境界の誤りが結果に現れません。",
+          solutionId: "case-quantity-solution"
+        }
+      ],
+      "message-authentication": [
+        {
+          context: "配布画面から文書を取得し、同じ画面に載っているハッシュ値と、取得した文書から計算した値が一致しました。画面に載る文書と照合値の両方が変わっていた可能性があります。",
+          prompt: "この一致から確認できたことはどれですか。",
+          options: ["出版部が配布した元の文書だと確認できた。", "取得した文書の計算値が、その画面の掲載値と一致した。", "元の文書から一切変わっていないと確認できた。"],
+          answer: 1,
+          explanation: "照合した相手は、その画面に掲載されている値です。正規の文書に対応する値かどうかを別途確認できれば、元の文書との一致を判断する根拠になります。"
+        },
+        {
+          context: "企画部が通知にデジタル署名を付けて支店へ送ります。企画部と支店はそれぞれ鍵のペアを持ち、支店は企画部の公開鍵を確認済みです。",
+          prompt: "企画部が署名を作る鍵と、支店が署名を検証する鍵の組はどれですか。",
+          options: ["企画部の公開鍵／企画部の秘密鍵", "企画部の秘密鍵／支店の公開鍵", "企画部の秘密鍵／企画部の公開鍵", "支店の秘密鍵／支店の公開鍵"],
+          answer: 2,
+          explanation: "署名者は企画部です。作成と検証には、企画部の同じ鍵ペアのうち、秘密鍵と公開鍵をそれぞれ使います。"
+        },
+        {
+          context: "受注システムと在庫システムは秘密鍵を一つ共有しています。在庫システムが通知本文と共有鍵からMACを再計算すると、通知に付いていたMACと一致しました。",
+          prompt: "この仕組みについて正しい説明はどれですか。",
+          options: ["鍵を共有した相手との間で、通知内容の認証に使える。", "受注システムだけがMACを作成できる。", "MACを付けると通知本文が秘匿される。", "在庫システムの公開鍵を使ってMACを検証する。"],
+          answer: 0,
+          explanation: "MACの計算に使うのは本文と共有鍵です。共有鍵を持つ両システムがMACを生成できます。本文を秘匿するなら暗号化が必要です。"
+        },
+        {
+          context: "出版部は誰でも閲覧できる告知文を配布します。読者は出版部の公開鍵を別経路で確認済みです。配布画面の文書や照合値は信頼できない場合があり、共有秘密鍵を全読者に配ることもできません。",
+          prompt: "出版部は文書に何を付け、読者は何を使って何を確認しますか。",
+          thinkFirst: true,
+          thinkFirstPrompt: "誰が、どの鍵で、何をするかを一文にしてから、選択肢を表示してください。",
+          options: ["出版部がハッシュ値を同じ画面に載せ、読者がその値と計算値を照合する。", "出版部が秘密鍵で文書に署名し、読者が確認済みの出版部の公開鍵で文書と署名を検証する。", "出版部がMACを付け、読者全員に同じ共有鍵を配って照合する。"],
+          answer: 1,
+          explanation: "配布画面とは別に確認済みの公開鍵があるので、読者自身が、受け取った内容に対して出版部の鍵で署名されたかを検証できます。頭の中の答えを次の3点と比べてください。",
+          solutionId: "signature-verification-solution"
+        }
+      ],
+      "interface-design": [
+        {
+          context: "通販の注文と実店舗の注文が、同じ倉庫の在庫を使います。通販では画面と注文受付を分け、倉庫には独立した在庫管理システムがあります。",
+          prompt: "注文が同時に入っても、最後の1個を二重に確保しないために適切な分担はどれですか。",
+          options: ["通販の画面が在庫数を覚え、購入者が注文するたびに表示を減らす。", "通販と実店舗が同じ確保APIを呼び、在庫管理が残数の確認から確保まで他の依頼が割り込まないようにする。", "通販と実店舗が在庫数を照会した後、それぞれの注文記録だけを更新する。"],
+          answer: 1,
+          explanation: "在庫管理が両方の依頼を受けて確認と確保を行えば、片方の注文が最後の1個を確保した後、もう片方には在庫不足を返せます。"
+        },
+        {
+          context: "APIには、入力として商品コードと数量、成功時の結果として確保番号が定義されています。エラー時の応答は全て「失敗」です。注文画面では、数量が不正なら入力を直すように、在庫不足なら数量を減らすか商品を変更するように案内します。",
+          prompt: "この画面要件を満たすために、API仕様へ追加すべき取り決めはどれですか。",
+          options: ["成功時に商品の名前も返す。", "確保番号を注文画面に表示する。", "数量不正と在庫不足を別々の結果として返す。"],
+          answer: 2,
+          explanation: "注文受付が二種類の案内を出し分けるには、失敗理由を応答で区別できる必要があります。入力や成功時の確保番号を変更しても、失敗の種類は判別できません。"
+        },
+        {
+          context: "注文受付は在庫確保を非同期で依頼します。依頼には注文番号、商品コード、数量が含まれます。受理すると注文画面は「処理中」になります。結果の通知は成功か失敗かだけを返します。同じ商品を別々の購入者が注文でき、通知の順序は依頼順と一致するとは限りません。",
+          prompt: "通知を受けて正しい注文を確定または取消しにするには、通知に何を追加しますか。",
+          thinkFirst: true,
+          options: ["依頼時と同じ注文番号を追加する。", "商品コードと確保数量を追加する。", "在庫管理が通知を送った時刻を追加する。"],
+          answer: 0,
+          explanation: "元の依頼と最終結果を対応付ける情報として、注文を一意に識別できる注文番号を返します。同じ商品・数量の注文もあり得ます。受理通知の時点では、画面は処理中のままです。"
+        },
+        {
+          context: "1注文につき1商品を確保する同期APIがあります。注文受付が注文番号、商品コード、数量を送ったところ、応答がないまま待ち時間の上限に達しました。実際には在庫を確保できていた可能性があります。",
+          prompt: "同じ依頼を再送でき、二重確保も起こさないようにするには、何を取り決めますか。",
+          thinkFirst: true,
+          options: ["再送時は毎回新しい注文番号を発行し、在庫管理は新規依頼として処理する。", "同じ注文番号と同じ内容で再送し、処理済みなら元の結果を返して確保を繰り返さない。", "応答がない場合は在庫不足とみなし、再送時に数量を減らす。"],
+          answer: 1,
+          explanation: "同じ依頼だと識別する方法と、処理済みの場合に保存済みの結果を返す取り決めが必要です。履歴の記録と在庫更新をまとめて行えば、更新だけが行われて再送時に履歴がない状態を防げます。"
+        }
+      ],
+      "critical-path": [
+        {
+          contextId: "schedule-question",
+          prompt: "CとDを始めるには、それぞれどの作業の完了が必要ですか。",
+          options: ["CはA、DはB", "CはA、DはAとB", "CもDもAとB", "CはB、DはA"],
+          answer: 1,
+          explanation: "Cは②から始まるのでAを待ちます。Dが始まる③にはBと②からの破線が入るため、DはAとBを両方待ちます。"
+        },
+        {
+          context: "開始日は1日目です。先行作業が終わった翌日に後続作業を始めます。",
+          contextId: "schedule-question",
+          prompt: "最短の完了日とクリティカルパスの組合せはどれですか。",
+          options: ["9日目・A→C→E", "12日目・B→D→E", "13日目・B→D→E", "15日目・A→B→D→E"],
+          answer: 1,
+          explanation: "③には経過5日に到達します。④はCの経過7日とDの経過10日の遅い方を待ちます。そこにEの2日を足すと、12日目の終了時点に完了します。",
+          solutionId: "schedule-early"
+        },
+        {
+          context: "開始日は1日目です。先行作業が終わった翌日に後続作業を始めます。",
+          contextId: "schedule-question",
+          prompt: "最短完了日を守る場合、Cの最遅開始日は何日目で、総余裕は何日ですか。",
+          thinkFirst: true,
+          options: ["6日目・3日", "6日目・2日", "7日目・3日", "7日目・4日"],
+          answer: 2,
+          explanation: "Cの終点④の最遅時刻は経過10日です。所要4日を引くと最遅開始は経過6日、つまり7日目です。最早の経過3日との差は3日。②の最遅時刻は③への破線の制約で経過5日になりますが、C自体の最遅開始は終点④から逆算します。",
+          solutionId: "schedule-late"
+        },
+        {
+          context: "開始日は1日目です。先行作業が終わった翌日に後続作業を始めます。図の計画からCの所要日数だけが4日延びました。",
+          contextId: "schedule-question",
+          prompt: "変更後の最短完了日とクリティカルパスを答えてください。",
+          thinkFirst: true,
+          options: ["12日目・B→D→E", "13日目・A→C→E", "13日目・B→D→E", "16日目・A→C→E"],
+          answer: 1,
+          explanation: "Cが8日になり、④への到達はA→Cが経過11日、B→Dが経過10日です。Eの2日を足すと13日目の終了時点に完了し、クリティカルパスはA→C→Eに変わります。Cの延長がちょうど3日なら④への到達がそろい、クリティカルパスは2本です。",
+          solutionId: "schedule-delay"
+        }
+      ],
+      availability: [
+        {
+          context: "経路Aは稼働率80％と90％の装置が直列につながり、経路Bは稼働率75％の装置1台です。装置は互いに独立で、どちらかの経路が使えればサービスは続きます。",
+          prompt: "システム全体の稼働率は何％ですか。",
+          options: ["54％", "72％", "93％", "97％"],
+          answer: 2,
+          explanation: "Aの稼働率は0.8×0.9＝0.72。両経路とも停止する確率は0.28×0.25＝0.07なので、稼働率は1−0.07＝93％です。54％は両経路が同時に稼働する割合です。"
+        },
+        {
+          context: "稼働率80％と90％の二つのサーバは、どちらか1台が動けば足ります。どちらを使う場合も、稼働率95％の同じゲートウェイ1台が必要です。装置同士は独立です。",
+          prompt: "システム全体の稼働率は何％ですか。",
+          options: ["90.25％", "93.1％", "95％", "98％"],
+          answer: 1,
+          explanation: "サーバ部分は1−0.2×0.1＝98％。共通ゲートウェイを一度だけ掛けて0.98×0.95＝93.1％です。ゲートウェイは必須なので全体は95％を超えません。"
+        },
+        {
+          context: "各装置の稼働率は同じ p で、0＜p＜1。各構成内で装置の稼働は互いに独立です。入力から出力まで、稼働中の装置だけでつながる経路が一つでもあればサービスを利用できます。",
+          contextId: "availability-ranking",
+          solutionId: "availability-ranking-solution",
+          prompt: "全体の稼働率が高い順に並べたものはどれですか。",
+          options: ["B、C、A", "C、B、A", "A、B、C", "B、A、C"],
+          answer: 0,
+          explanation: "CはAに予備経路を加え、BはCの予備経路の必須装置を1台減らしています。A＝p²、C＝1−(1−p²)²、B＝1−(1−p²)(1−p)。C−A＝p²(1−p²)、B−C＝(p−p²)(1−p²)はいずれも正なので、常にB＞C＞Aです。"
+        },
+        {
+          context: "図の四つの機器はすべて同じ稼働率 p（0≦p≦1）で、稼働は互いに独立です。入力から出力まで稼働中の機器だけでつながる経路が一つでもあれば、サービスを利用できます。",
+          contextId: "availability-graphs",
+          solutionId: "availability-graphs-solution",
+          prompt: "システムの稼働率を表すグラフはどれですか。",
+          options: ["グラフA", "グラフB", "グラフC", "グラフD"],
+          answer: 2,
+          explanation: "回線部分は1−(1−p)³、共通ゲートウェイも必要なので全体は p[1−(1−p)³]。グラフCです。p＝0.5なら0.4375で、直列4台のグラフDは0.0625。共通装置が必須なので、0＜p＜1で全体は対角線より下です。"
+        }
+      ],
+      "break-even": [
+        {
+          context: "ある商品の単価は2,400円、1個当たりの変動費は1,450円、月間固定費は19万円です。単価と1個当たりの変動費は販売数量によらず一定です。",
+          prompt: "月の利益を5万円以上にするには、最低何個売る必要がありますか。",
+          options: ["200個", "250個", "252個", "253個"],
+          answer: 3,
+          explanation: "1個売るごとに950円を回収できます。固定費19万円と目標利益5万円を合わせた24万円を950円で割ると約252.63個なので、切り上げて253個です。252個では利益49,400円、253個では50,350円です。"
+        },
+        {
+          context: "ある事業の月の固定費は180万円です。変動費は売上高の55％で、売上高が変わってもこの比率は一定です。",
+          prompt: "月60万円の利益を出すために必要な売上高はおよそいくらですか。万円単位に丸めて答えてください。",
+          options: ["400万円", "約436万円", "約533万円", "600万円"],
+          answer: 2,
+          explanation: "売上の45％が固定費の回収と利益に回ります。（180万円＋60万円）÷0.45 ≒ 533万円です。400万円は、利益がゼロになる売上高です。"
+        },
+        {
+          context: "同じ四半期について、売上600万円なら30万円の損失、売上800万円なら60万円の利益と見込まれています。どちらの場合も固定費と変動費率は同じです。",
+          prompt: "売上が900万円の場合、変動費はいくらですか。",
+          options: ["405万円", "450万円", "495万円", "540万円"],
+          answer: 2,
+          explanation: "利益の差は60−(−30)＝90万円、売上の差は200万円。二つの利益の式を引くと固定費が消え、限界利益率は90÷200＝45％と分かります。変動費率は55％なので、900×0.55＝495万円です。405万円は限界利益です。"
+        },
+        {
+          context: "売上高が変わっても、各社の固定費と変動費率は一定とします。",
+          contextId: "break-even-comparison",
+          prompt: "現在の月次実績から分かるX社の特徴はどれですか。",
+          options: [
+            "売上が100万円伸びると、利益はY社より15万円多く増える。",
+            "損益分岐点の売上高はY社より低い。",
+            "限界利益率はY社より低い。",
+            "現在の売上から損益ゼロになるまでの売上の減少割合はY社より大きい。"
+          ],
+          answer: 0,
+          explanation: "限界利益率はX社40％、Y社25％なので、売上100万円の増加で利益はそれぞれ40万円、25万円増えます。損益分岐点の売上高はX社が320÷0.4＝800万円、Y社が170÷0.25＝680万円。現在の売上1,000万円から損益ゼロまでの減少割合（安全余裕率）はX社20％、Y社32％です。"
+        }
+      ],
+      audit: [
+        {
+          prompt: "未申請の変更も調査対象に入れるには、どの記録から調べますか。",
+          options: ["申請台帳。承認欄がある変更を選ぶ。", "本番反映履歴。実際に反映された変更を選ぶ。", "両方にIDがある変更。確実に対応が取れるものだけを選ぶ。"],
+          answer: 1,
+          explanation: "本番反映履歴から始めると、申請の有無にかかわらず実施された変更を対象にできます。"
+        },
+        {
+          prompt: "木曜日の本番反映のうち、事前承認を確認できなかった変更とその理由は？",
+          options: ["W31は当日の承認なし。W32は事後承認。", "W33は申請なし。W34は反映なし。", "W32は事後承認。W33は申請なし。"],
+          answer: 2,
+          explanation: "W32は11:20の反映後、11:35に承認されました。W33は申請台帳にありません。W31は前日承認で条件を満たし、W34は木曜の反映履歴にないため対象外です。"
+        },
+        {
+          context: "決済システムでは、緊急パッチも含め、本番反映の開始前に運用責任者の承認が必要です。保守計画表には作業予定日と変更番号が載ります。配信サーバの「配信実績ログ」には、予定外の作業も含めて、実際に本番反映を開始したすべての変更の変更番号と開始日時が残ります。申請ワークフローの「変更受付台帳」には、変更番号、承認者、承認日時が残ります。月次報告書には、担当者の聞き取りを基に「対象月の変更は全件承認済み」と記載されています。",
+          prompt: "対象月に実際に反映された変更が事前承認を受けていたか、未申請の変更も含めて確認します。どの資料を起点に、どの資料と何をキーに照合し、何を確認しますか。",
+          thinkFirst: true,
+          options: [
+            "保守計画表を起点に、変更番号で変更受付台帳と照合し、承認日時が作業予定日前かを確認する。",
+            "対象月の配信実績ログを起点に、変更番号で変更受付台帳と照合し、運用責任者が反映開始より前に承認したかを確認する。",
+            "変更受付台帳を起点に、変更番号で配信実績ログと照合し、運用責任者が反映開始より前に承認したかを確認する。"
+          ],
+          answer: 1,
+          explanation: "頭の中で作った答えに、①起点は配信実績ログ、②変更受付台帳と変更番号で照合、③運用責任者の承認日時が反映開始日時より前、の三つが入っていたか確認しましょう。ログに対応する申請がなければ未申請、承認日時が後なら事後承認です。予定表には予定外の変更が載らず、台帳から始めると未申請分が漏れます。"
+        }
+      ],
+      "procurement-selection": [
+        {
+          prompt: "どの会社を選びますか。候補から外す会社とその理由、適合した会社の総合点から説明してください。",
+          thinkFirst: true,
+          thinkFirstPrompt: "選定先と理由を頭の中で一文にしてから、選択肢を表示してください。",
+          options: [
+            "E社。重みを掛けた合計が35.5点で全社の中で最も高い。",
+            "F社。条件に適合し、最も重い休日対応の項目が5点で適合案の中で最も高い。",
+            "D社。E社は費用が2点なので除外し、残った3社のうちD社が30.5点で最も高い。"
+          ],
+          answer: 2,
+          explanation: "選定理由に「E社は費用が2点で除外」と「D社は適合案の中で最高点」の両方が入っていたか確かめましょう。",
+          solutionId: "procurement-calculation"
+        },
+        {
+          context: "D社の提案には「休日の障害連絡は電話で受け付け、担当者が折り返す」とあります。",
+          prompt: "契約前に確認しておくとよいことはどれですか。",
+          options: [
+            "電話受付後、担当者からの折り返しにかかる目安時間と、遅れた場合の連絡先。",
+            "D社の費用点を引き上げた後の総合点。",
+            "休日対応の重みを下げた後の他社の順位。"
+          ],
+          answer: 0,
+          explanation: "電話で受け付けることは明記されています。折り返しや連絡の目安を契約前に確認すると、休日にどのような対応を受けられるか具体的になります。"
+        }
+      ],
+      classification: [
+        { prompt: "設定Cで、実際の遅延をどれだけ拾えましたか。また、遅延予告の何％が当たりましたか。", options: ["実際の遅延24件のうち18件で75％。予告30件のうち18件で60％。", "実際の遅延30件のうち18件で60％。予告24件のうち18件で75％。", "どちらも全100件のうち18件で18％。"], answer: 0, explanation: "実際の遅延は列の18＋6＝24件。予告は行の18＋12＝30件です。分子は同じ18件でも、再現率と適合率では分母が変わります。" },
+        { prompt: "予定どおりだった注文のうち、設定Cが誤って遅延を予告した割合は？", options: ["12/30 ＝ 40％", "12/100 ＝ 12％", "12/76 ≒ 15.8％"], answer: 2, explanation: "予定どおりの列は12＋64＝76件で、誤予告は12件です。12/30は、予告した注文に占める誤りの割合です。" },
+        { prompt: "設定Dでは見逃し3件・誤予告20件でした。見逃しを4件以内に抑えるには？", options: ["設定C。誤予告が12件で少ない。", "設定D。誤予告は増えるが、見逃しを3件に抑えられる。", "両方。どちらも実際の遅延を半数以上拾える。"], answer: 1, explanation: "Cは実際に遅延した6件を予定どおりと予測し、上限を超えます。Dでは誤予告は12件から20件に増えますが、見逃しは条件内です。" },
+        {
+          context: "メールを自動分類するフィルターがあります。迷惑メールと判定したメールは隔離し、通常のメールと判定したメールは受信箱に入れます。迷惑メールを陽性とします。",
+          prompt: "このフィルターをROC曲線で評価するとき、横軸に用いる偽陽性率はどれですか。",
+          options: [
+            "隔離したメールのうち、実際には通常のメールだった割合。",
+            "実際の迷惑メールのうち、受信箱に入った割合。",
+            "実際の通常のメールのうち、隔離された割合。",
+            "実際の迷惑メールのうち、隔離された割合。"
+          ],
+          answer: 2,
+          explanation: "実際に陰性だった通常のメールすべてが分母です。そのうち、陽性と判定されて隔離された通常のメールが分子です。隔離されたメール全体を分母にすると、隔離のうち誤りだった割合になります。実際の迷惑メールを分母にした場合、受信箱に入った割合は見逃し率、隔離された割合は再現率です。"
+        }
+      ],
+      binary: [
+        {
+          prompt: "0011₂ の右から4桁目を1にすると、元の値からいくつ増える？",
+          options: ["1", "4", "8", "11"], answer: 2,
+          explanation: "変えた桁の重みは8です。値は3から11になり、増えた量は8です。"
+        },
+        {
+          prompt: "3ビットが左から a、b、c と並ぶ。左の2桁を入れ替えた後の値は？",
+          options: ["4a＋2b＋c", "4b＋2a＋c", "4c＋2b＋a", "4b＋2c＋a"], answer: 1,
+          explanation: "新しい並びは b、a、c。左から重み4、2、1を掛けて足します。"
+        },
+        {
+          prompt: "2ビットの符号なし整数 x を2で割った整数の商を q とする。左右の桁を入れ替えた値は？",
+          options: ["2x−3q", "2x＋q", "x−2q", "2q＋x"], answer: 0,
+          explanation: "左の桁は商 q、右の桁は余り x−2q。入替え後は 2(x−2q)＋q＝2x−3q です。"
+        },
+        {
+          prompt: "符号なしの6ビットで表せる値は何通りで、最大値はいくつ？",
+          options: ["63通り、最大63", "64通り、最大64", "63通り、最大62", "64通り、最大63"], answer: 3,
+          explanation: "6桁にそれぞれ2通りあるので64通り。0を含むので最後の値は63です。"
+        },
+        {
+          prompt: "符号なし n ビットの最大値を2個足し、さらに1を足す。必要な最小のビット数は？（n は1以上）",
+          options: ["n", "n＋1", "n＋2", "2n＋1"], answer: 1,
+          explanation: "2(2ⁿ−1)＋1＝2ⁿ⁺¹−1。これは n＋1 ビットで表せる最大値に一致します。"
+        },
+        {
+          context: "3ビットの符号なし整数 x を考えます。x を4で割った整数の商を q、x を2で割った余りを r とします。",
+          prompt: "真ん中のビットをそのままにして、左端と右端だけを入れ替えます。入替え後の値を表す式はどれですか。",
+          options: ["x＋3q−3r", "x−4q＋4r", "x−3q＋3r", "4r＋q"],
+          answer: 2,
+          explanation: "4で割った商 q は左端、2で割った余り r は右端のビットです。両端の重み付きの値 4q＋r を x から引くと、真ん中のビットの分だけが残ります。そこに入替え後の両端 4r＋q を足すと、x−(4q＋r)＋(4r＋q)＝x−3q＋3r です。例えば x＝6（110₂）なら q＝1、r＝0 で、入替え後は3（011₂）になります。"
+        }
+      ],
+      radix: [
+        {
+          prompt: "37₁₀ を2進数で表すと？",
+          options: ["100011₂", "101001₂", "100101₂", "110101₂"], answer: 2,
+          explanation: "2で割った余りを逆順に読むと100101。重みを足すと32＋4＋1＝37です。"
+        },
+        {
+          prompt: "A03₁₆ を2進数で表すと？",
+          options: ["1010 0000 0011₂", "1010 0011₂", "1010 0011 0000₂", "1100 0000 0011₂"], answer: 0,
+          explanation: "A、0、3を順に1010、0000、0011へ戻します。中央の0000は、Aの位置を保つために必要です。"
+        },
+        {
+          prompt: "0.375₁₀ を2進数で表すと？",
+          options: ["0.101₂", "0.011₂", "0.110₂", "0.111₂"], answer: 1,
+          explanation: "残った小数を2倍すると0.75、1.5、1.0。各回の整数部分を順に読んで0.011です。1/4＋1/8＝0.375で検算できます。"
+        },
+        {
+          prompt: "11010.11₂ と同じ値を表す16進数は？",
+          options: ["1A.3₁₆", "D0.C₁₆", "1A.6₁₆", "1A.C₁₆"], answer: 3,
+          explanation: "小数部の11の右に0を補うと1100です。0001 1010 . 1100を読むと1A.Cです。"
+        },
+        {
+          prompt: "73₈ を2進数で表すと？ 8＝2³を手掛かりに考えてください。",
+          options: ["111011₂", "111001₂", "110111₂", "1001001₂"], answer: 0,
+          explanation: "8進数1桁は2進数3桁に対応します。7は111、3は011なので、111011です。"
+        }
+      ]
+    };
+
+    function initializeQuiz(practice, questions) {
+      const form = practice.querySelector("form");
+      const position = practice.querySelector("[data-quiz-position]");
+      const legend = form.querySelector("legend");
+      const context = form.querySelector("[data-question-context]");
+      const thinkFirst = form.querySelector("[data-think-first]");
+      const options = form.querySelector("[data-options]");
+      const reveal = form.querySelector("[data-reveal]");
+      const grade = form.querySelector('button[type="submit"]');
+      const next = form.querySelector("[data-next]");
+      const feedback = practice.querySelector("[data-feedback]");
+      const solution = practice.querySelector("[data-solution]");
+      const result = practice.querySelector("[data-result]");
+      const score = practice.querySelector("[data-score]");
+      let questionIndex = 0;
+      let correctCount = 0;
+
+      function renderQuestion(moveFocus) {
+        const question = questions[questionIndex];
+        position.textContent = (questionIndex + 1) + " / " + questions.length + "問";
+        legend.textContent = question.prompt;
+        context.textContent = question.context ?? "";
+        if (question.contextId) context.append(byId(question.contextId).content.cloneNode(true));
+        if (question.contextId === "availability-graphs") {
+          const graphs = context.querySelector(".availability-graphs");
+          const functions = [p => p, p => 1 - (1 - p) ** 3, p => p * (1 - (1 - p) ** 3), p => p ** 4];
+          graphs.style.display = "grid";
+          graphs.style.gridTemplateColumns = "repeat(auto-fit, minmax(min(100%, 150px), 1fr))";
+          for (const [index, fn] of functions.entries()) {
+            const canvas = document.createElement("canvas");
+            canvas.width = 200;
+            canvas.height = 160;
+            canvas.style.width = "100%";
+            canvas.style.maxWidth = "220px";
+            canvas.setAttribute("role", "img");
+            const descriptions = ["原点から右上への直線", "対角線より上の曲線で、pが0.5のとき0.875", "対角線より下の曲線で、pが0.5のとき0.4375", "対角線より下の曲線で、pが0.5のとき0.0625"];
+            canvas.setAttribute("aria-label", "グラフ" + "ABCD"[index] + "。" + descriptions[index] + "。横軸と縦軸は0から1。");
+            graphs.append(canvas);
+            const ctx = canvas.getContext("2d");
+            if (!ctx) continue;
+            ctx.font = "14px sans-serif";
+            ctx.fillText("グラフ" + "ABCD"[index], 35, 16);
+            ctx.fillText("1", 12, 34);
+            ctx.fillText("0", 16, 133);
+            ctx.fillText("1", 162, 148);
+            ctx.strokeStyle = "#8195a5";
+            ctx.beginPath(); ctx.moveTo(30, 28); ctx.lineTo(30, 128); ctx.lineTo(170, 128); ctx.stroke();
+            ctx.setLineDash([4, 3]);
+            ctx.beginPath(); ctx.moveTo(30, 128); ctx.lineTo(170, 28); ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.strokeStyle = "#175985"; ctx.lineWidth = 2;
+            ctx.beginPath();
+            for (let step = 0; step <= 100; step++) {
+              const p = step / 100;
+              const x = 30 + 140 * p, y = 128 - 100 * fn(p);
+              if (step === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+          }
+        }
+        context.hidden = !question.context && !question.contextId;
+        options.replaceChildren(...question.options.map((option, index) => {
+          const label = document.createElement("label");
+          label.className = "option";
+          const input = document.createElement("input");
+          input.type = "radio";
+          input.name = "answer";
+          input.value = index;
+          input.required = true;
+          label.append(input, option);
+          return label;
+        }));
+        const hideChoices = question.thinkFirst === true;
+        thinkFirst.textContent = question.thinkFirstPrompt ?? "頭の中で答えを一文にしてから、選択肢を開いてください。";
+        thinkFirst.hidden = !hideChoices;
+        options.hidden = hideChoices;
+        reveal.hidden = !hideChoices;
+        grade.hidden = hideChoices;
+        next.hidden = true;
+        feedback.hidden = true;
+        solution.replaceChildren();
+        result.hidden = true;
+        if (moveFocus) (context.hidden ? legend : context).focus();
+      }
+      reveal.addEventListener("click", () => {
+        options.hidden = false;
+        grade.hidden = false;
+        thinkFirst.hidden = true;
+        reveal.hidden = true;
+        options.querySelector("input").focus();
+      });
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const selected = new FormData(form).get("answer");
+        if (selected === null || grade.hidden) return;
+        const question = questions[questionIndex];
+        const correct = Number(selected) === question.answer;
+        if (correct) correctCount += 1;
+        for (const input of options.querySelectorAll("input")) input.disabled = true;
+        grade.hidden = true;
+        feedback.textContent = (correct ? "正解。" : "正解は " + question.options[question.answer] + "。") + question.explanation;
+        feedback.hidden = false;
+        if (question.solutionId) solution.append(byId(question.solutionId).content.cloneNode(true));
+        if (questionIndex + 1 < questions.length) {
+          next.hidden = false;
+          next.focus({ preventScroll: true });
+        } else {
+          score.textContent = correctCount + " / " + questions.length + "問 正解";
+          result.hidden = false;
+          score.focus({ preventScroll: true });
+        }
+      });
+      next.addEventListener("click", () => {
+        questionIndex += 1;
+        renderQuestion(true);
+      });
+      practice.querySelector("[data-retry]").addEventListener("click", () => {
+        questionIndex = 0;
+        correctCount = 0;
+        renderQuestion(true);
+      });
+      renderQuestion(false);
+    }
+
+    const template = byId("practice-template");
+    const studyRecordsKey = "ap-study-note.checks.v1";
+    const recordControls = new Map();
+
+    function readStudyChecks() {
+      const saved = JSON.parse(localStorage.getItem(studyRecordsKey));
+      return Object.fromEntries(lessons.map(({ id }) => {
+        let record = saved?.[id];
+        if (!saved) {
+          try { record = JSON.parse(localStorage.getItem("ap-study-note.v1." + id)); }
+          catch { record = null; }
+        }
+        return [id, { done: record?.done === true, review: record?.review === true }];
+      }));
+    }
+
+    function currentStudyChecks() {
+      return Object.fromEntries([...recordControls].map(([id, { done, review }]) =>
+        [id, { done: done.checked, review: review.checked }]));
+    }
+
+    function showStudyChecks(checks) {
+      for (const [id, { done, review }] of recordControls) {
+        done.checked = checks[id]?.done === true;
+        review.checked = checks[id]?.review === true;
+      }
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const doneCount = [...recordControls.values()].filter(({ done }) => done.checked).length;
+      byId("progress").textContent = "学習済み " + doneCount + " / " + lessons.length + "単元";
+    }
+    for (const lesson of lessons) {
+      const practice = lesson.querySelector("[data-practice]");
+      practice.append(template.content.cloneNode(true));
+      initializeQuiz(practice, questionSets[lesson.id]);
+      const done = practice.querySelector("[data-done]");
+      const review = practice.querySelector("[data-review]");
+      const status = practice.querySelector("[data-storage]");
+      const unavailable = "この環境ではチェックを保存できません。";
+      recordControls.set(lesson.id, { done, review, status });
+      practice.querySelector(".record").addEventListener("change", () => {
+        updateProgress();
+        try {
+          const checks = readStudyChecks();
+          checks[lesson.id] = { done: done.checked, review: review.checked };
+          localStorage.setItem(studyRecordsKey, JSON.stringify(checks));
+          showStudyChecks(checks);
+          status.textContent = "チェックを保存しました。";
+        } catch {
+          status.textContent = unavailable;
+        }
+      });
+    }
+    try {
+      showStudyChecks(readStudyChecks());
+    } catch {
+      for (const { status } of recordControls.values()) status.textContent = "保存したチェックを読み込めません。";
+      updateProgress();
+    }
+
+    const pngDialog = byId("study-png-dialog");
+    byId("study-png-open").addEventListener("click", () => {
+      const checks = currentStudyChecks();
+      const canvas = document.createElement("canvas");
+      canvas.width = 960;
+      canvas.height = 195 + lessons.length * 45;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      const done = Object.values(checks).filter(check => check.done).length;
+      const review = Object.values(checks).filter(check => check.review).length;
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#182938";
+      ctx.font = "bold 38px sans-serif";
+      ctx.fillText("応用情報の学習進捗", 38, 56);
+      ctx.font = "26px sans-serif";
+      ctx.fillText("学習済み " + done + " / " + lessons.length + "単元　復習 " + review + "単元", 38, 100);
+      ctx.font = "20px sans-serif";
+      ctx.fillText(new Date().toLocaleString("ja-JP"), 38, 133);
+      lessons.forEach((lesson, index) => {
+        const check = checks[lesson.id];
+        const y = 157 + index * 45;
+        ctx.fillStyle = index % 2 === 0 ? "#edf4fb" : "#fff";
+        ctx.fillRect(30, y, 900, 44);
+        ctx.fillStyle = "#182938";
+        ctx.font = "25px sans-serif";
+        ctx.fillText(lesson.querySelector("h1").textContent.trim(), 42, y + 30, 680);
+        ctx.textAlign = "right";
+        ctx.fillText([check.done && "学習済み", check.review && "復習"].filter(Boolean).join("・") || "未チェック", 915, y + 30);
+        ctx.textAlign = "left";
+      });
+      const png = canvas.toDataURL("image/png");
+      byId("study-png-preview").src = png;
+      byId("study-png-download").href = png;
+      pngDialog.showModal();
+    });
+
+    const transferDialog = byId("study-transfer-dialog");
+    const transferOutput = byId("study-transfer-output");
+    const transferInput = byId("study-transfer-input");
+    const transferStatus = byId("study-transfer-status");
+    const transferPreview = byId("study-transfer-preview");
+    let pendingStudyChecks = null;
+
+    function exportStudyChecks() {
+      const checked = Object.entries(currentStudyChecks()).filter(([, record]) => record.done || record.review);
+      return JSON.stringify({ format: "ap-study-note", version: 1, checks: Object.fromEntries(checked) });
+    }
+
+    function parseStudyTransfer(value) {
+      if (!value.trim()) throw new Error("引き継ぐ記録がありません。");
+      let data;
+      try { data = JSON.parse(value); }
+      catch { throw new Error("引き継ぎ文字列をすべて貼り付けてください。"); }
+      const checks = data?.checks;
+      if (data?.format !== "ap-study-note" || data.version !== 1 || !checks || typeof checks !== "object" || Array.isArray(checks)) {
+        throw new Error("応用情報の学習ノートから出力した文字列を使ってください。");
+      }
+      for (const [id, record] of Object.entries(checks)) {
+        if (!recordControls.has(id) || typeof record?.done !== "boolean" || typeof record?.review !== "boolean") {
+          throw new Error("読み込めない単元またはチェックが含まれています。");
+        }
+      }
+      return checks;
+    }
+
+    function resetTransferPreview() {
+      pendingStudyChecks = null;
+      transferPreview.hidden = true;
+    }
+
+    function previewStudyTransfer(overwrite) {
+      resetTransferPreview();
+      transferStatus.textContent = "";
+      const before = currentStudyChecks();
+      try {
+        const incoming = parseStudyTransfer(transferInput.value);
+        pendingStudyChecks = Object.fromEntries(lessons.map(({ id }) => {
+          const imported = Object.hasOwn(incoming, id) ? incoming[id] : { done: false, review: false };
+          return [id, overwrite ? imported : {
+            done: before[id].done || imported.done,
+            review: before[id].review && imported.review
+          }];
+        }));
+        const changes = key => {
+          const ids = Object.keys(before);
+          const added = ids.filter(id => !before[id][key] && pendingStudyChecks[id][key]).length;
+          const removed = ids.filter(id => before[id][key] && !pendingStudyChecks[id][key]).length;
+          return "追加 " + added + "件、解除 " + removed + "件";
+        };
+        const rule = overwrite ? "取り込んだチェックでこの端末の記録を置き換えます。"
+          : "学習済みはどちらかに付いていれば残り、復習は両方に付いているものが残ります。";
+        byId("study-transfer-summary").textContent = rule + " 学習済みは" + changes("done") + "。復習は" + changes("review") + "。";
+        transferPreview.hidden = false;
+        byId("study-transfer-preview-title").focus();
+      } catch (error) {
+        transferStatus.textContent = error.message;
+      }
+    }
+
+    byId("study-transfer-open").addEventListener("click", () => {
+      resetTransferPreview();
+      transferOutput.value = exportStudyChecks();
+      transferStatus.textContent = "";
+      byId("study-copy-status").textContent = "";
+      transferDialog.showModal();
+    });
+    byId("study-transfer-copy").addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(transferOutput.value);
+        byId("study-copy-status").textContent = "文字列をコピーしました。";
+      } catch {
+        transferOutput.select();
+        byId("study-copy-status").textContent = "選択した文字列をコピーしてください。";
+      }
+    });
+    transferInput.addEventListener("input", resetTransferPreview);
+    byId("study-transfer-merge").addEventListener("click", () => previewStudyTransfer(false));
+    byId("study-transfer-overwrite").addEventListener("click", () => previewStudyTransfer(true));
+    byId("study-transfer-cancel").addEventListener("click", () => {
+      resetTransferPreview();
+      byId("study-transfer-merge").focus();
+    });
+    byId("study-transfer-apply").addEventListener("click", () => {
+      if (!pendingStudyChecks) return;
+      try {
+        localStorage.setItem(studyRecordsKey, JSON.stringify(pendingStudyChecks));
+        showStudyChecks(pendingStudyChecks);
+        for (const { status } of recordControls.values()) status.textContent = "引き継いだチェックを保存しました。";
+        transferOutput.value = exportStudyChecks();
+        transferInput.value = "";
+        resetTransferPreview();
+        transferStatus.textContent = "学習記録を適用しました。";
+        transferInput.focus();
+      } catch {
+        transferStatus.textContent = "この環境では学習記録を保存できません。";
+      }
+    });
+  </script>
+</body>
+</html>
