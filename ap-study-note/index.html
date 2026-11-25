@@ -2410,6 +2410,7 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
     const isSubjectBPage = (hash) => hash === "subject-b" || subjectBLessons.some(({ id }) => id === hash);
     subjectToggle.addEventListener("click", () => {
       location.hash = isSubjectBPage(location.hash.slice(1)) ? "intro" : "subject-b";
+      if (toc.hidden) setTocOpen(true);
     });
 
     function showSection(moveFocus) {
@@ -2432,7 +2433,7 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
       }
       const chapter = toc.querySelector('a[aria-current="page"]')?.closest("details");
       if (chapter) chapter.open = true;
-      if (!moveFocus || (hash === "subject-b" && narrowScreen.matches)) return;
+      if (!moveFocus || byId("main").hidden) return;
       const heading = current.querySelector("h1");
       heading.focus({ preventScroll: true });
       heading.scrollIntoView({ block: "start" });
