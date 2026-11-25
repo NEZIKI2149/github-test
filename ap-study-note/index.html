@@ -2007,6 +2007,30 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
     const lessons = Array.from(document.querySelectorAll("[data-lesson]"));
     const sections = [byId("welcome"), byId("intro"), ...lessons];
     const toc = byId("toc");
+    const tocSpacer = document.createElement("div");
+    tocSpacer.setAttribute("aria-hidden", "true");
+    toc.appendChild(tocSpacer);
+    toc.addEventListener("click", (event) => {
+      const summary = event.target.closest("summary");
+      if (!summary || summary.parentElement.parentElement !== toc || !summary.parentElement.open) return;
+      event.preventDefault();
+      const position = summary.getBoundingClientRect().top;
+      const scrollBefore = toc.scrollTop;
+      // Reserve the disappearing height before closing so the browser cannot clamp the scroll.
+      const details = summary.parentElement;
+      const collapsedHeight = summary.offsetHeight;
+      const removedHeight = Math.max(0, details.offsetHeight - collapsedHeight);
+      tocSpacer.style.height = (tocSpacer.offsetHeight + removedHeight) + "px";
+      details.open = false;
+      toc.scrollTop = scrollBefore + summary.getBoundingClientRect().top - position;
+    });
+    toc.addEventListener("scroll", () => {
+      const spare = tocSpacer.offsetHeight;
+      const unused = toc.scrollHeight - toc.clientHeight - toc.scrollTop;
+      if (spare && unused > 1) {
+        tocSpacer.style.height = Math.max(0, spare - unused) + "px";
+      }
+    });
     const tocToggle = byId("toc-toggle");
     const navLinks = Array.from(toc.querySelectorAll("a"));
     const narrowScreen = window.matchMedia("(max-width: 760px)");
