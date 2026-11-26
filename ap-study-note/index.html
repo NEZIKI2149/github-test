@@ -331,6 +331,71 @@
     </nav>
     <main id="main" tabindex="-1">
       <article id="subject-b" hidden><h1 tabindex="-1">科目B</h1><p>目次から演習を選んでください。</p></article>
+      <article id="b-3-7" hidden>
+        <h1 tabindex="-1">B-3-7　入力が大きくなったときの改良を考える</h1>
+        <p class="context">解答の目安は12〜15分です。式と処理回数を考えてから選択肢を開いてください。</p>
+        <h2>仕様</h2>
+        <p>倉庫の日別出荷件数を配列A[1..n]に保持する。1回の集計でq件の問合せがあり、各問合せは両端を含む日付区間[l, r]の合計を返す。n, q ≥ 1、1 ≤ l ≤ r ≤ n。集計中に入力は変更されない。</p>
+        <p>方法Aは問合せのたびにsum ← 0として、i = lからrまで sum ← sum + A[i] を実行する。方法Bは以下の前処理を一度だけ行う。</p>
+        <p>加減算の比較では、合計・差を求める加減算だけを数え、ループ変数の更新などは数えない。追加記憶量の上限は、共通の入力や定数個の変数を除いた追加配列に適用する。</p>
+        <h2>方法Bのプログラム</h2>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="擬似コード"><pre><code>P[0] ← 0
+for i を 1 から n まで
+    P[i] ← ［ア］
+endfor
+各問合せ [l, r] について
+    ［イ］ を出力する
+endfor</code></pre></div>
+        <h2>設問一覧</h2>
+        <ol>
+          <li>方法Aの区間1件と、全期間の問合せq件の加算回数を求める。</li>
+          <li>P[i]の意味と空欄を答え、具体例で検算する。</li>
+          <li>方法Bの前処理・問合せ・全体の回数と、追加配列の大きさを求める。</li>
+          <li>具体的な件数とメモリ上限を使い、方式を選ぶ。</li>
+          <li>集計途中でA[k]が更新された場合のPの修正範囲を求める。</li>
+        </ol>
+        <div data-practice></div>
+        <details><summary>別の条件で解き直す</summary>
+          <p>n = 10,000、q = 200、各区間10日、Pの1要素8バイト、追加配列上限81,000バイトの場合、加減算回数でどちらを選ぶか答えてください。</p>
+          <details><summary>模範解答を表示</summary><p>Bは80,008バイトで上限内。ただしAは2,000回、Bは10,200回なので、加減算回数が少ないAを選びます。</p></details>
+        </details>
+      </article>
+      <article id="b-3-6" hidden>
+        <h1 tabindex="-1">B-3-6　小さい問題の答えから表を埋める</h1>
+        <p class="context">解答の目安は15〜18分です。式と根拠を考えてから選択肢を開いてください。</p>
+        <h2>仕様</h2>
+        <p>点検班は容量上限Wのケースに機材を入れる。各機材は高々1個選べ、何も選ばなくてもよい。容量の合計がW以下となる組合せのうち、評価点の合計の最大値を返す。</p>
+        <p>機材iの容量weight[i]は正の整数、評価点score[i]は非負整数。機材の添字は1始まり。表dp[0..n, 0..W]の行iは先頭から使える機材の範囲を、列cは容量上限を表す。maxは引数の大きい方を返す。</p>
+        <h2>基本入力（W = 5）</h2>
+        <table aria-label="機材の容量と評価点"><thead><tr><th scope="col">添字</th><th scope="col">機材</th><th scope="col">容量</th><th scope="col">評価点</th></tr></thead>
+        <tbody><tr><td>1</td><td>A</td><td>2</td><td>5</td></tr><tr><td>2</td><td>B</td><td>3</td><td>6</td></tr><tr><td>3</td><td>C</td><td>4</td><td>12</td></tr></tbody></table>
+        <h2>プログラム</h2>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="擬似コード"><pre><code>for c を 0 から W まで
+    dp[0, c] ← ［ア］
+endfor
+for i を 1 から n まで
+    for c を 0 から W まで
+        dp[i, c] ← dp[［イ］, c]
+        if ［ウ］
+            dp[i, c] ← max(dp[i, c], dp[i - 1, ［エ］] + score[i])
+        endif
+    endfor
+endfor
+return ［オ］</code></pre></div>
+        <h2>設問一覧</h2>
+        <ol>
+          <li>dp[i, c]の意味と、dp[2, 5]・dp[3, 5]の値と組合せを答える。</li>
+          <li>空欄を埋め、dp[1, 1]とdp[1, 2]を求める。</li>
+          <li>dp[3, 5]の候補の参照先と、列を降順にしたときの結果を答える。</li>
+          <li>選ぶ場合の参照を同じ行に変えたときの誤りを説明する。</li>
+          <li>更新するマスの数と、時間・表の記憶量を答える。</li>
+        </ol>
+        <div data-practice></div>
+        <details><summary>容量を変えて解き直す</summary>
+          <p>基本入力の容量上限をW = 3に変える。Cを読む行で選ぶ側の式を評価するか、戻り値と選ぶ機材を答えてください。</p>
+          <details><summary>模範解答を表示</summary><p>Cは容量4なので選ぶ側は評価しない。dp[3, 3] = dp[2, 3] = 6で、機材Bを選びます。</p></details>
+        </details>
+      </article>
       <article id="b-3-5" hidden>
         <h1 tabindex="-1">B-3-5　状態をグラフとして探索する</h1>
         <p class="context">解答の目安は15〜18分です。数値や式を自分で考えてから選択肢を開いてください。</p>
@@ -2652,6 +2717,36 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
       </tbody>
     </table></div>
   </template>
+  <template id="b-3-6-table">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="完成した表"><table>
+      <caption>基本入力の完成表。列は容量上限c</caption>
+      <thead><tr><th scope="col">i</th><th scope="col">0</th><th scope="col">1</th><th scope="col">2</th><th scope="col">3</th><th scope="col">4</th><th scope="col">5</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">0</th><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><th scope="row">1</th><td>0</td><td>0</td><td>5</td><td>5</td><td>5</td><td>5</td></tr>
+        <tr><th scope="row">2</th><td>0</td><td>0</td><td>5</td><td>6</td><td>6</td><td>11</td></tr>
+        <tr><th scope="row">3</th><td>0</td><td>0</td><td>5</td><td>6</td><td>12</td><td>12</td></tr>
+      </tbody>
+    </table></div>
+    <p>dp[3, 5]は、Cを選ばない場合のdp[2, 5] = 11と、選ぶ場合のdp[2, 1] + 12 = 12を比較します。</p>
+  </template>
+  <template id="b-3-7-prefix">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="累積和の表"><table>
+      <caption>A = [3, 1, 4, 2] の累積和</caption>
+      <thead><tr><th scope="col">i</th><th scope="col">0</th><th scope="col">1</th><th scope="col">2</th><th scope="col">3</th><th scope="col">4</th></tr></thead>
+      <tbody><tr><th scope="row">P[i]</th><td>0</td><td>3</td><td>4</td><td>8</td><td>10</td></tr></tbody>
+    </table></div>
+    <p>1〜r日目の合計P[r]から、1〜(l - 1)日目の合計P[l - 1]を引くと、l〜r日目の合計が残ります。</p>
+  </template>
+  <template id="b-3-7-cost">
+    <table aria-label="方式の費用比較"><caption>n = 10,000、q = 200、区間長100日の比較</caption>
+      <thead><tr><th scope="col">項目</th><th scope="col">方法A</th><th scope="col">方法B</th></tr></thead>
+      <tbody><tr><th scope="row">前処理</th><td>0回</td><td>10,000回</td></tr>
+      <tr><th scope="row">問合せ分</th><td>20,000回</td><td>200回</td></tr>
+      <tr><th scope="row">合計</th><td>20,000回</td><td>10,200回</td></tr>
+      <tr><th scope="row">追加配列</th><td>なし</td><td>80,008バイト</td></tr></tbody>
+    </table>
+  </template>
   <template id="practice-template">
     <h2>確認問題</h2>
     <p>1問ずつ解答と解説を確認し、最後に正答数を表示します。</p>
@@ -2709,7 +2804,7 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
   <script>
     const byId = (id) => document.getElementById(id);
     const lessons = Array.from(document.querySelectorAll("[data-lesson]"));
-    const subjectBLessons = ["b-1-1", "b-1-2", "b-1-3", "b-1-4", "b-1-5", "b-3-1", "b-3-2", "b-3-3", "b-3-4", "b-3-5"].map(byId);
+    const subjectBLessons = ["b-1-1", "b-1-2", "b-1-3", "b-1-4", "b-1-5", "b-3-1", "b-3-2", "b-3-3", "b-3-4", "b-3-5", "b-3-6", "b-3-7"].map(byId);
     const sections = [byId("welcome"), byId("intro"), byId("subject-b"), ...subjectBLessons, ...lessons];
     const toc = byId("toc");
     const subjectAItems = Array.from(toc.children);
@@ -2732,6 +2827,8 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
         <a href="#b-3-3">B-3-3　データ構造の操作をコードに戻す</a>
         <a href="#b-3-4">B-3-4　再帰で候補を列挙し、元の状態に戻す</a>
         <a href="#b-3-5">B-3-5　状態をグラフとして探索する</a>
+        <a href="#b-3-6">B-3-6　小さい問題の答えから表を埋める</a>
+        <a href="#b-3-7">B-3-7　入力が大きくなったときの改良を考える</a>
       </details>
       <p>B-4　システムアーキテクチャ</p>
       <p>B-5　ネットワーク</p>
@@ -3038,6 +3135,123 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
     });
 
     const questionSets = {
+      "b-3-7": [
+        {
+          prompt: "1　方法Aで区間[l, r]を1回集計する加算回数と、q件すべてが全期間の場合の回数を答えてください。",
+          thinkFirst: true,
+          options: [
+            "r - l回、全期間ならn + q回",
+            "r - l + 1回、全期間ならnq回",
+            "r - l + 1回、全期間ならn + q回"
+          ],
+          answer: 1,
+          explanation: "両端を含むため、l = rでも1回です。全期間は1件あたりn回でq件ならnq回です。"
+        },
+        {
+          prompt: "2　P[i]の意味、［ア］・［イ］、A = [3, 1, 4, 2]で[1, 3]の結果を答えてください。",
+          thinkFirst: true,
+          options: [
+            "P[i]は1日目からi日目までの累積和。ア P[i - 1] + A[i]、イ P[r] - P[l - 1]。結果は8",
+            "P[i]はi日目だけの値。ア P[i - 1] + A[i]、イ P[r] - P[l]。結果は5",
+            "P[i]は1日目からi日目までの累積和。ア P[i - 1] + A[i]、イ P[r] - P[l]。結果は5"
+          ],
+          answer: 0,
+          explanation: "P = [0, 3, 4, 8, 10]です。先頭からr日目までの和から、lより前の和P[l - 1]を引きます。",
+          solutionId: "b-3-7-prefix"
+        },
+        {
+          prompt: "3　方法Bの前処理、問合せ1回、全体の加減算回数と追加配列の要素数、方法Aの最悪時と方法B全体の計算量を答えてください。",
+          thinkFirst: true,
+          options: [
+            "n回、1回、q回、n要素。AはO(n + q)、BはO(q)",
+            "n回、1回、n + q回、n要素。AはO(nq)、BはO(n + q)",
+            "n回、1回、n + q回、n + 1要素。Aは最悪O(nq)、BはO(n + q)"
+          ],
+          answer: 2,
+          explanation: "P[0]も保存するのでn + 1要素です。Aの実際の回数は各区間長の合計で、最悪時にnq回です。"
+        },
+        {
+          prompt: "4　n = 10,000、各区間100日、Pの1要素8バイト。Bの加減算が初めて少なくなるqと、q = 200、追加配列上限80,000バイトで採る方法を答えてください。",
+          thinkFirst: true,
+          options: [
+            "q = 100。Bは80,000バイトなのでBを採る",
+            "q = 102。Bは80,008バイトで上限を超えるためAを採る",
+            "q = 101。Bは10,200回なので上限に関係なくBを採る"
+          ],
+          answer: 1,
+          explanation: "10,000 + q < 100qを満たす最小の整数は102。q = 200ではAが20,000回、Bが10,200回ですが、Bの配列は10,001 × 8 = 80,008バイトです。",
+          solutionId: "b-3-7-cost"
+        },
+        {
+          prompt: "5　集計の途中でA[k]がΔ増えた。Pを維持するための修正範囲と、累積和配列の修正にかかる加算回数を答えてください。",
+          thinkFirst: true,
+          options: [
+            "P[k..n]の全要素にΔを足す。n - k + 1回",
+            "P[k]だけにΔを足す。1回",
+            "P[0..k - 1]にΔを足す。k回"
+          ],
+          answer: 0,
+          explanation: "k日目を含む累積和はP[k]以降のすべてです。更新を考慮すると、入力が変わらない前提での費用比較だけでは方式を決められません。"
+        }
+      ],
+      "b-3-6": [
+        {
+          prompt: "1　dp[i, c]の意味を50字以内で答え、dp[2, 5]とdp[3, 5]の値と組合せを答えてください。",
+          thinkFirst: true,
+          options: [
+            "先頭i個から容量をちょうどcにする最大点。11はA・B、12はCのみ",
+            "先頭i個から各機材を高々1個選び容量合計をc以下にした最大点。11はA・B、12はCのみ",
+            "i番目の機材だけで容量cを使い切る最大点。11はA・B、12はCのみ"
+          ],
+          answer: 1,
+          explanation: "容量は上限で、使い切る必要はありません。Cだけなら容量4、評価点12で上限5以内です。"
+        },
+        {
+          prompt: "2　［ア］〜［オ］を埋め、dp[1, 1]とdp[1, 2]を答えてください。",
+          thinkFirst: true,
+          options: [
+            "ア 0、イ i - 1、ウ c ≥ weight[i]、エ c - weight[i]、オ dp[n, W]。値は0、5",
+            "ア 0、イ i、ウ c > weight[i]、エ c - weight[i]、オ dp[n, W]。値は0、0",
+            "ア 1、イ i - 1、ウ c ≥ score[i]、エ c - score[i]、オ dp[n - 1, W]。値は1、1"
+          ],
+          answer: 0,
+          explanation: "機材0個なら0点です。容量がちょうど足りる場合も選べ、選ぶ場合は前の行の残容量を参照します。"
+        },
+        {
+          prompt: "3　dp[3, 5]の二つの候補値を参照元付きで示し、同じ二次元表で列cだけを降順に計算しても結果が同じか答えてください。",
+          thinkFirst: true,
+          options: [
+            "選ばない dp[3, 4] = 12、選ぶ dp[3, 1] + 12 = 12。降順では常に結果が変わる",
+            "選ばない dp[2, 5] = 11、選ぶ dp[3, 1] + 12 = 12。降順では常に結果が変わる",
+            "選ばない dp[2, 5] = 11、選ぶ dp[2, 1] + 12 = 12。前の行が完成済みなので列を降順にしても同じ"
+          ],
+          answer: 2,
+          explanation: "どちらの候補も前の行から求めます。同じ行の他の列に依存しないので、この二次元表では列の順序を変えられます。",
+          solutionId: "b-3-6-table"
+        },
+        {
+          prompt: "4　選ぶ場合だけdp[i, c - weight[i]]を参照するよう変え、元の昇順ループを使う。dp[1, 4]の誤った値、正しい値と理由を答えてください。",
+          thinkFirst: true,
+          options: [
+            "誤りも正しくも5。同じ機材は同じ行で参照できない",
+            "誤りは10、正しくは5。同じ行のdp[1, 2]に入ったAの点を再び加え、Aを2個使うため",
+            "誤りは12、正しくは5。機材Cの点が自動で足されるため"
+          ],
+          answer: 1,
+          explanation: "昇順ではdp[1, 2] = 5が先に計算されます。その同じ行を読んでAの5点をもう一度足すため10になります。"
+        },
+        {
+          prompt: "5　初期化以外で更新するマスの数と、n、Wが1以上のときの時間・表の記憶量を答えてください。",
+          thinkFirst: true,
+          options: [
+            "n × Wマス、時間O(n + W)、記憶量O(nW)",
+            "(n + 1) × (W + 1)マス、時間O(nW)、記憶量O(n + W)",
+            "n × (W + 1)マス、時間O(nW)、表の記憶量O(nW)"
+          ],
+          answer: 2,
+          explanation: "iは1〜n、cは0〜Wなのでn × (W + 1)マスです。初期化は別にW + 1マスあり、表全体は(n + 1) × (W + 1)要素です。"
+        }
+      ],
       "b-3-5": [
         {
           prompt: "1　Sから1手で到達できる状態を右・下・左・上の順に答え、(2, 2)で鍵の有無が次の操作にどう影響するか答えてください。",
