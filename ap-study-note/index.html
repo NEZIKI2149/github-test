@@ -331,6 +331,53 @@
     </nav>
     <main id="main" tabindex="-1">
       <article id="subject-b" hidden><h1 tabindex="-1">科目B</h1><p>目次から演習を選んでください。</p></article>
+      <article id="b-3-8" hidden>
+        <h1 tabindex="-1">B-3-8　初見の仕様からプログラムを完成させる</h1>
+        <p class="context">解答の目安は25〜30分です。本番形式で解くときは、全6問の答えを下書きしてから選択肢を開いてください。</p>
+        <h2>仕様</h2>
+        <p>設備を1台だけ使って複数の点検依頼を処理する。依頼 <code>i</code> は開始時刻 <code>s[i]</code>、終了時刻 <code>e[i]</code>、得点 <code>v[i]</code> を持つ。開始・終了は整数で <code>s[i] &lt; e[i]</code>、得点は非負整数。依頼は予定された全時間を使い、途中で分割できない。前の依頼が終了した時刻に次の依頼を開始でき、各依頼は高々1回選べる。依頼を一つも選ばない場合の得点は0。最大の合計得点を求める。入力は終了時刻の非減少順で、同時刻の終了もあり得る。添字は1始まりで <code>n ≥ 1</code>。</p>
+        <table><caption>基本入力</caption>
+          <thead><tr><th scope="col">依頼</th><th scope="col">開始</th><th scope="col">終了</th><th scope="col">得点</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">A（1）</th><td>0</td><td>2</td><td>4</td></tr>
+            <tr><th scope="row">B（2）</th><td>1</td><td>3</td><td>7</td></tr>
+            <tr><th scope="row">C（3）</th><td>2</td><td>4</td><td>5</td></tr>
+            <tr><th scope="row">D（4）</th><td>4</td><td>5</td><td>4</td></tr>
+            <tr><th scope="row">E（5）</th><td>3</td><td>6</td><td>8</td></tr>
+          </tbody>
+        </table>
+        <h2>プログラム</h2>
+        <p><code>previous(i)</code> は、依頼 <code>i</code> の直前に置ける候補のうち最大の添字を求める。該当するものがなければ0を返す。<code>lo</code> は条件を満たすことが分かっている境界、<code>hi</code> は条件を満たさないことが分かっている境界。0と <code>i</code> は探索対象の外側に置く仮の境界で、比較時に参照しない。<code>floor</code> は切下げ。<code>best[0..n]</code> の添字は、検討対象に入れた先頭からの依頼数。</p>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="擬似コード"><pre><code>previous(i)
+    lo ← 0
+    hi ← i
+    while ［ア］
+        mid ← floor((lo + hi) / 2)
+        if ［イ］
+            lo ← mid
+        else
+            hi ← mid
+        endif
+    endwhile
+    return ［ウ］
+
+best[0] ← 0
+for i を 1 から n まで
+    p ← previous(i)
+    best[i] ← max(［エ］, ［オ］)
+endfor
+return best[n]</code></pre></div>
+        <h2>設問一覧</h2>
+        <ol>
+          <li>DとEの両方を選べるか答える。基本入力で最大得点を得る依頼の組と、その得点を求める。</li>
+          <li>［ア］〜［ウ］を埋め、<code>previous(4)</code> の各反復後の <code>(lo, hi)</code> を答える。</li>
+          <li><code>best[i]</code> の意味を説明し、［エ］〜［オ］に入る二つの式を答える。基本入力で <code>i = 1..5</code> の <code>p</code> と <code>best[i]</code> を順に示す。</li>
+          <li>選択した依頼間に1単位以上の空き時間が必要になった。変える条件式、Eの <code>p</code>、基本入力での最大得点と組を答える。</li>
+          <li>入力の整列は済んでいる。毎回手前の全依頼を走査して <code>p</code> を求める場合と、掲載コードの場合の時間計算量を答える。掲載コードの追加領域も求め、反復回数で根拠を示す。</li>
+          <li>［イ］の比較を誤って <code>e[mid] &lt; s[i]</code> と書いた場合に、元の仕様と異なる出力になる依頼2件の入力を自分で作る。正しい出力と誤った出力も示す。</li>
+        </ol>
+        <div data-practice></div>
+      </article>
       <article id="b-3-7" hidden>
         <h1 tabindex="-1">B-3-7　入力が大きくなったときの改良を考える</h1>
         <p class="context">解答の目安は12〜15分です。式と処理回数を考えてから選択肢を開いてください。</p>
@@ -2747,6 +2794,20 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
       <tr><th scope="row">追加配列</th><td>なし</td><td>80,008バイト</td></tr></tbody>
     </table>
   </template>
+  <template id="b-3-8-trace">
+    <p>終了時刻順なので、iを採用したときに前に置ける候補は1〜pに収まります。p = 0なら候補はありません。</p>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="得点の更新表"><table>
+      <caption>基本入力の得点の更新</caption>
+      <thead><tr><th scope="col">i</th><th scope="col">p</th><th scope="col">見送る</th><th scope="col">採用する</th><th scope="col">best[i]</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">1</th><td>0</td><td>0</td><td>4</td><td>4</td></tr>
+        <tr><th scope="row">2</th><td>0</td><td>4</td><td>7</td><td>7</td></tr>
+        <tr><th scope="row">3</th><td>1</td><td>7</td><td>9</td><td>9</td></tr>
+        <tr><th scope="row">4</th><td>3</td><td>9</td><td>13</td><td>13</td></tr>
+        <tr><th scope="row">5</th><td>2</td><td>13</td><td>15</td><td>15</td></tr>
+      </tbody>
+    </table></div>
+  </template>
   <template id="practice-template">
     <h2>確認問題</h2>
     <p>1問ずつ解答と解説を確認し、最後に正答数を表示します。</p>
@@ -2804,7 +2865,7 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
   <script>
     const byId = (id) => document.getElementById(id);
     const lessons = Array.from(document.querySelectorAll("[data-lesson]"));
-    const subjectBLessons = ["b-1-1", "b-1-2", "b-1-3", "b-1-4", "b-1-5", "b-3-1", "b-3-2", "b-3-3", "b-3-4", "b-3-5", "b-3-6", "b-3-7"].map(byId);
+    const subjectBLessons = ["b-1-1", "b-1-2", "b-1-3", "b-1-4", "b-1-5", "b-3-1", "b-3-2", "b-3-3", "b-3-4", "b-3-5", "b-3-6", "b-3-7", "b-3-8"].map(byId);
     const sections = [byId("welcome"), byId("intro"), byId("subject-b"), ...subjectBLessons, ...lessons];
     const toc = byId("toc");
     const subjectAItems = Array.from(toc.children);
@@ -2829,6 +2890,7 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
         <a href="#b-3-5">B-3-5　状態をグラフとして探索する</a>
         <a href="#b-3-6">B-3-6　小さい問題の答えから表を埋める</a>
         <a href="#b-3-7">B-3-7　入力が大きくなったときの改良を考える</a>
+        <a href="#b-3-8">B-3-8　初見の仕様からプログラムを完成させる</a>
       </details>
       <p>B-4　システムアーキテクチャ</p>
       <p>B-5　ネットワーク</p>
@@ -3135,6 +3197,51 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
     });
 
     const questionSets = {
+      "b-3-8": [
+        {
+          prompt: "1　DとEの両方を選べるか答える。基本入力で最大得点を得る依頼の組と、その得点を求める。",
+          thinkFirst: true,
+          options: ["DとEは重なる。B・Eで15点","DとEは重ならない。D・Eで12点","DとEは重なる。A・C・Dで13点"],
+          answer: 0,
+          explanation: "DとEは時間が重なるため両方は選べない。BとEを選ぶと最大15点。Eを選ぶ場合の前の候補はA・Bで、互いに重なるため点が高いBを採る。Eを選ばない場合の最大はA・C・Dの13点。"
+        },
+        {
+          prompt: "2　［ア］〜［ウ］を埋め、previous(4) の各反復後の (lo, hi) を答える。",
+          thinkFirst: true,
+          options: ["ア lo < hi、イ e[mid] < s[i]、ウ hi。 (2, 4) → (2, 3)","ア hi - lo > 1、イ e[mid] ≤ s[i]、ウ lo。 (2, 4) → (3, 4)","ア hi - lo > 1、イ e[mid] ≤ s[i]、ウ hi。 (2, 4) → (3, 4)"],
+          answer: 1,
+          explanation: "アは hi - lo > 1、イは e[mid] ≤ s[i]、ウは lo。更新後は (2, 4) → (3, 4)。Cの終了とDの開始が同時刻でも選べる。境界が隣接したら、条件を満たす最大位置は lo。"
+        },
+        {
+          prompt: "3　best[i] の意味を説明し、［エ］〜［オ］に入る二つの式を答える。基本入力で i = 1..5 の p と best[i] を順に示す。",
+          thinkFirst: true,
+          options: ["i件目だけの得点。エ best[i - 1]、オ v[p] + v[i]","先頭i件の最大得点。エ best[i - 1]、オ best[i - 1] + v[i]","先頭i件の最大得点。エ best[i - 1]、オ best[p] + v[i]。pは0,0,1,3,2、bestは4,7,9,13,15"],
+          answer: 2,
+          explanation: "best[i] は先頭i件から重複時間のない組を選んだときの最大得点。エは best[i - 1]、オは best[p] + v[i]（二つの順序は逆でも可）。p は 0, 0, 1, 3, 2、best[i] は 4, 7, 9, 13, 15。添字 p の依頼を必ず選ぶ必要はない。",
+          solutionId: "b-3-8-trace"
+        },
+        {
+          prompt: "4　選択した依頼間に1単位以上の空き時間が必要になった。変える条件式、Eの p、基本入力での最大得点と組を答える。",
+          thinkFirst: true,
+          options: ["e[mid] + 1 ≤ s[i]。pは1、A・Eで12点","e[mid] ≤ s[i]。pは2、B・Eで15点","e[mid] + 1 ≤ s[i]。pは1、B・Dで11点"],
+          answer: 0,
+          explanation: "条件は e[mid] + 1 ≤ s[i]。Eの p は1。最大は12点でAとE。best[1..5] = [4, 7, 7, 11, 12]。表の更新式は同じで、採用時に参照できる範囲が変わる。"
+        },
+        {
+          prompt: "5　入力の整列は済んでいる。毎回手前の全依頼を走査して p を求める場合と、掲載コードの場合の時間計算量を答える。掲載コードの追加領域も求め、反復回数で根拠を示す。",
+          thinkFirst: true,
+          options: ["全走査はO(n)、掲載コードはO(log n)、追加領域はO(1)","全走査はO(n²)、掲載コードはO(n log n)、追加領域はO(n)","全走査はO(n²)、掲載コードはO(n log n)、追加領域はO(n²)"],
+          answer: 1,
+          explanation: "全走査の比較は 0 + 1 + … + (n - 1) 回で O(n²)。掲載コードは境界間隔を反復ごとにほぼ半分にするので全体で O(n log n)（n ≥ 2）。追加領域は best の n + 1 要素と定数個の変数で O(n)。"
+        },
+        {
+          prompt: "6　［イ］の比較を誤って e[mid] < s[i] と書いた場合に、元の仕様と異なる出力になる依頼2件の入力を自分で作る。正しい出力と誤った出力も示す。",
+          thinkFirst: true,
+          options: ["(0, 2, 3) と (3, 4, 5)。正しくは8点、誤った式では5点","(0, 3, 3) と (2, 4, 5)。正しくは8点、誤った式では5点","(0, 2, 3) と (2, 4, 5)。正しくは8点、誤った式では5点"],
+          answer: 2,
+          explanation: "例は (開始, 終了, 得点) = (0, 2, 3), (2, 4, 5)。正しくは両方選べて8点。誤った式では2件目の p が0となり、最大は5点。同時刻に接し、両方を選んだ得点が片方より高い、という条件を満たす他の例も正答。"
+        }
+      ],
       "b-3-7": [
         {
           prompt: "1　方法Aで区間[l, r]を1回集計する加算回数と、q件すべてが全期間の場合の回数を答えてください。",
