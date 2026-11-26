@@ -99,7 +99,9 @@
     .option:has(input:checked) { background: var(--wash); border-color: var(--accent); }
     input[type="radio"], input[type="checkbox"] { accent-color: var(--accent); margin: 0; }
     .feedback { background: var(--wash); border-radius: .4rem; padding: .5rem .75rem; }
-    .answer-note textarea { display: block; box-sizing: border-box; width: 100%; margin-block: .3rem .65rem; padding: .45rem .6rem; border: 1px solid var(--line); border-radius: .4rem; background: var(--paper); color: var(--ink); font: inherit; font-size: max(16px, 1em); resize: vertical; }
+    .answer-note textarea { display: block; box-sizing: border-box; width: 100%; margin-block: .3rem .2rem; padding: .45rem .6rem; border: 1px solid var(--line); border-radius: .4rem; background: var(--paper); color: var(--ink); font: inherit; font-size: max(16px, 1em); resize: vertical; }
+    .answer-note-count { margin: 0 0 .65rem; color: var(--muted); font-size: .875rem; font-variant-numeric: tabular-nums; }
+    .answer-note-count[data-over-limit] { color: var(--ink); font-weight: 700; }
     .answer-note-review { margin-block: .65rem; }
     .answer-note-review p { margin: .25rem 0 .65rem; overflow-wrap: anywhere; }
     [data-note-written] { white-space: pre-wrap; }
@@ -377,7 +379,7 @@
           <li>停止要求の発生時刻が監視周期内のどこでもよい場合、現行方式の応答時間の上限を求め、12 ms以内を保証できるか答えてください。</li>
           <li>変更案の応答時間の上限を求め、停止要求の通知経路と停止制御タスクの優先度を変える理由をそれぞれ答えてください。</li>
           <li>停止指令から6 ms経っても停止を確認できず、その後に確認信号が届きました。利用者が通常リセットを押したときの状態と始動可否を答えてください。</li>
-          <li>正常に停止が確認され、停止要求も解除されています。開始ボタンが押されたままリセットした場合、直後の状態と、その後に再開を許す入力の条件を答えてください。</li>
+          <li>正常に停止が確認され、停止要求も解除されています。開始ボタンが押されたままリセットしたとき、直後の状態を答えてください。開始通知の扱いと再開を許す入力の条件を、合わせて55字以内で説明してください。</li>
         </ol>
         <div data-practice></div>
       </article>
@@ -561,9 +563,9 @@ return best[n]</code></pre></div>
         <ol>
           <li>DとEの両方を選べるか答える。基本入力で最大得点を得る依頼の組と、その得点を求める。</li>
           <li>［ア］〜［ウ］を埋め、<code>previous(4)</code> の各反復後の <code>(lo, hi)</code> を答える。</li>
-          <li><code>best[i]</code> の意味を説明し、［エ］〜［オ］に入る二つの式を答える。基本入力で <code>i = 1..5</code> の <code>p</code> と <code>best[i]</code> を順に示す。</li>
+          <li><code>best[i]</code> の意味を35字以内で説明する。続けて［エ］〜［オ］の二つの式と、基本入力で <code>i = 1..5</code> の <code>p</code> と <code>best[i]</code> を順に示す。</li>
           <li>選択した依頼間に1単位以上の空き時間が必要になった。変える条件式、Eの <code>p</code>、基本入力での最大得点と組を答える。</li>
-          <li>入力の整列は済んでいる。毎回手前の全依頼を走査して <code>p</code> を求める場合と、掲載コードの場合の時間計算量を答える。掲載コードの追加領域も求め、反復回数で根拠を示す。</li>
+          <li>入力の整列は済んでいる。毎回手前の全依頼を走査して <code>p</code> を求める場合と、掲載コードの場合の時間計算量、掲載コードの追加領域を答える。時間計算量の根拠は反復回数に触れ、二つの方法を合わせて65字以内で説明する。</li>
           <li>［イ］の比較を誤って <code>e[mid] &lt; s[i]</code> と書いた場合に、元の仕様と異なる出力になる依頼2件の入力を自分で作る。正しい出力と誤った出力も示す。</li>
         </ol>
         <div data-practice></div>
@@ -586,7 +588,7 @@ endfor</code></pre></div>
         <h2>設問一覧</h2>
         <ol>
           <li>方法Aの区間1件と、全期間の問合せq件の加算回数を求める。</li>
-          <li>P[i]の意味と空欄を答え、具体例で検算する。</li>
+          <li>P[i]の意味を25字以内で説明し、空欄を答え、具体例で検算する。</li>
           <li>方法Bの前処理・問合せ・全体の回数と、追加配列の大きさを求める。</li>
           <li>具体的な件数とメモリ上限を使い、方式を選ぶ。</li>
           <li>集計途中でA[k]が更新された場合のPの修正範囲を求める。</li>
@@ -623,8 +625,8 @@ return ［オ］</code></pre></div>
         <ol>
           <li>dp[i, c]の意味と、dp[2, 5]・dp[3, 5]の値と組合せを答える。</li>
           <li>空欄を埋め、dp[1, 1]とdp[1, 2]を求める。</li>
-          <li>dp[3, 5]の候補の参照先と、列を降順にしたときの結果を答える。</li>
-          <li>選ぶ場合の参照を同じ行に変えたときの誤りを説明する。</li>
+          <li>dp[3, 5]の二つの候補値と参照先を示す。列を降順にしたときに結果が同じか、理由と合わせて45字以内で答える。</li>
+          <li>選ぶ場合の参照を同じ行に変えたときの誤った値と正しい値を答える。値が誤る理由を55字以内で説明する。</li>
           <li>更新するマスの数と、時間・表の記憶量を答える。</li>
         </ol>
         <div data-practice></div>
@@ -750,7 +752,7 @@ search(pos)
           <li>資料AにCを追加して1件取り出し、空欄と各変数の値を求める。</li>
           <li>資料Aから2件取り出した後の状態と、空・満杯の判定を答える。</li>
           <li>資料Bから1件取り消してZを追加し、空欄と結果を答える。</li>
-          <li>資料Cへの挿入の代入順と、逆順にしたときの参照を答える。</li>
+          <li>資料Cへの挿入に必要な代入を順に書く。逆順にした場合にN.nextが何を指し、先頭からTに到達できるかを50字以内で説明する。</li>
         </ol>
         <div data-practice></div>
         <details><summary>末尾への挿入で解き直す</summary>
@@ -819,7 +821,7 @@ return (bestStart, bestLength)</code></pre></div>
           <li>入力 [4, 5, 5, 7, 8, 6, 7, 8] の戻り値と、同じ長さの候補から選ぶ理由を答える。</li>
           <li>同じ入力の i = 3 と i = 8 で、i を増やす直前の4変数を答える。</li>
           <li>空欄を埋め、[9] の反復回数と戻り値を答える。</li>
-          <li>最長の更新を区間の更新より前に移したときの [8, 9] の戻り値と修正理由を答える。</li>
+          <li>最長の更新を区間の更新より前に移したときの [8, 9] の誤った戻り値を答える。この移動が誤りになる理由を55字以内で説明する。</li>
         </ol>
         <div data-practice></div>
         <details>
@@ -3172,10 +3174,13 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
         <fieldset>
           <legend tabindex="-1"></legend>
           <p data-think-first hidden>頭の中で答えを一文にしてから、選択肢を開いてください。</p>
-          <label class="answer-note" data-answer-note hidden>
-            自分の解答メモ（任意）
-            <textarea rows="3"></textarea>
-          </label>
+          <div class="answer-note" data-answer-note hidden>
+            <label>
+              自分の解答メモ（任意）
+              <textarea rows="3"></textarea>
+            </label>
+            <p class="answer-note-count" data-note-count></p>
+          </div>
           <div data-options></div>
         </fieldset>
         <div class="controls"><button type="button" data-reveal hidden>選択肢を表示</button><button type="submit" class="primary">解答する</button><button type="button" data-next hidden>次の問題</button></div>
@@ -3594,6 +3599,7 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
         },
         {
           prompt: "4　変更案の応答時間の上限をmsで答えてください。次に、停止要求の通知経路と停止制御タスクの優先度を変える理由を、合わせて65字以内で説明してください。",
+          noteLimitPart: "二つの理由",
           thinkFirst: true,
           options: ["上限4 ms。割込みの通知と停止指令までの時間で判定する","上限8 ms。割込みで周期待ちを省き、高い優先度で入力監視を中断して停止制御を実行する","上限10 ms。割込みで要求を受けても、入力監視が終わるまで待って停止制御を始める"],
           answer: 1,
@@ -3609,7 +3615,8 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
           solutionId: "b-7-8-stop"
         },
         {
-          prompt: "6　正常に停止が確認され、停止要求も解除されています。開始ボタンが押されたままリセットした場合、直後の状態と、その後に再開を許す入力の条件を答えてください。",
+          prompt: "6　正常に停止が確認され、停止要求も解除されています。開始ボタンが押されたままリセットしたとき、直後の状態を答えてください。開始通知の扱いと再開を許す入力の条件を、合わせて55字以内で説明してください。",
+          noteLimitPart: "開始通知の扱いと再開条件",
           thinkFirst: true,
           options: ["リセットで搬送中に戻り、保持されていた開始で始動する","リセットで待機に戻り、その時点で開始ボタンが押されていれば始動する","リセットで待機に戻る。以前の開始通知は破棄し、リセット後にボタンが離されてから押されたときに始動する"],
           answer: 2,
@@ -3633,9 +3640,9 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
           solutionId: "b-7-7-timeout"
         },
         {
-          prompt: "3　「洗浄中」に流量値が「あり」のまま、自己診断が異常になりました。次の処理と理由を答えてください。",
+          prompt: "3　「洗浄中」に流量値が「あり」のまま、自己診断が異常になりました。ポンプとヒーターの出力、表示、移行先の状態を、運転を続けない理由と合わせて60字以内で答えてください。",
           thinkFirst: true,
-          options: ["流量があるので、両出力をONに保って洗浄を続ける","ヒーターだけをOFFにして、流量値が変わるまでポンプを動かし続ける","両出力を直ちにOFFにして「センサー異常」と表示し、異常停止へ移る"],
+          options: ["流量があるので、両出力をONに保って洗浄を続ける","ヒーターだけをOFFにして、流量値が変わるまでポンプを動かし続ける","流量値は判定に使えないため、両出力を直ちにOFFにして「センサー異常」と表示し、異常停止へ移る。"],
           answer: 2,
           explanation: "自己診断が異常になった時点の流量値は判定に使えません。「流量あり」を運転継続の根拠にせず、仕様どおり両出力を止めます。",
           solutionId: "b-7-7-diagnosis"
@@ -3680,7 +3687,8 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
           solutionId: "b-7-6-timing"
         },
         {
-          prompt: "4　ボタンだけを受け付け、点灯期限を30 msとします。待機時間が60 msの場合と100 msの場合で、電力量が最も小さい方式をそれぞれ答え、理由を説明してください。",
+          prompt: "4　ボタンだけを受け付け、点灯期限を30 msとします。待機時間が60 msと100 msの場合で、電力量が最も小さい方式をそれぞれ答えてください。最適な方式が変わる理由は50字以内で説明してください。",
+          noteLimitPart: "方式が変わる理由",
           thinkFirst: true,
           options: ["60 msは低速待機、100 msは深いスリープ。待機が長くなると待機中の節約が復帰時の差を上回る","どちらも深いスリープ。待機電力が最も小さい","どちらも低速待機。復帰に必要な電力量が深いスリープより小さい"],
           answer: 0,
@@ -3728,9 +3736,10 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
           explanation: "次の測定でレジスタが置き換わる前に割込み処理が値と時刻を取得します。待ちが生じ得る保存は記録タスクが担当します。"
         },
         {
-          prompt: "2　現行方式で保存される内容と、ほかの測定結果が保存されない理由を答えてください。",
+          prompt: "2　現行方式で保存される時刻と検査値を答えてください。ほかの測定結果が保存されない理由は45字以内で説明してください。",
+          noteLimitPart: "保存されない理由",
           thinkFirst: true,
-          options: ["（10 ms、42）の1件。フラグがONになった後は共有変数を更新しない","3件とも保存される。フラグがONになるごとに組が保持される","（15 ms、41）の1件。共有変数は上書きされ、フラグはONのまま"],
+          options: ["（10 ms、42）の1件。フラグがONになった後は共有変数を更新しない","3件とも保存される。フラグがONになるごとに組が保持される","（15 ms、41）の1件。共有変数は上書きされ、フラグにはONの状態しか残らない。"],
           answer: 2,
           explanation: "共有変数には最新の1組が残ります。ONを繰り返してもフラグで保持できるのはONという状態だけです。",
           solutionId: "b-7-4-shared"
@@ -3775,9 +3784,10 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
           solutionId: "b-7-3-trace"
         },
         {
-          prompt: "3　0秒に認証成功し、5秒ちょうどに初めて開ボタンを押しました。扉が開くか、画面に何が出るかを理由とともに答えてください。",
+          prompt: "3　0秒に認証成功し、5秒ちょうどに初めて開ボタンを押しました。扉が開くかと、画面に何が出るかを答えてください。その理由は45字以内で説明してください。",
+          noteLimitPart: "理由",
           thinkFirst: true,
-          options: ["扉は開かず「再認証してください」と表示。満了後の認証待ちで開ボタンを無視する","扉は開き「再認証してください」と表示。両イベントを開扉待ちとして処理する","扉は開き、表示は出ない。開ボタンが満了を取り消す"],
+          options: ["扉は開かず「再認証してください」と表示。満了を先に処理して認証待ちに戻るので、開ボタンは無視される。","扉は開き「再認証してください」と表示。両イベントを開扉待ちとして処理する","扉は開き、表示は出ない。開ボタンが満了を取り消す"],
           answer: 0,
           explanation: "満了を先に処理すると認証待ちに戻ります。開ボタンは更新後の状態で処理するため、扉は施錠されたままです。",
           solutionId: "b-7-3-order"
@@ -3800,6 +3810,7 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
         },
         {
           prompt: "2　初めて高温を通知する時刻を秒で答えてください。2秒時点の測定を連続回数に含めない理由は30字以内で説明してください。",
+          noteLimitPart: "理由",
           thinkFirst: true,
           options: ["6秒。しきい値以上の測定を累計する","8秒。2秒時点の測定を含めて3回になる","10秒。4秒時点で連続回数が0に戻る"],
           answer: 2,
@@ -3867,9 +3878,10 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
           explanation: "アは hi - lo > 1、イは e[mid] ≤ s[i]、ウは lo。更新後は (2, 4) → (3, 4)。Cの終了とDの開始が同時刻でも選べる。境界が隣接したら、条件を満たす最大位置は lo。"
         },
         {
-          prompt: "3　best[i] の意味を説明し、［エ］〜［オ］に入る二つの式を答える。基本入力で i = 1..5 の p と best[i] を順に示す。",
+          prompt: "3　best[i] の意味を35字以内で説明する。続けて［エ］〜［オ］の二つの式と、基本入力で i = 1..5 の p と best[i] を順に示す。",
+          noteLimitPart: "best[i] の意味",
           thinkFirst: true,
-          options: ["i件目だけの得点。エ best[i - 1]、オ v[p] + v[i]","先頭i件の最大得点。エ best[i - 1]、オ best[i - 1] + v[i]","先頭i件の最大得点。エ best[i - 1]、オ best[p] + v[i]。pは0,0,1,3,2、bestは4,7,9,13,15"],
+          options: ["i件目だけの得点。エ best[i - 1]、オ v[p] + v[i]","先頭i件の最大得点。エ best[i - 1]、オ best[i - 1] + v[i]","先頭i件から時間が重ならないように選んだときの最大得点。エ best[i - 1]、オ best[p] + v[i]。pは0,0,1,3,2、bestは4,7,9,13,15"],
           answer: 2,
           explanation: "best[i] は先頭i件から重複時間のない組を選んだときの最大得点。エは best[i - 1]、オは best[p] + v[i]（二つの順序は逆でも可）。p は 0, 0, 1, 3, 2、best[i] は 4, 7, 9, 13, 15。添字 p の依頼を必ず選ぶ必要はない。",
           solutionId: "b-3-8-trace"
@@ -3882,9 +3894,10 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
           explanation: "条件は e[mid] + 1 ≤ s[i]。Eの p は1。最大は12点でAとE。best[1..5] = [4, 7, 7, 11, 12]。表の更新式は同じで、採用時に参照できる範囲が変わる。"
         },
         {
-          prompt: "5　入力の整列は済んでいる。毎回手前の全依頼を走査して p を求める場合と、掲載コードの場合の時間計算量を答える。掲載コードの追加領域も求め、反復回数で根拠を示す。",
+          prompt: "5　入力の整列は済んでいる。毎回手前の全依頼を走査して p を求める場合と、掲載コードの場合の時間計算量、掲載コードの追加領域を答える。時間計算量の根拠は反復回数に触れ、二つの方法を合わせて65字以内で説明する。",
+          noteLimitPart: "時間計算量の根拠",
           thinkFirst: true,
-          options: ["全走査はO(n)、掲載コードはO(log n)、追加領域はO(1)","全走査はO(n²)、掲載コードはO(n log n)、追加領域はO(n)","全走査はO(n²)、掲載コードはO(n log n)、追加領域はO(n²)"],
+          options: ["全走査はO(n)、掲載コードはO(log n)、追加領域はO(1)","全走査はO(n²)、掲載コードはO(n log n)、追加領域はO(n)。全走査は比較が0回からn−1回まで増え、掲載コードは各依頼をO(log n)回の比較で処理する。","全走査はO(n²)、掲載コードはO(n log n)、追加領域はO(n²)"],
           answer: 1,
           explanation: "全走査の比較は 0 + 1 + … + (n - 1) 回で O(n²)。掲載コードは境界間隔を反復ごとにほぼ半分にするので全体で O(n log n)（n ≥ 2）。追加領域は best の n + 1 要素と定数個の変数で O(n)。"
         },
@@ -3909,7 +3922,8 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
           explanation: "両端を含むため、l = rでも1回です。全期間は1件あたりn回でq件ならnq回です。"
         },
         {
-          prompt: "2　P[i]の意味、［ア］・［イ］、A = [3, 1, 4, 2]で[1, 3]の結果を答えてください。",
+          prompt: "2　P[i]の意味を25字以内で説明してください。続けて［ア］・［イ］と、A = [3, 1, 4, 2]で[1, 3]の結果を答えてください。",
+          noteLimitPart: "P[i]の意味",
           thinkFirst: true,
           options: [
             "P[i]は1日目からi日目までの累積和。ア P[i - 1] + A[i]、イ P[r] - P[l - 1]。結果は8",
@@ -3958,6 +3972,7 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
       "b-3-6": [
         {
           prompt: "1　dp[i, c]の意味を40字以内で説明してください。続けて、dp[2, 5]とdp[3, 5]について、得点と選ぶ機材をそれぞれ答えてください。",
+          noteLimitPart: "dp[i, c]の意味",
           thinkFirst: true,
           options: [
             "先頭i個から容量をちょうどcにする最大点。11はA・B、12はCのみ",
@@ -3979,7 +3994,8 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
           explanation: "機材0個なら0点です。容量がちょうど足りる場合も選べ、選ぶ場合は前の行の残容量を参照します。"
         },
         {
-          prompt: "3　dp[3, 5]の二つの候補値を参照元付きで示し、同じ二次元表で列cだけを降順に計算しても結果が同じか答えてください。",
+          prompt: "3　dp[3, 5]の二つの候補値を参照元付きで示してください。同じ二次元表で列cだけを降順にしても結果が同じか、理由と合わせて45字以内で答えてください。",
+          noteLimitPart: "降順にした場合の結果と理由",
           thinkFirst: true,
           options: [
             "選ばない dp[3, 4] = 12、選ぶ dp[3, 1] + 12 = 12。降順では常に結果が変わる",
@@ -3991,7 +4007,8 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
           solutionId: "b-3-6-table"
         },
         {
-          prompt: "4　選ぶ場合だけdp[i, c - weight[i]]を参照するよう変え、元の昇順ループを使う。dp[1, 4]の誤った値、正しい値と理由を答えてください。",
+          prompt: "4　選ぶ場合だけdp[i, c - weight[i]]を参照するよう変え、元の昇順ループを使う。dp[1, 4]の誤った値と正しい値を答えてください。値が誤る理由は55字以内で説明してください。",
+          noteLimitPart: "値が誤る理由",
           thinkFirst: true,
           options: [
             "誤りも正しくも5。同じ機材は同じ行で参照できない",
@@ -4155,7 +4172,8 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
           solutionId: "b-3-3-stack"
         },
         {
-          prompt: "4　資料Cの挿入に必要な代入2行を順に書き、逆順にした場合の参照を答えてください。",
+          prompt: "4　資料Cの挿入に必要な代入2行を順に書いてください。逆順にした場合、N.nextが何を指し、先頭からTに到達できるかを50字以内で説明してください。",
+          noteLimitPart: "逆順にした場合の説明",
           thinkFirst: true,
           options: [
             "R.next ← N、N.next ← R.next。P → R → N → T → nullになる",
@@ -4217,6 +4235,7 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
       "b-3-1": [
         {
           prompt: "1　[4, 5, 5, 7, 8, 6, 7, 8] の戻り値を（開始位置, 長さ）で答えてください。同じ長さの候補から選んだ理由は30字以内で説明してください。",
+          noteLimitPart: "理由",
           thinkFirst: true,
           options: [
             "(3, 3)。位置3〜5と6〜8は同じ長さで、位置3の方が先",
@@ -4250,10 +4269,11 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
           explanation: "末尾を調べるには i ≤ n、同値で区切るには厳密な <、同率で先の区間を残すには > が必要です。[3, 3, 4] の正しい結果は(2, 2)。i < nでは末尾を調べず(1, 1)、≤では同値を伸ばし(1, 3)になります。ウを≥にすると例の入力で同率の後の区間(6, 3)に上書きします。"
         },
         {
-          prompt: "4　最長区間を更新するif全体を、startとlengthを更新する処理より前に移した。[8, 9] の誤った戻り値と、修正理由を答えてください。",
+          prompt: "4　最長区間を更新するif全体を、startとlengthを更新する処理より前に移した。[8, 9] の誤った戻り値を答えてください。この移動が誤りになる理由は55字以内で説明してください。",
+          noteLimitPart: "理由",
           thinkFirst: true,
           options: [
-            "(1, 1)。末尾を含む長さに更新する前に比較しているため、区間の更新後に最長と比較する",
+            "(1, 1)。末尾を含む長さへ更新する前に比較が終わり、長さ2が最長の記録に反映されない。",
             "(1, 2)。比較を前に移しても末尾の長さは反映される",
             "(2, 1)。最長比較の前にstartが2に更新される"
           ],
@@ -6018,6 +6038,7 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
       const thinkFirst = form.querySelector("[data-think-first]");
       const answerNote = form.querySelector("[data-answer-note]");
       const noteInput = answerNote.querySelector("textarea");
+      const noteCount = answerNote.querySelector("[data-note-count]");
       const noteReview = practice.querySelector("[data-note-review]");
       const ownNote = noteReview.querySelector("[data-note-own]");
       const writtenNote = ownNote.querySelector("[data-note-written]");
@@ -6032,6 +6053,30 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
       const score = practice.querySelector("[data-score]");
       let questionIndex = 0;
       let correctCount = 0;
+
+      function updateNoteCount() {
+        const { prompt, noteLimitPart } = questions[questionIndex];
+        const count = Array.from(noteInput.value.trim().replace(/\n/g, "")).length;
+        const limits = [...prompt.matchAll(/(\d+)字以内/g)];
+        const limit = limits.length === 1 ? Number(limits[0][1]) : null;
+        const excess = limit !== null && !noteLimitPart ? Math.max(0, count - limit) : 0;
+
+        let text = count + "字";
+        if (limit !== null && noteLimitPart) {
+          text = "メモ全体 " + text + "・" + noteLimitPart + "は" + limit + "字以内";
+        } else if (limit !== null) {
+          text += " / " + limit + "字以内";
+          if (excess > 0) text += "（" + excess + "字超過）";
+        }
+        noteCount.textContent = text;
+        noteCount.toggleAttribute("data-over-limit", excess > 0);
+      }
+
+      if (allowAnswerNote) {
+        noteCount.id = practice.closest("article").id + "-note-count";
+        noteInput.setAttribute("aria-describedby", noteCount.id);
+        noteInput.addEventListener("input", updateNoteCount);
+      }
 
       function renderQuestion(moveFocus) {
         const question = questions[questionIndex];
@@ -6092,6 +6137,7 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
         const showNote = allowAnswerNote && hideChoices;
         answerNote.hidden = !showNote;
         noteInput.value = "";
+        if (showNote) updateNoteCount();
         noteReview.hidden = true;
         thinkFirst.textContent = question.thinkFirstPrompt ?? (showNote
           ? "答えを考えてから選択肢を開いてください。メモを使うと採点後に解答例と見比べられます。"
