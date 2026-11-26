@@ -99,6 +99,10 @@
     .option:has(input:checked) { background: var(--wash); border-color: var(--accent); }
     input[type="radio"], input[type="checkbox"] { accent-color: var(--accent); margin: 0; }
     .feedback { background: var(--wash); border-radius: .4rem; padding: .5rem .75rem; }
+    .answer-note textarea { display: block; box-sizing: border-box; width: 100%; margin-block: .3rem .65rem; padding: .45rem .6rem; border: 1px solid var(--line); border-radius: .4rem; background: var(--paper); color: var(--ink); font: inherit; font-size: max(16px, 1em); resize: vertical; }
+    .answer-note-review { margin-block: .65rem; }
+    .answer-note-review p { margin: .25rem 0 .65rem; overflow-wrap: anywhere; }
+    [data-note-written] { white-space: pre-wrap; }
     .record, .sources { border-top: 1px solid var(--line); margin-top: 1.8rem; padding-top: 1rem; }
     .record label { display: inline-flex; align-items: center; min-height: 2.75rem; gap: .5rem; margin-right: 1rem; }
     .sources { font-size: .9rem; }
@@ -2842,10 +2846,18 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
         <fieldset>
           <legend tabindex="-1"></legend>
           <p data-think-first hidden>頭の中で答えを一文にしてから、選択肢を開いてください。</p>
+          <label class="answer-note" data-answer-note hidden>
+            自分の解答メモ（任意）
+            <textarea rows="3"></textarea>
+          </label>
           <div data-options></div>
         </fieldset>
         <div class="controls"><button type="button" data-reveal hidden>選択肢を表示</button><button type="submit" class="primary">解答する</button><button type="button" data-next hidden>次の問題</button></div>
       </form>
+      <div class="answer-note-review" data-note-review hidden>
+        <div data-note-own hidden><strong>自分の解答メモ</strong><p data-note-written></p></div>
+        <strong>解答例</strong><p data-note-model></p>
+      </div>
       <p class="feedback" data-feedback role="status" hidden></p>
       <div data-solution></div>
       <div data-result hidden><p data-score class="number" tabindex="-1"></p><button type="button" data-retry>もう一度解く</button></div>
@@ -5412,12 +5424,18 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
       ]
     };
 
-    function initializeQuiz(practice, questions) {
+    function initializeQuiz(practice, questions, { allowAnswerNote = false } = {}) {
       const form = practice.querySelector("form");
       const position = practice.querySelector("[data-quiz-position]");
       const legend = form.querySelector("legend");
       const context = form.querySelector("[data-question-context]");
       const thinkFirst = form.querySelector("[data-think-first]");
+      const answerNote = form.querySelector("[data-answer-note]");
+      const noteInput = answerNote.querySelector("textarea");
+      const noteReview = practice.querySelector("[data-note-review]");
+      const ownNote = noteReview.querySelector("[data-note-own]");
+      const writtenNote = ownNote.querySelector("[data-note-written]");
+      const modelAnswer = noteReview.querySelector("[data-note-model]");
       const options = form.querySelector("[data-options]");
       const reveal = form.querySelector("[data-reveal]");
       const grade = form.querySelector('button[type="submit"]');
@@ -5485,7 +5503,13 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
           return label;
         }));
         const hideChoices = question.thinkFirst === true;
-        thinkFirst.textContent = question.thinkFirstPrompt ?? "頭の中で答えを一文にしてから、選択肢を開いてください。";
+        const showNote = allowAnswerNote && hideChoices;
+        answerNote.hidden = !showNote;
+        noteInput.value = "";
+        noteReview.hidden = true;
+        thinkFirst.textContent = question.thinkFirstPrompt ?? (showNote
+          ? "答えを考えてから選択肢を開いてください。メモを使うと採点後に解答例と見比べられます。"
+          : "頭の中で答えを一文にしてから、選択肢を開いてください。");
         thinkFirst.hidden = !hideChoices;
         options.hidden = hideChoices;
         reveal.hidden = !hideChoices;
@@ -5512,7 +5536,16 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
         if (correct) correctCount += 1;
         for (const input of options.querySelectorAll("input")) input.disabled = true;
         grade.hidden = true;
-        feedback.textContent = (correct ? "正解。" : "正解は " + question.options[question.answer] + "。") + question.explanation;
+        if (!answerNote.hidden) {
+          writtenNote.textContent = noteInput.value.trim();
+          ownNote.hidden = !writtenNote.textContent;
+          modelAnswer.textContent = question.options[question.answer];
+          noteReview.hidden = false;
+          answerNote.hidden = true;
+          feedback.textContent = (correct ? "正解。" : "不正解。") + " 解説　" + question.explanation;
+        } else {
+          feedback.textContent = (correct ? "正解。" : "正解は " + question.options[question.answer] + "。") + question.explanation;
+        }
         feedback.hidden = false;
         if (question.solutionId) solution.append(byId(question.solutionId).content.cloneNode(true));
         if (questionIndex + 1 < questions.length) {
@@ -5542,7 +5575,7 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
       const content = template.content.cloneNode(true);
       content.querySelector(".record").remove();
       practice.append(content);
-      initializeQuiz(practice, questionSets[lesson.id]);
+      initializeQuiz(practice, questionSets[lesson.id], { allowAnswerNote: lesson.id === "b-3-2" });
     }
     const studyRecordsKey = "ap-study-note.checks.v1";
     const recordControls = new Map();
