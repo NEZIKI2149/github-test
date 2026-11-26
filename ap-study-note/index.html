@@ -5575,7 +5575,7 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
       const content = template.content.cloneNode(true);
       content.querySelector(".record").remove();
       practice.append(content);
-      initializeQuiz(practice, questionSets[lesson.id], { allowAnswerNote: lesson.id === "b-3-2" });
+      initializeQuiz(practice, questionSets[lesson.id], { allowAnswerNote: true });
     }
     const studyRecordsKey = "ap-study-note.checks.v1";
     const recordControls = new Map();
