@@ -331,6 +331,44 @@
     </nav>
     <main id="main" tabindex="-1">
       <article id="subject-b" hidden><h1 tabindex="-1">科目B</h1><p>目次から演習を選んでください。</p></article>
+      <article id="b-3-1" hidden>
+        <h1 tabindex="-1">B-3-1　仕様から変数の意味と更新順を読む</h1>
+        <p class="context">解答の目安は8〜10分です。各問は自分で答えを考えてから選択肢を表示してください。</p>
+        <h2>仕様</h2>
+        <p>日ごとの測定値を保存した整数配列 value[1..n]（n ≥ 1）から、値が毎日厳密に増加する最長の連続区間を探す。長さは要素数で、同値が続いたところでは区間を区切る。同じ長さの最長区間が複数ある場合は開始位置が最も小さいものを返す。戻り値は（開始位置, 長さ）。</p>
+        <p>添字は1から始まり、代入は上から順に実行する。whileの条件は本体の前に判定する。startとlengthは調査中の区間、bestStartとbestLengthは見つかった最長区間を表す。</p>
+        <h2>プログラム</h2>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="擬似コード"><pre><code>start ← 1, length ← 1
+bestStart ← 1, bestLength ← 1
+i ← 2
+while ［ア］
+    if ［イ］
+        length ← length + 1
+    else
+        start ← i
+        length ← 1
+    endif
+    if ［ウ］
+        bestStart ← start
+        bestLength ← length
+    endif
+    i ← i + 1
+endwhile
+return (bestStart, bestLength)</code></pre></div>
+        <h2>設問一覧</h2>
+        <ol>
+          <li>入力 [4, 5, 5, 7, 8, 6, 7, 8] の戻り値と、同じ長さの候補から選ぶ理由を答える。</li>
+          <li>同じ入力の i = 3 と i = 8 で、i を増やす直前の4変数を答える。</li>
+          <li>空欄を埋め、[9] の反復回数と戻り値を答える。</li>
+          <li>最長の更新を区間の更新より前に移したときの [8, 9] の戻り値と修正理由を答える。</li>
+        </ol>
+        <div data-practice></div>
+        <details>
+          <summary>条件を変えて解き直す</summary>
+          <p>文字列 ABBC について、隣り合う文字が異なる最長の連続区間を同じ方法で探す。［イ］に入る比較式と戻り値を答えてください。</p>
+          <details><summary>模範解答を表示</summary><p>value[i - 1] ≠ value[i]、戻り値は (1, 2)。位置1〜2と3〜4が同じ長さなので先の区間を返します。</p></details>
+        </details>
+      </article>
       <article id="b-1-5" hidden>
         <h1 tabindex="-1">B-1-5　初見のインシデント報告を読み解く</h1>
         <p class="context">解答の目安は25〜30分です。本番形式で解くときは、全6問の答えを下書きしてから選択肢を開いてください。</p>
@@ -2394,6 +2432,17 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
     <p><strong>資料F　復旧条件と候補</strong></p>
     <p>初動後の調査で、復旧対象の誤変更はA271・A272の2件と確定した。09:35から安全な環境で作業可。09:20の停止を基準に、RPOは15分、RTOは60分。全体復元は復元後の確認を含め30分。書換えから保護され、照合値が一致する08:55時点と09:10時点のバックアップがある。独立保管された注文控えには2件の正しい配送先があり、対象2件だけを修正し、再照合と出荷指示の試験まで20分で終えられる。この方法では、他の注文データに変更を加えず、正常な受注更新を失わない。</p>
   </template>
+  <template id="b-3-1-trace">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="変数の更新表"><table>
+      <caption>変数の更新前 → 更新後</caption>
+      <thead><tr><th scope="col">i</th><th scope="col">隣接2値</th><th scope="col">(start, length)</th><th scope="col">(bestStart, bestLength)</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">3</th><td>5, 5</td><td>(1, 2) → (3, 1)</td><td>(1, 2) → (1, 2)</td></tr>
+        <tr><th scope="row">5</th><td>7, 8</td><td>(3, 2) → (3, 3)</td><td>(1, 2) → (3, 3)</td></tr>
+        <tr><th scope="row">8</th><td>7, 8</td><td>(6, 2) → (6, 3)</td><td>(3, 3) → (3, 3)</td></tr>
+      </tbody>
+    </table></div>
+  </template>
   <template id="practice-template">
     <h2>確認問題</h2>
     <p>1問ずつ解答と解説を確認し、最後に正答数を表示します。</p>
@@ -2451,7 +2500,7 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
   <script>
     const byId = (id) => document.getElementById(id);
     const lessons = Array.from(document.querySelectorAll("[data-lesson]"));
-    const subjectBLessons = ["b-1-1", "b-1-2", "b-1-3", "b-1-4", "b-1-5"].map(byId);
+    const subjectBLessons = ["b-1-1", "b-1-2", "b-1-3", "b-1-4", "b-1-5", "b-3-1"].map(byId);
     const sections = [byId("welcome"), byId("intro"), byId("subject-b"), ...subjectBLessons, ...lessons];
     const toc = byId("toc");
     const subjectAItems = Array.from(toc.children);
@@ -2467,7 +2516,10 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
         <a href="#b-1-5">B-1-5　初見のインシデント報告を読み解く</a>
       </details>
       <p>B-2　経営戦略・情報戦略</p>
-      <p>B-3　プログラミング（アルゴリズム）</p>
+      <details>
+        <summary>B-3　プログラミング（アルゴリズム）</summary>
+        <a href="#b-3-1">B-3-1　仕様から変数の意味と更新順を読む</a>
+      </details>
       <p>B-4　システムアーキテクチャ</p>
       <p>B-5　ネットワーク</p>
       <p>B-6　データベース</p>
@@ -2773,6 +2825,53 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
     });
 
     const questionSets = {
+      "b-3-1": [
+        {
+          prompt: "1　[4, 5, 5, 7, 8, 6, 7, 8] の戻り値と、同じ長さの候補から選んだ理由を答えてください。",
+          thinkFirst: true,
+          options: [
+            "(3, 3)。位置3〜5と6〜8は同じ長さで、位置3の方が先",
+            "(6, 3)。同じ長さなら後の区間を選ぶ",
+            "(1, 5)。離れた位置の値も集めて増加列を作る"
+          ],
+          answer: 0,
+          explanation: "同値の位置2と3の間で区切ります。仕様は連続区間で、同じ長さなら開始位置が小さい方を選びます。"
+        },
+        {
+          prompt: "2　同じ入力の i = 3 と i = 8 について、iを増やす直前の (start, length, bestStart, bestLength) を答えてください。",
+          thinkFirst: true,
+          options: [
+            "i = 3 は (1, 3, 1, 3)、i = 8 は (6, 3, 6, 3)",
+            "i = 3 は (3, 1, 1, 2)、i = 8 は (6, 3, 3, 3)",
+            "i = 3 は (3, 1, 3, 1)、i = 8 は (6, 3, 6, 3)"
+          ],
+          answer: 1,
+          explanation: "i = 3では同値のため区間を開始し直し、最長は(1, 2)のままです。i = 8では現在の長さが3になり、最長と同率なので開始位置3を保ちます。",
+          solutionId: "b-3-1-trace"
+        },
+        {
+          prompt: "3　［ア］〜［ウ］を埋め、[9] の反復回数と戻り値を答えてください。",
+          thinkFirst: true,
+          options: [
+            "アは i < n、イは value[i - 1] < value[i]、ウは length > bestLength。[9] は0回、(1, 1)",
+            "アは i ≤ n、イは value[i - 1] ≤ value[i]、ウは length ≥ bestLength。[9] は0回、(1, 1)",
+            "アは i ≤ n、イは value[i - 1] < value[i]、ウは length > bestLength。[9] は0回、(1, 1)"
+          ],
+          answer: 2,
+          explanation: "末尾を調べるには i ≤ n、同値で区切るには厳密な <、同率で先の区間を残すには > が必要です。[3, 3, 4] の正しい結果は(2, 2)。i < nでは末尾を調べず(1, 1)、≤では同値を伸ばし(1, 3)になります。ウを≥にすると例の入力で同率の後の区間(6, 3)に上書きします。"
+        },
+        {
+          prompt: "4　最長区間を更新するif全体を、startとlengthを更新する処理より前に移した。[8, 9] の誤った戻り値と、修正理由を答えてください。",
+          thinkFirst: true,
+          options: [
+            "(1, 1)。末尾を含む長さに更新する前に比較しているため、区間の更新後に最長と比較する",
+            "(1, 2)。比較を前に移しても末尾の長さは反映される",
+            "(2, 1)。最長比較の前にstartが2に更新される"
+          ],
+          answer: 0,
+          explanation: "i = 2の冒頭では長さ1を比較します。その後に2へ増えても次の反復がなく、最長の記録は更新されません。"
+        }
+      ],
       "b-1-5": [
         {
           prompt: "1　承認のない配送先変更に使われたIDと対象の注文を、照合の根拠を添えて70字以内で答える。",
