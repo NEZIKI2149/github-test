@@ -331,6 +331,163 @@
     </nav>
     <main id="main" tabindex="-1">
       <article id="subject-b" hidden><h1 tabindex="-1">科目B</h1><p>目次から演習を選んでください。</p></article>
+      <article id="b-3-5" hidden>
+        <h1 tabindex="-1">B-3-5　状態をグラフとして探索する</h1>
+        <p class="context">解答の目安は15〜18分です。数値や式を自分で考えてから選択肢を開いてください。</p>
+        <h2>仕様</h2>
+        <p>点検ロボットを出発マスSから出口Gへ移動させる。行と列は1始まり。右、下、左、上の順に隣接マスへの移動を試す。どの移動も1手で、盤面外と壁には入れない。鍵マスKに入ると鍵を取得して持ち続け、Gへは鍵を持っているときだけ入れる。</p>
+        <p>初期状態はSで鍵なし。状態は (行, 列, 鍵の有無) とし、鍵なしは0、鍵ありは1とする。次に可能な操作はこの三つの値で決まる。キューには状態と、そこまでの手数を保存する。Gに着く最少手数を求め、到達できなければ -1 を返す。</p>
+        <table aria-label="点検ロボットの盤面"><thead><tr><th scope="col">行＼列</th><th scope="col">1</th><th scope="col">2</th><th scope="col">3</th></tr></thead>
+        <tbody><tr><th scope="row">1</th><td>S</td><td>K</td><td>壁</td></tr><tr><th scope="row">2</th><td>通路</td><td>通路</td><td>G</td></tr></tbody></table>
+        <h2>プログラム</h2>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="擬似コード"><pre><code>初期状態 (1, 1, 0) を手数0でキューに追加し、訪問済みにする
+while ［ア］
+    (r, c, key, d) ← キューの先頭から取り出す
+    if (r, c) が G の位置
+        return d
+    endif
+    for (dr, dc) を (0, 1), (1, 0), (0, -1), (-1, 0) の順に
+        nr ← r + dr
+        nc ← c + dc
+        if ［イ］  // 移動後の座標が盤面内
+            if 移動先が壁、または移動先が G で key = 0
+                次の方向へ進む
+            endif
+            nextKey ← key
+            if 移動先が K
+                nextKey ← 1
+            endif
+            nextState ← (nr, nc, nextKey)
+            if ［ウ］
+                nextState を訪問済みにする
+                (nr, nc, nextKey, ［エ］) をキューの末尾に追加する
+            endif
+        endif
+    endfor
+endwhile
+return -1</code></pre></div>
+        <h2>設問一覧</h2>
+        <ol>
+          <li>Sから1手で到達できる状態と、(2, 2)で鍵の有無が操作に与える影響を答える。</li>
+          <li>［ア］〜［エ］を埋める。</li>
+          <li>SとKの処理後のキュー、最少手数と経路を求める。</li>
+          <li>同じ状態への2回目以降の到着を調べなくてよい理由と、最少手数になる理由を答える。</li>
+          <li>別の盤面で座標だけを訪問済みにしたとき、経路が漏れる理由を答える。</li>
+        </ol>
+        <div data-practice></div>
+        <details><summary>壁を増やして解き直す</summary>
+          <p>元の盤面の (2, 2) も壁に変更した。戻り値と探索終了時のキューの状態を答えてください。</p>
+          <details><summary>模範解答を表示</summary><p>右側のGへ入る経路がなく、到達できる状態をすべて処理するとキューが空になるため、-1を返します。</p></details>
+        </details>
+      </article>
+      <article id="b-3-4" hidden>
+        <h1 tabindex="-1">B-3-4　再帰で候補を列挙し、元の状態に戻す</h1>
+        <p class="context">解答の目安は12〜15分です。式や出力順を考えてから選択肢を開いてください。</p>
+        <h2>仕様</h2>
+        <p>実演会で、異なる実演を重複なしでk件選ぶ。順序が異なる並べ方は別々に出力する。候補名はname[1..n]に名前順で並ぶ。実演Bは実演Aの直後には置けない。各位置の候補は添字の昇順に試す。1 ≤ k ≤ nで、添字は1から始まる。</p>
+        <p>search(pos)の入口ではorder[1..pos-1]が確定済み。used[i]は候補iがその範囲にあるときだけ真。orderとusedは全呼出しで共有し、posと反復変数iは呼出しごとに独立する。出力時はorderの先頭k件が示す名前を読み、未確定部分に残った値は使わない。</p>
+        <h2>プログラム</h2>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="擬似コード"><pre><code>全ての used[i] ← false
+search(1)
+
+search(pos)
+    if ［ア］
+        order[1..k] が示す名前の並びを出力
+        return
+    endif
+    for i を 1 から n まで順に
+        if used[i] = false
+            if pos = 1 または (name[order[pos - 1]], name[i]) ≠ (A, B)
+                order[pos] ← i
+                used[i] ← true
+                search(［イ］)
+                ［ウ］
+            endif
+        endif
+    endfor</code></pre></div>
+        <p>「または」は左から評価し、左が真なら右を評価しない。そのため先頭でorder[0]を読まない。</p>
+        <h2>基本入力と設問一覧</h2>
+        <p>name = [A, B, C]、n = 3、k = 2。</p>
+        <ol>
+          <li>出力順と、最初の出力時のpos・usedが真の候補を答える。</li>
+          <li>空欄を埋め、k = 1で最初の候補を選んだ直後の呼出しを追う。</li>
+          <li>最上位でAの印を解除し忘れた場合の途中状態と漏れる並びを答える。</li>
+          <li>AとBをどちらの順でも隣接禁止にした場合の出力順を答える。</li>
+        </ol>
+        <div data-practice></div>
+        <details><summary>3件の並べ方で解き直す</summary>
+          <p>元の禁止条件のまま、k = 3に変更したときの全出力を順に答えてください。</p>
+          <details><summary>模範解答を表示</summary><p>ACB、BAC、BCA、CBA。禁止された候補からは呼び出さず、次の候補を試します。</p></details>
+        </details>
+      </article>
+      <article id="b-3-3" hidden>
+        <h1 tabindex="-1">B-3-3　データ構造の操作をコードに戻す</h1>
+        <p class="context">解答の目安は10〜15分です。式や途中値を自分で考えてから選択肢を開いてください。</p>
+        <p>点検窓口では、未処理の依頼を受付順に処理し、取消し可能な処理履歴は直近のものから取り出す。チェック項目は単方向リストに保持する。各設問は、指定された資料の初期状態から始める。</p>
+        <h2>資料A　未処理キュー</h2>
+        <p>容量4、添字0〜3。headは次に取り出す位置、sizeは要素数。head = 3、size = 2で、添字3にA、添字0にBが入っている。処理順はA、B。modは非負整数の剰余。</p>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="キューの初期状態"><table><caption>配列Qの初期状態</caption>
+          <thead><tr><th scope="col">添字</th><th scope="col">0</th><th scope="col">1</th><th scope="col">2</th><th scope="col">3</th></tr></thead>
+          <tbody><tr><th scope="row">値</th><td>B</td><td>空</td><td>空</td><td>A（head）</td></tr></tbody>
+        </table></div>
+        <pre><code>追加：Q[［ア］] ← x
+      size ← size + 1
+取出：x ← Q[head]
+      head ← ［イ］
+      size ← size - 1</code></pre>
+        <p>空なら取出しを行わず、満杯なら追加を行わない。</p>
+        <h2>資料B　処理履歴のスタック</h2>
+        <p>容量3、添字0〜2。topは次に書き込む位置。top = 2、S[0] = X、S[1] = Yで、S[2]は空き。追加は S[top] ← x の後にtopを1増やす。配列に古い値が残っても、有効範囲から外れれば履歴に含めない。</p>
+        <pre><code>取消：空でないことを確認する
+      top ← ［ウ］
+      return S[［エ］]</code></pre>
+        <h2>資料C　チェック項目の単方向リスト</h2>
+        <p>P → R → T → null。新しい単独ノードNをRの直後に挿入する。nextは次のノードへの参照、nullは後続なしを表す。作業用変数を使わず、N.nextとR.nextをそれぞれ1回だけ代入する。</p>
+        <h2>設問一覧</h2>
+        <ol>
+          <li>資料AにCを追加して1件取り出し、空欄と各変数の値を求める。</li>
+          <li>資料Aから2件取り出した後の状態と、空・満杯の判定を答える。</li>
+          <li>資料Bから1件取り消してZを追加し、空欄と結果を答える。</li>
+          <li>資料Cへの挿入の代入順と、逆順にしたときの参照を答える。</li>
+        </ol>
+        <div data-practice></div>
+        <details><summary>末尾への挿入で解き直す</summary>
+          <p>資料Cの初期状態で、Tの直後にNを挿入する代入2行を順に答えてください。</p>
+          <details><summary>模範解答を表示</summary><p>N.next ← T.next、T.next ← N。更新前のT.nextはnullなので、挿入後は P → R → T → N → null です。</p></details>
+        </details>
+      </article>
+      <article id="b-3-2" hidden>
+        <h1 tabindex="-1">B-3-2　整列済みデータから目的の位置を探す</h1>
+        <p class="context">解答の目安は10〜12分です。自分で答えを考えてから選択肢を開いてください。</p>
+        <h2>仕様</h2>
+        <p>受付番号を小さい順に並べた配列 A[1..n] を使う。同じ番号が複数回現れることがある。firstAtLeast(A, n, x) はx以上の最初の添字を返す。該当する要素がなければ末尾の直後を表すn + 1を返す。空配列も受け付ける。</p>
+        <p>lo以下の実要素は全てx未満、hi以上の実要素は全てx以上と分かっている。添字0とn + 1は配列の外に置く初期境界で、参照しない。floorは小数部分を切り下げる。</p>
+        <h2>プログラム</h2>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="擬似コード"><pre><code>lo ← 0
+hi ← n + 1
+while ［ア］
+    mid ← floor((lo + hi) / 2)
+    if ［イ］
+        hi ← mid
+    else
+        lo ← ［ウ］
+    endif
+endwhile
+return ［エ］</code></pre></div>
+        <h2>設問一覧</h2>
+        <ol>
+          <li>A = [2, 4, 4, 4, 7, 9]、x = 4 の戻り値、初回のmidと、等しい値を見つけた後に残す範囲を答える。</li>
+          <li>［ア］〜［エ］と、各反復後の境界を答える。</li>
+          <li>x = 1、5、10 の挿入位置、存在の安全な判定方法と空配列の戻り値を答える。</li>
+          <li>比較を A[mid] &gt; x に変えた場合の戻り値、その意味と、4の出現回数を答える。</li>
+        </ol>
+        <div data-practice></div>
+        <details>
+          <summary>1要素の配列で解き直す</summary>
+          <p>配列 [4] で、x = 4 と x = 6 の挿入位置と、値が存在するかを答えてください。</p>
+          <details><summary>模範解答を表示</summary><p>x = 4 は位置1で存在する。x = 6 は位置2で存在しない。位置2は末尾の直後なので A[2] は参照しません。</p></details>
+        </details>
+      </article>
       <article id="b-3-1" hidden>
         <h1 tabindex="-1">B-3-1　仕様から変数の意味と更新順を読む</h1>
         <p class="context">解答の目安は8〜10分です。各問は自分で答えを考えてから選択肢を表示してください。</p>
@@ -2443,6 +2600,58 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
       </tbody>
     </table></div>
   </template>
+  <template id="b-3-2-trace">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="二分探索の更新表"><table>
+      <caption>A = [2, 4, 4, 4, 7, 9]、x = 4 の更新</caption>
+      <thead><tr><th scope="col">回</th><th scope="col">mid</th><th scope="col">比較</th><th scope="col">更新後 (lo, hi)</th></tr></thead>
+      <tbody><tr><th scope="row">1</th><td>3</td><td>4 ≥ 4</td><td>(0, 3)</td></tr>
+      <tr><th scope="row">2</th><td>1</td><td>2 &lt; 4</td><td>(1, 3)</td></tr>
+      <tr><th scope="row">3</th><td>2</td><td>4 ≥ 4</td><td>(1, 2)</td></tr></tbody>
+    </table></div>
+    <p>境界が隣接し、lo以下は4未満、hi以上は4以上なので、hi = 2を返します。</p>
+  </template>
+  <template id="b-3-3-queue">
+    <p>初期の添字と論理順</p><p>添字 0 = B、1 = 空、2 = 空、3 = A（head）<br>処理順 A → B</p>
+    <p>Cを添字1に追加し、Aを取り出すと head = 0、size = 2。処理順は B → C です。</p>
+  </template>
+  <template id="b-3-3-stack">
+    <p>取消し前は S[0..1] が有効で、top = 2 は空き位置です。topを1にしてYを読み、ZをS[1]へ書いてtopを2にします。</p>
+  </template>
+  <template id="b-3-3-list">
+    <p>元の参照を保存する操作は N.next ← R.next です。</p>
+    <p>P → R → T → null　かつ　N → T → null<br>次に R.next ← N で P → R → N → T → null。</p>
+    <p>逆順では、R → N に変更した後で N.next ← R.next を実行するため、N → N となります。</p>
+  </template>
+  <template id="b-3-4-tree">
+    <p><strong>探索の順序と印の変化</strong></p>
+    <pre>search(1)　used = {}
+├─ Aを選ぶ → search(2)　used = {A}
+│  ├─ Aは使用済み
+│  ├─ BはAの直後なので飛ばす
+│  └─ Cを選ぶ → search(3)　used = {A, C}
+│     └─ ACを出力してsearch(2)に戻る
+│        → Cの印を解除　used = {A}
+│  → search(1)に戻りAの印を解除　used = {}
+├─ Bを選ぶ → search(2)　used = {B}
+│  ├─ Aを選ぶ → BAを出力してAの印を解除
+│  └─ Cを選ぶ → BCを出力してCの印を解除
+│  → search(1)でBの印を解除　used = {}
+└─ Cを選ぶ → CA、CBの順に出力</pre>
+    <p>usedは共有されるため、戻った呼出しで今選んだ候補の印を解除します。posとiは各呼出しで独立しています。</p>
+  </template>
+  <template id="b-3-5-queue">
+    <p>盤面の上段は S・K・壁、下段は 通路・通路・G。表の状態は (行, 列, 鍵, 手数) です。</p>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="キューの変化"><table>
+      <caption>先頭から処理したときのキュー</caption>
+      <thead><tr><th scope="col">取り出した状態</th><th scope="col">追加した状態と理由</th><th scope="col">処理後のキュー（先頭から）</th></tr></thead>
+      <tbody>
+        <tr><td>S (1,1,0,0)</td><td>右のK (1,2,1,1)、下 (2,1,0,1)。左・上は盤面外</td><td>[(1,2,1,1), (2,1,0,1)]</td></tr>
+        <tr><td>K (1,2,1,1)</td><td>下 (2,2,1,2)、左のS (1,1,1,2)。右は壁、上は盤面外</td><td>[(2,1,0,1), (2,2,1,2), (1,1,1,2)]</td></tr>
+        <tr><td>通路 (2,1,0,1)</td><td>右 (2,2,0,2)。下・左は盤面外、上は訪問済み</td><td>[(2,2,1,2), (1,1,1,2), (2,2,0,2)]</td></tr>
+        <tr><td>通路 (2,2,1,2)</td><td>右のG (2,3,1,3)。次から手数3の状態が追加される</td><td>先頭に残る手数2の状態を先に処理する</td></tr>
+      </tbody>
+    </table></div>
+  </template>
   <template id="practice-template">
     <h2>確認問題</h2>
     <p>1問ずつ解答と解説を確認し、最後に正答数を表示します。</p>
@@ -2500,7 +2709,7 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
   <script>
     const byId = (id) => document.getElementById(id);
     const lessons = Array.from(document.querySelectorAll("[data-lesson]"));
-    const subjectBLessons = ["b-1-1", "b-1-2", "b-1-3", "b-1-4", "b-1-5", "b-3-1"].map(byId);
+    const subjectBLessons = ["b-1-1", "b-1-2", "b-1-3", "b-1-4", "b-1-5", "b-3-1", "b-3-2", "b-3-3", "b-3-4", "b-3-5"].map(byId);
     const sections = [byId("welcome"), byId("intro"), byId("subject-b"), ...subjectBLessons, ...lessons];
     const toc = byId("toc");
     const subjectAItems = Array.from(toc.children);
@@ -2519,6 +2728,10 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
       <details>
         <summary>B-3　プログラミング（アルゴリズム）</summary>
         <a href="#b-3-1">B-3-1　仕様から変数の意味と更新順を読む</a>
+        <a href="#b-3-2">B-3-2　整列済みデータから目的の位置を探す</a>
+        <a href="#b-3-3">B-3-3　データ構造の操作をコードに戻す</a>
+        <a href="#b-3-4">B-3-4　再帰で候補を列挙し、元の状態に戻す</a>
+        <a href="#b-3-5">B-3-5　状態をグラフとして探索する</a>
       </details>
       <p>B-4　システムアーキテクチャ</p>
       <p>B-5　ネットワーク</p>
@@ -2825,6 +3038,207 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
     });
 
     const questionSets = {
+      "b-3-5": [
+        {
+          prompt: "1　Sから1手で到達できる状態を右・下・左・上の順に答え、(2, 2)で鍵の有無が次の操作にどう影響するか答えてください。",
+          thinkFirst: true,
+          options: [
+            "右は(1, 2, 0)、下は(2, 1, 0)。鍵がなくてもGに入れる",
+            "右は(1, 2, 1)、下は(2, 1, 0)。鍵ありの場合だけ(2, 2)から右のGへ入れる",
+            "右は(1, 2, 1)、下は(2, 1, 0)。鍵の有無にかかわらずGに入れない"
+          ],
+          answer: 1,
+          explanation: "Kに入ると鍵を取得します。左と上は盤面外です。同じ座標でも鍵の有無でGへ進めるかが変わります。"
+        },
+        {
+          prompt: "2　［ア］〜［エ］を埋めてください。",
+          thinkFirst: true,
+          options: [
+            "ア キューが空でない、イ 1 ≤ nr ≤ 行数 かつ 1 ≤ nc ≤ 列数、ウ nextStateが訪問済みでない、エ d + 1",
+            "ア キューが空、イ 1 ≤ r ≤ 行数 かつ 1 ≤ c ≤ 列数、ウ 現在の状態が訪問済みでない、エ d",
+            "ア キューが空でない、イ 1 ≤ nr < 行数 かつ 1 ≤ nc < 列数、ウ 移動前の鍵を使った状態が未訪問、エ d + 1"
+          ],
+          answer: 0,
+          explanation: "キューが空なら処理対象がありません。移動後のnr・ncを範囲内で判定し、鍵の取得を反映したnextStateを登録時に訪問済みとします。右端と下端も範囲に含みます。"
+        },
+        {
+          prompt: "3　Sの処理後と、その直後に取り出した状態の処理後のキューを順に答え、最少手数と経路を一つ答えてください。",
+          thinkFirst: true,
+          options: [
+            "S後 [(2,1,0,1), (1,2,1,1)]。次の処理後は空。最少3手",
+            "S後 [(1,2,1,1), (2,1,0,1)]。K処理後 [(2,1,0,1), (2,2,1,2)]。最少2手",
+            "S後 [(1,2,1,1), (2,1,0,1)]。K処理後 [(2,1,0,1), (2,2,1,2), (1,1,1,2)]。右・下・右の3手"
+          ],
+          answer: 2,
+          explanation: "順序は右、下、左、上です。KからSに戻ると鍵ありの(1,1,1)になり、鍵なしの初期状態とは別なので追加します。",
+          solutionId: "b-3-5-queue"
+        },
+        {
+          prompt: "4　同じ状態への2回目以降の到着を調べなくてもよい理由と、Gを取り出した時点で手数が最少と分かる理由を答えてください。",
+          thinkFirst: true,
+          options: [
+            "各移動が1手でキューは手数の小さい状態から処理する。同じ状態からできる操作は同じなので最初の到達だけでよい",
+            "キューは常に最後に追加した状態から処理するので、早く到着した状態が必ず短い",
+            "同じ座標なら鍵の有無によらず次の操作が同じなので、どの経路でも手数は等しい"
+          ],
+          answer: 0,
+          explanation: "各辺の費用が1で、先入れ先出しのキューは小さい手数から処理します。同じ状態は以後の選択肢も同じです。"
+        },
+        {
+          prompt: "5　一方通行の別の盤面でXには1手で鍵なし、3手で鍵ありで到着できる。Xから出られる唯一の方向は鍵が必要なGへの移動。座標だけを訪問済みにすると4手の経路が漏れる理由を答えてください。",
+          thinkFirst: true,
+          options: [
+            "鍵なしのXからでもGに進めるため、鍵ありのXは不要",
+            "1手目でXが訪問済みになり、後から着く鍵ありのXを追加できないため",
+            "鍵ありのXを最初に処理し、鍵なしのXを追加するため"
+          ],
+          answer: 1,
+          explanation: "座標と鍵の組で判定すれば、後から着く鍵ありのXは別状態として処理でき、Gへ進めます。"
+        }
+      ],
+      "b-3-4": [
+        {
+          prompt: "1　基本入力で出力される並びを順に答え、最初の出力時のposとusedが真の候補を答えてください。",
+          thinkFirst: true,
+          options: [
+            "AC, BC, CA, CB。最初はpos = 2、AとCが真",
+            "AC, BA, BC, CA, CB。最初はpos = 3、AとCが真",
+            "AC, CA, BA, BC, CB。最初はpos = 3、AとCが真"
+          ],
+          answer: 1,
+          explanation: "Aの直後のBは飛ばしますが、Bの直後のAは許されます。各位置で候補を添字順に試すので、出力順はAC、BA、BC、CA、CBです。",
+          solutionId: "b-3-4-tree"
+        },
+        {
+          prompt: "2　［ア］〜［ウ］と、k = 1で最初の候補を選んだ直後の呼出しで起きることを答えてください。",
+          thinkFirst: true,
+          options: [
+            "ア pos = k + 1、イ pos + 1、ウ used[i] ← false。search(2)でAを出力して戻る",
+            "ア pos = k、イ pos + 1、ウ used[i] ← false。search(1)でAを出力する",
+            "ア pos = k + 1、イ pos、ウ used[i] ← true。search(1)でAを出力する"
+          ],
+          answer: 0,
+          explanation: "posは次に埋める位置です。k件が確定してposがk + 1になったら出力し、戻ったら今回選んだ候補の印を解除します。"
+        },
+        {
+          prompt: "3　最上位のsearch(1)で、Aを先頭に選んだ呼出しから戻った時だけ［ウ］を忘れた。次にBを先頭にした直後、真の候補と、本来の出力から漏れる並びを答えてください。",
+          thinkFirst: true,
+          options: [
+            "BとCが真。ACとBCが漏れる",
+            "AとCが真。BAだけが漏れる",
+            "AとBが真。BAとCAが漏れる"
+          ],
+          answer: 2,
+          explanation: "Aの印が残り、次にBを選んでBも真になります。下位で使ったCは解除済みです。以降、Aを2番目にできずBAとCAが漏れます。"
+        },
+        {
+          prompt: "4　AとBをどちらの順でも隣接させない条件に変える。禁止する組と基本入力の出力順を答えてください。",
+          thinkFirst: true,
+          options: [
+            "(A, B)のみ禁止。AC, BA, BC, CA, CB",
+            "(A, B)と(B, A)を禁止。AC, BC, CA, CB",
+            "(A, C)と(C, A)を禁止。AB, BA, BC, CB"
+          ],
+          answer: 1,
+          explanation: "直前と現在の組が(A, B)または(B, A)のときに飛ばします。先頭には直前の要素がないので参照しません。"
+        }
+      ],
+      "b-3-3": [
+        {
+          prompt: "1　資料AでCを追加してから1件取り出す。［ア］・［イ］、Cの添字、取り出す依頼、最後の(head, size)を答えてください。",
+          thinkFirst: true,
+          options: [
+            "ア head + size、イ head + 1。添字5にC、Aを取り出し、(4, 2)",
+            "ア (head + size) mod 4、イ (head + 1) mod 4。添字1にC、Aを取り出し、(0, 2)",
+            "ア (head + size) mod 4、イ (head + 1) mod 4。添字1にC、Bを取り出し、(0, 2)"
+          ],
+          answer: 1,
+          explanation: "追加先は(3 + 2) mod 4 = 1。取り出すのはheadが指す添字3のAです。headは0、sizeは2となり、残る論理順はB、Cです。",
+          solutionId: "b-3-3-queue"
+        },
+        {
+          prompt: "2　資料Aの初期状態から2件取り出した後の(head, size)、3回目の取出しを防ぐ条件、満杯の判定を答えてください。",
+          thinkFirst: true,
+          options: [
+            "順にA、Bを取り出して(1, 0)。空はsize = 0、満杯はsize = 4",
+            "順にB、Aを取り出して(1, 0)。head = 1なら空、head = 0なら満杯",
+            "順にA、Bを取り出して(1, 0)。追加位置がheadと一致すれば必ず空"
+          ],
+          answer: 0,
+          explanation: "3回目はsize = 0で取出しを行いません。追加位置は空と満杯のどちらでもheadと一致するため、sizeで区別します。"
+        },
+        {
+          prompt: "3　資料Bの初期状態で1回取り消してからZを追加する。［ウ］・［エ］、取り消す履歴、Zの位置、最後のtopを答えてください。",
+          thinkFirst: true,
+          options: [
+            "ウ top、エ top - 1。Yを返し、Zは添字2、topは3",
+            "ウ top - 1、エ top - 1。Xを返し、Zは添字1、topは2",
+            "ウ top - 1、エ top。Yを返し、Zは添字1、topは2"
+          ],
+          answer: 2,
+          explanation: "topは次の空き位置です。2から1に減らしてS[1]のYを返し、ZをS[1]に書いてtopを2に戻します。古い値は有効範囲外なら履歴に含めません。",
+          solutionId: "b-3-3-stack"
+        },
+        {
+          prompt: "4　資料Cの挿入に必要な代入2行を順に書き、逆順にした場合の参照を答えてください。",
+          thinkFirst: true,
+          options: [
+            "R.next ← N、N.next ← R.next。P → R → N → T → nullになる",
+            "N.next ← R.next、R.next ← N。逆順ではN.nextがN自身を指し、先頭からTに到達できない",
+            "N.next ← R、R.next ← N。逆順ではTがNの次になる"
+          ],
+          answer: 1,
+          explanation: "先にN.nextへ元のR.nextを保存してからR.nextをNにします。逆順では変更済みのR.nextをN.nextに代入するため、N → Nの自己参照になります。",
+          solutionId: "b-3-3-list"
+        }
+      ],
+      "b-3-2": [
+        {
+          prompt: "1　A = [2, 4, 4, 4, 7, 9]、x = 4 の戻り値、初回のmid、等しい値が見つかった後に残す範囲を答えてください。",
+          thinkFirst: true,
+          options: [
+            "戻り値3。初回midは3で一致したので直ちに返す",
+            "戻り値2。初回midは3で、位置3を含む左側を残す",
+            "戻り値4。初回midは3で、位置4より右を残す"
+          ],
+          answer: 1,
+          explanation: "初回はA[3] = 4。最初の該当位置は3かそれより左なのでhiを3にします。位置3も答えの候補です。"
+        },
+        {
+          prompt: "2　［ア］〜［エ］と、設問1の各回の更新後の (lo, hi) を順に答えてください。",
+          thinkFirst: true,
+          options: [
+            "ア hi - lo > 1、イ A[mid] ≥ x、ウ mid、エ hi。 (0, 3) → (1, 3) → (1, 2)",
+            "ア lo < hi、イ A[mid] ≥ x、ウ mid、エ hi。 (0, 3) → (1, 3) → (1, 2)",
+            "ア hi - lo > 1、イ A[mid] > x、ウ mid、エ hi。 (3, 7) → (3, 5) → (4, 5)"
+          ],
+          answer: 0,
+          explanation: "lo < mid < hi の間に調べる位置があります。境界が隣接すると、lo以下はx未満、hi以上はx以上なのでhiが答えです。lo < hiでは隣接時にもmidがloとなり、更新されず止まりません。",
+          solutionId: "b-3-2-trace"
+        },
+        {
+          prompt: "3　同じ配列で x = 1、5、10 の挿入位置と存在の有無、安全な判定手順、空配列の戻り値を答えてください。",
+          thinkFirst: true,
+          options: [
+            "位置は1、5、6で、すべて存在しない。A[p]を先に判定する。空配列は0",
+            "位置は1、4、7で、5は存在する。p ≤ n の前にA[p]を調べる。空配列は1",
+            "位置は1、5、7で、すべて存在しない。先にp ≤ nを確認し、成立した場合だけA[p] = xか調べる。空配列は1"
+          ],
+          answer: 2,
+          explanation: "p = 7は末尾の直後で、実要素ではありません。先にp ≤ nを確認すればA[7]を参照せず存在しないと分かります。空配列ではループ0回で1を返します。"
+        },
+        {
+          prompt: "4　［イ］を A[mid] > x に変えた場合、x = 4 の戻り値、その意味、元の結果と合わせた4の個数を答えてください。",
+          thinkFirst: true,
+          options: [
+            "戻り値5。xより大きい最初の要素の位置で、5 - 2 = 3個",
+            "戻り値4。xと等しい最後の要素の位置で、4 - 2 = 2個",
+            "戻り値2。x以上の最初の要素の位置で、2 - 2 = 0個"
+          ],
+          answer: 0,
+          explanation: "比較を > にするとlo以下はx以下、hi以上はxより大きいという境界になります。最初の4の位置2から、最初の4より大きい値の位置5までが4の範囲です。"
+        }
+      ],
       "b-3-1": [
         {
           prompt: "1　[4, 5, 5, 7, 8, 6, 7, 8] の戻り値と、同じ長さの候補から選んだ理由を答えてください。",
