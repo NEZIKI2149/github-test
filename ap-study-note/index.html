@@ -619,6 +619,85 @@
         <div data-practice></div>
         <p class="sources"><a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/ps6vr70000010d6y-att/2023r05h_ap_pm_cmnt.pdf">IPA 令和5年度春期・午後の採点講評</a></p>
       </article>
+      <article id="b-4-1" hidden>
+        <h1 tabindex="-1">B-4-1　構成図から要求の経路と各層の役割を読む</h1>
+        <p class="context">初見演習の目安は8〜12分です。</p>
+        <h2>要求と応答をそれぞれ追う</h2>
+        <p>クライアントは操作を受け付けて結果を表示します。画面サーバは画面向けの入力と出力を整えます。業務APIは決められた形式で要求を受け、業務上のルールを適用します。データベース（DB）は業務データを保持します。各構成要素が実際に何を担当するかは、設問の資料から読み取ります。</p>
+        <h3>例題　備品を品名で検索する</h3>
+        <ol>
+          <li>ブラウザから画面サーバに品名を送ります。画面サーバはその品名を指定して検索APIを呼び出します。</li>
+          <li>検索APIは品名に合う備品をDBから取得し、候補を画面サーバへ返します。</li>
+          <li>画面サーバは候補を一覧表示用に整えて返し、ブラウザが表示します。</li>
+        </ol>
+        <h2>演習　市の貸出施設予約システム</h2>
+        <p>利用者はブラウザから、窓口職員は職員端末から予約を取り消せます。本人確認は済んでいます。</p>
+        <h3>資料A　構成図と受け渡す情報</h3>
+        <pre class="table-wrap" tabindex="0" aria-label="予約取消しの構成図">利用者ブラウザ
+      ⇅
+Web画面サーバ
+      ⇅
+予約業務API ⇄ 職員端末
+      ⇅
+    予約DB</pre>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="取消しで受け渡す情報"><table>
+          <thead><tr><th scope="col">呼出し元 → 呼出し先</th><th scope="col">要求で渡す情報</th><th scope="col">応答で返す情報</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">利用者ブラウザ → Web画面サーバ</th><td>取消操作、予約番号</td><td>利用者向けメッセージ</td></tr>
+            <tr><th scope="row">Web画面サーバ → 予約業務API</th><td>取消APIの呼出し、予約番号</td><td>結果コード、予約状態</td></tr>
+            <tr><th scope="row">職員端末 → 予約業務API</th><td>同じ取消APIの呼出し、予約番号</td><td>結果コード、予約状態</td></tr>
+            <tr><th scope="row">予約業務API → 予約DB</th><td>予約番号で検索。許可時は取消済みへ更新</td><td>予約状態、利用開始日時、更新の結果</td></tr>
+          </tbody>
+        </table></div>
+        <h3>資料B　現行の判定と画面表示</h3>
+        <ul>
+          <li>予約業務APIは予約DBから予約状態と利用開始日時を取得します。APIの現在時刻を使い、「有効」の予約を利用開始の24時間前まで取り消せると判定します。24時間前ちょうども受付範囲です。</li>
+          <li>許可した場合は、DBの予約状態を「取消済み」に更新してから成功を返します。期限を過ぎた場合は、DBを更新せず結果コード「期限超過」を返します。</li>
+          <li>Web画面サーバは結果コードを利用者向けの文に変換します。「期限超過」のときはブラウザに「24時間前までに取り消してください」と表示します。</li>
+          <li>職員端末は結果コードと予約状態を職員向けの画面に表示します。「期限超過」のときは「取消期限を過ぎています」と表示します。取消期限を案内する表示は、Webと職員端末のこの2か所です。</li>
+        </ul>
+        <h3>資料C　変更要件</h3>
+        <p>Webと職員端末の両方で、利用開始の6時間前まで取り消せるようにします。Webの期限超過メッセージには、変更後も具体的な取消期限を表示します。結果コードとDB項目は現行のものを使えます。</p>
+        <div data-practice></div>
+        <p class="sources"><a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/m42obm000000afqx-att/2024r06h_ap_pm_cmnt.pdf">IPA 令和6年度春期・午後の採点講評（問4）</a></p>
+      </article>
+      <article id="b-4-2" hidden>
+        <h1 tabindex="-1">B-4-2　データ量から必要な帯域と保存容量を求める</h1>
+        <p class="context">初見演習の目安は12〜15分です。</p>
+        <h2>1枚の大きさから帯域と容量を求める</h2>
+        <p>圧縮前のビット数は「横の画素数 × 縦の画素数 × 1画素当たりのビット数」です。8 bit＝1 Bなので、8で割るとバイト数になります。圧縮で75％削減する場合は、元の大きさに残る割合の25％を掛けます。</p>
+        <ul>
+          <li><strong>帯域</strong>はピーク時の同時稼働台数と、各台が毎秒送る枚数から求めます。500 kBの画像を2台が毎秒4枚ずつ送るなら、500 × 2 × 4＝4,000 kB/sで、32 Mbit/sです。</li>
+          <li><strong>保存容量</strong>は実際の1日当たりの総枚数と保持する日数から求めます。同じ画像を2台合計で1日1万枚保存するなら、500 kB × 10,000＝5 GB/日です。</li>
+        </ul>
+        <p>計算した帯域は画像に使える実効帯域と、容量は画像に割り当てられた保存領域と比べます。</p>
+        <h2>演習　荷物のラベル画像を保管する</h2>
+        <p>物流拠点の撮影機は、荷物のラベル画像をその場で圧縮し、拠点の回線で保管サーバに送ります。サーバは受信した画像を1枚ずつ保存し、保存期間を過ぎた画像を日単位で削除します。</p>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="画像の転送と保存の運用条件"><table>
+          <thead><tr><th scope="col">項目</th><th scope="col">仕様・運用条件</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">圧縮前の画像</th><td>2,000 × 1,000画素、1画素当たり8 bit。画像の付加情報は無視します。</td></tr>
+            <tr><th scope="row">通常時の撮影</th><td>ピーク時は6台が同時に稼働し、各台が毎秒3枚を送ります。全台合計で1日180,000枚を撮影します。</td></tr>
+            <tr><th scope="row">回線</th><td>公称100 Mbit/sの80％を画像の転送に使えます。必要帯域は1秒単位のデータ量で求めます。</td></tr>
+            <tr><th scope="row">保存領域</th><td>画像に使える容量は1,500 GBで、通常は直近14日分を保持します。各日の撮影枚数は同じで、削除済みデータや複製は容量に含めません。</td></tr>
+          </tbody>
+        </table></div>
+        <p>1 kB＝1,000 B、1 MB＝1,000 kB、1 GB＝1,000 MB、1 TB＝1,000 GB、1 Mbit＝1,000,000 bitとします。</p>
+        <h3>圧縮方式</h3>
+        <p>各方式の圧縮後の大きさは固定で、どの方式も撮影周期内に圧縮できます。</p>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="圧縮方式と精度試験の結果"><table>
+          <thead><tr><th scope="col">方式</th><th scope="col">圧縮後に残る割合</th><th scope="col">ラベルの読取り精度試験</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">P（現行）</th><td>25％</td><td>合格</td></tr>
+            <tr><th scope="row">Q</th><td>20％</td><td>合格</td></tr>
+            <tr><th scope="row">R</th><td>15％</td><td>不合格</td></tr>
+          </tbody>
+        </table></div>
+        <h3>更新後の条件（第4・5問）</h3>
+        <p>ピーク時の同時稼働が8台になり、保存期間は20日に延びます。各台が毎秒送る枚数、全台合計の1日当たりの撮影枚数、回線と保存領域の上限は現行と同じです。</p>
+        <div data-practice></div>
+        <p class="sources"><a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/nl10bi0000009lh8-att/2025r07a_ap_pm_cmnt.pdf">IPA 令和7年度秋期・午後の採点講評（問4）</a></p>
+      </article>
       <article id="b-6-11" hidden>
         <h1 tabindex="-1">B-6-11　総合演習：業務変更をE-R図・SQL・帳票に反映する</h1>
         <p class="context">初見演習の目安は25〜30分です。</p>
@@ -3827,6 +3906,61 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
       </tbody>
     </table></div>
   </template>
+  <template id="b-4-1-current-flow">
+    <ol>
+      <li><strong>参照</strong>　予約業務APIがDBから予約状態と利用開始日時を読みます。</li>
+      <li><strong>判定</strong>　利用開始まで10時間なので、現行の期限を過ぎています。DBの予約状態は「有効」のままです。</li>
+      <li><strong>応答</strong>　予約業務APIはWeb画面サーバに「期限超過」を返します。</li>
+      <li><strong>表示</strong>　Web画面サーバが結果コードを案内文に変え、ブラウザに「24時間前までに取り消してください」と表示します。</li>
+    </ol>
+  </template>
+  <template id="b-4-1-shared-api">
+    <pre class="table-wrap" tabindex="0" aria-label="変更後の二つの取消経路">Web画面サーバ（新しい期限を案内）
+      ↓ 予約番号
+予約業務API ← 予約番号 ─ 職員端末
+      ↓ 期限内なら取消済みに更新
+    予約DB</pre>
+    <p>有効な予約は、利用開始までの残り時間が6時間以上なら、どちらの入口からでも取り消せます。</p>
+  </template>
+  <template id="b-4-2-bandwidth">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="通常時の必要帯域"><table>
+      <thead><tr><th scope="col">計算する量</th><th scope="col">式と結果</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">ピーク時の枚数</th><td>6台 × 3枚/秒＝18枚/秒</td></tr>
+        <tr><th scope="row">必要帯域</th><td>0.5 MB/枚 × 18枚/秒＝9 MB/s＝72 Mbit/s</td></tr>
+        <tr><th scope="row">画像用の帯域</th><td>100 Mbit/s × 0.8＝80 Mbit/s</td></tr>
+      </tbody>
+    </table></div>
+  </template>
+  <template id="b-4-2-storage">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="通常時の保存容量"><table>
+      <thead><tr><th scope="col">計算する量</th><th scope="col">式と結果</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">1日分</th><td>0.5 MB/枚 × 180,000枚/日＝90,000 MB/日＝90 GB/日</td></tr>
+        <tr><th scope="row">14日分</th><td>90 GB/日 × 14日＝1,260 GB</td></tr>
+        <tr><th scope="row">画像用の保存領域</th><td>1,500 GB</td></tr>
+      </tbody>
+    </table></div>
+  </template>
+  <template id="b-4-2-updated">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="更新後に方式Pを使ったときの不足量"><table>
+      <thead><tr><th scope="col">比較の対象</th><th scope="col">必要量</th><th scope="col">上限</th><th scope="col">不足量</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">回線帯域</th><td>0.5 MB/枚 × 24枚/秒＝12 MB/s＝96 Mbit/s</td><td>80 Mbit/s</td><td>16 Mbit/s</td></tr>
+        <tr><th scope="row">保存容量</th><td>90 GB/日 × 20日＝1,800 GB</td><td>1,500 GB</td><td>300 GB</td></tr>
+      </tbody>
+    </table></div>
+  </template>
+  <template id="b-4-2-comparison">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="更新後の回線帯域・保存容量・精度の比較"><table>
+      <thead><tr><th scope="col">方式</th><th scope="col">1枚</th><th scope="col">帯域（上限80 Mbit/s）</th><th scope="col">容量（上限1,500 GB）</th><th scope="col">精度</th><th scope="col">採否</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">P</th><td>0.5 MB</td><td>96 Mbit/s</td><td>1,800 GB</td><td>合格</td><td>不可</td></tr>
+        <tr><th scope="row">Q</th><td>0.4 MB</td><td>76.8 Mbit/s</td><td>1,440 GB</td><td>合格</td><td>可</td></tr>
+        <tr><th scope="row">R</th><td>0.3 MB</td><td>57.6 Mbit/s</td><td>1,080 GB</td><td>不合格</td><td>不可</td></tr>
+      </tbody>
+    </table></div>
+  </template>
   <template id="b-6-1-equipment-answer">
     <p>設備（<u>設備番号</u>〔主キー〕、設備名）<br>
     点検（<u>点検番号</u>〔主キー〕、<span style="text-decoration: underline dashed">設備番号</span>〔外部キー〕、予定日）</p>
@@ -4541,7 +4675,7 @@ WHERE p.点検月 = :対象月</code></pre></div>
   <script>
     const byId = (id) => document.getElementById(id);
     const lessons = Array.from(document.querySelectorAll("[data-lesson]"));
-    const subjectBLessons = ["b-1-1", "b-1-2", "b-1-3", "b-1-4", "b-1-5", "b-2-1", "b-2-2", "b-2-3", "b-2-4", "b-2-5", "b-2-6", "b-2-7", "b-2-8", "b-3-1", "b-3-2", "b-3-3", "b-3-4", "b-3-5", "b-3-6", "b-3-7", "b-3-8", "b-6-1", "b-6-2", "b-6-3", "b-6-4", "b-6-5", "b-6-6", "b-6-7", "b-6-8", "b-6-9", "b-6-10", "b-6-11", "b-7-1", "b-7-2", "b-7-3", "b-7-4", "b-7-5", "b-7-6", "b-7-7", "b-7-8"].map(byId);
+    const subjectBLessons = ["b-1-1", "b-1-2", "b-1-3", "b-1-4", "b-1-5", "b-2-1", "b-2-2", "b-2-3", "b-2-4", "b-2-5", "b-2-6", "b-2-7", "b-2-8", "b-3-1", "b-3-2", "b-3-3", "b-3-4", "b-3-5", "b-3-6", "b-3-7", "b-3-8", "b-4-1", "b-4-2", "b-6-1", "b-6-2", "b-6-3", "b-6-4", "b-6-5", "b-6-6", "b-6-7", "b-6-8", "b-6-9", "b-6-10", "b-6-11", "b-7-1", "b-7-2", "b-7-3", "b-7-4", "b-7-5", "b-7-6", "b-7-7", "b-7-8"].map(byId);
     const sections = [byId("welcome"), byId("intro"), byId("subject-b"), ...subjectBLessons, ...lessons];
     const toc = byId("toc");
     const subjectAItems = Array.from(toc.children);
@@ -4578,7 +4712,11 @@ WHERE p.点検月 = :対象月</code></pre></div>
         <a href="#b-3-7">B-3-7　入力が大きくなったときの改良を考える</a>
         <a href="#b-3-8">B-3-8　初見の仕様からプログラムを完成させる</a>
       </details>
-      <p>B-4　システムアーキテクチャ</p>
+      <details>
+        <summary>B-4　システムアーキテクチャ</summary>
+        <a href="#b-4-1">B-4-1　構成図から要求の経路と各層の役割を読む</a>
+        <a href="#b-4-2">B-4-2　データ量から必要な帯域と保存容量を求める</a>
+      </details>
       <p>B-5　ネットワーク</p>
       <details>
         <summary>B-6　データベース</summary>
@@ -5532,6 +5670,146 @@ WHERE p.点検月 = :対象月</code></pre></div>
           ],
           "explanation": "画面からの発注はK社にもあります。資料Cから追加する機能を、資料Aから小規模店の判断内容と期限を拾います。",
           "thinkFirst": true
+        }
+      ],
+      "b-4-1": [
+        {
+          prompt: "1　Webで取消操作をした場合、取消要求が通る順序と、期限を判定する構成要素の組合せを選んでください。",
+          options: [
+            "ブラウザ → 予約業務API → Web画面サーバ。期限を判定するのはWeb画面サーバ。",
+            "ブラウザ → Web画面サーバ → 予約業務API。期限を判定するのは予約業務API。",
+            "ブラウザ → Web画面サーバ → 予約DB。期限を判定するのは予約DB。"
+          ],
+          answer: 1,
+          explanation: "Web画面サーバは予約番号を渡します。予約業務APIがDBから予約状態と利用開始日時を読み、APIの現在時刻で取消しの可否を判定します。"
+        },
+        {
+          prompt: "2　現行方式で、利用開始の10時間前にWebから有効な予約を取り消そうとしました。予約DBの状態と画面表示を、結果の経路を含めて答えてください。",
+          thinkFirst: true,
+          options: [
+            "DBは有効のまま。予約DBが利用者向けの文を作り、ブラウザに直接返す。",
+            "DBは取消済み。予約業務APIが成功をWeb画面サーバに返し、ブラウザに取消完了を表示する。",
+            "DBは有効のまま。APIが期限超過をWeb画面サーバへ返し、ブラウザに「24時間前までに取り消してください」と表示する。"
+          ],
+          answer: 2,
+          selfCheck: [
+            "予約DBを更新せず、予約状態は「有効」のままと書いた",
+            "予約業務APIが「期限超過」の結果コードをWeb画面サーバへ返すと書いた",
+            "Web画面サーバを経由して、ブラウザに「24時間前までに取消しが必要」と伝わる表示を出すと書いた"
+          ],
+          explanation: "利用開始の10時間前は、現行の24時間前という締切を過ぎています。判定は予約業務APIが行い、表示文はWeb画面サーバが作ります。",
+          solutionId: "b-4-1-current-flow"
+        },
+        {
+          prompt: "3　変更要件を満たすために修正する箇所と、それぞれの修正内容を60字以内で答えてください。",
+          thinkFirst: true,
+          options: [
+            "予約業務APIの期限を6時間前に変更し、Web画面サーバの期限超過メッセージも6時間前に直す。",
+            "Web画面サーバのメッセージだけを6時間前に直す。",
+            "Web画面サーバと職員端末に、それぞれ6時間前までの取消判定を追加する。"
+          ],
+          answer: 0,
+          selfCheck: [
+            "予約業務APIで、取消しを受け付ける期限を利用開始の6時間前に変更すると書いた",
+            "Web画面サーバが返す案内に、新しい期限「利用開始の6時間前まで」を反映すると書いた（設定値から文を作る方法も可）"
+          ],
+          explanation: "両方の入口が同じAPIを使うので、期限判定はそこで一度変更します。表示だけを変えると、利用開始の10時間前にはWebで案内した期限内でもAPIが拒否します。共通の判定とWebの案内を両方更新します。職員端末の表示は具体的な時刻を含まないので、そのまま使えます。",
+          solutionId: "b-4-1-shared-api"
+        },
+        {
+          prompt: "4　変更後、利用開始の10時間前に職員端末から有効な予約を取り消せますか。職員端末を改修せずに結果が変わる理由を、DBの状態とともに答えてください。",
+          thinkFirst: true,
+          options: [
+            "取り消せない。職員端末の期限判定が24時間前のままなので、DBは有効のまま。",
+            "取り消せる。職員端末も呼ぶ共通APIでは残り6時間以上なら期限内なので、DBの状態は取消済みになる。",
+            "取り消せる。職員端末が6時間前までの条件で直接DBを更新し、取消済みにする。"
+          ],
+          answer: 1,
+          selfCheck: [
+            "変更後は利用開始の10時間前でも取り消せると答えた",
+            "職員端末からも共通の予約業務APIを呼ぶため、変更後の判定が適用されると説明した",
+            "取消しが反映され、予約DBの状態が「取消済み」になると書いた"
+          ],
+          explanation: "職員端末の要求はWeb画面サーバを通らず、共通の予約業務APIへ直接届きます。10時間前は6時間前の締切より早いので、APIが取消しを許可し、DBを更新します。",
+          solutionId: "b-4-1-shared-api"
+        }
+      ],
+      "b-4-2": [
+        {
+          prompt: "1　画像1枚の大きさを、圧縮前と方式Pによる圧縮後の順に選んでください。",
+          options: [
+            "16 MB、4 MB",
+            "2 MB、1.5 MB",
+            "2 MB、0.5 MB"
+          ],
+          answer: 2,
+          explanation: "圧縮前は2,000 × 1,000 × 8＝16,000,000 bitです。8で割ると2,000,000 B、つまり2 MBになり、方式Pではその25％の0.5 MBです。"
+        },
+        {
+          prompt: "2　通常のピーク時に、方式Pで必要な帯域をMbit/sで求め、画像に使える回線の帯域に収まるか答えてください。",
+          thinkFirst: true,
+          options: [
+            "72 Mbit/s。画像に使える80 Mbit/s以内に収まる。",
+            "9 Mbit/s。画像に使える80 Mbit/s以内に収まる。",
+            "72 Mbit/s。画像に使える100 Mbit/s以内に収まる。"
+          ],
+          answer: 0,
+          selfCheck: [
+            "通常のピーク時に必要な帯域を72 Mbit/sと求めた",
+            "画像に使える帯域（80 Mbit/s）に収まると答えた"
+          ],
+          explanation: "毎秒6 × 3＝18枚を送ります。毎秒の画像データ量は9 MBなので、8を掛けて72 Mbit/sです。回線のうち画像に使えるのは公称100 Mbit/sの80％です。",
+          solutionId: "b-4-2-bandwidth"
+        },
+        {
+          prompt: "3　通常時に方式Pの画像を14日分保存するための容量をGBで求め、保存領域に収まるか答えてください。",
+          thinkFirst: true,
+          options: [
+            "7,560 GB。1,500 GBに収まらない。",
+            "1,260 GB。1,500 GB以内に収まる。",
+            "10,886.4 GB。1,500 GBに収まらない。"
+          ],
+          answer: 1,
+          selfCheck: [
+            "14日分の保存に必要な容量を1,260 GBと求めた",
+            "画像用の保存領域1,500 GB以内に収まると答えた"
+          ],
+          explanation: "1日180,000枚は全台の合計です。ピーク時の毎秒枚数で1日分を推計したり、全台合計に台数を掛けたりすると、実際の撮影枚数より多くなります。",
+          solutionId: "b-4-2-storage"
+        },
+        {
+          prompt: "4　更新後も方式Pを使うと、画像用の回線帯域と保存領域はそれぞれどれだけ不足しますか。Mbit/sとGBで答えてください。",
+          thinkFirst: true,
+          options: [
+            "回線は不足しない。保存領域は300 GB不足する。",
+            "回線は16 Mbit/s不足する。保存領域は900 GB不足する。",
+            "回線は16 Mbit/s不足する。保存領域は300 GB不足する。"
+          ],
+          answer: 2,
+          selfCheck: [
+            "画像用の回線帯域は16 Mbit/s不足すると答えた",
+            "画像用の保存領域は300 GB不足すると答えた"
+          ],
+          explanation: "8台への増加はピーク時の帯域に反映します。1日の総枚数は変わらず、保存量は90 GB/日です。20日分の1,800 GBから、使える1,500 GBを引きます。",
+          solutionId: "b-4-2-updated"
+        },
+        {
+          prompt: "5　更新後の条件で採用できる圧縮方式を一つ選んでください。必要な帯域と保存容量を求め、読取り精度の条件も含めて採用できる理由を答えてください。",
+          thinkFirst: true,
+          options: [
+            "方式Q。76.8 Mbit/sと1,440 GBで両上限以内に収まり、読取り精度試験にも合格している。",
+            "方式R。57.6 Mbit/sと1,080 GBで両上限以内に収まるので採用できる。",
+            "方式P。精度試験に合格し、公称100 Mbit/sの回線で転送できるので採用できる。"
+          ],
+          answer: 0,
+          selfCheck: [
+            "採用する方式をQと答えた",
+            "必要な帯域が回線に収まると示した（76.8 ≦ 80 Mbit/s、または9.6 ≦ 10 MB/s）",
+            "必要な保存容量が画像用の領域に収まると示した（1,440 ≦ 1,500 GB、または1.44 ≦ 1.5 TB）",
+            "方式Qはラベルの読取り精度試験に合格していると書いた"
+          ],
+          explanation: "更新後は毎秒24枚、20日で360万枚です。方式Qの1枚0.4 MBを基に求めると、回線と保存領域の両方に収まります。方式Rは設備に収まりますが、読取り精度試験に不合格です。",
+          solutionId: "b-4-2-comparison"
         }
       ],
       "b-6-11": [
