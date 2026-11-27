@@ -337,6 +337,235 @@
     </nav>
     <main id="main" tabindex="-1">
       <article id="subject-b" hidden><h1 tabindex="-1">科目B</h1><p>目次から演習を選んでください。</p></article>
+      <article id="b-6-11" hidden>
+        <h1 tabindex="-1">B-6-11　総合演習：業務変更をE-R図・SQL・帳票に反映する</h1>
+        <p class="context">初見演習の目安は25〜30分です。</p>
+        <h2>計測器の月次点検</h2>
+        <p>保守会社は、機器ごとに毎月の点検を管理しています。機器番号は拠点内で一意です。現行の機器表では許容誤差を改定のたびに上書きし、月次点検表では機器ごと・月ごとに予定と一つの結果を持っています。</p>
+        <h3>変更要求</h3>
+        <ul>
+          <li>機器ごとの判定基準を版として残します。版番号は機器内で一意で、改定のたびに増えます。各版の許容誤差は変更しません。予定登録時に選んだ現行版の版番号を保存し、後で改定してもその予定の適用版を維持します。</li>
+          <li>予定は機器ごと・月ごとに1行とします。一つの予定に0回以上の試行を登録でき、試行番号は予定内で一意です。各試行は一つの予定に属します。試行日時と状態は必須です。誤差は非負整数で、完了行には必ず入り、取消行ではNULLになります。</li>
+          <li>6月帳票は6月の予定ごとに1行です。2026年6月1日0時以上・7月1日0時未満の完了試行を数え、その中で日時が最新の試行を載せます。同時刻なら試行番号が大きい方を選びます。</li>
+          <li>完了件数が0なら試行番号と誤差をNULL、判定を「未実施」とします。最新試行の誤差が予定の適用版の許容誤差以下なら「適合」、超えれば「超過」です。</li>
+        </ul>
+        <h2>変更後のE-R図</h2>
+        <p>［ア］〜［エ］には列や関連の端の件数を入れます。主キーの列は実線の下線、外部キーだけの列は破線の下線です。両方を兼ねる列は実線で示し、外部キーは参照先も答えます。</p>
+        <pre class="table-wrap" tabindex="0" aria-label="E-R図の空欄">機器（拠点コード、機器番号）
+基準版（［ア］、版番号、許容誤差）
+点検予定（［イ］、適用版番号）
+点検試行（［ウ］、試行番号、試行日時、状態、誤差）
+
+機器 ── 基準版 ── 点検予定
+［エ］点検予定 □ ── □ 点検試行</pre>
+        <h2>サンプルデータ</h2>
+        <p>機器はA・01、A・02、B・01、B・02の4台です。A・01の6月予定を登録した後に、同じ機器の版2を追加しました。許容誤差と誤差の単位はmVです。</p>
+        <h3>基準版</h3>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="基準版"><table>
+      <thead><tr><th scope="col">拠点</th><th scope="col">機器</th><th scope="col">版番号</th><th scope="col">許容誤差</th></tr></thead>
+      <tbody>
+        <tr><td>A</td><td>01</td><td>1</td><td>10</td></tr>
+        <tr><td>A</td><td>01</td><td>2</td><td>8</td></tr>
+        <tr><td>B</td><td>01</td><td>1</td><td>14</td></tr>
+        <tr><td>A</td><td>02</td><td>1</td><td>8</td></tr>
+        <tr><td>B</td><td>02</td><td>1</td><td>7</td></tr>
+      </tbody>
+    </table></div>
+        <h3>点検予定</h3>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="点検予定"><table>
+      <thead><tr><th scope="col">拠点</th><th scope="col">機器</th><th scope="col">点検月</th><th scope="col">適用版番号</th></tr></thead>
+      <tbody>
+        <tr><td>A</td><td>01</td><td>2026-05-01</td><td>1</td></tr>
+        <tr><td>A</td><td>01</td><td>2026-06-01</td><td>1</td></tr>
+        <tr><td>A</td><td>02</td><td>2026-06-01</td><td>1</td></tr>
+        <tr><td>B</td><td>01</td><td>2026-06-01</td><td>1</td></tr>
+        <tr><td>B</td><td>02</td><td>2026-06-01</td><td>1</td></tr>
+      </tbody>
+    </table></div>
+        <h3>点検試行</h3>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="点検試行"><table>
+      <thead><tr><th scope="col">拠点</th><th scope="col">機器</th><th scope="col">点検月</th><th scope="col">試行番号</th><th scope="col">試行日時</th><th scope="col">状態</th><th scope="col">誤差</th></tr></thead>
+      <tbody>
+        <tr><td>A</td><td>01</td><td>2026-05-01</td><td>1</td><td>2026-05-15 09:00</td><td>完了</td><td>8</td></tr>
+        <tr><td>A</td><td>01</td><td>2026-06-01</td><td>1</td><td>2026-06-12 09:00</td><td>完了</td><td>11</td></tr>
+        <tr><td>A</td><td>01</td><td>2026-06-01</td><td>2</td><td>2026-06-12 09:00</td><td>完了</td><td>9</td></tr>
+        <tr><td>A</td><td>01</td><td>2026-06-01</td><td>3</td><td>2026-06-20 11:00</td><td>取消</td><td>NULL</td></tr>
+        <tr><td>A</td><td>01</td><td>2026-06-01</td><td>4</td><td>2026-07-01 00:00</td><td>完了</td><td>6</td></tr>
+        <tr><td>A</td><td>02</td><td>2026-06-01</td><td>1</td><td>2026-06-11 10:00</td><td>取消</td><td>NULL</td></tr>
+        <tr><td>B</td><td>01</td><td>2026-06-01</td><td>1</td><td>2026-06-01 00:00</td><td>完了</td><td>14</td></tr>
+      </tbody>
+    </table></div>
+        <p>点検月は月初日のDATE型、試行日時はTIMESTAMP型です。SQLでは対象月に2026-06-01、月初日時に2026-06-01 00:00、翌月初日時に2026-07-01 00:00を指定します。</p>
+        <div data-practice></div>
+        <p class="sources"><a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/nl10bi0000009lh8-att/2025r07a_ap_pm_qs.pdf">IPA 令和7年度秋期・午後問6</a> / <a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/nl10bi0000009lh8-att/2025r07h_ap_pm_cmnt.pdf#page=2">IPA 令和7年度春期・午後の採点講評（問6）</a></p>
+      </article>
+      <article id="b-6-10" hidden>
+        <h1 tabindex="-1">B-6-10　ログから障害後の復旧状態を求める</h1>
+        <p class="context">初見演習の目安は12〜18分です。</p>
+        <h2>倉庫の在庫台帳</h2>
+        <p>数量を更新するたびに更新前後の値をログに記録します。COMMITの記録がログに残った時点で取引が確定します。ログは番号順に永続化されます。同じ品目を未確定の別取引が更新することはありません。</p>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="保存済みの数量"><table>
+      <thead><tr><th scope="col">保存時点</th><th scope="col">A</th><th scope="col">B</th><th scope="col">C</th><th scope="col">D</th></tr></thead>
+      <tbody>
+        <tr><td>全件バックアップ</td><td>100</td><td>50</td><td>30</td><td>20</td></tr>
+        <tr><td>チェックポイント</td><td>90</td><td>70</td><td>30</td><td>15</td></tr>
+      </tbody>
+    </table></div>
+        <p>全件バックアップはログ取得前の確定状態です。チェックポイントでは未確定の更新も含めて表全体を書き出し、その間は更新を止めます。書出しだけでは取引は確定しません。</p>
+        <h2>障害までのログ</h2>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="障害までのログ"><table>
+      <thead><tr><th scope="col">番号</th><th scope="col">取引</th><th scope="col">記録</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>T1</td><td>Aを100から90に更新</td></tr>
+        <tr><td>2</td><td>T1</td><td>COMMIT</td></tr>
+        <tr><td>3</td><td>T2</td><td>Bを50から70に更新</td></tr>
+        <tr><td>4</td><td>T5</td><td>Dを20から15に更新</td></tr>
+        <tr><td>5</td><td>—</td><td>チェックポイント</td></tr>
+        <tr><td>6</td><td>T2</td><td>Cを30から35に更新</td></tr>
+        <tr><td>7</td><td>T2</td><td>COMMIT</td></tr>
+        <tr><td>8</td><td>T3</td><td>Aを90から80に更新</td></tr>
+        <tr><td>9</td><td>T3</td><td>Aを80から72に更新</td></tr>
+        <tr><td>10</td><td>T4</td><td>Cを35から40に更新</td></tr>
+        <tr><td>11</td><td>T4</td><td>COMMIT</td></tr>
+        <tr><td>—</td><td>—</td><td>障害発生</td></tr>
+      </tbody>
+    </table></div>
+        <h2>この演習で使う回復手順</h2>
+        <ul>
+          <li><strong>媒体障害</strong>では全件バックアップを復元します。利用できる連続したログ範囲内にCOMMITがある取引だけを選び、更新後の値を番号の昇順で反映します。</li>
+          <li><strong>システム障害</strong>では、保存されたチェックポイント時点の表から始めます。それ以後の全更新はログだけにあり、未確定のものも含め番号順に再実行します。その後、未確定の取引に属する更新を番号の逆順で取り消します。取消しにはチェックポイントより前のログも使えます。</li>
+        </ul>
+        <p>再実行では更新後の値を反映し、取消しでは更新前の値を書き戻します。</p>
+        <div data-practice></div>
+        <p class="sources"><a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt80000008smf-att/2022r04a_ap_am_qs.pdf">IPA 令和4年度秋期・午前問29</a></p>
+      </article>
+      <article id="b-6-9" hidden>
+        <h1 tabindex="-1">B-6-9　遅い問合せを実行計画と索引から見直す</h1>
+        <p class="context">初見演習の目安は12〜18分です。</p>
+        <h2>施設の作業記録を検索する</h2>
+        <p>作業記録表は記録ID、施設コード、実施日時、所見を持ちます。記録IDが主キーです。施設Aの6月分を出す検索をQ1、施設を絞らず期間だけで検索する問合せをQ2とします。どちらも所見を表示します。</p>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="データの分布"><table>
+          <thead><tr><th scope="col">範囲</th><th scope="col">行数</th></tr></thead>
+          <tbody>
+            <tr><td>表全体</td><td>100,000</td></tr>
+            <tr><td>施設Aの全期間</td><td>500</td></tr>
+            <tr><td>全施設の6月分</td><td>4,000</td></tr>
+            <tr><td>施設Aの6月分</td><td>40</td></tr>
+          </tbody>
+        </table></div>
+        <h2>Q1のSQLと実行計画</h2>
+        <pre><code>SELECT 記録ID, 実施日時, 所見
+FROM 作業記録
+WHERE 施設コード = :施設
+  AND 実施日時 &gt;= :開始
+  AND 実施日時 &lt; :終了</code></pre>
+        <p>現在は記録IDの主キー索引だけです。Q1では施設にA、開始に6月1日0時、終了に7月1日0時を指定します。</p>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="Q1の実行計画"><table>
+          <thead><tr><th scope="col">Q1の実行計画</th><th scope="col">索引で読む範囲</th><th scope="col">索引の読取件数</th><th scope="col">表本体の読取行数</th><th scope="col">結果行数</th></tr></thead>
+          <tbody>
+            <tr><td>全表走査</td><td>使用なし</td><td>0</td><td>100,000</td><td>40</td></tr>
+            <tr><td>I1（施設コード、実施日時）</td><td>［ア］</td><td>［イ］</td><td>40</td><td>40</td></tr>
+            <tr><td>I2（実施日時、施設コード）</td><td>［ウ］</td><td>［エ］</td><td>40</td><td>40</td></tr>
+          </tbody>
+        </table></div>
+        <h2>索引の並び順と費用</h2>
+        <p>B-tree系の複合索引は先頭列で並び、先頭列が同じ項目の中で次の列が並びます。この演習では索引の連続した一つの範囲を読みます。先頭列を等値で指定できれば、その値の中で次の列の範囲を絞れます。先頭列を範囲で指定すると、後続列はその範囲を読んでから絞り込むために使います。</p>
+        <p>索引だけで判定できる条件は表本体を読む前に確認します。所見はI1・I2のどちらにも含まれないため、残った行は表本体を参照します。</p>
+        <ul>
+          <li>全表走査の費用は表本体1行につき1単位。</li>
+          <li>索引を使う場合は索引1件につき1単位、表本体の参照1行につき4単位。</li>
+          <li>索引の木をたどる費用は省きます。単位は演習用です。</li>
+        </ul>
+        <div data-practice></div>
+        <p class="sources"><a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/m42obm000000afqx-att/2024r06a_ap_pm_qs.pdf">IPA 令和6年度秋期・午後問6</a> / <a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/m42obm000000afqx-att/2024r06a_ap_pm_cmnt.pdf">同・採点講評</a></p>
+      </article>
+      <article id="b-6-8" hidden>
+        <h1 tabindex="-1">B-6-8　同時実行で起きる不整合を防ぐ</h1>
+        <p class="context">初見演習の目安は15〜20分です。</p>
+        <h2>共同作業室の設備予約</h2>
+        <p>空き枠表は枠IDを主キーとし、残数を記録します。予約明細の主キーは（予約ID、枠ID）で、予約数は1以上です。初期残数はAが5、Bが4です。設問で別の残数を指定された場合は、その値から始めます。</p>
+        <p>申請ごとに異なる予約IDを使います。複数枠を取る予約は、すべての枠の確保に成功したときに確定します。途中で失敗した場合は、そのトランザクションの変更をすべて取り消します。</p>
+        <h2>この演習の読取りとロックの規則</h2>
+        <ul>
+          <li>通常のSELECTは行をロックしません。READ COMMITTEDでは文ごとに開始時点の確定値を読みます。スナップショット方式では、初回読取り時点の確定データを以後の通常のSELECTでも読みます。どちらも自分の未確定更新は読めます。</li>
+          <li>UPDATEとSELECT FOR UPDATEは対象行の専有ロックを取ります。他の処理がその行をロックしていれば待ちます。ロックの解放はCOMMITまたはROLLBACKの時点です。</li>
+          <li>SELECT FOR UPDATEはロック取得後に最新の確定値を読みます。条件付きUPDATEは、待機後にロックを得た時点の値でWHEREを再評価します。</li>
+        </ul>
+        <div data-practice></div>
+        <p class="sources"><a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt80000009sgk-att/2022r04h_ap_pm_cmnt.pdf#page=2">IPA 令和4年度春期・午後の採点講評（問6）</a></p>
+      </article>
+      <article id="b-6-7" hidden>
+        <h1 tabindex="-1">B-6-7　複数の更新を一つの業務処理にまとめる</h1>
+        <p class="context">初見演習の目安は12〜18分です。</p>
+        <h2>工房の資材引当て</h2>
+        <p>1件の申請は、一つの棚にある一つの資材を指定します。引当てとは、申請数をその棚の在庫から確保することです。引当可能数を減らし、引当記録を追加し、処理待ち申請を削除するまでを一つの業務処理とします。在庫が足りない申請は処理待ちに残します。</p>
+        <ul>
+          <li>在庫の主キーは（資材ID、棚ID）。引当可能数は必須で0以上です。</li>
+          <li>処理待ち申請と引当記録は、いずれも申請IDが主キーです。申請数は必須で1以上です。両表の（資材ID、棚ID）は在庫を参照します。</li>
+          <li>引当記録には処理済み申請の資材ID・棚ID・引当数を保存します。処理待ち申請への外部キーはありません。</li>
+        </ul>
+        <h2>初期データ</h2>
+        <h3>在庫</h3>
+<div class="table-wrap" tabindex="0" role="region" aria-label="在庫"><table>
+    <thead><tr><th scope="col">資材ID</th><th scope="col">棚ID</th><th scope="col">引当可能数</th></tr></thead>
+    <tbody>
+      <tr><td>M01</td><td>S1</td><td>6</td></tr>
+      <tr><td>M01</td><td>S2</td><td>8</td></tr>
+      <tr><td>M02</td><td>S1</td><td>4</td></tr>
+    </tbody>
+  </table></div>
+        <h3>処理待ち申請</h3>
+<div class="table-wrap" tabindex="0" role="region" aria-label="処理待ち申請"><table>
+    <thead><tr><th scope="col">申請ID</th><th scope="col">資材ID</th><th scope="col">棚ID</th><th scope="col">申請数</th></tr></thead>
+    <tbody>
+      <tr><td>R101</td><td>M01</td><td>S1</td><td>4</td></tr>
+      <tr><td>R102</td><td>M01</td><td>S2</td><td>9</td></tr>
+    </tbody>
+  </table></div>
+        <p>引当記録の初期状態は空です。各問は、指定がある場合を除き、この初期状態から始めます。</p>
+        <h2>処理の順序</h2>
+        <ol>
+          <li>処理待ち申請を1行読み、対象の在庫をUPDATEします。</li>
+          <li>読んだ申請の4項目を引当記録にINSERTします。引当数には申請数を入れます。</li>
+          <li>処理した申請をDELETEし、三つの変更がそろった時点でCOMMITします。</li>
+        </ol>
+        <p>一連の処理を一つのトランザクションで行います。更新0件・削除0件・SQLエラーは失敗として中止し、ROLLBACKで未確定の変更を取り消します。</p>
+        <div data-practice></div>
+        <p class="sources"><a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt80000009sgk-att/2022r04h_ap_pm_cmnt.pdf#page=2">IPA 令和4年度春期・午後の採点講評（問6）</a></p>
+      </article>
+      <article id="b-6-6" hidden>
+        <h1 tabindex="-1">B-6-6　存在・未該当・最新をSQLで取り出す</h1>
+        <p class="context">初見演習の目安は15〜20分です。</p>
+        <h2>工作室の利用記録</h2>
+        <p>会員表にはA・B・C・Dの4人が登録されています。主キーは会員IDです。利用履歴の主キーは整数の履歴IDです。非会員が当日参加した場合、会員IDはNULLになります。利用日時は利用枠の開始日時で、完了・取消のどちらでも必須です。</p>
+        <p>「利用した」と数えるのは完了行だけです。最新とは利用日時が最も遅い完了行です。会員ごとに1件を選ぶ場合は、最新日時が同じ行の中で履歴IDが最大の行を選びます。履歴IDの大小と利用日時の順が一致するとは限りません。</p>
+        <h2>利用履歴</h2>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="利用履歴"><table>
+          <thead><tr><th scope="col">履歴ID</th><th scope="col">会員ID</th><th scope="col">利用日時</th><th scope="col">状態</th></tr></thead>
+          <tbody>
+            <tr><td>10</td><td>A</td><td>2026-06-01 09:00</td><td>完了</td></tr>
+            <tr><td>12</td><td>A</td><td>2026-06-04 10:00</td><td>完了</td></tr>
+            <tr><td>13</td><td>A</td><td>2026-06-04 10:00</td><td>完了</td></tr>
+            <tr><td>14</td><td>B</td><td>2026-06-03 13:00</td><td>完了</td></tr>
+            <tr><td>15</td><td>NULL</td><td>2026-06-05 11:00</td><td>完了</td></tr>
+            <tr><td>16</td><td>C</td><td>2026-06-06 12:00</td><td>取消</td></tr>
+            <tr><td>18</td><td>A</td><td>2026-06-07 09:00</td><td>取消</td></tr>
+          </tbody>
+        </table></div>
+        <h2>副問合せの読み方</h2>
+        <p>外側の会員を1人ずつ固定し、内側でその会員に該当する行があるかを調べます。内側から外側の列を参照する条件を相関条件と呼びます。EXISTSは行の有無を判定するため、内側に複数行あっても外側の会員は1行のままです。</p>
+        <p>最新日時を使う場合は、会員ごとの日時の最大値を求め、その値と一致する履歴行を探します。同時刻の行は複数残り得ます。</p>
+        <h2>設問一覧</h2>
+        <ol>
+          <li>完了履歴の有無で会員を分ける。</li>
+          <li>NOT INとNULLの組合せで返る行を予測する。</li>
+          <li>会員ごとの最新日時と一致する行を全て出す。</li>
+          <li>日時と履歴IDで最新の1行を選ぶ。</li>
+          <li>未利用者も含め全会員を帳票に残す。</li>
+        </ol>
+        <div data-practice></div>
+        <p class="sources"><a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/nl10bi0000009lh8-att/2025r07a_ap_pm_qs.pdf">IPA 令和7年度秋期・午後問6</a></p>
+      </article>
       <article id="b-6-5" hidden>
         <h1 tabindex="-1">B-6-5　集計単位を決めて二重計上を防ぐ</h1>
         <p class="context">初見演習の目安は15〜20分です。</p>
@@ -3407,6 +3636,421 @@ LEFT JOIN 支出集計 AS e ON c.講座ID = e.講座ID</code></pre>
     <p>入金集計はAが2件・2,400円、Bが1件・3,000円。支出集計はAが1,200円、Cが700円です。各集計は講座IDにつき最大1行なので、明細同士の組合せは生じません。</p>
     <div class="table-wrap"><table><thead><tr><th>講座</th><th>入金件数</th><th>収入合計</th><th>支出合計</th><th>差引額</th></tr></thead><tbody><tr><td>A</td><td>2</td><td>2,400</td><td>1,200</td><td>1,200</td></tr><tr><td>B</td><td>1</td><td>3,000</td><td>0</td><td>3,000</td></tr><tr><td>C</td><td>0</td><td>0</td><td>700</td><td>−700</td></tr><tr><td>D</td><td>0</td><td>0</td><td>0</td><td>0</td></tr></tbody></table></div>
   </template>
+  <template id="b-6-6-exists-question">
+    <div class="table-wrap" tabindex="0"><pre><code>SELECT m.会員ID
+FROM 会員 AS m
+WHERE EXISTS (
+  SELECT 1 FROM 利用履歴 AS h
+  WHERE ［ア］
+)</code></pre></div>
+  </template>
+  <template id="b-6-6-exists-answer">
+    <div class="table-wrap" tabindex="0"><pre><code>SELECT m.会員ID
+FROM 会員 AS m
+WHERE EXISTS (
+  SELECT 1 FROM 利用履歴 AS h
+  WHERE h.会員ID = m.会員ID AND h.状態 = '完了'
+)</code></pre></div>
+    <p>EXISTSはA・B、NOT EXISTSはC・Dです。相関条件を外すと会員に関係なく完了行が見つかるため、NOT EXISTSでは誰も残りません。</p>
+  </template>
+  <template id="b-6-6-null-answer">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="NOT INの判定"><table>
+          <thead><tr><th scope="col">会員</th><th scope="col">完了行の会員IDとの比較</th><th scope="col">NOT IN</th></tr></thead>
+          <tbody>
+            <tr><td>A・B</td><td>一致あり</td><td>FALSE</td></tr>
+            <tr><td>C・D</td><td>一致なし、NULLとの比較あり</td><td>UNKNOWN</td></tr>
+          </tbody>
+        </table></div>
+    <p>WHEREを通るのはTRUEだけです。NOT EXISTSは非会員の行を会員IDの一致条件で除外します。</p>
+  </template>
+  <template id="b-6-6-max-question">
+    <div class="table-wrap" tabindex="0"><pre><code>SELECT m.会員ID, h.履歴ID
+FROM 会員 AS m
+JOIN 利用履歴 AS h ON m.会員ID = h.会員ID
+WHERE ［イ］
+  AND h.利用日時 = (
+    SELECT MAX(［ウ］)
+    FROM 利用履歴 AS x
+    WHERE ［エ］ AND ［オ］
+  )</code></pre></div>
+  </template>
+  <template id="b-6-6-max-answer">
+    <div class="table-wrap" tabindex="0"><pre><code>SELECT m.会員ID, h.履歴ID
+FROM 会員 AS m
+JOIN 利用履歴 AS h ON m.会員ID = h.会員ID
+WHERE h.状態 = '完了'
+  AND h.利用日時 = (
+    SELECT MAX(x.利用日時)
+    FROM 利用履歴 AS x
+    WHERE x.会員ID = h.会員ID AND x.状態 = '完了'
+  )</code></pre></div>
+    <p>Aの最新日時は6月4日10時で、12と13の両方が一致します。Bは14です。</p>
+  </template>
+  <template id="b-6-6-latest-question">
+    <div class="table-wrap" tabindex="0"><pre><code>SELECT m.会員ID, h.履歴ID
+FROM 会員 AS m
+JOIN 利用履歴 AS h ON m.会員ID = h.会員ID
+WHERE h.状態 = '完了'
+  AND NOT EXISTS (
+    SELECT 1 FROM 利用履歴 AS x
+    WHERE ［カ］ AND ［キ］
+      AND （［ク］ OR ［ケ］）
+  )</code></pre></div>
+  </template>
+  <template id="b-6-6-latest-answer">
+    <div class="table-wrap" tabindex="0"><pre><code>SELECT m.会員ID, h.履歴ID
+FROM 会員 AS m
+JOIN 利用履歴 AS h ON m.会員ID = h.会員ID
+WHERE h.状態 = '完了'
+  AND NOT EXISTS (
+    SELECT 1 FROM 利用履歴 AS x
+    WHERE x.会員ID = h.会員ID AND x.状態 = '完了'
+      AND (x.利用日時 &gt; h.利用日時
+        OR (x.利用日時 = h.利用日時 AND x.履歴ID &gt; h.履歴ID))
+  )</code></pre></div>
+    <p>ORの両側に同じ会員・完了の条件を適用します。Aの6月2日の完了行を履歴ID 20で追加しても、日時が早いためAの最新は13です。</p>
+  </template>
+  <template id="b-6-6-report-answer">
+    <div class="table-wrap" tabindex="0"><pre><code>WITH 最新 AS (
+  SELECT m.会員ID, h.履歴ID
+  FROM 会員 AS m
+  JOIN 利用履歴 AS h ON m.会員ID = h.会員ID
+  WHERE h.状態 = '完了'
+    AND NOT EXISTS (
+      SELECT 1 FROM 利用履歴 AS x
+      WHERE x.会員ID = h.会員ID AND x.状態 = '完了'
+        AND (x.利用日時 &gt; h.利用日時
+          OR (x.利用日時 = h.利用日時 AND x.履歴ID &gt; h.履歴ID))
+    )
+)
+SELECT m.会員ID, r.履歴ID
+FROM 会員 AS m
+LEFT JOIN 最新 AS r ON m.会員ID = r.会員ID</code></pre></div>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="帳票の結果"><table>
+          <thead><tr><th scope="col">会員ID</th><th scope="col">履歴ID</th></tr></thead>
+          <tbody>
+            <tr><td>A</td><td>13</td></tr>
+            <tr><td>B</td><td>14</td></tr>
+            <tr><td>C</td><td>NULL</td></tr>
+            <tr><td>D</td><td>NULL</td></tr>
+          </tbody>
+        </table></div>
+    <p>同時刻の履歴を全て残す第3問の結果を結合すると、Aが2行になります。</p>
+  </template>
+  <template id="b-6-7-insert-answer">
+    <div class="table-wrap" tabindex="0"><pre><code>INSERT INTO 引当記録 (申請ID, 資材ID, 棚ID, 引当数)
+VALUES (:申請ID, :資材ID, :棚ID, :申請数)</code></pre></div>
+  </template>
+  <template id="b-6-7-update-question">
+    <div class="table-wrap" tabindex="0"><pre><code>UPDATE 在庫
+SET 引当可能数 = ［ア］
+WHERE ［イ］</code></pre></div>
+  </template>
+  <template id="b-6-7-update-answer">
+    <div class="table-wrap" tabindex="0"><pre><code>UPDATE 在庫
+SET 引当可能数 = 引当可能数 - :申請数
+WHERE 資材ID = :資材ID AND 棚ID = :棚ID
+  AND 引当可能数 &gt;= :申請数</code></pre></div><div class="table-wrap" tabindex="0" role="region" aria-label="更新結果"><table>
+    <thead><tr><th scope="col">申請</th><th scope="col">引当可能数</th><th scope="col">申請数</th><th scope="col">更新件数</th></tr></thead>
+    <tbody>
+      <tr><td>R101</td><td>6</td><td>4</td><td>1</td></tr>
+      <tr><td>R102</td><td>8</td><td>9</td><td>0</td></tr>
+    </tbody>
+  </table></div>
+  </template>
+  <template id="b-6-7-rollback-answer">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="処理途中の状態"><table>
+    <thead><tr><th scope="col">時点</th><th scope="col">M01・S1の引当可能数</th><th scope="col">引当記録</th><th scope="col">処理待ちR101</th></tr></thead>
+    <tbody>
+      <tr><td>開始前</td><td>6</td><td>既存1件</td><td>あり</td></tr>
+      <tr><td>UPDATE直後</td><td>2（未確定）</td><td>既存1件</td><td>あり</td></tr>
+      <tr><td>INSERT失敗時</td><td>2（未確定の変更）</td><td>既存1件</td><td>あり</td></tr>
+      <tr><td>ROLLBACK直後</td><td>6</td><td>既存1件</td><td>あり</td></tr>
+    </tbody>
+  </table></div>
+  </template>
+  <template id="b-6-7-delete-question">
+    <div class="table-wrap" tabindex="0"><pre><code>DELETE FROM 処理待ち申請
+WHERE ［ウ］</code></pre></div>
+  </template>
+  <template id="b-6-7-delete-answer">
+    <div class="table-wrap" tabindex="0"><pre><code>DELETE FROM 処理待ち申請
+WHERE 申請ID = :申請ID</code></pre></div><p>削除件数がちょうど1件であることを確認し、三つの変更がすべて成功してからCOMMITします。</p>
+  </template>
+  <template id="b-6-8-lost-answer">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="残数と更新の順序"><table>
+      <thead><tr><th scope="col">時点</th><th scope="col">T1</th><th scope="col">T2</th><th scope="col">確定済みの残数</th></tr></thead>
+      <tbody>
+        <tr><td>①</td><td>5を読む</td><td>—</td><td>5</td></tr>
+        <tr><td>②</td><td>—</td><td>5を読む</td><td>5</td></tr>
+        <tr><td>③</td><td>2枠を予約し3で確定</td><td>—</td><td>3</td></tr>
+        <tr><td>④</td><td>—</td><td>古い5から計算して4で確定</td><td>4</td></tr>
+      </tbody>
+    </table></div>
+  </template>
+  <template id="b-6-8-update-question">
+    <pre><code>UPDATE 空き枠
+SET 残数 = ［ア］
+WHERE 枠ID = :枠ID AND ［イ］</code></pre>
+  </template>
+  <template id="b-6-8-update-answer">
+    <pre><code>UPDATE 空き枠
+SET 残数 = 残数 - :予約数
+WHERE 枠ID = :枠ID AND 残数 &gt;= :予約数</code></pre>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="残り1枠の処理"><table>
+      <thead><tr><th scope="col">時点</th><th scope="col">T1</th><th scope="col">T2</th><th scope="col">確定済みの残数</th></tr></thead>
+      <tbody>
+        <tr><td>更新直後</td><td>Aを保持、未確定値0</td><td>Aのロックを待つ</td><td>1</td></tr>
+        <tr><td>T1確定後</td><td>予約成立、ロック解放</td><td>条件を再評価し更新0件</td><td>0</td></tr>
+        <tr><td>T2終了後</td><td>—</td><td>予約を作らずROLLBACK</td><td>0</td></tr>
+      </tbody>
+    </table></div>
+    <p>T1がROLLBACKした場合、残数は1のままです。T2は条件を満たすので1件を更新し、予約明細を登録して確定できます。</p>
+  </template>
+  <template id="b-6-8-deadlock-question">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="操作の順序"><table>
+      <thead><tr><th scope="col">時点</th><th scope="col">T1</th><th scope="col">T2</th></tr></thead>
+      <tbody>
+        <tr><td>①</td><td>Aを1減らす</td><td>—</td></tr>
+        <tr><td>②</td><td>—</td><td>Bを1減らす</td></tr>
+        <tr><td>③</td><td>Bを1減らそうとする</td><td>—</td></tr>
+        <tr><td>④</td><td>—</td><td>Aを1減らそうとする</td></tr>
+      </tbody>
+    </table></div>
+  </template>
+  <template id="b-6-8-deadlock-answer">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="保持しているロックと待ち先"><table>
+      <thead><tr><th scope="col">時点</th><th scope="col">T1</th><th scope="col">T2</th><th scope="col">待ち関係</th></tr></thead>
+      <tbody>
+        <tr><td>①</td><td>Aを保持</td><td>—</td><td>なし</td></tr>
+        <tr><td>②</td><td>Aを保持</td><td>Bを保持</td><td>なし</td></tr>
+        <tr><td>③</td><td>Aを保持、B待ち</td><td>Bを保持</td><td>T1 → T2</td></tr>
+        <tr><td>④</td><td>Aを保持、B待ち</td><td>Bを保持、A待ち</td><td>T1 → T2 → T1</td></tr>
+        <tr><td>T2取消後</td><td>AとBを保持</td><td>Bを解放</td><td>なし</td></tr>
+      </tbody>
+    </table></div><p>①〜④の確定済み残数はAが5、Bが4です。T2を取り消すと、T1はBを4から3に更新して両枠の予約を確定できます。</p>
+  </template>
+  <template id="b-6-8-order-answer">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="取得順をそろえた場合"><table>
+      <thead><tr><th scope="col">時点</th><th scope="col">T1</th><th scope="col">T2</th><th scope="col">確定済みの残数（A、B）</th></tr></thead>
+      <tbody>
+        <tr><td>T2がAを取得</td><td>A待ち</td><td>Aを保持</td><td>（5、4）</td></tr>
+        <tr><td>T2がBも取得して確定</td><td>Aを取得できる</td><td>両ロックを解放</td><td>（4、3）</td></tr>
+        <tr><td>T1も確定</td><td>A→Bの順で処理し解放</td><td>—</td><td>（3、2）</td></tr>
+      </tbody>
+    </table></div>
+  </template>
+  <template id="b-6-9-ranges-answer">
+    <p>次は同じサンプル行を索引の列順で並べたものです。Q1では、I1は施設Aの6月だけを読み、I2は6月の範囲を読んでから施設Aを残します。</p>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="列順と読取り範囲"><table>
+          <thead><tr><th scope="col">索引</th><th scope="col">並び順の例</th><th scope="col">表本体を参照する行</th></tr></thead>
+          <tbody>
+            <tr><td>I1</td><td>A・5月31日 → <strong>A・6月10日</strong> → A・7月1日 → B・6月8日 → B・6月12日</td><td>A・6月10日</td></tr>
+            <tr><td>I2</td><td>A・5月31日 → <strong>B・6月8日 → A・6月10日 → B・6月12日</strong> → A・7月1日</td><td>A・6月10日</td></tr>
+          </tbody>
+        </table></div>
+    <p>太字が索引から読む範囲です。I2のBの2行は索引内で除外するため、表本体の読取行数はI1と同じです。</p>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="Q1の走査範囲と費用"><table>
+          <thead><tr><th scope="col">索引</th><th scope="col">読む範囲</th><th scope="col">索引件数</th><th scope="col">表参照行数</th><th scope="col">費用</th></tr></thead>
+          <tbody>
+            <tr><td>I1</td><td>施設Aの6月</td><td>40</td><td>40</td><td>200</td></tr>
+            <tr><td>I2</td><td>全施設の6月</td><td>4,000</td><td>40</td><td>4,160</td></tr>
+          </tbody>
+        </table></div>
+  </template>
+  <template id="b-6-9-cost-answer">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="対象期間を広げた場合の比較"><table>
+          <thead><tr><th scope="col">計画</th><th scope="col">索引件数</th><th scope="col">表の読取行数</th><th scope="col">費用</th></tr></thead>
+          <tbody>
+            <tr><td>I2</td><td>70,000</td><td>70,000</td><td>350,000</td></tr>
+            <tr><td>全表走査</td><td>0</td><td>100,000</td><td>100,000</td></tr>
+          </tbody>
+        </table></div>
+  </template>
+  <template id="b-6-10-media-answer">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="媒体障害の復旧"><table>
+      <thead><tr><th scope="col">操作</th><th scope="col">A</th><th scope="col">B</th><th scope="col">C</th><th scope="col">D</th></tr></thead>
+      <tbody>
+        <tr><td>バックアップから開始</td><td>100</td><td>50</td><td>30</td><td>20</td></tr>
+        <tr><td>1を再実行</td><td>90</td><td>50</td><td>30</td><td>20</td></tr>
+        <tr><td>3を再実行</td><td>90</td><td>70</td><td>30</td><td>20</td></tr>
+        <tr><td>6を再実行</td><td>90</td><td>70</td><td>35</td><td>20</td></tr>
+        <tr><td>10を再実行</td><td>90</td><td>70</td><td>40</td><td>20</td></tr>
+      </tbody>
+    </table></div>
+  </template>
+  <template id="b-6-10-system-answer">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="システム障害の復旧"><table>
+      <thead><tr><th scope="col">操作</th><th scope="col">A</th><th scope="col">B</th><th scope="col">C</th><th scope="col">D</th></tr></thead>
+      <tbody>
+        <tr><td>チェックポイントから開始</td><td>90</td><td>70</td><td>30</td><td>15</td></tr>
+        <tr><td>6を再実行</td><td>90</td><td>70</td><td>35</td><td>15</td></tr>
+        <tr><td>8を再実行</td><td>80</td><td>70</td><td>35</td><td>15</td></tr>
+        <tr><td>9を再実行</td><td>72</td><td>70</td><td>35</td><td>15</td></tr>
+        <tr><td>10を再実行</td><td>72</td><td>70</td><td>40</td><td>15</td></tr>
+        <tr><td>9を取消し</td><td>80</td><td>70</td><td>40</td><td>15</td></tr>
+        <tr><td>8を取消し</td><td>90</td><td>70</td><td>40</td><td>15</td></tr>
+        <tr><td>4を取消し</td><td>90</td><td>70</td><td>40</td><td>20</td></tr>
+      </tbody>
+    </table></div>
+  </template>
+  <template id="b-6-10-order-answer">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="Aの取消し順と数量"><table>
+      <thead><tr><th scope="col">順序</th><th scope="col">最初の値</th><th scope="col">1回目の取消し後</th><th scope="col">2回目の取消し後</th></tr></thead>
+      <tbody>
+        <tr><td>9 → 8</td><td>72</td><td>80</td><td>90</td></tr>
+        <tr><td>8 → 9</td><td>72</td><td>90</td><td>80</td></tr>
+      </tbody>
+    </table></div>
+  </template>
+  <template id="b-6-11-keys-answer">
+    <p>点検予定（<u>拠点コード</u>、<u>機器番号</u>、<u>点検月</u>、適用版番号）<br>
+    点検試行（<u>拠点コード</u>、<u>機器番号</u>、<u>点検月</u>、<u>試行番号</u>、試行日時、状態、誤差）</p>
+    <p>下線の列を組み合わせて主キーにします。試行の先頭3列は予定への外部キーも兼ねます。</p>
+    <p>点検予定 1 ── 0..多 点検試行</p>
+  </template>
+  <template id="b-6-11-schema-answer">
+    <p>下線の列の組が各表の主キーです。破線は外部キーだけの列で、参照先と参照に使う列の組は下に示します。</p>
+    <ul>
+      <li>機器（<u>拠点コード</u>、<u>機器番号</u>）</li>
+      <li>基準版（<u>拠点コード</u>、<u>機器番号</u>、<u>版番号</u>、許容誤差）</li>
+      <li>点検予定（<u>拠点コード</u>、<u>機器番号</u>、<u>点検月</u>、<span style="text-decoration: underline dashed">適用版番号</span>）</li>
+      <li>点検試行（<u>拠点コード</u>、<u>機器番号</u>、<u>点検月</u>、<u>試行番号</u>、試行日時、状態、誤差）</li>
+    </ul>
+    <p>機器 1 ── 0..多 基準版<br>基準版 1 ── 0..多 点検予定<br>点検予定 1 ── 0..多 点検試行</p>
+    <ul>
+      <li>基準版の（拠点コード、機器番号）から機器の主キーを参照します。</li>
+      <li>予定の（拠点コード、機器番号、適用版番号）から基準版の主キーを参照します。</li>
+      <li>試行の（拠点コード、機器番号、点検月）から予定の主キーを参照します。</li>
+    </ul>
+    <p>A・01は適用版1の許容誤差は10 mVです。仮に誤差が9 mVなら、版1では適合、版2の8 mVでは超過になり、同じ測定値でも判定が変わります。</p>
+  </template>
+  <template id="b-6-11-count-question">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="SQL"><pre><code>SELECT 拠点コード, 機器番号, 点検月, 試行番号, 試行日時, 誤差
+FROM 点検試行
+WHERE ［オ］</code></pre></div>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="SQL"><pre><code>SELECT 拠点コード, 機器番号, 点検月, COUNT(*) AS 完了件数
+FROM 対象試行
+GROUP BY ［カ］</code></pre></div>
+  </template>
+  <template id="b-6-11-count-answer">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="SQL"><pre><code>SELECT 拠点コード, 機器番号, 点検月, 試行番号, 試行日時, 誤差
+FROM 点検試行
+WHERE 点検月 = :対象月 AND 状態 = '完了'
+  AND 試行日時 &gt;= :月初日時 AND 試行日時 &lt; :翌月初日時</code></pre></div>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="SQL"><pre><code>SELECT 拠点コード, 機器番号, 点検月, COUNT(*) AS 完了件数
+FROM 対象試行
+GROUP BY 拠点コード, 機器番号, 点検月</code></pre></div>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="対象試行と集計件数"><table>
+      <thead><tr><th scope="col">拠点</th><th scope="col">機器</th><th scope="col">対象試行番号</th><th scope="col">完了件数</th></tr></thead>
+      <tbody>
+        <tr><td>A</td><td>01</td><td>1、2</td><td>2</td></tr>
+        <tr><td>B</td><td>01</td><td>1</td><td>1</td></tr>
+      </tbody>
+    </table></div>
+  </template>
+  <template id="b-6-11-latest-question">
+    <p>対象試行は、帳票の点検月と日時の範囲に合う完了行です。</p>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="SQL"><pre><code>SELECT t.拠点コード, t.機器番号, t.点検月, t.試行番号, t.誤差
+FROM 対象試行 AS t
+WHERE NOT EXISTS (
+  SELECT 1 FROM 対象試行 AS x
+  WHERE ［キ］ AND ［ク］
+)</code></pre></div>
+  </template>
+  <template id="b-6-11-latest-answer">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="SQL"><pre><code>SELECT t.拠点コード, t.機器番号, t.点検月, t.試行番号, t.誤差
+FROM 対象試行 AS t
+WHERE NOT EXISTS (
+  SELECT 1 FROM 対象試行 AS x
+  WHERE x.拠点コード = t.拠点コード AND x.機器番号 = t.機器番号
+    AND x.点検月 = t.点検月
+    AND (x.試行日時 &gt; t.試行日時
+      OR (x.試行日時 = t.試行日時 AND x.試行番号 &gt; t.試行番号))
+)</code></pre></div>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="最新試行"><table>
+      <thead><tr><th scope="col">拠点</th><th scope="col">機器</th><th scope="col">試行番号</th><th scope="col">誤差</th></tr></thead>
+      <tbody>
+        <tr><td>A</td><td>01</td><td>2</td><td>9</td></tr>
+        <tr><td>B</td><td>01</td><td>1</td><td>14</td></tr>
+      </tbody>
+    </table></div>
+  </template>
+  <template id="b-6-11-report-question">
+    <p>件数と最新は、それぞれ「拠点・機器・点検月」ごとに最大1行です。件数には完了件数、最新には試行番号と誤差があります。</p>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="SQL"><pre><code>SELECT p.拠点コード, p.機器番号, ［ケ］ AS 完了件数,
+       r.試行番号, r.誤差,
+       CASE WHEN ［コ］ THEN '未実施'
+            WHEN ［サ］ THEN '適合'
+            ELSE '超過' END AS 判定
+FROM 点検予定 AS p
+［シ］ 基準版 AS v ON ［ス］
+［セ］ 件数 AS c ON ［ソ］
+［タ］ 最新 AS r ON ［チ］
+WHERE p.点検月 = :対象月</code></pre></div>
+  </template>
+  <template id="b-6-11-report-answer">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="6月帳票の結果"><table>
+      <thead><tr><th scope="col">拠点</th><th scope="col">機器</th><th scope="col">完了件数</th><th scope="col">試行番号</th><th scope="col">誤差</th><th scope="col">判定</th></tr></thead>
+      <tbody>
+        <tr><td>A</td><td>01</td><td>2</td><td>2</td><td>9</td><td>適合</td></tr>
+        <tr><td>A</td><td>02</td><td>0</td><td>NULL</td><td>NULL</td><td>未実施</td></tr>
+        <tr><td>B</td><td>01</td><td>1</td><td>1</td><td>14</td><td>適合</td></tr>
+        <tr><td>B</td><td>02</td><td>0</td><td>NULL</td><td>NULL</td><td>未実施</td></tr>
+      </tbody>
+    </table></div>
+    <details><summary>完成SQLを表示</summary>
+      <div class="table-wrap" tabindex="0" role="region" aria-label="SQL"><pre><code>WITH 対象試行 AS (
+  SELECT 拠点コード, 機器番号, 点検月, 試行番号, 試行日時, 誤差
+  FROM 点検試行
+  WHERE 点検月 = :対象月 AND 状態 = '完了'
+    AND 試行日時 &gt;= :月初日時 AND 試行日時 &lt; :翌月初日時
+), 件数 AS (
+  SELECT 拠点コード, 機器番号, 点検月, COUNT(*) AS 完了件数
+  FROM 対象試行
+  GROUP BY 拠点コード, 機器番号, 点検月
+), 最新 AS (
+  SELECT t.拠点コード, t.機器番号, t.点検月, t.試行番号, t.誤差
+  FROM 対象試行 AS t
+  WHERE NOT EXISTS (
+    SELECT 1 FROM 対象試行 AS x
+    WHERE x.拠点コード = t.拠点コード AND x.機器番号 = t.機器番号
+      AND x.点検月 = t.点検月
+      AND (x.試行日時 &gt; t.試行日時
+        OR (x.試行日時 = t.試行日時 AND x.試行番号 &gt; t.試行番号))
+  )
+)
+SELECT p.拠点コード, p.機器番号, COALESCE(c.完了件数, 0) AS 完了件数,
+       r.試行番号, r.誤差,
+       CASE WHEN r.試行番号 IS NULL THEN '未実施'
+            WHEN r.誤差 &lt;= v.許容誤差 THEN '適合'
+            ELSE '超過' END AS 判定
+FROM 点検予定 AS p
+JOIN 基準版 AS v ON p.拠点コード = v.拠点コード
+  AND p.機器番号 = v.機器番号 AND p.適用版番号 = v.版番号
+LEFT JOIN 件数 AS c ON p.拠点コード = c.拠点コード
+  AND p.機器番号 = c.機器番号 AND p.点検月 = c.点検月
+LEFT JOIN 最新 AS r ON p.拠点コード = r.拠点コード
+  AND p.機器番号 = r.機器番号 AND p.点検月 = r.点検月
+WHERE p.点検月 = :対象月</code></pre></div>
+    </details>
+  </template>
+  <template id="b-6-11-mix-answer">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="別拠点の試行が混入した場合"><table>
+      <thead><tr><th scope="col">予定</th><th scope="col">試行の出所</th><th scope="col">試行番号</th><th scope="col">誤差</th><th scope="col">予定の許容誤差</th><th scope="col">判定</th></tr></thead>
+      <tbody>
+        <tr><td>A・01</td><td>A・01</td><td>2</td><td>9</td><td>10</td><td>適合</td></tr>
+        <tr><td>A・01</td><td>B・01</td><td>1</td><td>14</td><td>10</td><td>超過</td></tr>
+        <tr><td>B・01</td><td>A・01</td><td>2</td><td>9</td><td>14</td><td>適合</td></tr>
+        <tr><td>B・01</td><td>B・01</td><td>1</td><td>14</td><td>14</td><td>適合</td></tr>
+      </tbody>
+    </table></div><p>機器02の2行も残るため、帳票は合計6行です。件数側の結合条件は変更していないので、完了件数は各予定の元の値が繰り返されます。</p>
+  </template>
+  <template id="b-6-11-mix-question">
+    <p>件数と基準版の結合条件は第5問のままです。最新試行だけ、次の条件で結合します。</p>
+    <div class="table-wrap" tabindex="0"><pre><code>LEFT JOIN 最新 AS r ON p.機器番号 = r.機器番号
+  AND p.点検月 = r.点検月</code></pre></div>
+  </template>
   <template id="practice-template">
     <h2>確認問題</h2>
     <p>1問ずつ解答と解説を確認し、最後に正答数を表示します。</p>
@@ -3475,7 +4119,7 @@ LEFT JOIN 支出集計 AS e ON c.講座ID = e.講座ID</code></pre>
   <script>
     const byId = (id) => document.getElementById(id);
     const lessons = Array.from(document.querySelectorAll("[data-lesson]"));
-    const subjectBLessons = ["b-1-1", "b-1-2", "b-1-3", "b-1-4", "b-1-5", "b-3-1", "b-3-2", "b-3-3", "b-3-4", "b-3-5", "b-3-6", "b-3-7", "b-3-8", "b-6-1", "b-6-2", "b-6-3", "b-6-4", "b-6-5", "b-7-1", "b-7-2", "b-7-3", "b-7-4", "b-7-5", "b-7-6", "b-7-7", "b-7-8"].map(byId);
+    const subjectBLessons = ["b-1-1", "b-1-2", "b-1-3", "b-1-4", "b-1-5", "b-3-1", "b-3-2", "b-3-3", "b-3-4", "b-3-5", "b-3-6", "b-3-7", "b-3-8", "b-6-1", "b-6-2", "b-6-3", "b-6-4", "b-6-5", "b-6-6", "b-6-7", "b-6-8", "b-6-9", "b-6-10", "b-6-11", "b-7-1", "b-7-2", "b-7-3", "b-7-4", "b-7-5", "b-7-6", "b-7-7", "b-7-8"].map(byId);
     const sections = [byId("welcome"), byId("intro"), byId("subject-b"), ...subjectBLessons, ...lessons];
     const toc = byId("toc");
     const subjectAItems = Array.from(toc.children);
@@ -3511,6 +4155,12 @@ LEFT JOIN 支出集計 AS e ON c.講座ID = e.講座ID</code></pre>
         <a href="#b-6-3">B-6-3　業務の変更を表と制約に反映する</a>
         <a href="#b-6-4">B-6-4　結合後に残る行と増える行を読む</a>
         <a href="#b-6-5">B-6-5　集計単位を決めて二重計上を防ぐ</a>
+        <a href="#b-6-6">B-6-6　存在・未該当・最新をSQLで取り出す</a>
+        <a href="#b-6-7">B-6-7　複数の更新を一つの業務処理にまとめる</a>
+        <a href="#b-6-8">B-6-8　同時実行で起きる不整合を防ぐ</a>
+        <a href="#b-6-9">B-6-9　遅い問合せを実行計画と索引から見直す</a>
+        <a href="#b-6-10">B-6-10　ログから障害後の復旧状態を求める</a>
+        <a href="#b-6-11">B-6-11　総合演習：業務変更をE-R図・SQL・帳票に反映する</a>
       </details>
       <details>
         <summary>B-7　組込みシステム開発</summary>
@@ -3824,6 +4474,406 @@ LEFT JOIN 支出集計 AS e ON c.講座ID = e.講座ID</code></pre>
     });
 
     const questionSets = {
+      "b-6-11": [
+        {
+          "prompt": "1　E-R図の［イ］〜［エ］を埋めてください。点検予定と点検試行の主キー、試行から予定を参照する外部キーも答えてください。",
+          "thinkFirst": true,
+          "options": [
+            "予定は（機器番号、点検月）、試行は試行番号が主キー。試行の機器番号で予定を参照し、両側の件数は1。",
+            "予定の主キーは（拠点コード、機器番号、点検月）。試行の主キーはその3列と試行番号の組で、先頭3列は予定への外部キー。点検予定 1 ── 0..多 点検試行。",
+            "予定の主キーは（拠点コード、機器番号、適用版番号）。試行は（機器番号、試行番号）が主キー。点検予定 0..多 ── 1 点検試行。"
+          ],
+          "answer": 1,
+          "explanation": "機器番号は拠点をまたいで重複します。さらに同じ機器の別の月を区別し、各月の予定の中で試行番号を使います。",
+          "solutionId": "b-6-11-keys-answer"
+        },
+        {
+          "prompt": "2　［ア］を埋め、基準版の主キーと、予定から適用版を参照する外部キーを答えてください。現行版を読み直さず予定に適用版を保存する理由は40字以内で説明してください。",
+          "thinkFirst": true,
+          "options": [
+            "基準版は版番号だけを主キーにし、予定は適用版番号だけで参照する。版番号は全機器で一意だから。",
+            "基準版の主キーは（拠点コード、機器番号）。予定はこの2列で参照する。改定前の判定も最新の許容誤差で見直すため。",
+            "基準版の主キーは（拠点コード、機器番号、版番号）。予定は（拠点コード、機器番号、適用版番号）で参照する。改定後も、予定登録時に選んだ許容誤差で判定できるようにするため。"
+          ],
+          "answer": 2,
+          "explanation": "A・01の6月予定には版1が保存されています。後から同じ機器に版2を追加しても、参照先は版1のままです。",
+          "solutionId": "b-6-11-schema-answer",
+          "noteLimitPart": "理由"
+        },
+        {
+          "prompt": "3　対象試行を選ぶ［オ］と、完了件数を求める［カ］を埋めてください。集計表に入る予定と件数も答えてください。",
+          "thinkFirst": true,
+          "options": [
+            "オは点検月＝対象月、状態＝完了、試行日時が月初以上・翌月初未満。カは拠点コード、機器番号、点検月。A・01が2件、B・01が1件。",
+            "オは点検月＝対象月、状態＝完了、試行日時が月初以上・翌月初以下。カは拠点コード、機器番号、点検月。A・01が3件、B・01が1件。",
+            "オは点検月＝対象月だけ。カは機器番号。01が5件、02が1件。"
+          ],
+          "answer": 0,
+          "explanation": "6月1日0時のB・01は含み、7月1日0時のA・01の試行4は除きます。取消だけの予定と試行がない予定は、この集計表には出ません。",
+          "solutionId": "b-6-11-count-answer",
+          "contextId": "b-6-11-count-question"
+        },
+        {
+          "prompt": "4　対象試行から予定ごとの最新を1行選びます。比較範囲の［キ］と、候補より優先される行の条件［ク］を補い、残る試行番号を答えてください。",
+          "thinkFirst": true,
+          "options": [
+            "キは点検月が同じこと。クは試行番号がより大きいこと。A・01の2だけが残る。",
+            "キは拠点・機器・点検月が同じこと。クは日時が後、または同時刻で試行番号が大きいこと。A・01は2、B・01は1。",
+            "キは拠点・機器・点検月が同じこと。クは日時が後であること。A・01は1と2、B・01は1。"
+          ],
+          "answer": 1,
+          "explanation": "同じ予定の対象試行だけを比べます。日時だけで選ぶとA・01の同時刻の2行が残るため、同時刻の優先条件も必要です。",
+          "solutionId": "b-6-11-latest-answer",
+          "contextId": "b-6-11-latest-question"
+        },
+        {
+          "prompt": "5　［ケ］〜［チ］を埋めて帳票SQLを完成させてください。（拠点、機器、完了件数、試行番号、誤差、判定）を全て答えてください。行の順序は問いません。",
+          "thinkFirst": true,
+          "options": [
+            "全て内部結合し、件数と最新は拠点・機器・点検月で結ぶ。A・01（2、2、9、適合）、B・01（1、1、14、適合）の2行。",
+            "件数・最新は左外部結合し、それぞれ予定の主キーの全列で結ぶ。基準は機器ごとに現行版を使い、A・01（2、2、9、超過）、B・01（1、1、14、適合）、A・02とB・02は未実施。",
+            "基準版は適用版への外部キーの全列で内部結合。件数と最新は予定の主キーの全列で左外部結合。件数はNULLを0にし、試行番号がNULLなら未実施、誤差が許容誤差以下なら適合。A・01（2、2、9、適合）、B・01（1、1、14、適合）、A・02とB・02はともに（0、NULL、NULL、未実施）。"
+          ],
+          "answer": 2,
+          "explanation": "実績がなくても予定は残します。A・01は適用版1の10 mVを使い、B・01は誤差が許容誤差の14 mVと等しいため適合です。",
+          "solutionId": "b-6-11-report-answer",
+          "contextId": "b-6-11-report-question"
+        },
+        {
+          "prompt": "6　第5問の帳票SQLで、最新試行を結ぶONから拠点コードの一致だけを外します。A・01の予定に混入する試行と帳票全体の行数を答えてください。混入理由は35字以内で説明してください。",
+          "thinkFirst": true,
+          "options": [
+            "B・01の試行1がA・01に混入し、帳票は6行。機器番号が拠点ごとに付くため、別拠点の同じ番号も一致するから。",
+            "B・01の試行1がA・01に混入するが、予定の主キーにより帳票は4行のまま。",
+            "A・01に混入する試行はない。点検月の一致があるので別拠点の機器は区別できる。"
+          ],
+          "answer": 0,
+          "explanation": "混入した誤差14 mVはA・01の許容誤差10 mVで判定され、誤った「超過」が出ます。B・01にもA・01の試行が混入するため、正しい4行に2行が加わります。",
+          "solutionId": "b-6-11-mix-answer",
+          "contextId": "b-6-11-mix-question",
+          "noteLimitPart": "理由"
+        }
+      ],
+      "b-6-10": [
+        {
+          "prompt": "1　取引を、チェックポイントまでに確定、チェックポイントの後から障害までに確定、障害時点で未確定の三つに分けてください。",
+          "thinkFirst": true,
+          "options": [
+            "順にT1、T2・T4、T3・T5。",
+            "順にT1・T2・T5、T4、T3。",
+            "順にT1、T2・T3・T4、T5。"
+          ],
+          "answer": 0,
+          "explanation": "確定の根拠はCOMMITです。T2はチェックポイント前にも更新していますが、確定は後です。T5の変更は書き出された表に含まれていても、確定していません。"
+        },
+        {
+          "prompt": "2　媒体障害で全件バックアップとログ1〜11が使えます。再実行する更新ログの番号を順に挙げ、復旧後の数量を（A、B、C、D）の順で答えてください。",
+          "thinkFirst": true,
+          "options": [
+            "6、10。（100、50、40、20）。",
+            "1、3、6、10。（90、70、40、20）。",
+            "1、3、4、6、8、9、10。（72、70、40、15）。"
+          ],
+          "answer": 1,
+          "explanation": "T1・T2・T4は確定しています。全件バックアップはログ1より前なので、チェックポイント前の更新1と3も反映します。",
+          "solutionId": "b-6-10-media-answer"
+        },
+        {
+          "prompt": "3　システム障害でチェックポイントの表から始めます。再実行する更新ログの番号と直後の数量、取り消す更新ログの番号と最終数量を順に答えてください。数量は（A、B、C、D）の順です。",
+          "thinkFirst": true,
+          "options": [
+            "再実行は6、10で（90、70、40、15）。取消しは4で（90、70、40、20）。",
+            "再実行は6、8、9、10で（72、70、40、15）。取消しは4、8、9で（80、70、40、20）。",
+            "再実行は6、8、9、10で（72、70、40、15）。取消しは9、8、4で（90、70、40、20）。"
+          ],
+          "answer": 2,
+          "explanation": "この回復手順ではチェックポイント後の全更新を再実行します。チェックポイントにはT5の未確定更新も含まれるため、取消しではログ4まで参照します。",
+          "solutionId": "b-6-10-system-answer"
+        },
+        {
+          "prompt": "4　第3問でT3の更新を8、9の順で取り消すとAはいくつになりますか。逆順にする理由は40字以内で説明してください。",
+          "thinkFirst": true,
+          "options": [
+            "90になる。番号順なら元の状態に戻せるため。",
+            "80になる。後の更新から戻さないと、途中の値で元の値を上書きするため。",
+            "72のまま。再実行した更新を取り消せないため。"
+          ],
+          "answer": 1,
+          "explanation": "ログ8の更新前は90、ログ9の更新前は80です。8から戻すと、最後に80が書き戻されます。",
+          "solutionId": "b-6-10-order-answer",
+          "noteLimitPart": "理由"
+        },
+        {
+          "prompt": "5　媒体障害でログ7が破損し、検証できる連続範囲は1〜6です。ログ8〜11の断片は読めます。演習の規則で復旧できる数量を（A、B、C、D）の順で答えてください。T2のBを70にできない理由は40字以内で説明してください。",
+          "thinkFirst": true,
+          "options": [
+            "（90、70、35、20）。T2の更新ログが全てあれば確定扱いできるため。",
+            "（90、50、40、20）。後半の断片からT4を適用できるため。",
+            "（90、50、30、20）。使える範囲にT2のCOMMITがなく、確定を確認できないため。"
+          ],
+          "answer": 2,
+          "explanation": "ログ1〜6でCOMMITを確認できる取引はT1だけです。欠落より後の断片をつなげず、連続範囲から確定を確認できた更新だけを適用します。",
+          "noteLimitPart": "理由"
+        }
+      ],
+      "b-6-9": [
+        {
+          "prompt": "1　現状のQ1で最も多くの行を読んでいる段階と、読み取る行数・返す行数を答えてください。",
+          "thinkFirst": true,
+          "options": [
+            "作業記録の全表走査で100,000行を読み、施設と期間が合う40行を返す。",
+            "主キー索引で施設Aを500行読み、40行を返す。",
+            "全表走査で40行を読み、100,000行を返す。"
+          ],
+          "answer": 0,
+          "explanation": "記録IDで絞る条件がなく、現状の計画では表本体の全行を確認します。"
+        },
+        {
+          "prompt": "2　Q1の実行計画の［ア］〜［エ］を埋め、I1・I2の費用と、優先する索引を答えてください。選ぶ理由は45字以内で説明してください。",
+          "thinkFirst": true,
+          "options": [
+            "I1は全施設の6月4,000件・費用4,160。I2は施設Aの6月40件・費用200なのでI2。",
+            "I1は施設Aの6月40件・費用200。I2は全施設の6月4,000件・費用4,160。I1を選ぶ。施設を先頭列で固定してから日時範囲を指定でき、読む索引の件数が少ないため。",
+            "I1・I2とも施設Aの6月40件・費用200。表参照が同じなので索引の読取りも同じ。"
+          ],
+          "answer": 1,
+          "explanation": "各計画とも所見を読むために40行を表から取得します。索引部分の費用が40単位と4,000単位で異なります。",
+          "solutionId": "b-6-9-ranges-answer",
+          "noteLimitPart": "理由"
+        },
+        {
+          "prompt": "3　Q2で6月の全施設の記録を出します。I2で読む索引の件数と費用を答えてください。I1では日時条件だけで一つの狭い範囲を取れない理由は35字以内で説明してください。",
+          "thinkFirst": true,
+          "options": [
+            "4,000件・20,000単位。日時は施設ごとに並び、同じ月の記録が索引内で離れるため。",
+            "40件・200単位。施設Aだけを読めば全施設の6月分が得られるため。",
+            "4,000件・4,000単位。I1もI2も日時が先頭に並ぶため。"
+          ],
+          "answer": 0,
+          "explanation": "Q2は施設を絞らないので6月の4,000件すべてが該当し、すべての所見を読むために表を参照します。I2なら日時の範囲を直接指定できます。",
+          "solutionId": "b-6-9-ranges-answer",
+          "noteLimitPart": "理由"
+        },
+        {
+          "prompt": "4　Q2の対象期間を広げると70,000行が該当しました。I2を使う場合と全表走査の費用を求め、このモデルで採る計画を答えてください。",
+          "thinkFirst": true,
+          "options": [
+            "I2は70,000単位、全表走査は100,000単位なのでI2。",
+            "I2は280,000単位、全表走査は400,000単位なのでI2。",
+            "I2は350,000単位、全表走査は100,000単位なので全表走査。"
+          ],
+          "answer": 2,
+          "explanation": "I2の費用は70,000＋4×70,000です。該当する割合が大きいと、表への個別参照の費用が積み上がります。",
+          "solutionId": "b-6-9-cost-answer"
+        },
+        {
+          "prompt": "5　Q1と短期間のQ2がともに頻繁になりました。I1に加えてI2も維持すると、行の追加と実施日時の変更でどんな処理が増えますか。採否を判断するための確認項目を二つ挙げてください。",
+          "thinkFirst": true,
+          "options": [
+            "追加ではI2にエントリを登録し、日時の変更ではI2の索引キーを更新する。Q2と日時変更の実行時間をそれぞれ追加前後で比べる。",
+            "I2に追加する処理だけが増える。確認するのは索引名と主キー名。",
+            "検索時だけI2を読み、追加も日時変更も処理は増えない。Q2の結果行数だけを確認する。"
+          ],
+          "answer": 0,
+          "explanation": "実施日時はI2の索引キーの一部です。検索がどのくらい短くなるかと、更新時の負担がどのくらい増えるかを両方確認します。"
+        }
+      ],
+      "b-6-8": [
+        {
+          "prompt": "1　枠Aの残数は5です。T1が2枠、T2が1枠を申し込み、両方が通常のSELECTで5を読みます。T1は5から計算した3を保存して予約を確定します。続いてT2は5から計算した4を保存して予約を確定します。最終残数と本来の残数を答え、差が生じた理由を35字以内で説明してください。",
+          "thinkFirst": true,
+          "options": [
+            "最終残数は4、本来は2。T2が古い残数から計算し、T1の更新を上書きしたため。",
+            "最終残数は3、本来は2。先に確定した値が後続の更新を防ぐため。",
+            "最終残数は2、本来も2。COMMIT時に二つの計算結果を合算するため。"
+          ],
+          "answer": 0,
+          "explanation": "両方の予約が記録されますが、T2が3を4で上書きします。このように先の更新結果が消えることを更新の消失といいます。",
+          "solutionId": "b-6-8-lost-answer",
+          "noteLimitPart": "理由"
+        },
+        {
+          "prompt": "2　枠Aの残数は1です。［ア］と［イ］を補ってください。T1とT2が1枠ずつ申し込み、T1のUPDATEが未確定の間にT2もUPDATEします。待つ操作、T1のCOMMIT後のT2の更新件数、最終残数、成立する予約を答えてください。",
+          "thinkFirst": true,
+          "options": [
+            "アは残数 - :予約数、イは残数 > :予約数。T1は更新0件、T2が成立し残数0。",
+            "アは残数 - :予約数、イは残数 >= :予約数。T2のUPDATEが待ち、T1の確定後は更新0件。残数0でT1だけが成立する。",
+            "アは残数 - :予約数、イは残数 >= :予約数。T2は待つが条件は再評価しない。両方が成立し残数は−1。"
+          ],
+          "answer": 1,
+          "explanation": "更新件数が1件のときだけ予約明細を登録します。T2がAのロックを得た時点では残数が0なので、WHEREを満たしません。",
+          "solutionId": "b-6-8-update-answer",
+          "contextId": "b-6-8-update-question"
+        },
+        {
+          "prompt": "3　読取り用のT1が枠Aの残数5を読み、その後T2が残数を3に変更してCOMMITします。T1が同じSELECTを繰り返したとき、READ COMMITTEDとスナップショット方式でそれぞれ二度の読取り値を答えてください。別ケースでT1の最初の読取りをSELECT FOR UPDATEにすると、T2のどの操作が待ちますか。",
+          "thinkFirst": true,
+          "options": [
+            "READ COMMITTEDは（5、5）、スナップショット方式は（5、3）。T2のUPDATEは待たない。",
+            "どちらも（5、3）。T2はUPDATE後のCOMMITで初めて待つ。",
+            "READ COMMITTEDは（5、3）、スナップショット方式は（5、5）。最初の読取りがSELECT FOR UPDATEならT2のAへのUPDATEが待つ。"
+          ],
+          "answer": 2,
+          "explanation": "通常のSELECTで同じ値が返るかは読む時点で決まります。SELECT FOR UPDATEを使う別ケースでは、T1がAを専有するためT2の更新が待ちます。"
+        },
+        {
+          "prompt": "4　T1とT2がA・Bをそれぞれ1枠ずつ予約します。表の時点ごとに保持するロックと待ち先を追い、デッドロックになる時点を答えてください。DBがT2の変更をすべてROLLBACKした場合、T1のCOMMIT後の残数と成立する予約も答えてください。",
+          "thinkFirst": true,
+          "options": [
+            "③でデッドロック。T2の取消後はAが4、Bが4となり、どちらも成立しない。",
+            "④でデッドロック。③でT1がT2を待ち、④でT2もT1を待つ。T2の取消後はT1だけが成立し、残数はAが4、Bが3。",
+            "④でデッドロック。T2の取消で両取引の更新が取り消され、Aが5、Bが4になる。"
+          ],
+          "answer": 1,
+          "explanation": "手順③では待つ側が一方だけです。手順④で待ち先が循環します。T2のROLLBACKでBが解放されると、T1が処理を続けられます。",
+          "solutionId": "b-6-8-deadlock-answer",
+          "contextId": "b-6-8-deadlock-question"
+        },
+        {
+          "prompt": "5　第4問の循環を防ぐため、両処理に共通のロック取得順を一つ指定してください。T2が先にロックを得た場合にT1が待つ場所と、両方の確定後の残数を答え、循環しなくなる理由を40字以内で説明してください。",
+          "thinkFirst": true,
+          "options": [
+            "両方ともA→B。T1はAで待ち、両方の確定後はAが3、Bが2。先にAで待つ側がBを保持しないため、待ち関係が循環しないから。",
+            "T1はA→B、T2はB→A。T1はBで待つが必ず両方成立する。",
+            "両方ともA→B。T1はBだけで待ち、確定後はAが4、Bが3。"
+          ],
+          "answer": 0,
+          "explanation": "T1がAで待つ間、Bは保持していません。T2は両枠を確保して確定でき、その後T1も同じ順で予約します。",
+          "solutionId": "b-6-8-order-answer",
+          "noteLimitPart": "理由"
+        }
+      ],
+      "b-6-7": [
+        {
+          "prompt": "1　R101を正常処理します。どの表のどの行を変え、いつCOMMITするかを答えてください。",
+          "thinkFirst": true,
+          "options": [
+            "M01・S1を6から2に更新し、引当記録に（R101、M01、S1、4）を追加し、処理待ちのR101を削除してからCOMMITする。",
+            "M01・S2を8から4に更新し、処理待ちR101を削除してからCOMMITする。",
+            "M01・S1を6から2に更新してCOMMITし、その後に記録の追加と申請の削除を行う。"
+          ],
+          "answer": 0,
+          "explanation": "資材IDと棚IDの組で在庫を特定します。三つの変更がそろった時点で確定します。",
+          "solutionId": "b-6-7-insert-answer"
+        },
+        {
+          "prompt": "2　在庫UPDATEの［ア］と［イ］を補ってください。R102の更新件数と、その後の処理を答えてください。",
+          "thinkFirst": true,
+          "options": [
+            "アは引当可能数 - :申請数。イは資材IDだけの一致。1件更新して記録を追加する。",
+            "アは引当可能数 - :申請数。イは資材ID・棚IDがそれぞれ一致し、引当可能数 >= :申請数。R102は更新0件なのでROLLBACKし、処理待ちに残す。",
+            "アは引当可能数 - :申請数。イは資材IDと棚IDの一致だけ。8から9を引いてCOMMITする。"
+          ],
+          "answer": 1,
+          "explanation": "R102の棚は8個しかなく、9個以上という条件に合いません。SQLエラーではなく更新0件です。残数と申請数が等しい場合は更新でき、結果は0になります。",
+          "solutionId": "b-6-7-update-answer",
+          "contextId": "b-6-7-update-question"
+        },
+        {
+          "prompt": "3　R101が再送され、処理待ちにR101が再登録されました。引当記録には（R101、M01、S1、4）がすでにあり、補充後のM01・S1は6個です。UPDATE直後の値、INSERTが違反する制約、ROLLBACK後の各表の状態を答えてください。",
+          "thinkFirst": true,
+          "options": [
+            "UPDATEで2になる。INSERTは外部キー違反で失敗し、ROLLBACKしても在庫は2のまま。",
+            "UPDATEで2になり、INSERTは申請IDの重複で失敗する。ROLLBACKで在庫は6になるが、既存の記録も消える。",
+            "UPDATE直後は2。INSERTは申請IDの主キー重複で失敗。ROLLBACK後は在庫6、既存の引当記録1件、処理待ちR101あり。"
+          ],
+          "answer": 2,
+          "explanation": "INSERT失敗時に処理を止めてROLLBACKします。この処理の開始前に確定していた記録と処理待ち申請は残ります。",
+          "solutionId": "b-6-7-rollback-answer"
+        },
+        {
+          "prompt": "4　第3問でUPDATE直後にCOMMITし、新しいトランザクションでINSERTします。INSERT失敗後にROLLBACKすると在庫はいくつになりますか。業務上の不整合は40字以内で説明してください。",
+          "thinkFirst": true,
+          "options": [
+            "2のまま。新しい引当記録が作られないまま、在庫の減少だけが確定するため。",
+            "6に戻る。同じ申請IDならトランザクションをまたいで取り消せるため。",
+            "2のまま。引当記録も同時にもう1行増えるため。"
+          ],
+          "answer": 0,
+          "explanation": "後のROLLBACKが取り消せるのは、後のトランザクションの未確定変更です。先に確定したUPDATEで在庫は2のままです。",
+          "noteLimitPart": "不整合の説明"
+        },
+        {
+          "prompt": "5　R101の正常ケースでDELETEからWHEREを外し、削除0件だけを失敗とします。消える申請を答え、［ウ］と確定前の件数検査を補ってください。",
+          "thinkFirst": true,
+          "options": [
+            "R101だけが消える。WHEREを付けず、0件だけを失敗とすればよい。",
+            "R101とR102が消える。ウは申請ID = :申請ID。削除件数がちょうど1件の場合だけ確定する。",
+            "R101とR102が消える。ウは資材ID = :資材ID。削除が1件以上なら確定する。"
+          ],
+          "answer": 1,
+          "explanation": "WHEREなしでは全行を削除し、0件だけの検査を通過します。2件削除した場合も、確定前ならROLLBACKで全体を取り消せます。",
+          "solutionId": "b-6-7-delete-answer",
+          "contextId": "b-6-7-delete-question"
+        }
+      ],
+      "b-6-6": [
+        {
+          "prompt": "1　［ア］を補い、EXISTSで残る会員を答えてください。完了履歴がない会員を出す変更と、その結果も答えてください。",
+          "thinkFirst": true,
+          "options": [
+            "h.状態 = '完了'。EXISTSはA・B、NOT EXISTSはC・D。",
+            "h.会員ID = m.会員ID AND h.状態 = '完了'。EXISTSはA・B、NOT EXISTSはC・D。",
+            "h.会員ID = m.会員ID。EXISTSはA・B、NOT EXISTSはC・D。"
+          ],
+          "answer": 1,
+          "explanation": "Cには取消だけ、Dには履歴自体がありません。会員と状態の両方で内側の行を絞ります。",
+          "solutionId": "b-6-6-exists-answer",
+          "contextId": "b-6-6-exists-question"
+        },
+        {
+          "prompt": "2　会員ID NOT IN（完了行の会員IDを返す副問合せ）で誰が残りますか。NOT EXISTSと結果が異なる理由は45字以内で説明してください。",
+          "thinkFirst": true,
+          "options": [
+            "CとDが残る。会員表の会員IDは主キーなので、比較候補にもNULLがないため。",
+            "Cだけが残る。取消が完了行の一覧に含まれないため。",
+            "誰も残らない。完了行に会員IDがNULLの行があり、不一致の会員もUNKNOWNになるため。"
+          ],
+          "answer": 2,
+          "explanation": "A・Bは候補に一致するためFALSEです。C・DはNULLを含む一覧に対して不一致と確定できません。",
+          "solutionId": "b-6-6-null-answer",
+          "noteLimitPart": "理由"
+        },
+        {
+          "prompt": "3　会員ごとの最新日時に一致する完了行を全て出します。［イ］〜［オ］を埋め、残る履歴IDを答えてください。",
+          "thinkFirst": true,
+          "options": [
+            "イはh.状態 = '完了'、ウはx.利用日時、エはx.会員ID = h.会員ID、オはx.状態 = '完了'。Aは12・13、Bは14。",
+            "MAXに履歴IDを入れ、最新の1行を選ぶ。Aは13、Bは14。",
+            "内側は会員だけで絞り、取消を含めて最大日時を求める。Aは18、Bは14。"
+          ],
+          "answer": 0,
+          "explanation": "外側と内側の両方で完了に限定します。取消の18と非会員の15は結果に入りません。",
+          "solutionId": "b-6-6-max-answer",
+          "contextId": "b-6-6-max-question"
+        },
+        {
+          "prompt": "4　会員ごとに最新の完了行を1件にするため、［カ］〜［ケ］と残る履歴IDを答えてください。履歴IDだけの最大値で代用できない理由は35字以内で説明してください。",
+          "thinkFirst": true,
+          "options": [
+            "同じ会員なら状態を問わず、日時が後の行を優先する。Aは18、Bは14。",
+            "同じ会員の完了行を比較し、クは日時が後、ケは同日時かつ履歴IDが大きい。Aは13、Bは14。履歴IDの大小が利用日時の順を表す保証がないため。",
+            "同じ会員の完了行を比較し、日時が同じなら両方残す。Aは12・13、Bは14。"
+          ],
+          "answer": 1,
+          "explanation": "同じ会員の完了行のうち、より優先される行が存在しない候補だけを残します。",
+          "solutionId": "b-6-6-latest-answer",
+          "contextId": "b-6-6-latest-question",
+          "noteLimitPart": "理由"
+        },
+        {
+          "prompt": "5　未利用者も含め全会員を1行ずつ残すには、第4問の結果をどう結合しますか。会員IDと履歴IDの組も答えてください。",
+          "thinkFirst": true,
+          "options": [
+            "会員表から会員IDでLEFT JOINする。A・13、B・14、C・NULL、D・NULL。",
+            "会員表と会員IDでINNER JOINする。A・13、B・14だけ。",
+            "会員表から第3問の結果をLEFT JOINする。A・12、A・13、B・14、C・NULL、D・NULL。"
+          ],
+          "answer": 0,
+          "explanation": "会員表の行を全て残し、最新履歴が存在しない会員は履歴IDをNULLで補います。",
+          "solutionId": "b-6-6-report-answer"
+        }
+      ],
       "b-6-5": [
         {
           "prompt": "1　6月収入の集計対象となる入金IDと講座単位の件数・金額を示してください。明細の絞込みと集計単位をそれぞれどの句に置きますか。",
