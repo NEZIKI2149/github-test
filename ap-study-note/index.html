@@ -105,6 +105,10 @@
     .answer-note-review { margin-block: .65rem; }
     .answer-note-review p { margin: .25rem 0 .65rem; overflow-wrap: anywhere; }
     [data-note-written] { white-space: pre-wrap; }
+    .answer-self-check { margin-top: .8rem; }
+    .answer-self-check p { color: var(--muted); font-size: .9rem; margin-bottom: .4rem; }
+    .answer-self-check .option { min-height: 2.75rem; align-items: flex-start; cursor: pointer; }
+    .answer-self-check input { flex: none; margin-top: .35em; }
     .record, .sources { border-top: 1px solid var(--line); margin-top: 1.8rem; padding-top: 1rem; }
     .record label { display: inline-flex; align-items: center; min-height: 2.75rem; gap: .5rem; margin-right: 1rem; }
     .sources { font-size: .9rem; }
@@ -4485,9 +4489,14 @@ WHERE p.点検月 = :対象月</code></pre></div>
         </fieldset>
         <div class="controls"><button type="button" data-reveal hidden>選択肢を表示</button><button type="submit" class="primary">解答する</button><button type="button" data-next hidden>次の問題</button></div>
       </form>
-      <div class="answer-note-review" data-note-review hidden>
+      <div class="answer-note-review" data-note-review role="group" aria-label="解答の振り返り" tabindex="-1" hidden>
         <div data-note-own hidden><strong>自分の解答メモ</strong><p data-note-written></p></div>
         <strong>解答例</strong><p data-note-model></p>
+        <fieldset class="answer-self-check" data-self-check hidden>
+          <legend>セルフチェック</legend>
+          <p>同じ意味を書けていた項目にチェックを入れてください。</p>
+          <div data-self-check-items></div>
+        </fieldset>
       </div>
       <p class="feedback" data-feedback role="status" hidden></p>
       <div data-solution></div>
@@ -7037,7 +7046,12 @@ WHERE p.点検月 = :対象月</code></pre></div>
             "セッションIDがS40で一致するため、EXT-17で手順書がダウンロードされた"
           ],
           answer: 1,
-          explanation: "自己採点の要点は、EXT-17、顧客台帳の取得、S41による照合の3点です。資料Aで期限を確認し、資料Bの09:04と資料Cの09:06をS41でつなぎます。認証成功だけではファイルの取得は分かりません。"
+          selfCheck: [
+            "使われたIDは「EXT-17」と書けた",
+            "取得されたファイルは「顧客台帳」と書けた",
+            "二つのログをセッションID「S41」で照合したと書けた"
+          ],
+          explanation: "資料Aで期限を確認し、資料Bの09:04と資料Cの09:06をS41でつなぎます。認証成功だけではファイルの取得は分かりません。"
         },
         {
           prompt: "1-b　台帳に記載された担当者本人が取得したと断定できない理由を40字以内で答えてください。",
@@ -7048,7 +7062,11 @@ WHERE p.点検月 = :対象月</code></pre></div>
             "ログは使用IDと操作を示すが、実際に操作した人物は確認できないから"
           ],
           answer: 2,
-          explanation: "自己採点の要点は、ログで確認できるのが使用IDと操作までで、操作者は未確認だと書けていることです。資料Aが示すのはIDの割当先で、資料B・Cに操作者の氏名はありません。"
+          selfCheck: [
+            "ログから確認できるのは使用IDと操作だと書けた",
+            "実際に操作した人物までは特定できないと書けた"
+          ],
+          explanation: "資料Aが示すのはIDの割当先で、資料B・Cに操作者の氏名はありません。"
         },
         {
           prompt: "2　契約終了が登録されていたのにIDが無効化されなかった業務上の理由を55字以内で答えてください。",
@@ -7059,7 +7077,11 @@ WHERE p.点検月 = :対象月</code></pre></div>
             "ID管理者が停止依頼を受け取った後も、期限内に処理しなかったから"
           ],
           answer: 0,
-          explanation: "自己採点の要点は、通知手順がないことと、停止処理には依頼が必要なことの2点です。資料Dでは契約終了は登録済みで、停止依頼と停止処理は未登録です。"
+          selfCheck: [
+            "契約終了をID管理者に知らせる手順がなかったと書けた",
+            "ID管理者は停止依頼を受けてから処理するため、通知がなければ停止されないと書けた"
+          ],
+          explanation: "資料Dでは契約終了は登録済みで、停止依頼と停止処理は未登録です。"
         },
         {
           prompt: "3　現行の担当分担で再発を防ぐには、誰が、どの情報を、いつ渡し、誰がいつ何をするか。65字以内で答えてください。",
@@ -7070,7 +7092,12 @@ WHERE p.点検月 = :対象月</code></pre></div>
             "契約担当が終了済み契約を月末にまとめて報告し、ID管理者が受領後に対象IDを無効化する"
           ],
           answer: 1,
-          explanation: "自己採点の要点は、契約担当が対象IDと期限を事前に通知し、ID管理者が期限に無効化することです。資料Dの終了登録と無効化をつなぐ手順にします。月末にまとめると、利用期限から無効化までIDが使える期間が生じます。"
+          selfCheck: [
+            "契約担当がID管理者に事前に通知すると書けた",
+            "通知に対象IDと利用期限を含めた",
+            "ID管理者が利用期限に合わせて対象IDを無効化すると書けた"
+          ],
+          explanation: "資料Dの終了登録と無効化をつなぐ手順にします。月末にまとめると、利用期限から無効化までIDが使える期間が生じます。"
         }
       ],
       "audit-followup": [
@@ -8581,6 +8608,8 @@ WHERE p.点検月 = :対象月</code></pre></div>
       const ownNote = noteReview.querySelector("[data-note-own]");
       const writtenNote = ownNote.querySelector("[data-note-written]");
       const modelAnswer = noteReview.querySelector("[data-note-model]");
+      const selfCheck = noteReview.querySelector("[data-self-check]");
+      const selfCheckItems = selfCheck.querySelector("[data-self-check-items]");
       const options = form.querySelector("[data-options]");
       const reveal = form.querySelector("[data-reveal]");
       const grade = form.querySelector('button[type="submit"]');
@@ -8591,6 +8620,10 @@ WHERE p.点検月 = :対象月</code></pre></div>
       const score = practice.querySelector("[data-score]");
       let questionIndex = 0;
       let correctCount = 0;
+
+      if (allowAnswerNote && questions.some(question => question.selfCheck?.length)) {
+        solution.after(next);
+      }
 
       function updateNoteCount() {
         const { prompt, noteLimitPart } = questions[questionIndex];
@@ -8677,6 +8710,8 @@ WHERE p.点検月 = :対象月</code></pre></div>
         noteInput.value = "";
         if (showNote) updateNoteCount();
         noteReview.hidden = true;
+        selfCheck.hidden = true;
+        selfCheckItems.replaceChildren();
         thinkFirst.textContent = question.thinkFirstPrompt ?? (showNote
           ? "答えを考えてから選択肢を開いてください。メモを使うと採点後に解答例と見比べられます。"
           : "頭の中で答えを一文にしてから、選択肢を開いてください。");
@@ -8710,6 +8745,17 @@ WHERE p.点検月 = :対象月</code></pre></div>
           writtenNote.textContent = noteInput.value.trim();
           ownNote.hidden = !writtenNote.textContent;
           modelAnswer.textContent = question.options[question.answer];
+          if (question.selfCheck?.length) {
+            for (const criterion of question.selfCheck) {
+              const label = document.createElement("label");
+              label.className = "option";
+              const checkbox = document.createElement("input");
+              checkbox.type = "checkbox";
+              label.append(checkbox, criterion);
+              selfCheckItems.append(label);
+            }
+            selfCheck.hidden = false;
+          }
           noteReview.hidden = false;
           answerNote.hidden = true;
           feedback.textContent = (correct ? "正解。" : "不正解。") + " 解説　" + question.explanation;
@@ -8720,12 +8766,13 @@ WHERE p.点検月 = :対象月</code></pre></div>
         if (question.solutionId) solution.append(byId(question.solutionId).content.cloneNode(true));
         if (questionIndex + 1 < questions.length) {
           next.hidden = false;
-          next.focus({ preventScroll: true });
+          if (selfCheck.hidden) next.focus({ preventScroll: true });
         } else {
           score.textContent = correctCount + " / " + questions.length + "問 正解";
           result.hidden = false;
-          score.focus({ preventScroll: true });
+          if (selfCheck.hidden) score.focus({ preventScroll: true });
         }
+        if (!selfCheck.hidden) noteReview.focus();
       });
       next.addEventListener("click", () => {
         questionIndex += 1;
