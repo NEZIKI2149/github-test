@@ -951,6 +951,103 @@ Web画面サーバ
         <div data-practice></div>
         <p class="sources"><a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/m42obm000000afqx-att/2024r06a_ap_pm_cmnt.pdf">IPA 令和6年度秋期・午後の採点講評（問4）</a> ／ <a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/nl10bi0000009lh8-att/2025r07h_ap_pm_cmnt.pdf">IPA 令和7年度春期・午後の採点講評（問4）</a></p>
       </article>
+      <article id="b-5-1" hidden>
+        <h1 tabindex="-1">B-5-1　構成図から端末の最初の転送先を読む</h1>
+        <p class="context">初見演習の目安は8〜12分です。</p>
+        <h2>最初に誰へ渡すかを決める</h2>
+        <p>端末は、自分のIPv4アドレスと<strong>プレフィックス長</strong>から、直接接続しているサブネットの範囲を求めます。例えば /27 は、32ビットのうち先頭27ビットがネットワーク部という意味です。残りの5ビットで区切るので、1ブロックは32アドレスです。</p>
+        <ul>
+          <li>宛先IPが範囲内なら、その宛先機器に直接渡します。</li>
+          <li>宛先IPが範囲外で、宛先に個別の経路設定がなければ、デフォルトゲートウェイへ渡します。</li>
+        </ul>
+        <p><strong>ARP</strong>は、次に渡す機器のIPv4アドレスに対応するMACアドレスを、同じLAN内で調べる仕組みです。対応が未登録ならLAN内へARP要求をブロードキャストし、応答で次の機器のMACアドレスを得ます。IPパケットには最終宛先のIPを入れ、そのパケットを載せるイーサネットフレームには、今いるLANで次に受け取る機器のMACを入れます。</p>
+        <h3>例題　別LANのプリンタへ送る</h3>
+        <p>端末が198.51.100.40/27、ゲートウェイが198.51.100.33、プリンタが198.51.100.72だとします。端末のサブネットは198.51.100.32〜198.51.100.63です。プリンタは範囲外なので、端末は198.51.100.33のMACをARPで調べます。</p>
+        <pre class="table-wrap" tabindex="0" aria-label="別LANのプリンタが最終宛先で、最初のフレームはルータに届く例">端末 → ルータ → プリンタ
+最初のフレームの宛先MAC　ルータの端末側MAC
+その中のIPパケットの宛先IP　プリンタのIP</pre>
+        <h2>演習　物流センターの受付PCから送る</h2>
+        <h3>資料A　構成とIPv4設定</h3>
+        <pre class="table-wrap" tabindex="0" aria-label="LAN Aに受付PCと伝票プリンタ、LAN Bに在庫サーバがあり、両方をルータRが接続する">LAN A（受付PC・伝票プリンタ）
+          │
+        ルータR
+          │
+LAN B（在庫サーバ）</pre>
+        <p>ルータRは両方のLANに一つずつインタフェースを持ち、どちらにも直接接続しています。MAC欄のPC・PR・RA・RB・SVは、この演習で使うMACアドレスの略記です。</p>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="各機器の接続先、IPv4設定とMACアドレス"><table>
+          <thead><tr><th scope="col">機器</th><th scope="col">接続先</th><th scope="col">IPv4設定</th><th scope="col">MAC</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">受付PC</th><td>LAN A</td><td>192.0.2.34/26<br>ゲートウェイ 192.0.2.1</td><td>PC</td></tr>
+            <tr><th scope="row">伝票プリンタ</th><td>LAN A</td><td>192.0.2.60/26</td><td>PR</td></tr>
+            <tr><th scope="row">ルータRのLAN A側</th><td>LAN A</td><td>192.0.2.1/26</td><td>RA</td></tr>
+            <tr><th scope="row">ルータRのLAN B側</th><td>LAN B</td><td>192.0.2.65/26</td><td>RB</td></tr>
+            <tr><th scope="row">在庫サーバ</th><td>LAN B</td><td>192.0.2.70/26<br>ゲートウェイ 192.0.2.65</td><td>SV</td></tr>
+          </tbody>
+        </table></div>
+        <h3>資料B　送信時の前提</h3>
+        <p>各通信の開始時点では、ARPキャッシュ（IPとMACの対応の記録）は空です。端末の経路は、直接接続経路と設定済みのデフォルト経路だけです。Rは別の機器に代わってARPに応答することも、IPアドレスを変換することもありません。ARPの問合せが届くのは同じLAN内です。</p>
+        <h2>設問一覧</h2>
+        <ol>
+          <li>受付PCのサブネットのアドレス範囲と、伝票プリンタ・在庫サーバのうちどちらがその範囲に入るかを選んでください。範囲にはネットワークアドレスとブロードキャストアドレスも含めます。</li>
+          <li>受付PCから伝票プリンタへ送るとき、ARPで問い合わせる対象IPと、その後に送るIPパケットの宛先IP・フレームの宛先MACを答えてください。</li>
+          <li>受付PCから在庫サーバへ送るとき、受付PCとルータRがそれぞれARPで問い合わせる対象IPを答えてください。また、LAN AとLAN Bそれぞれで、IPパケットの宛先IPとフレームの宛先MACを答えてください。</li>
+          <li>受付PCだけがプレフィックス長を誤って/24に設定しました。伝票プリンタには接続できますが、在庫サーバへは接続できません。LAN Aで観測されるARP要求を含めて、在庫サーバへ接続できない理由を70字以内で答えてください。</li>
+        </ol>
+        <div data-practice></div>
+        <p class="sources"><a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/nl10bi0000009lh8-att/2025r07a_ap_pm_cmnt.pdf">IPA 令和7年度秋期・午後の採点講評（問5）</a></p>
+      </article>
+      <article id="b-5-2" hidden>
+        <h1 tabindex="-1">B-5-2　端末が社内LANを使えるまでの条件を追う</h1>
+        <p class="context">初見演習の目安は12〜18分です。</p>
+        <h2>接続・認証・VLAN・DHCPを順に確認する</h2>
+        <p>この演習では、有線リンクの確立や無線アクセスポイント（AP）への接続に続いて、端末の接続認証を行います。<strong>IEEE 802.1X</strong>では、スイッチやAPが認証サーバと連携し、認証結果に応じて通信を許可します。</p>
+        <p><strong>VLAN</strong>は、物理機器を共有しながら、ブロードキャストが届く範囲を論理的に分ける仕組みです。この事例では、認証に成功した端末は割当て規則に従ってVLANに入ります。</p>
+        <p><strong>DHCP</strong>は、IPアドレスやプレフィックス、デフォルトゲートウェイ、DNSサーバなどの設定を自動で配布します。初回接続の端末は、自分のVLAN内にDISCOVERをブロードキャストします。DHCPサーバが別ネットワークにある場合は、<strong>DHCPリレー</strong>が要求を中継し、端末の要求を受けた側のネットワークを特定できる情報も伝えます。</p>
+        <pre class="table-wrap" tabindex="0" aria-label="DHCPの設定取得手順。DISCOVER、OFFER、REQUEST、ACKの順">端末 → DHCPDISCOVER（サーバを探す）
+端末 ← DHCPOFFER（設定の候補を受け取る）
+端末 → DHCPREQUEST（提示された設定を要求する）
+端末 ← DHCPACK（配布を承認され、設定が確定する）</pre>
+        <h3>例題　無線に接続できた端末にIP設定がない</h3>
+        <p>APへの接続成立と認証成功が記録されている場合は、その先を調べます。APの割当て記録で実際のVLANを確認し、そのVLANのリレーとDHCPサーバの記録から、要求がどこまで届いたかを追います。</p>
+        <h2>演習　物流会社の事務所と倉庫の端末</h2>
+        <h3>資料A　構成と接続時の前提</h3>
+        <pre class="table-wrap" tabindex="0" aria-label="事務所と倉庫の端末からL3スイッチを通り、認証サーバとDHCPサーバのあるLANへつながる構成">有線端末 → アクセススイッチ → L3スイッチ
+無線端末 → AP ──────────→ 同じL3スイッチ
+
+L3スイッチ → サーバ用LAN（認証サーバ・DHCPサーバ）</pre>
+        <p>L3スイッチはVLAN間でIPパケットを転送し、各VLANのゲートウェイとDHCPリレーを担当します。アクセススイッチとAPは、認証結果に従って端末にVLANを割り当てます。認証に失敗した端末には業務用通信を許可しません。</p>
+        <p>端末はすべてDHCPを使います。資料Cは既存リース（以前に受け取った有効なアドレスの割当て）がない端末の初回接続の記録です。</p>
+        <h3>資料B　割当て規則とDHCP設定</h3>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="予定VLANとVLANごとに配布するIP設定"><table>
+          <thead><tr><th scope="col">接続と認証結果</th><th scope="col">割当て予定</th><th scope="col">端末用IPのサブネット</th><th scope="col">ゲートウェイ</th><th scope="col">DNSサーバ</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">有線・事務所端末として成功</th><td>VLAN 10</td><td>192.0.2.0/26</td><td>192.0.2.1</td><td>198.51.100.53（社内）</td></tr>
+            <tr><th scope="row">無線・倉庫端末として成功</th><td>VLAN 20</td><td>192.0.2.64/26</td><td>192.0.2.65</td><td>198.51.100.53（社内）</td></tr>
+            <tr><th scope="row">無線・来訪者端末として成功</th><td>VLAN 30</td><td>192.0.2.128/26</td><td>192.0.2.129</td><td>198.51.100.54（来訪者用）</td></tr>
+          </tbody>
+        </table></div>
+        <p>DHCPサーバ（198.51.100.67）には、三つのVLANの配布範囲が登録済みで空きがあります。L3スイッチのリレー転送先はVLANごとに設定し、正常時はすべて198.51.100.67です。現在はVLAN 10・30に設定済みで、VLAN 20だけ未登録です。来訪者用VLANから倉庫の業務システムへの接続は許可しません。</p>
+        <h3>資料C　実際に観測した記録</h3>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="端末P・Q・R・Sの接続、認証、VLAN、DHCP記録"><table>
+          <thead><tr><th scope="col">端末</th><th scope="col">接続と認証</th><th scope="col">実際のVLAN</th><th scope="col">DHCPの記録</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">P（事務所）</th><td>有線リンク確立、認証成功</td><td>VLAN 10</td><td>DHCPACKを受信。192.0.2.34/26を取得。</td></tr>
+            <tr><th scope="row">Q（倉庫）</th><td>APへの接続成立、認証失敗</td><td>割当てなし</td><td>IP設定を取得できていない。</td></tr>
+            <tr><th scope="row">R（倉庫）</th><td>APへの接続成立、認証成功</td><td>VLAN 20</td><td>L3スイッチはDISCOVERを受信。DHCPサーバにはRの要求の記録がなく、RはIP設定を取得できていない。</td></tr>
+            <tr><th scope="row">S（倉庫）</th><td>APへの接続成立、倉庫端末として認証成功</td><td>VLAN 30</td><td>DHCPACKを受信。192.0.2.150/26を取得。</td></tr>
+          </tbody>
+        </table></div>
+        <h2>設問一覧</h2>
+        <ol>
+          <li>事務所端末Pが割り当てられたVLANと、DHCPで受け取るデフォルトゲートウェイ・DNSサーバの組合せを選んでください。</li>
+          <li>倉庫端末Qについて、成功した段階と止まった段階を挙げ、原因を調べるために次に確認する記録を60字以内で答えてください。</li>
+          <li>倉庫端末Rの設定取得が止まった理由と、修正する装置・VLAN・設定値を70字以内で答えてください。</li>
+          <li>Rの中継が正常になりました。DHCPサーバが配布範囲を選ぶ判断材料と、選ぶ配布範囲、Rが取得するゲートウェイ・DNSサーバを答えてください。</li>
+          <li>SはIP設定を取得しましたが、倉庫の業務システムに接続できません。第3問の修正は済んでいます。VLAN割当てとDHCP配布の記録から原因を説明し、直す設定と、修正後に端末で確かめるIPアドレスの範囲・ゲートウェイを答えてください。</li>
+        </ol>
+        <div data-practice></div>
+        <p class="sources"><a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/nl10bi0000009lh8-att/2025r07h_ap_pm_cmnt.pdf">IPA 令和7年度春期・午後の採点講評（問5）</a></p>
+      </article>
       <article id="b-6-11" hidden>
         <h1 tabindex="-1">B-6-11　総合演習：業務変更をE-R図・SQL・帳票に反映する</h1>
         <p class="context">初見演習の目安は25〜30分です。</p>
@@ -4405,6 +4502,64 @@ IN ──┼─ [L2] ─┼─ <mark>[GW]</mark> ─ OUT
       </tbody>
     </table></div>
   </template>
+  <template id="b-5-1-printer">
+    <pre class="table-wrap" tabindex="0" aria-label="受付PCから同じLANのプリンタへ直接送る経路">LAN A　受付PC → 伝票プリンタ</pre>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="プリンタ宛てのARP対象と送信時の宛先"><table>
+      <thead><tr><th scope="col">区間</th><th scope="col">ARP対象IP</th><th scope="col">宛先IP</th><th scope="col">宛先MAC</th></tr></thead>
+      <tbody><tr><th scope="row">LAN A　PC → プリンタ</th><td>192.0.2.60</td><td>192.0.2.60</td><td>PR</td></tr></tbody>
+    </table></div>
+  </template>
+  <template id="b-5-1-server">
+    <pre class="table-wrap" tabindex="0" aria-label="受付PCからルータRを経由して在庫サーバへ送る経路">受付PC ─ LAN A → R ─ LAN B → 在庫サーバ</pre>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="LAN A・BでのARP対象と送信時の宛先"><table>
+      <thead><tr><th scope="col">区間と送信元</th><th scope="col">ARP対象IP</th><th scope="col">宛先IP</th><th scope="col">宛先MAC</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">LAN A　受付PC</th><td>192.0.2.1</td><td>192.0.2.70</td><td>RA</td></tr>
+        <tr><th scope="row">LAN B　ルータR</th><td>192.0.2.70</td><td>192.0.2.70</td><td>SV</td></tr>
+      </tbody>
+    </table></div>
+  </template>
+  <template id="b-5-1-prefix">
+    <pre class="table-wrap" tabindex="0" aria-label="受付PCが正しい26ビットと誤った24ビット設定で送るARP要求の比較">受付PCが /26
+PC ─ 192.0.2.1 のARP要求 → R（LAN A側）
+PC ─ 宛先MAC RA のフレーム → R → サーバ
+
+受付PCが /24
+PC ─ 192.0.2.70 のARP要求 → LAN A内
+                              × LAN Bへ届かない
+応答なし → IPパケットを載せたフレームは未送信</pre>
+  </template>
+  <template id="b-5-2-evidence">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="端末Pの記録で確認できる各段階"><table>
+      <thead><tr><th scope="col">段階</th><th scope="col">根拠</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">有線接続</th><td>有線リンク確立</td></tr>
+        <tr><th scope="row">接続認証</th><td>認証成功</td></tr>
+        <tr><th scope="row">VLAN割当て</th><td>実際の割当てはVLAN 10</td></tr>
+        <tr><th scope="row">DHCP設定取得</th><td>DHCPACKを受信し192.0.2.34/26を取得。VLAN 10に対応するゲートウェイは192.0.2.1、DNSは198.51.100.53。</td></tr>
+      </tbody>
+    </table></div>
+  </template>
+  <template id="b-5-2-relay">
+    <pre class="table-wrap" tabindex="0" aria-label="Rの設定取得で、要求はL3スイッチに届く。修正後はサーバへ届き、応答も戻る">現在
+R → VLAN 20のDISCOVER → L3スイッチ
+                           × 転送先が未登録
+
+修正後
+R → L3スイッチ → DHCPサーバ（198.51.100.67）
+R ← L3スイッチ ← DHCPサーバ
+    VLAN 20へ応答を中継</pre>
+  </template>
+  <template id="b-5-2-assignment">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="Sの実際の設定と修正後に受け取る設定"><table>
+      <thead><tr><th scope="col">項目</th><th scope="col">VLAN 30での設定</th><th scope="col">VLAN 20へ修正後</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">端末のIP</th><td>192.0.2.150/26</td><td>192.0.2.64/26内の端末用IP</td></tr>
+        <tr><th scope="row">ゲートウェイ</th><td>192.0.2.129</td><td>192.0.2.65</td></tr>
+        <tr><th scope="row">DNSサーバ</th><td>198.51.100.54</td><td>198.51.100.53</td></tr>
+      </tbody>
+    </table></div>
+  </template>
   <template id="b-6-1-equipment-answer">
     <p>設備（<u>設備番号</u>〔主キー〕、設備名）<br>
     点検（<u>点検番号</u>〔主キー〕、<span style="text-decoration: underline dashed">設備番号</span>〔外部キー〕、予定日）</p>
@@ -5119,7 +5274,7 @@ WHERE p.点検月 = :対象月</code></pre></div>
   <script>
     const byId = (id) => document.getElementById(id);
     const lessons = Array.from(document.querySelectorAll("[data-lesson]"));
-    const subjectBLessons = ["b-1-1", "b-1-2", "b-1-3", "b-1-4", "b-1-5", "b-2-1", "b-2-2", "b-2-3", "b-2-4", "b-2-5", "b-2-6", "b-2-7", "b-2-8", "b-3-1", "b-3-2", "b-3-3", "b-3-4", "b-3-5", "b-3-6", "b-3-7", "b-3-8", "b-4-1", "b-4-2", "b-4-3", "b-4-4", "b-4-5", "b-4-6", "b-4-7", "b-4-8", "b-6-1", "b-6-2", "b-6-3", "b-6-4", "b-6-5", "b-6-6", "b-6-7", "b-6-8", "b-6-9", "b-6-10", "b-6-11", "b-7-1", "b-7-2", "b-7-3", "b-7-4", "b-7-5", "b-7-6", "b-7-7", "b-7-8"].map(byId);
+    const subjectBLessons = ["b-1-1", "b-1-2", "b-1-3", "b-1-4", "b-1-5", "b-2-1", "b-2-2", "b-2-3", "b-2-4", "b-2-5", "b-2-6", "b-2-7", "b-2-8", "b-3-1", "b-3-2", "b-3-3", "b-3-4", "b-3-5", "b-3-6", "b-3-7", "b-3-8", "b-4-1", "b-4-2", "b-4-3", "b-4-4", "b-4-5", "b-4-6", "b-4-7", "b-4-8", "b-5-1", "b-5-2", "b-6-1", "b-6-2", "b-6-3", "b-6-4", "b-6-5", "b-6-6", "b-6-7", "b-6-8", "b-6-9", "b-6-10", "b-6-11", "b-7-1", "b-7-2", "b-7-3", "b-7-4", "b-7-5", "b-7-6", "b-7-7", "b-7-8"].map(byId);
     const sections = [byId("welcome"), byId("intro"), byId("subject-b"), ...subjectBLessons, ...lessons];
     const toc = byId("toc");
     const subjectAItems = Array.from(toc.children);
@@ -5167,7 +5322,11 @@ WHERE p.点検月 = :対象月</code></pre></div>
         <a href="#b-4-7">B-4-7　非機能要件とサービス条件からクラウド構成を選ぶ</a>
         <a href="#b-4-8">B-4-8　総合演習：拠点システムの構成変更を判断する</a>
       </details>
-      <p>B-5　ネットワーク</p>
+      <details>
+        <summary>B-5　ネットワーク</summary>
+        <a href="#b-5-1">B-5-1　構成図から端末の最初の転送先を読む</a>
+        <a href="#b-5-2">B-5-2　端末が社内LANを使えるまでの条件を追う</a>
+      </details>
       <details>
         <summary>B-6　データベース</summary>
         <a href="#b-6-1">B-6-1　業務ルールからE-R図とキーを決める</a>
@@ -6769,6 +6928,153 @@ WHERE p.点検月 = :対象月</code></pre></div>
           explanation: "1工場当たりの上限を求めると、前処理は50件/秒、回線は200 ÷ (0.2 × 8)＝125件/秒、中央は150 ÷ 3＝50件/秒です。最小の50件/秒が全体の上限で、このとき前処理も中央の取込も上限に達します。",
           solutionId: "b-4-8-growth",
           thinkFirst: true
+        }
+      ],
+      "b-5-1": [
+        {
+          prompt: "1　受付PCのサブネットのアドレス範囲と、伝票プリンタ・在庫サーバのうちどちらがその範囲に入るかを選んでください。範囲にはネットワークアドレスとブロードキャストアドレスも含めます。",
+          options: [
+            "192.0.2.0〜192.0.2.63。伝票プリンタだけが同じサブネット。",
+            "192.0.2.0〜192.0.2.255。伝票プリンタも在庫サーバも同じサブネット。",
+            "192.0.2.32〜192.0.2.63。伝票プリンタだけが同じサブネット。"
+          ],
+          answer: 0,
+          explanation: "/26ではホスト部が6ビットなので、1ブロックに64個のアドレスがあります。受付PCの末尾34は0〜63のブロックです。伝票プリンタの末尾60は範囲内、在庫サーバの末尾70は64〜127の別ブロックです。受付PC側のネットワークアドレスは192.0.2.0、ブロードキャストアドレスは192.0.2.63です。"
+        },
+        {
+          prompt: "2　受付PCから伝票プリンタへ送るとき、ARPで問い合わせる対象IPと、その後に送るIPパケットの宛先IP・フレームの宛先MACを答えてください。",
+          thinkFirst: true,
+          options: [
+            "ARP対象IPは192.0.2.1、宛先IPは192.0.2.60、宛先MACはRA。",
+            "ARP対象IPは192.0.2.60、宛先IPは192.0.2.60、宛先MACはPR。",
+            "ARP対象IPは192.0.2.60、宛先IPは192.0.2.60、宛先MACはブロードキャスト。"
+          ],
+          answer: 1,
+          selfCheck: [
+            "受付PCが192.0.2.60のMACアドレスをARPで問い合わせると答えた",
+            "IPパケットの宛先IPは192.0.2.60と答えた",
+            "IPパケットを載せるフレームの宛先MACはPRと答えた（伝票プリンタのMAC、でも可）"
+          ],
+          explanation: "伝票プリンタのIPは受付PCが直接接続するサブネット内です。受付PCはプリンタのMACを問い合わせ、返ってきたPRを使って直接送ります。LAN Aの機器が受け取るのは「192.0.2.60を使っている機器は、自分のMACを知らせてください」というARP要求です。応答後、印刷データを載せたフレームはPR宛てに送られます。",
+          solutionId: "b-5-1-printer"
+        },
+        {
+          prompt: "3　受付PCから在庫サーバへ送るとき、受付PCとルータRがそれぞれARPで問い合わせる対象IPを答えてください。また、LAN AとLAN Bそれぞれで、IPパケットの宛先IPとフレームの宛先MACを答えてください。",
+          thinkFirst: true,
+          options: [
+            "LAN AはARP対象IP 192.0.2.70、宛先IP 192.0.2.70、宛先MAC SV。LAN Bも同じ。",
+            "LAN AはARP対象IP 192.0.2.1、宛先IP 192.0.2.1、宛先MAC RA。LAN BはARP対象IP・宛先IPとも192.0.2.70、宛先MAC SV。",
+            "LAN AはARP対象IP 192.0.2.1、宛先IP 192.0.2.70、宛先MAC RA。LAN BはARP対象IP・宛先IPとも192.0.2.70、宛先MAC SV。"
+          ],
+          answer: 2,
+          selfCheck: [
+            "LAN AのARP対象は192.0.2.1と答えた（RのLAN A側IP）",
+            "LAN Aのフレームの宛先MACはRAと答えた（RのLAN A側MACでも可）",
+            "LAN BのARP対象は192.0.2.70と答えた（在庫サーバのIP）",
+            "LAN Bのフレームの宛先MACはSVと答えた（在庫サーバのMACでも可）",
+            "IPパケットの宛先IPは両区間とも192.0.2.70と答えた（両区間で在庫サーバのIPと明記しても可）"
+          ],
+          explanation: "受付PCはサブネット外のサーバへ送るため、最初のフレームをRのLAN A側へ渡します。RはLAN Bに直接接続しているので、LAN BでサーバのMACを調べ、新しいフレームに載せて送ります。この構成ではアドレス変換がなく、IPパケットの宛先は両区間で192.0.2.70です。",
+          solutionId: "b-5-1-server"
+        },
+        {
+          prompt: "4　受付PCだけがプレフィックス長を誤って/24に設定しました。伝票プリンタには接続できますが、在庫サーバへは接続できません。LAN Aで観測されるARP要求を含めて、在庫サーバへ接続できない理由を70字以内で答えてください。",
+          thinkFirst: true,
+          options: [
+            "サーバを同じサブネットと判断し、LAN Aで192.0.2.70のMACを問い合わせる。サーバは別LANにあり応答がない。",
+            "サーバを別サブネットと判断し、LAN Aで192.0.2.1のMACを問い合わせる。Rは別LANにあり応答がない。",
+            "LAN AのARP要求が在庫サーバに届き、サーバのMACを取得する。宛先IPを192.0.2.1に変えるため接続できない。"
+          ],
+          answer: 0,
+          selfCheck: [
+            "/24にした結果、受付PCが在庫サーバを同じサブネット上と判断すると説明した（サーバに直接送ろうとする、でも可）",
+            "LAN AのARP要求がサーバのIPを対象にしていると示した（「192.0.2.70のMACを尋ねる」「LAN Aでサーバ宛てのARP解決を試みる」など）",
+            "在庫サーバはLAN Bにあり、ARP要求が届かず応答を得られないと答えた"
+          ],
+          explanation: "/24の受付PCは末尾0〜255を直接接続先と判断します。プリンタもその範囲内で、実際にLAN Aにいるので応答できます。在庫サーバはLAN Bにおり、RはARPの代理応答をしません。受付PCは宛先MACを解決できず、IPパケットを載せたフレームを送る手前で止まります。/26に戻すと在庫サーバ宛ての最初の転送先はRになります。",
+          solutionId: "b-5-1-prefix"
+        }
+      ],
+      "b-5-2": [
+        {
+          prompt: "1　事務所端末Pが割り当てられたVLANと、DHCPで受け取るデフォルトゲートウェイ・DNSサーバの組合せを選んでください。",
+          options: [
+            "VLAN 10、ゲートウェイ192.0.2.65、DNS 198.51.100.53。",
+            "VLAN 10、ゲートウェイ192.0.2.1、DNS 198.51.100.53。",
+            "VLAN 30、ゲートウェイ192.0.2.129、DNS 198.51.100.54。"
+          ],
+          answer: 1,
+          explanation: "資料CではPがVLAN 10に割り当てられ、DHCPACKを受け取っています。資料BのVLAN 10の行からゲートウェイとDNSサーバを読み取れます。",
+          solutionId: "b-5-2-evidence"
+        },
+        {
+          prompt: "2　倉庫端末Qについて、成功した段階と止まった段階を挙げ、原因を調べるために次に確認する記録を60字以内で答えてください。",
+          thinkFirst: true,
+          options: [
+            "APへの接続は成立し、接続認証で止まった。認証サーバでQの認証を拒否した理由を確認する。",
+            "接続認証まで成功し、VLANの割当てで止まった。APでVLAN 20の割当て設定を確認する。",
+            "VLAN 20への割当てまで成功している。DHCPサーバでQへのアドレス配布記録を確認する。"
+          ],
+          answer: 0,
+          selfCheck: [
+            "APへの接続が成立したと示した（無線接続は確立した、でも可）",
+            "業務用通信の許可に必要な接続認証で止まったと答えた",
+            "Qの認証失敗の理由が分かる記録を確認すると答えた（認証サーバの拒否ログ、APに記録された拒否理由など）"
+          ],
+          explanation: "資料Cに、APへの接続成立、認証失敗、VLAN割当てなしが記録されています。最初に失敗が確認できるのは接続認証です。資料Cで分かるのは認証が失敗した段階までです。認証サーバでQの接続時刻の記録を照合すると、失敗の理由を調べられます。"
+        },
+        {
+          prompt: "3　倉庫端末Rの設定取得が止まった理由と、修正する装置・VLAN・設定値を70字以内で答えてください。",
+          thinkFirst: true,
+          options: [
+            "VLAN 20の配布範囲が未登録のため、DHCPサーバに192.0.2.64/26の範囲を追加する。",
+            "VLAN 20のDISCOVERが中継されないため、APのDHCPリレー転送先を198.51.100.67に設定する。",
+            "リレー転送先が未設定で要求がサーバへ届かない。L3スイッチのVLAN 20の転送先に198.51.100.67を設定する。"
+          ],
+          answer: 2,
+          selfCheck: [
+            "VLAN 20のリレー転送先が未設定のため、Rの要求がDHCPサーバへ中継されないと説明した",
+            "L3スイッチのVLAN 20のDHCPリレー設定を修正すると特定した",
+            "VLAN 20の転送先を198.51.100.67にすると答えた"
+          ],
+          explanation: "Rの認証とVLAN 20への割当ては成功し、DISCOVERはL3スイッチまで届いています。資料BでVLAN 20だけリレーの転送先が未登録です。サーバに配布範囲と空きがあっても、要求が届くところまで進む必要があります。",
+          solutionId: "b-5-2-relay"
+        },
+        {
+          prompt: "4　Rの中継が正常になりました。DHCPサーバが配布範囲を選ぶ判断材料と、選ぶ配布範囲、Rが取得するゲートウェイ・DNSサーバを答えてください。",
+          thinkFirst: true,
+          options: [
+            "リレーが伝えたVLAN 20側のネットワーク情報から192.0.2.64/26を選ぶ。ゲートウェイ192.0.2.65、DNS 198.51.100.53。",
+            "DHCPサーバが接続するサーバ用LANから範囲を選ぶ。ゲートウェイとDNSにはサーバのIP 198.51.100.67を配布する。",
+            "無線接続という情報からVLAN 30の192.0.2.128/26を選ぶ。ゲートウェイ192.0.2.129、DNS 198.51.100.54。"
+          ],
+          answer: 0,
+          selfCheck: [
+            "リレーが伝えた受信側ネットワークの情報で範囲を選ぶと答えた（VLAN 20側のリレーインタフェースのアドレス、など）",
+            "VLAN 20用の192.0.2.64/26から端末用アドレスを選ぶと答えた（使用できる端末用の範囲を示しても可）",
+            "ゲートウェイは192.0.2.65と答えた",
+            "DNSサーバは198.51.100.53と答えた"
+          ],
+          explanation: "リレーが伝えるのは、端末の要求を受けた側のネットワークの情報です。VLAN 20の端末用アドレスと、同じ配布範囲に登録されているゲートウェイ・DNSを組み合わせて返します。"
+        },
+        {
+          prompt: "5　SはIP設定を取得しましたが、倉庫の業務システムに接続できません。第3問の修正は済んでいます。VLAN割当てとDHCP配布の記録から原因を説明し、直す設定と、修正後に端末で確かめるIPアドレスの範囲・ゲートウェイを答えてください。",
+          thinkFirst: true,
+          options: [
+            "SへのDHCP配布が失敗した。VLAN 30のリレー転送先を直し、192.0.2.128/26の端末用IPとゲートウェイ192.0.2.129を確認する。",
+            "倉庫端末Sは誤ってVLAN 30に入り、そのVLAN用のIP設定を取得した。倉庫用VLAN 20へ割り当てるよう修正し、再接続後に192.0.2.64/26の端末用IPとゲートウェイ192.0.2.65を確認する。",
+            "認証で失敗した。Sの認証設定を直してVLAN 30へ再接続し、来訪者用DNS 198.51.100.54を確認する。"
+          ],
+          answer: 1,
+          selfCheck: [
+            "認証成功後、倉庫端末Sが来訪者用VLAN 30へ誤って割り当てられたと答えた",
+            "DHCP配布はVLAN 30で成功したと示した（ACK受信、または取得した192.0.2.150/26が来訪者用の範囲に入ることを示しても可）",
+            "認証後にSが倉庫用VLAN 20に入るよう割当て設定を修正すると答えた",
+            "修正後の端末で192.0.2.64/26内の端末用IPを取得したか確かめると答えた（192.0.2.66〜192.0.2.126など、ゲートウェイを除く範囲でも可）",
+            "修正後の端末でゲートウェイ192.0.2.65を取得したか確かめると答えた"
+          ],
+          explanation: "Sは倉庫端末として認証されていますが、実際に入ったのはVLAN 30です。そのVLAN用の192.0.2.150/26を受け取れているので、DHCPは割当て先に対応する設定を配布できています。来訪者用VLANでは倉庫の業務システムへの接続が許可されません。VLANの割当てを正し、再接続して設定を取り直します。",
+          solutionId: "b-5-2-assignment"
         }
       ],
       "b-6-11": [
