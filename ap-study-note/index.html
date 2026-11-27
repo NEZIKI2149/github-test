@@ -1048,6 +1048,111 @@ L3スイッチ → サーバ用LAN（認証サーバ・DHCPサーバ）</pre>
         <div data-practice></div>
         <p class="sources"><a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/nl10bi0000009lh8-att/2025r07h_ap_pm_cmnt.pdf">IPA 令和7年度春期・午後の採点講評（問5）</a></p>
       </article>
+      <article id="b-5-3" hidden>
+        <h1 tabindex="-1">B-5-3　経路表とアドレス変換表から往復の経路を決める</h1>
+        <p class="context">初見演習の目安は15〜20分です。</p>
+        <h2>その区間で見える宛先から経路を選ぶ</h2>
+        <p>ルータは、宛先IPを含むネットワークの行を経路表から探し、その中でプレフィックスが最も長い行を選びます。これを<strong>最長一致</strong>と呼びます。表に次ホップが書かれていれば、その次のルータに渡します。直接接続の行なら、該当するLANから宛先へ直接送ります。</p>
+        <p>例えば198.51.100.75には、198.51.100.0/24、198.51.100.64/26、デフォルト経路（/0）が一致します。/26が最も長く、その行の次ホップがルータBなら、最初のルータはパケットをルータBに渡します。その先はルータBの経路表で決まります。</p>
+        <h3>変換後の送信元は、応答を受け取る宛先になる</h3>
+        <p><strong>NAPT</strong>は、IPアドレスとポート番号を対応付けて変換します。この演習の装置は、往路で送信元のIP・ポートを変換し、対応する応答が同じ装置に戻ったとき、応答の宛先を元のIP・ポートに戻します。</p>
+        <p>例えば2台の端末が変換後のアドレスを共有し、別々のポート62001・62002を割り当てられた場合、62002宛ての応答は2台目の行に対応します。往路・復路をそれぞれたどり、変換点の前後で見える宛先を経路表に当てはめます。</p>
+        <h2>演習　在庫照会サーバの移設</h2>
+        <h3>資料A　構成と接続先</h3>
+        <pre class="table-wrap" tabindex="0" aria-label="社内PCからR1とR2を経由して新サーバに接続し、R1とR2はいずれもR3へ転送できる構成">社内PC → R1 ─ 中継LAN ─ R2 → 新サーバ
+R1・R2はどちらも上位ルータR3へ転送可</pre>
+        <p>卸売会社が在庫照会サーバを203.0.113.20から203.0.113.70（新サーバ）に移しました。社内PCは新サーバのIPを取得済みで、TCP 443に接続します。社内PCのゲートウェイはR1、新サーバのゲートウェイはR2です。</p>
+        <p>中継LANは198.51.100.0/30です。中継LAN側のIPはR1が198.51.100.1、R2が198.51.100.2です。</p>
+        <h3>資料B　移設後の経路表</h3>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="R1とR2の経路表"><table>
+          <thead><tr><th scope="col">ルータ</th><th scope="col">宛先プレフィックス</th><th scope="col">転送先</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">R1</th><td>192.0.2.0/24</td><td>社内LANへ直接</td></tr>
+            <tr><th scope="row">R1</th><td>198.51.100.0/30</td><td>中継LANへ直接</td></tr>
+            <tr><th scope="row">R1</th><td>203.0.113.64/26</td><td>R2（198.51.100.2）</td></tr>
+            <tr><th scope="row">R1</th><td>203.0.113.0/24</td><td>R3</td></tr>
+            <tr><th scope="row">R1</th><td>0.0.0.0/0</td><td>R3</td></tr>
+            <tr><th scope="row">R2</th><td>203.0.113.64/26</td><td>新サーバのLANへ直接</td></tr>
+            <tr><th scope="row">R2</th><td>198.51.100.0/30</td><td>中継LANへ直接</td></tr>
+            <tr><th scope="row">R2</th><td>0.0.0.0/0</td><td>R3</td></tr>
+          </tbody>
+        </table></div>
+        <h3>資料C　R1の変換表</h3>
+        <p>R1はR2へ送る次のTCP通信の送信元を変換します。198.51.100.129はR1が使う変換用IPで、中継LANの範囲外です。返ってきた応答が表の行に対応すると、R1は応答の宛先を変換前の送信元の組に戻し、社内LANへ送ります。</p>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="PC-AとPC-Bの送信元変換表"><table>
+          <thead><tr><th scope="col">通信</th><th scope="col">変換前の送信元<br>IP：ポート</th><th scope="col">変換後の送信元<br>IP：ポート</th><th scope="col">往路の宛先<br>IP：ポート</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">PC-A</th><td>192.0.2.34：51000</td><td>198.51.100.129：40001</td><td>203.0.113.70：443</td></tr>
+            <tr><th scope="row">PC-B</th><td>192.0.2.35：51000</td><td>198.51.100.129：40002</td><td>203.0.113.70：443</td></tr>
+          </tbody>
+        </table></div>
+        <p>R3は198.51.100.129宛てのパケットを破棄します。転送結果に影響する条件は、ここに示した経路と変換だけです。</p>
+        <h2>設問一覧</h2>
+        <ol>
+          <li>R1が新サーバ宛ての要求を転送するとき、採用する宛先プレフィックスと次ホップの組合せを選んでください。</li>
+          <li>PC-Aの要求について、R1の変換後にR2が見る送信元と宛先のIPアドレス・TCPポート番号をそれぞれ答えてください。R2が採用する経路と転送先も答えてください。</li>
+          <li>新サーバがPC-Aの要求に応答しましたが、PC-Aには届きません。R2で見える応答の宛先IP・TCPポート番号、R2が採用する経路、破棄されるまでの経路を答えてください。</li>
+          <li>R2に静的経路を1行加えて復路を直します。その行の対象を変換用IP一つに限定するとき、宛先プレフィックスと次ホップのIPアドレスを答えてください。</li>
+          <li>修正後、R1に198.51.100.129：40002宛ての応答が届きました。R1が社内LANへ送るときの宛先IP・TCPポート番号と、二台のPCへの応答を区別できる理由を答えてください。</li>
+        </ol>
+        <div data-practice></div>
+        <p class="sources"><a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/nl10bi0000009lh8-att/2025r07a_ap_pm_cmnt.pdf">IPA 令和7年度秋期・午後の採点講評（問5）</a></p>
+      </article>
+      <article id="b-5-4" hidden>
+        <h1 tabindex="-1">B-5-4　名前解決から業務サービスの接続先を特定する</h1>
+        <p class="context">初見演習の目安は12〜18分です。</p>
+        <h2>名前の問合せ先と、新しく接続する相手を追う</h2>
+        <p><strong>権威DNS</strong>は担当するドメインの登録値を返します。<strong>キャッシュDNS</strong>は端末に代わって問い合わせ、取得済みの応答を<strong>TTL</strong>（再利用できる時間）の範囲で返します。</p>
+        <ul>
+          <li>Webでは、URLのホスト名のAレコードからIPv4アドレスを調べます。</li>
+          <li>メールでは、受信者のドメインのMXレコードから配送先のホスト名を得て、その名前のAレコードで接続先IPv4アドレスを調べます。</li>
+        </ul>
+        <p>DNSから新しいIPを得た場合も、すでに開いているTCP接続は、それを開いたときの相手と通信を続けます。</p>
+        <h3>例題　登録値の変更とキャッシュの期限</h3>
+        <p>8時50分にTTL 600秒で旧IPを取得した場合、期限は9時00分です。権威DNSが8時55分に新IPへ更新されると、8時57分には権威DNSが新IPを返し、キャッシュDNSは期限内の旧IPを返します。9時00分以降にキャッシュDNSへ聞くと、新しい値を取り直します。</p>
+        <h2>演習　受注Webと受注メールを移行する</h2>
+        <p>卸売会社では、受注Webと受注メールのサーバを移します。演習ではIPv4を扱います。</p>
+        <h3>資料A　DNSを問い合わせる経路と業務で接続する経路</h3>
+        <pre class="table-wrap" tabindex="0" aria-label="本社PCはC1、支店PCはC2、取引先メールサーバは取引先のキャッシュDNSに問い合わせる。各キャッシュDNSは必要に応じて権威DNSに問い合わせる">名前解決
+本社PC → C1（キャッシュDNS） → 権威DNS
+支店PC → C2（キャッシュDNS） → 権威DNS
+取引先メールサーバ → 取引先のキャッシュDNS → 権威DNS</pre>
+        <pre class="table-wrap" tabindex="0" aria-label="本社PCと支店PCは受注Webに接続し、取引先メールサーバは受注メールの配送先に接続する">業務の接続
+本社PC・支店PC → 受注Web（TCP）
+取引先メールサーバ → 受注メールの配送先（SMTP）</pre>
+        <h3>資料B　権威DNSの登録とキャッシュの取得時刻</h3>
+        <p>10時00分に二つのAレコードを同時に更新し、すべての権威DNSが直ちに新しい値を返します。</p>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="10時00分の前後に権威DNSが返す値とTTL"><table>
+          <thead><tr><th scope="col">対象名</th><th scope="col">種別</th><th scope="col">10時00分より前</th><th scope="col">10時00分以降</th><th scope="col">TTL</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">web.orders.example</th><td>A</td><td>192.0.2.10</td><td>192.0.2.20</td><td>900秒</td></tr>
+            <tr><th scope="row">orders.example</th><td>MX</td><td>優先度10、mx.orders.example</td><td>優先度10、mx.orders.example</td><td>1,800秒</td></tr>
+            <tr><th scope="row">mx.orders.example</th><td>A</td><td>192.0.2.30</td><td>192.0.2.40</td><td>600秒</td></tr>
+          </tbody>
+        </table></div>
+        <ul>
+          <li>C1はWebのAレコードを9時55分に取得済み。C2は10時02分に初めて取得する。</li>
+          <li>取引先のキャッシュDNSは、受注メールのMXと配送先のAを9時58分に取得済み。</li>
+          <li>取得時刻からTTLが経過した時点で期限切れとなる。参照されても期限は延びず、期限切れ後の最初の問合せで取得し直す。</li>
+          <li>端末やアプリ独自のDNSキャッシュ、設定ファイルによる名前の上書きはない。</li>
+        </ul>
+        <h3>資料C　本社PCの接続記録とメールの前提</h3>
+        <ul>
+          <li>本社PCは受注WebのTCP接続を10時03分に開いた。10時12分にも旧Webと通信中で、記録から同じ接続だと分かる。</li>
+          <li>10時12分の診断では、C1を指定してWeb名を問い合わせたところ、新IPが返った。</li>
+          <li>メールは設問に指定した時刻ごとに名前を解決し、新たにSMTP接続を開く。</li>
+        </ul>
+        <h2>設問一覧</h2>
+        <ol>
+          <li>支店PCが10時02分に受注Webへ新規接続します。PCのDNS問合せ先、調べるレコードの種別、Webの接続先IPの組合せを選んでください。</li>
+          <li>本社PCが10時03分に受注Webへの新しいTCP接続を開くときの接続先IPと、C1が保持する旧Aレコードの期限切れ時刻を答えてください。</li>
+          <li>10時03分に本社PCだけ旧Webへつながると報告されました。権威DNSの登録ミスとC1のキャッシュの影響を区別するため、どこへ何を問い合わせ、応答の何を確認するかを70字以内で答えてください。</li>
+          <li>取引先がsales@orders.example宛てに10時05分と10時09分に新規配送します。参照するレコードを順に示し、各時刻のSMTP接続先IPを答えてください。</li>
+          <li>10時12分にC1は新IPを返しますが、本社PCの接続記録では旧Webと通信中です。その理由と、旧Webを停止する前に確認することを70字以内で答えてください。</li>
+        </ol>
+        <div data-practice></div>
+        <p class="sources"><a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/nl10bi0000009lh8-att/2025r07h_ap_pm_cmnt.pdf">IPA 令和7年度春期・午後の採点講評（問5）</a> ／ <a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/ps6vr70000010d6y-att/2023r05h_ap_pm_cmnt.pdf">IPA 令和5年度春期・午後の採点講評（問5）</a></p>
+      </article>
       <article id="b-6-11" hidden>
         <h1 tabindex="-1">B-6-11　総合演習：業務変更をE-R図・SQL・帳票に反映する</h1>
         <p class="context">初見演習の目安は25〜30分です。</p>
@@ -4560,6 +4665,84 @@ R ← L3スイッチ ← DHCPサーバ
       </tbody>
     </table></div>
   </template>
+  <template id="b-5-3-match">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="203.0.113.70に一致するR1の経路"><table>
+      <thead><tr><th scope="col">一致する行</th><th scope="col">次ホップ</th><th scope="col">判定</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">203.0.113.64/26</th><td>R2（198.51.100.2）</td><td>採用。64〜127の範囲に70が含まれ、最長の/26</td></tr>
+        <tr><th scope="row">203.0.113.0/24</th><td>R3</td><td>一致。0〜255の範囲に70が含まれる</td></tr>
+        <tr><th scope="row">0.0.0.0/0</th><td>R3</td><td>一致。すべてのIPv4アドレスを含む</td></tr>
+      </tbody>
+    </table></div>
+  </template>
+  <template id="b-5-3-request">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="PC-Aから新サーバまでの各区間とR1の変換"><table>
+      <thead><tr><th scope="col">区間</th><th scope="col">送信元</th><th scope="col">宛先</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">PC-A → R1</th><td>192.0.2.34：51000</td><td>203.0.113.70：443</td></tr>
+        <tr><th scope="row">R1 → R2</th><td>198.51.100.129：40001</td><td>203.0.113.70：443</td></tr>
+        <tr><th scope="row">R2 → 新サーバ</th><td>198.51.100.129：40001</td><td>203.0.113.70：443</td></tr>
+      </tbody>
+    </table></div>
+  </template>
+  <template id="b-5-3-reply-before">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="修正前のPC-A宛ての応答がR3で破棄される経路"><table>
+      <thead><tr><th scope="col">区間</th><th scope="col">送信元</th><th scope="col">宛先</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">新サーバ → R2</th><td>203.0.113.70：443</td><td>198.51.100.129：40001</td></tr>
+        <tr><th scope="row">R2 → R3（デフォルト経路）</th><td>203.0.113.70：443</td><td>198.51.100.129：40001</td></tr>
+      </tbody>
+    </table></div>
+    <p>R3で破棄されるため、R1の逆変換に進みません。</p>
+  </template>
+  <template id="b-5-3-reply-after">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="修正後のPC-B宛ての応答がR1を経由して戻る経路"><table>
+      <thead><tr><th scope="col">区間</th><th scope="col">送信元</th><th scope="col">宛先</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">新サーバ → R2</th><td>203.0.113.70：443</td><td>198.51.100.129：40002</td></tr>
+        <tr><th scope="row">R2 → R1（198.51.100.129/32）</th><td>203.0.113.70：443</td><td>198.51.100.129：40002</td></tr>
+        <tr><th scope="row">R1 → PC-B（PC-Bの変換表の行）</th><td>203.0.113.70：443</td><td>192.0.2.35：51000</td></tr>
+      </tbody>
+    </table></div>
+  </template>
+  <template id="b-5-4-path">
+    <pre class="table-wrap" tabindex="0" aria-label="支店PCのDNS問合せと新Webへの接続">名前解決　支店PC → C2 → 権威DNS
+          支店PC ← C2 ← A 192.0.2.20
+Web接続　 支店PC → 192.0.2.20</pre>
+  </template>
+  <template id="b-5-4-web-time">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="本社のC1で旧WebのAレコードが期限切れになるまで"><table>
+      <thead><tr><th scope="col">時刻</th><th scope="col">C1と権威DNSの動き</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">9時55分</th><td>C1が旧IP 192.0.2.10を取得（TTL 900秒）</td></tr>
+        <tr><th scope="row">10時00分</th><td>権威DNSを新IP 192.0.2.20へ更新</td></tr>
+        <tr><th scope="row">10時03分</th><td>C1は有効期間内の旧IPを返す（残り約420秒）</td></tr>
+        <tr><th scope="row">10時10分</th><td>C1の旧Aレコードが期限切れ</td></tr>
+        <tr><th scope="row">10時12分</th><td>診断時、C1が新IPを返す</td></tr>
+      </tbody>
+    </table></div>
+  </template>
+  <template id="b-5-4-mail-time">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="メールで使うMXとAの有効期間"><table>
+      <thead><tr><th scope="col">取引先が保持するレコード</th><th scope="col">取得</th><th scope="col">権威DNSでの値の変更</th><th scope="col">期限切れ</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">受信ドメインのMX</th><td>9時58分</td><td>配送先名は引き続きmx.orders.example</td><td>10時28分</td></tr>
+        <tr><th scope="row">配送先名の旧A</th><td>9時58分</td><td>10時00分に192.0.2.40へ更新</td><td>10時08分</td></tr>
+      </tbody>
+    </table></div>
+    <pre class="table-wrap" tabindex="0" aria-label="配送先の名前は共通で、10時08分のAレコード期限切れにより配送先IPが変わる">orders.example → MX → mx.orders.example
+10時05分　キャッシュのA → 192.0.2.30
+10時09分　取り直したA   → 192.0.2.40</pre>
+  </template>
+  <template id="b-5-4-connections">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="10時12分時点の既存接続と新規接続の接続先"><table>
+      <thead><tr><th scope="col">10時12分の接続</th><th scope="col">使うIP</th><th scope="col">根拠</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">10時03分に開いたTCP接続</th><td>192.0.2.10（旧Web）</td><td>開いたときの相手との接続を再利用</td></tr>
+        <tr><th scope="row">名前解決して開く新規接続</th><td>192.0.2.20（新Web）</td><td>C1が返す現在のAレコード</td></tr>
+      </tbody>
+    </table></div>
+  </template>
   <template id="b-6-1-equipment-answer">
     <p>設備（<u>設備番号</u>〔主キー〕、設備名）<br>
     点検（<u>点検番号</u>〔主キー〕、<span style="text-decoration: underline dashed">設備番号</span>〔外部キー〕、予定日）</p>
@@ -5274,7 +5457,7 @@ WHERE p.点検月 = :対象月</code></pre></div>
   <script>
     const byId = (id) => document.getElementById(id);
     const lessons = Array.from(document.querySelectorAll("[data-lesson]"));
-    const subjectBLessons = ["b-1-1", "b-1-2", "b-1-3", "b-1-4", "b-1-5", "b-2-1", "b-2-2", "b-2-3", "b-2-4", "b-2-5", "b-2-6", "b-2-7", "b-2-8", "b-3-1", "b-3-2", "b-3-3", "b-3-4", "b-3-5", "b-3-6", "b-3-7", "b-3-8", "b-4-1", "b-4-2", "b-4-3", "b-4-4", "b-4-5", "b-4-6", "b-4-7", "b-4-8", "b-5-1", "b-5-2", "b-6-1", "b-6-2", "b-6-3", "b-6-4", "b-6-5", "b-6-6", "b-6-7", "b-6-8", "b-6-9", "b-6-10", "b-6-11", "b-7-1", "b-7-2", "b-7-3", "b-7-4", "b-7-5", "b-7-6", "b-7-7", "b-7-8"].map(byId);
+    const subjectBLessons = ["b-1-1", "b-1-2", "b-1-3", "b-1-4", "b-1-5", "b-2-1", "b-2-2", "b-2-3", "b-2-4", "b-2-5", "b-2-6", "b-2-7", "b-2-8", "b-3-1", "b-3-2", "b-3-3", "b-3-4", "b-3-5", "b-3-6", "b-3-7", "b-3-8", "b-4-1", "b-4-2", "b-4-3", "b-4-4", "b-4-5", "b-4-6", "b-4-7", "b-4-8", "b-5-1", "b-5-2", "b-5-3", "b-5-4", "b-6-1", "b-6-2", "b-6-3", "b-6-4", "b-6-5", "b-6-6", "b-6-7", "b-6-8", "b-6-9", "b-6-10", "b-6-11", "b-7-1", "b-7-2", "b-7-3", "b-7-4", "b-7-5", "b-7-6", "b-7-7", "b-7-8"].map(byId);
     const sections = [byId("welcome"), byId("intro"), byId("subject-b"), ...subjectBLessons, ...lessons];
     const toc = byId("toc");
     const subjectAItems = Array.from(toc.children);
@@ -5326,6 +5509,8 @@ WHERE p.点検月 = :対象月</code></pre></div>
         <summary>B-5　ネットワーク</summary>
         <a href="#b-5-1">B-5-1　構成図から端末の最初の転送先を読む</a>
         <a href="#b-5-2">B-5-2　端末が社内LANを使えるまでの条件を追う</a>
+        <a href="#b-5-3">B-5-3　経路表とアドレス変換表から往復の経路を決める</a>
+        <a href="#b-5-4">B-5-4　名前解決から業務サービスの接続先を特定する</a>
       </details>
       <details>
         <summary>B-6　データベース</summary>
@@ -7075,6 +7260,165 @@ WHERE p.点検月 = :対象月</code></pre></div>
           ],
           explanation: "Sは倉庫端末として認証されていますが、実際に入ったのはVLAN 30です。そのVLAN用の192.0.2.150/26を受け取れているので、DHCPは割当て先に対応する設定を配布できています。来訪者用VLANでは倉庫の業務システムへの接続が許可されません。VLANの割当てを正し、再接続して設定を取り直します。",
           solutionId: "b-5-2-assignment"
+        }
+      ],
+      "b-5-3": [
+        {
+          prompt: "1　R1が新サーバ宛ての要求を転送するとき、採用する宛先プレフィックスと次ホップの組合せを選んでください。",
+          options: [
+            "203.0.113.0/24、R3。",
+            "203.0.113.64/26、R2（198.51.100.2）。",
+            "0.0.0.0/0、R3。"
+          ],
+          answer: 1,
+          explanation: "新サーバの203.0.113.70は三つの行に一致します。/26が最も長く、表の次ホップはR2です。R1は中継LANに直接接続しているため、R2の198.51.100.2へ渡せます。",
+          solutionId: "b-5-3-match"
+        },
+        {
+          prompt: "2　PC-Aの要求について、R1の変換後にR2が見る送信元と宛先のIPアドレス・TCPポート番号をそれぞれ答えてください。R2が採用する経路と転送先も答えてください。",
+          thinkFirst: true,
+          options: [
+            "送信元198.51.100.1：40001、宛先203.0.113.70：443。R2は203.0.113.64/26で新サーバに直接送る。",
+            "送信元198.51.100.129：40001、宛先198.51.100.2：443。R2は自身宛てのパケットとして受け取る。",
+            "送信元198.51.100.129：40001、宛先203.0.113.70：443。R2は203.0.113.64/26で新サーバに直接送る。"
+          ],
+          answer: 2,
+          selfCheck: [
+            "変換後の送信元を198.51.100.129：40001と答えた",
+            "宛先を203.0.113.70：443と答えた",
+            "R2の採用経路は203.0.113.64/26で、直接新サーバへ送ると答えた（新サーバ側LANの直接接続経路を使う、でも可）"
+          ],
+          explanation: "R1は変換表のPC-Aの行を使い、要求の送信元IP・ポートを変換します。R2はパケットの宛先である203.0.113.70を経路表で照合し、新サーバへ直接送ります。",
+          solutionId: "b-5-3-request"
+        },
+        {
+          prompt: "3　新サーバがPC-Aの要求に応答しましたが、PC-Aには届きません。R2で見える応答の宛先IP・TCPポート番号、R2が採用する経路、破棄されるまでの経路を答えてください。",
+          thinkFirst: true,
+          options: [
+            "宛先198.51.100.129：40001。R2は0.0.0.0/0でR3へ転送し、R3が破棄する。",
+            "宛先192.0.2.34：51000。R2は0.0.0.0/0でR3へ転送し、R3が破棄する。",
+            "宛先198.51.100.129：40001。R2は198.51.100.0/30でR1へ直接転送する。"
+          ],
+          answer: 0,
+          selfCheck: [
+            "R2で見える応答の宛先を198.51.100.129：40001と答えた",
+            "R2がデフォルト経路（0.0.0.0/0）を使い、R3へ送ると答えた",
+            "破棄する装置をR3と特定した（「新サーバ → R2 → R3で破棄」という図示でも可）"
+          ],
+          explanation: "サーバは、届いた要求の送信元だった198.51.100.129：40001に応答します。このIPはR2の中継LAN（198.51.100.0〜198.51.100.3）に含まれないため、R2はデフォルト経路でR3に送ります。",
+          solutionId: "b-5-3-reply-before"
+        },
+        {
+          prompt: "4　R2に静的経路を1行加えて復路を直します。その行の対象を変換用IP一つに限定するとき、宛先プレフィックスと次ホップのIPアドレスを答えてください。",
+          thinkFirst: true,
+          options: [
+            "198.51.100.128/25 → 198.51.100.1（R1）。",
+            "198.51.100.129/32 → 198.51.100.1（R1）。",
+            "198.51.100.129/32 → 198.51.100.129。"
+          ],
+          answer: 1,
+          selfCheck: [
+            "宛先を198.51.100.129/32とした（198.51.100.129へのホスト経路、または宛先198.51.100.129・マスク255.255.255.255という表記でも可）",
+            "次ホップをR1の中継LAN側198.51.100.1と答えた"
+          ],
+          explanation: "/32はIPv4アドレス一つを指定します。この行がデフォルト経路より優先され、R2は中継LANで直接届くR1の198.51.100.1へ応答を渡します。R1まで届く間、パケットの宛先は198.51.100.129のままです。"
+        },
+        {
+          prompt: "5　修正後、R1に198.51.100.129：40002宛ての応答が届きました。R1が社内LANへ送るときの宛先IP・TCPポート番号と、二台のPCへの応答を区別できる理由を答えてください。",
+          thinkFirst: true,
+          options: [
+            "192.0.2.34：51000へ送る。元の送信元ポートが同じなので、PC-Aの行を使う。",
+            "192.0.2.35：40002へ送る。PC-Bの行を使い、変換後のポートを保つ。",
+            "192.0.2.35：51000へ送る。R1は応答の宛先ポート40002を変換表と照合し、PC-BのIPとポートを特定できる。"
+          ],
+          answer: 2,
+          selfCheck: [
+            "社内LANへ転送する応答の宛先を192.0.2.35：51000と答えた",
+            "変換後のポートでPCを特定できると説明した（40002に対応するPC-Bの変換表の行を使う、でも可）"
+          ],
+          explanation: "R1は同じ変換用IPを使い、PC-Aに40001、PC-Bに40002を割り当てています。応答の宛先198.51.100.129：40002と一致するPC-Bの行を使い、宛先のIPとポートを両方とも元の値に戻します。",
+          solutionId: "b-5-3-reply-after"
+        }
+      ],
+      "b-5-4": [
+        {
+          prompt: "1　支店PCが10時02分に受注Webへ新規接続します。PCのDNS問合せ先、調べるレコードの種別、Webの接続先IPの組合せを選んでください。",
+          options: [
+            "問合せ先は権威DNS、Aレコード、接続先は192.0.2.20。",
+            "問合せ先はC2、Aレコード、接続先は192.0.2.20。",
+            "問合せ先はC2、MXレコード、接続先は192.0.2.10。"
+          ],
+          answer: 1,
+          explanation: "支店PCは設定されたC2にWeb名のIPv4アドレスを問い合わせます。C2は初回の問合せで権威DNSから10時00分以降のAレコードを取得し、192.0.2.20をPCに返します。PCはそのIPへ新規接続します。",
+          solutionId: "b-5-4-path"
+        },
+        {
+          prompt: "2　本社PCが10時03分に受注Webへの新しいTCP接続を開くときの接続先IPと、C1が保持する旧Aレコードの期限切れ時刻を答えてください。",
+          thinkFirst: true,
+          options: [
+            "接続先は192.0.2.10、期限切れは10時10分。",
+            "接続先は192.0.2.10、期限切れは10時15分。",
+            "接続先は192.0.2.20、旧Aレコードの期限切れは10時00分。"
+          ],
+          answer: 0,
+          selfCheck: [
+            "10時03分に返る旧IP 192.0.2.10を接続先と答えた",
+            "C1の旧Aレコードは10時10分に期限切れになると答えた（9時55分の取得から15分後、でも可）"
+          ],
+          explanation: "C1が取得した9時55分を起点に900秒（15分）を足すと、期限は10時10分です。10時03分は期限前なので、C1はキャッシュから旧IPを返します。権威DNSの更新後もC1はこの期限まで旧値を再利用できます。",
+          solutionId: "b-5-4-web-time"
+        },
+        {
+          prompt: "3　10時03分に本社PCだけ旧Webへつながると報告されました。権威DNSの登録ミスとC1のキャッシュの影響を区別するため、どこへ何を問い合わせ、応答の何を確認するかを70字以内で答えてください。",
+          thinkFirst: true,
+          options: [
+            "C1だけにWeb名のAレコードを問い合わせ、旧IPが返ったら権威DNSの登録ミスと判断する。",
+            "本社と支店でWebを開き、両方のページの見た目を比べて権威DNSの値を判断する。",
+            "C1と権威DNSに同じWeb名のAレコードを問い合わせ、返るIPを比較し、C1の残りTTLを確認する。"
+          ],
+          answer: 2,
+          selfCheck: [
+            "C1と権威DNSをそれぞれ指定して問い合わせると答えた",
+            "両方にweb.orders.exampleのAレコードを問い合わせると答えた（Web名のIPv4アドレスを調べる、でも可）",
+            "同じ問合せに対して両者が返すIPを比べると答えた（権威DNSは新IP、C1は旧IPかを調べる、でも可）",
+            "C1の旧値がまだ有効かを残りTTLで確認すると答えた（残り7分、または取得時刻とTTLから期限を確かめる方法でも可）"
+          ],
+          explanation: "10時03分なら、C1は192.0.2.10を残りTTL約420秒で返し、権威DNSは192.0.2.20を返します。両方に同じ名前と種別で問い合わせると、それぞれがどの値を返しているか分かります。"
+        },
+        {
+          prompt: "4　取引先がsales@orders.example宛てに10時05分と10時09分に新規配送します。参照するレコードを順に示し、各時刻のSMTP接続先IPを答えてください。",
+          thinkFirst: true,
+          options: [
+            "orders.exampleのMXで得たmx.orders.exampleをIPとして使うので、両時刻ともAレコードは参照しない。",
+            "orders.exampleのMXでmx.orders.exampleを得て、そのAレコードを参照する。10時05分は192.0.2.30、10時09分は192.0.2.40へ接続する。",
+            "orders.exampleのMXでmx.orders.exampleを得て、そのAレコードを参照する。MXが有効なので両時刻とも192.0.2.30へ接続する。"
+          ],
+          answer: 1,
+          selfCheck: [
+            "受信者のドメインのMXから配送先ホスト名を得ると答えた（orders.exampleのMX → mx.orders.example）",
+            "その配送先ホスト名のAレコードでIPv4アドレスを求めると答えた（「MXで得た名前のAを引く」でも可）",
+            "10時05分の接続先を192.0.2.30と答えた",
+            "10時09分の接続先を192.0.2.40と答えた"
+          ],
+          explanation: "取引先のキャッシュDNSは、MXとAをどちらも9時58分に取得しています。MXの期限は10時28分、旧Aの期限は10時08分です。10時09分もMXは再利用できますが、Aは権威DNSへ問い合わせ直すので新しいIPになります。",
+          solutionId: "b-5-4-mail-time"
+        },
+        {
+          prompt: "5　10時12分にC1は新IPを返しますが、本社PCの接続記録では旧Webと通信中です。その理由と、旧Webを停止する前に確認することを70字以内で答えてください。",
+          thinkFirst: true,
+          options: [
+            "10時03分からのTCP接続を再利用している。停止前に旧接続の終了と、新規接続が新IPへ向かうことを確認する。",
+            "C1のキャッシュが旧IPに戻った。停止前にC1を再起動し、権威DNSを更新する。",
+            "既存のTCP接続もDNSの応答と同時に移る。停止前にC1が新IPを返したことだけを確認する。"
+          ],
+          answer: 0,
+          selfCheck: [
+            "10時03分に開いた旧IPへのTCP接続を使い続けていると説明した（確立済みの接続の再利用、でも可）",
+            "旧Webに残る接続が終了したことを確認すると答えた（旧サーバへの接続や処理中のセッションの解消を確認する、など）",
+            "新規接続が新IPに向かうことを確認すると答えた（新Webへの接続テストや接続記録の確認、など）"
+          ],
+          explanation: "10時12分の診断用DNS応答の192.0.2.20は、新たに名前を解決して接続する場合の候補です。接続記録では同じTCP接続が使われており、相手は10時03分に接続した192.0.2.10です。旧Webの接続が終了し、新規接続が新Webに届くことを確かめてから停止します。",
+          solutionId: "b-5-4-connections"
         }
       ],
       "b-6-11": [
