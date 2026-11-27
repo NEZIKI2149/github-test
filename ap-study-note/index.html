@@ -1254,6 +1254,85 @@ R1・R2はどちらも上位ルータR3へ転送可</pre>
         <div data-practice></div>
         <p class="sources"><a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/m42obm000000afqx-att/2024r06h_ap_pm_cmnt.pdf">IPA 令和6年度春期・午後の採点講評（問5）</a></p>
       </article>
+      <article id="b-5-7" hidden>
+        <h1 tabindex="-1">B-5-7　観測結果を突き合わせて障害区間を絞る</h1>
+        <p class="context">初見演習の目安は15〜20分です。</p>
+        <h2>試験ごとに通った範囲を読む</h2>
+        <p><strong>ping</strong>は、相手からICMPの応答が返るかを調べる試験です。名前解決の試験では、指定したDNSが目的の名前に何を返すかを見ます。サービスの試験では、HTTPSなど、そのサービスで実際に使う通信の応答を確認します。</p>
+        <pre class="table-wrap" tabindex="0" aria-label="ゲートウェイへのpingはルータまで、本社Webの試験は本社Webまでを対象とする">端末 → 自拠点ルータ → 拠点間回線 → 本社Web
+pingの範囲　端末 ↔ 自拠点ルータ
+HTTPSの範囲　端末 ↔ 本社Web</pre>
+        <p>ゲートウェイへのpingで応答があれば、端末とルータの間を往復できたと分かります。本社のサービスまで調べるには、そこに届く試験の結果を見ます。</p>
+        <h2>演習　東倉庫だけ出荷Webを開けない</h2>
+        <h3>資料A　東西の倉庫と本社の構成</h3>
+        <p>東倉庫の端末Eと西倉庫の端末Wは、同じ本社DNSと出荷Webを使います。それぞれのデフォルトゲートウェイは自拠点のルータです。出荷Webの名前は <code>ship.example</code>、正常なIPv4アドレスは192.0.2.80です。</p>
+        <pre class="table-wrap" tabindex="0" aria-label="各倉庫の端末はアクセススイッチ、自拠点ルータ、拠点回線、本社ルータを経て本社DNSと出荷Webに接続する">倉庫から本社への通信（東・西とも同じ構成）
+端末 → アクセススイッチ → 自拠点ルータ
+     → 拠点回線 → 本社ルータ → 本社DNS／出荷Web</pre>
+        <ul>
+          <li>HTTPSの試験は部門共通の監視ページを開きます。認証や業務権限の違いは考えません。</li>
+          <li>IP固定の試験では接続先だけを192.0.2.80に固定し、HTTPSで使うホスト名とTLSの接続先名は <code>ship.example</code> のままにします。</li>
+          <li>通常URLの試験では、両端末とも本社DNSに <code>ship.example</code> のAレコードを問い合わせます。端末に残ったDNSの回答、名前の上書き、プロキシはなく、試験中に設定は変わりません。</li>
+        </ul>
+        <h3>資料B　初期の試験結果</h3>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="同時刻に東西の倉庫で実施した四つの試験"><table>
+          <thead><tr><th scope="col">試験</th><th scope="col">西倉庫の端末W</th><th scope="col">東倉庫の端末E</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">自拠点のゲートウェイへのping</th><td>応答あり</td><td>応答あり</td></tr>
+            <tr><th scope="row">本社DNSを指定し、ship.exampleを問合せ</th><td>192.0.2.80</td><td>タイムアウト</td></tr>
+            <tr><th scope="row">192.0.2.80へ接続先を固定したHTTPS</th><td>HTTP 200</td><td>HTTP 200</td></tr>
+            <tr><th scope="row">通常URLでのHTTPS</th><td>HTTP 200</td><td>名前解決エラー</td></tr>
+          </tbody>
+        </table></div>
+        <h2>設問一覧</h2>
+        <ol>
+          <li>初期の試験結果から、東倉庫の端末Eで確認できた通信と、失敗した処理の組合せを選んでください。</li>
+          <li>端末Eから自拠点のゲートウェイへのpingが成功しました。この結果から、拠点間回線が正常といえますか。pingが通る範囲を示して答えてください。</li>
+          <li>端末EのDNS問合せが本社DNSに届かなかった場合と、回答がEに戻らなかった場合を区別します。まずどの記録を、何と照合して確認するかを55字以内で答えてください。</li>
+          <li>追加資料から、問合せと回答についてどこまで確認できたかを示してください。復路の途中に観測点を一つ選び、同じDNS回答が見えた場合と見えなかった場合に調べる範囲を答えてください。</li>
+          <li>東倉庫ルータの受信エラーの増加数と、SNMPトラップが示す事象を答えてください。この記録でDNSタイムアウトの原因箇所まで確定できるか、理由も答えてください。</li>
+        </ol>
+        <div data-practice></div>
+        <p class="sources"><a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/nl10bi0000009lh8-att/2025r07h_ap_pm_cmnt.pdf">IPA 令和7年度春期・午後の採点講評（問5）</a></p>
+      </article>
+      <article id="b-5-8" hidden>
+        <h1 tabindex="-1">B-5-8　総合演習：業務サーバ移行後の接続を設計・検証する</h1>
+        <p class="context">初見演習の目安は25〜30分です。</p>
+        <h2>演習　返品受付Webをクラウドへ移す</h2>
+        <p>卸売会社が返品受付Webを本社からクラウドへ移します。東支店・西支店とも、移行後も <code>https://returns.example/</code> で業務を続けます。</p>
+        <pre class="table-wrap" tabindex="0" aria-label="東西の支店PCは自支店ルータから本社ルータへ進む。本社LANには旧サーバ、クラウド接続ファイアウォールの先には新サーバがある。西支店ルータは検証用ルータにもつながる">東支店PC → 東支店ルータ ─┐
+西支店PC → 西支店ルータ ─┴→ 本社ルータ
+             └─ 検証用ルータ    ├─ 本社LAN → 旧サーバ
+                                └─ クラウド接続FW → 新サーバ</pre>
+        <h3>資料A　端末とDNSの設定</h3>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="両支店の端末とDNSの設定"><table>
+          <thead><tr><th scope="col">項目</th><th scope="col">東支店</th><th scope="col">西支店</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">PCのネットワーク</th><td>192.0.2.0/26</td><td>192.0.2.64/26</td></tr>
+            <tr><th scope="row">PCの既定のゲートウェイ</th><td>東支店ルータ</td><td>西支店ルータ</td></tr>
+            <tr><th scope="row">PCが問い合わせるDNS</th><td>東支店のキャッシュDNS</td><td>西支店のキャッシュDNS</td></tr>
+            <tr><th scope="row">切替時の旧IPのキャッシュ</th><td>なし</td><td>9時55分に取得。TTLは600秒</td></tr>
+          </tbody>
+        </table></div>
+        <p>両支店のキャッシュDNSは共通の権威DNSを参照します。現在の登録値は旧サーバの198.51.100.30です。新サーバは203.0.113.70で、切替予定時刻は10時00分です。期限切れ後の最初の問合せで権威DNSから取得し直します。</p>
+        <h3>資料B　移行時の通信条件</h3>
+        <ul>
+          <li>現在のクラウド接続ファイアウォール（FW）には新サーバへの許可がありません。移行後に許可する業務通信は、東西の支店PCから新サーバのTCP 443への接続だけです。</li>
+          <li>DNSの経路と許可、および新サーバから支店までの本社経由の復路は設定済みです。FWは許可済み接続の応答を自動で通します。アドレス変換やプロキシは使いません。</li>
+          <li>旧サーバは移行後の検証が完了するまで稼働します。試験ごとに新規接続し、アプリ独自のキャッシュは使いません。IP固定試験でもHTTPSのホスト名とTLSの接続先名は <code>returns.example</code> です。装置の時刻は同期しています。</li>
+        </ul>
+        <h2>設問一覧</h2>
+        <ol>
+          <li>同じURLで新サーバを利用するため、どのDNSの何のレコードをどの値へ変更しますか。PCでそのまま使えるゲートウェイとDNSの設定も答えてください。</li>
+          <li>クラウド接続FWに追加する新規接続の許可を、送信元の範囲、宛先IP、宛先TCPポートで答えてください。</li>
+          <li>西支店が10時02分に旧IPを得た理由と、キャッシュが期限切れになる時刻を答えてください。</li>
+          <li>10時07分の西支店の失敗をDNSの旧値で説明できますか。試験結果を根拠に判断し、次にどの区間をどこで確かめるかを答えてください。</li>
+          <li>資料Cから、西支店ルータが新IP宛てに選ぶ経路と次ホップを示し、設定の修正案と修正後の経路を答えてください。ほかの業務通信も維持することが条件です。</li>
+          <li>修正後、旧サーバを停止する前に両支店で何を確認しますか。名前解決、実際の接続先、業務操作の結果と、旧サーバを停止できる条件を答えてください。</li>
+        </ol>
+        <div data-practice></div>
+        <p class="sources"><a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/nl10bi0000009lh8-att/2025r07a_ap_pm_cmnt.pdf">IPA 令和7年度秋期・午後の採点講評（問5）</a> ／ <a href="https://www.ipa.go.jp/shiken/mondai-kaiotu/nl10bi0000009lh8-att/2025r07h_ap_pm_cmnt.pdf">IPA 令和7年度春期・午後の採点講評（問5）</a></p>
+      </article>
       <article id="b-6-11" hidden>
         <h1 tabindex="-1">B-6-11　総合演習：業務変更をE-R図・SQL・帳票に反映する</h1>
         <p class="context">初見演習の目安は25〜30分です。</p>
@@ -4915,6 +4994,82 @@ Web接続　 支店PC → 192.0.2.20</pre>
       </tbody>
     </table></div>
   </template>
+  <template id="b-5-7-observations">
+    <h3>追加資料　東倉庫の試験時刻に対応する記録</h3>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="本社DNS、東倉庫ルータ、監視システムの記録"><table>
+      <thead><tr><th scope="col">記録元</th><th scope="col">対象時間帯の記録</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">本社DNS</th><td>端末Eからの問合せを受信し、Eがタイムアウトする前に、その問合せへの正常な回答を送出した。</td></tr>
+        <tr><th scope="row">東倉庫ルータ</th><td>回線側インタフェースの受信エラー累積値が1,240から1,280へ増えた。</td></tr>
+        <tr><th scope="row">監視システム</th><td>同じインタフェースの一時的なリンク切断を知らせるSNMPトラップを受信した。</td></tr>
+      </tbody>
+    </table></div>
+    <p>各装置の時刻は同期済みです。問合せ送信から端末Eがタイムアウトするまでを調査対象とし、各観測点の入出方向の記録には欠落がないものとします。DNSの回答は送信元・宛先、問合せ名、取引ID（問合せと回答を対応付ける番号）で照合できます。受信エラーの累積値とリンク切断の通知には、個別のDNS回答を識別する情報はありません。</p>
+  </template>
+  <template id="b-5-7-tested-scope">
+    <pre class="table-wrap" tabindex="0" aria-label="端末Eと東倉庫ルータの往復だけがpingの確認範囲">端末E ↔ アクセススイッチ ↔ 東倉庫ルータ
+このpingの確認範囲はここまで</pre>
+  </template>
+  <template id="b-5-7-reply-check">
+    <pre class="table-wrap" tabindex="0" aria-label="確認済みのDNS問合せと送出、次の観測点の例">確認済み　端末Eの問合せが本社DNSに到着
+確認済み　本社DNSが対応する回答を送出
+次の観測　本社DNS → 本社ルータ → 東倉庫ルータの回線側 → 端末E</pre>
+    <ul>
+      <li>回線側で同じ回答が見える場合は、その観測点から端末Eまでを調べる。</li>
+      <li>同じ回答が見えない場合は、本社DNSの送出点からその観測点までを調べる。</li>
+    </ul>
+  </template>
+  <template id="b-5-8-cutover-tests">
+    <h3>切替後の試験結果</h3>
+    <p>10時00分に権威DNSを更新し、資料Bに従って両支店の許可を追加しました。</p>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="移行後の東支店と西支店の試験結果"><table>
+      <thead><tr><th scope="col">観測</th><th scope="col">東支店</th><th scope="col">西支店</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">10時02分・支店DNSを指定した問合せ</th><td>新IP</td><td>旧IP</td></tr>
+        <tr><th scope="row">10時07分・支店DNSを指定した問合せ</th><td>新IP</td><td>新IP</td></tr>
+        <tr><th scope="row">10時07分・新IPを固定したHTTPS接続</th><td>正常な応答</td><td>接続タイムアウト</td></tr>
+        <tr><th scope="row">10時07分・クラウド接続FWの試験記録</th><td>新規接続の記録あり</td><td>新規接続の記録なし</td></tr>
+      </tbody>
+    </table></div>
+  </template>
+  <template id="b-5-8-route-table">
+    <h3>資料C　ルータの経路表</h3>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="新サーバ宛ての転送判断に使う経路表"><table>
+      <thead><tr><th scope="col">ルータ</th><th scope="col">宛先プレフィックス</th><th scope="col">次ホップ</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">東支店ルータ</th><td>0.0.0.0/0</td><td>本社ルータ</td></tr>
+        <tr><th scope="row">西支店ルータ</th><td>0.0.0.0/0</td><td>本社ルータ</td></tr>
+        <tr><th scope="row">西支店ルータ</th><td>203.0.113.64/26</td><td>検証用ルータ</td></tr>
+        <tr><th scope="row">本社ルータ</th><td>203.0.113.64/26</td><td>クラウド接続FW</td></tr>
+      </tbody>
+    </table></div>
+    <p>表は10時07分の試験時点（経路修正前）の設定です。その時点で各ルータの新サーバ宛てに一致する経路をすべて示しています。検証用の静的経路を使う現行業務はなく、検証用ルータから新サーバには到達できません。</p>
+  </template>
+  <template id="b-5-8-fw-rule">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="クラウド接続FWに追加する許可と等価な範囲"><table>
+      <thead><tr><th scope="col">送信元</th><th scope="col">宛先</th><th scope="col">宛先TCPポート</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">東支店PC 192.0.2.0/26</th><td>203.0.113.70</td><td>443</td></tr>
+        <tr><th scope="row">西支店PC 192.0.2.64/26</th><td>203.0.113.70</td><td>443</td></tr>
+        <tr><th scope="row">上の2行を1行にまとめる場合 192.0.2.0/25</th><td>203.0.113.70</td><td>443</td></tr>
+      </tbody>
+    </table></div>
+  </template>
+  <template id="b-5-8-dns-timeline">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="西支店DNSの旧値の取得から期限切れまで"><table>
+      <thead><tr><th scope="col">時刻</th><th scope="col">西支店DNSが保持する値</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">9時55分</th><td>旧IPを取得。ここから600秒間有効</td></tr>
+        <tr><th scope="row">10時00分</th><td>権威DNSが新IPに変わっても、旧値のキャッシュは有効</td></tr>
+        <tr><th scope="row">10時02分</th><td>期限前なので旧IPを返す</td></tr>
+        <tr><th scope="row">10時05分</th><td>旧値が期限切れ。この時刻以降の最初の問合せで新IPを取得</td></tr>
+      </tbody>
+    </table></div>
+  </template>
+  <template id="b-5-8-route-fix">
+    <pre class="table-wrap" tabindex="0" aria-label="西支店の修正前後の新サーバ宛て経路">修正前　西支店ルータ → 検証用ルータ（新サーバに届かない）
+修正後　西支店ルータ → 本社ルータ → クラウド接続FW → 新サーバ</pre>
+  </template>
   <template id="b-6-1-equipment-answer">
     <p>設備（<u>設備番号</u>〔主キー〕、設備名）<br>
     点検（<u>点検番号</u>〔主キー〕、<span style="text-decoration: underline dashed">設備番号</span>〔外部キー〕、予定日）</p>
@@ -5629,7 +5784,7 @@ WHERE p.点検月 = :対象月</code></pre></div>
   <script>
     const byId = (id) => document.getElementById(id);
     const lessons = Array.from(document.querySelectorAll("[data-lesson]"));
-    const subjectBLessons = ["b-1-1", "b-1-2", "b-1-3", "b-1-4", "b-1-5", "b-2-1", "b-2-2", "b-2-3", "b-2-4", "b-2-5", "b-2-6", "b-2-7", "b-2-8", "b-3-1", "b-3-2", "b-3-3", "b-3-4", "b-3-5", "b-3-6", "b-3-7", "b-3-8", "b-4-1", "b-4-2", "b-4-3", "b-4-4", "b-4-5", "b-4-6", "b-4-7", "b-4-8", "b-5-1", "b-5-2", "b-5-3", "b-5-4", "b-5-5", "b-5-6", "b-6-1", "b-6-2", "b-6-3", "b-6-4", "b-6-5", "b-6-6", "b-6-7", "b-6-8", "b-6-9", "b-6-10", "b-6-11", "b-7-1", "b-7-2", "b-7-3", "b-7-4", "b-7-5", "b-7-6", "b-7-7", "b-7-8"].map(byId);
+    const subjectBLessons = ["b-1-1", "b-1-2", "b-1-3", "b-1-4", "b-1-5", "b-2-1", "b-2-2", "b-2-3", "b-2-4", "b-2-5", "b-2-6", "b-2-7", "b-2-8", "b-3-1", "b-3-2", "b-3-3", "b-3-4", "b-3-5", "b-3-6", "b-3-7", "b-3-8", "b-4-1", "b-4-2", "b-4-3", "b-4-4", "b-4-5", "b-4-6", "b-4-7", "b-4-8", "b-5-1", "b-5-2", "b-5-3", "b-5-4", "b-5-5", "b-5-6", "b-5-7", "b-5-8", "b-6-1", "b-6-2", "b-6-3", "b-6-4", "b-6-5", "b-6-6", "b-6-7", "b-6-8", "b-6-9", "b-6-10", "b-6-11", "b-7-1", "b-7-2", "b-7-3", "b-7-4", "b-7-5", "b-7-6", "b-7-7", "b-7-8"].map(byId);
     const sections = [byId("welcome"), byId("intro"), byId("subject-b"), ...subjectBLessons, ...lessons];
     const toc = byId("toc");
     const subjectAItems = Array.from(toc.children);
@@ -5685,6 +5840,8 @@ WHERE p.点検月 = :対象月</code></pre></div>
         <a href="#b-5-4">B-5-4　名前解決から業務サービスの接続先を特定する</a>
         <a href="#b-5-5">B-5-5　プロキシ経由の通信と許可ルールを組み直す</a>
         <a href="#b-5-6">B-5-6　通信方式と送信間隔から遅延・帯域を見積もる</a>
+        <a href="#b-5-7">B-5-7　観測結果を突き合わせて障害区間を絞る</a>
+        <a href="#b-5-8">B-5-8　総合演習：業務サーバ移行後の接続を設計・検証する</a>
       </details>
       <details>
         <summary>B-6　データベース</summary>
@@ -7753,6 +7910,197 @@ WHERE p.点検月 = :対象月</code></pre></div>
           ],
           explanation: "200 msで送れる量は96,000 × 0.200＝19,200 bitです。1件1,600 bitなのでちょうど12件送れます。仮に78台なら1組13台で約216.7 msかかり、次の組の到着までに終わりません。78台でも平均は12.48 kbit/sで、平均だけではこの待ちを見つけられません。",
           solutionId: "b-5-6-capacity"
+        }
+      ],
+      "b-5-7": [
+        {
+          prompt: "1　初期の試験結果から、東倉庫の端末Eで確認できた通信と、失敗した処理の組合せを選んでください。",
+          options: [
+            "東倉庫のゲートウェイへのpingと、IPを固定した本社WebへのHTTPSは成功。端末Eは本社DNSから期限内に回答を得られなかった。",
+            "ゲートウェイへのpingが通るので、本社までの全通信と名前解決は成功。失敗したのは本社Webの処理。",
+            "通常URLを開けないので、本社WebへのHTTPSはすべて失敗。名前解決は確認できない。"
+          ],
+          answer: 0,
+          explanation: "端末Eでは、ゲートウェイへのpingに応答があり、IPを固定した試験では本社WebからHTTP 200が返りました。指定した本社DNSへの問合せはタイムアウトしています。HTTP 200で確認できたのは、試した監視ページと、その試験で使ったHTTPS通信です。"
+        },
+        {
+          prompt: "2　端末Eから自拠点のゲートウェイへのpingが成功しました。この結果から、拠点間回線が正常といえますか。pingが通る範囲を示して答えてください。",
+          thinkFirst: true,
+          options: [
+            "正常といえる。ゲートウェイから応答が戻るので、本社方向の回線も往復できる。",
+            "この結果だけでは判断できない。pingの往復は東倉庫内の端末Eと東倉庫ルータの間で完結する。",
+            "回線の往路は正常といえる。pingは本社ルータを経由し、復路だけ東倉庫内を通る。"
+          ],
+          answer: 1,
+          selfCheck: [
+            "pingで確かめた区間を端末Eと東倉庫ルータの間と答えた",
+            "その試験に拠点間回線は含まれず、回線の正常性は判断できないと答えた"
+          ],
+          explanation: "自拠点のゲートウェイは東倉庫ルータです。そのpingは倉庫内のアクセススイッチを経由して往復します。別に行ったIP固定のHTTPS試験では、その時点で本社Webとの往復通信ができています。",
+          solutionId: "b-5-7-tested-scope"
+        },
+        {
+          prompt: "3　端末EのDNS問合せが本社DNSに届かなかった場合と、回答がEに戻らなかった場合を区別します。まずどの記録を、何と照合して確認するかを55字以内で答えてください。",
+          thinkFirst: true,
+          options: [
+            "端末Eのタイムアウト時刻を西倉庫のHTTPS記録と照合し、本社DNSへの到達を確認する。",
+            "本社DNSのAレコードと端末Wが得たIPを照合し、Eへの回答送出を確認する。",
+            "本社DNSでEの試験時刻・送信元・問合せ名に対応する受信と回答送出の記録を確認する。"
+          ],
+          answer: 2,
+          selfCheck: [
+            "本社DNS側で問合せの受信と回答の送出を確認すると答えた（DNSの入出方向が分かる通信記録でも可）",
+            "端末Eの試験時刻、送信元、問合せ名などを照合し、対象の問合せと回答を識別すると答えた"
+          ],
+          explanation: "本社DNSで該当する受信が見えなければ、そこまでの往路を調べます。受信があって回答の送出が見えなければ、本社DNSの処理や送出も候補です。同じ問合せに対する正常な回答が送出されていれば、その回答がEに届くまでの復路と、Eでの受信を調べます。"
+        },
+        {
+          prompt: "4　追加資料から、問合せと回答についてどこまで確認できたかを示してください。復路の途中に観測点を一つ選び、同じDNS回答が見えた場合と見えなかった場合に調べる範囲を答えてください。",
+          thinkFirst: true,
+          contextId: "b-5-7-observations",
+          options: [
+            "問合せは本社DNSに届き、回答も送出された。東倉庫ルータの回線側で同じ回答を探す。見えればそこからEまで、見えなければDNSの送出点から観測点までを調べる。",
+            "問合せは本社DNSに届いた。東倉庫ルータの回線側で回答が見えればDNSからルータまで、見えなければルータからEまでを調べる。",
+            "本社DNSが回答を送出したので、回答はEに到達した。Eで名前の入力間違いがないかを確認する。"
+          ],
+          answer: 0,
+          selfCheck: [
+            "Eの問合せが本社DNSに到達し、対応する回答を本社DNSが送出したと答えた",
+            "復路上に観測点と方向を定め、同じDNS回答を照合すると答えた（本社ルータの東向き送出なども可）",
+            "回答が見えれば、選んだ観測点から端末E側の範囲を調べると答えた",
+            "回答が見えなければ、本社DNSの送出点から選んだ観測点までを調べると答えた"
+          ],
+          explanation: "観測点が東倉庫ルータの回線側なら、そこに着いた回答を送信元・宛先、問合せ名、取引IDで照合します。本社ルータの東向き送出など、復路の別の境界を選んでも構いません。その場合は、選んだ観測点を境に次の調査範囲を示します。",
+          solutionId: "b-5-7-reply-check"
+        },
+        {
+          prompt: "5　東倉庫ルータの受信エラーの増加数と、SNMPトラップが示す事象を答えてください。この記録でDNSタイムアウトの原因箇所まで確定できるか、理由も答えてください。",
+          thinkFirst: true,
+          contextId: "b-5-7-observations",
+          options: [
+            "受信エラーが40件増え、回線側でリンクが一時切断した。よってDNS回答はその回線で破棄されたと確定できる。",
+            "受信エラーが40件増え、回線側でリンクが一時切断した。調査候補になるが、個別のDNS回答との対応が分からず原因は確定できない。",
+            "1,280件の受信エラーが新たに発生し、SNMPトラップがDNSサーバの停止を通知した。"
+          ],
+          answer: 1,
+          selfCheck: [
+            "受信エラーが40件増えたと答えた（1,280 − 1,240）",
+            "SNMPトラップが東倉庫ルータの回線側の一時的なリンク切断を知らせたと答えた",
+            "記録からは個別のDNS回答の消失を特定できず、原因箇所は確定できないと答えた"
+          ],
+          explanation: "カウンタの差はその時間帯のエラー件数です。SNMPトラップは機器が監視先に送るイベント通知で、ここでは回線側のリンク切断を知らせます。時間帯が重なったので候補にはなりますが、同じDNS回答がどこまで届いたかを照合し、切断やエラーがタイムアウトに関係したかを確認します。"
+        }
+      ],
+      "b-5-8": [
+        {
+          prompt: "1　同じURLで新サーバを利用するため、どのDNSの何のレコードをどの値へ変更しますか。PCでそのまま使えるゲートウェイとDNSの設定も答えてください。",
+          thinkFirst: true,
+          options: [
+            "共通の権威DNSで returns.example のAレコードを203.0.113.70へ変更する。PCは自支店ルータと自支店のキャッシュDNSを使い続ける。",
+            "各PCのDNS問合せ先を203.0.113.70へ変更する。権威DNSの登録はそのままにする。",
+            "権威DNSのAレコードを203.0.113.70へ変更し、各PCのゲートウェイをクラウド接続FWへ変更する。"
+          ],
+          answer: 0,
+          selfCheck: [
+            "共通の権威DNSで returns.example のAレコードを変更すると答えた",
+            "変更後の値を新サーバの203.0.113.70と答えた",
+            "PCのゲートウェイは自支店ルータのままと答えた",
+            "PCのDNS問合せ先は自支店のキャッシュDNSのままと答えた"
+          ],
+          explanation: "利用者が入力する名前は共通なので、その名前を管理する権威DNSのAレコードを更新します。自支店ルータはPCの最初の転送先、自支店DNSはPCの名前解決先です。サーバの移転後もその役割は変わりません。"
+        },
+        {
+          prompt: "2　クラウド接続FWに追加する新規接続の許可を、送信元の範囲、宛先IP、宛先TCPポートで答えてください。",
+          thinkFirst: true,
+          options: [
+            "192.0.2.0/26と192.0.2.64/26から、198.51.100.30のTCP 443を許可する。",
+            "192.0.2.0/26と192.0.2.64/26から、203.0.113.70のTCP 443を許可する。",
+            "192.0.2.0/24から、203.0.113.64/26の全てのTCPポートを許可する。"
+          ],
+          answer: 1,
+          selfCheck: [
+            "送信元を両支店PCの範囲に限定した（二つの/26、等価な192.0.2.0/25、同じ二範囲のアドレスグループでも可）",
+            "宛先を新サーバの203.0.113.70だけにした（203.0.113.70/32でも可）",
+            "宛先をTCP 443に限定した（資料のHTTPSサービス名でも可）"
+          ],
+          explanation: "東支店は192.0.2.0〜63、西支店は192.0.2.64〜127のプレフィックスです。二つをまとめると192.0.2.0/25です。アドレス変換がないため、FWで見える送信元は支店PCです。宛先は新サーバのHTTPSだけを許可します。",
+          solutionId: "b-5-8-fw-rule"
+        },
+        {
+          prompt: "3　西支店が10時02分に旧IPを得た理由と、キャッシュが期限切れになる時刻を答えてください。",
+          thinkFirst: true,
+          context: "権威DNSの更新は予定どおり10時00分に完了しました。",
+          options: [
+            "10時00分に旧値のTTLを数え直すので、期限は10時10分。",
+            "権威DNSの更新と同時に期限が切れるため、10時02分の旧IPは更新失敗を示す。",
+            "西支店DNSが9時55分に取得した旧値をTTL内で返した。600秒後の10時05分に期限切れになる。"
+          ],
+          answer: 2,
+          selfCheck: [
+            "西支店DNSの9時55分取得分が残っていたと答えた",
+            "取得時刻から600秒を足し、期限切れは10時05分と答えた（有効なのは10時05分の直前まで）"
+          ],
+          explanation: "TTLはそのキャッシュDNSが値を取得した時刻から数えます。旧値は10時05分に期限切れになり、その時刻以降の最初の問合せで共通の権威DNSから値を再取得します。",
+          solutionId: "b-5-8-dns-timeline"
+        },
+        {
+          prompt: "4　10時07分の西支店の失敗をDNSの旧値で説明できますか。試験結果を根拠に判断し、次にどの区間をどこで確かめるかを答えてください。",
+          thinkFirst: true,
+          contextId: "b-5-8-cutover-tests",
+          options: [
+            "DNSの旧値で説明できる。西支店DNSのキャッシュを消し、10時02分と同じ問合せを繰り返す。",
+            "旧値では説明できない。西支店DNSは新IPを返し、新IP固定でも失敗する。FWに西支店の接続記録がないので、まず西支店ルータで新IPへの次ホップや送出を確認する。",
+            "DNSの旧値では説明できない。FWに西支店の記録がないので、FWが拒否したと確定できる。FWの許可範囲を広げる。"
+          ],
+          answer: 1,
+          selfCheck: [
+            "10時07分には西支店DNSが新IPを返し、新IP固定でも失敗したため、DNSの旧値では説明できないと答えた",
+            "西支店からFW入口までの到達を先に調べると答えた（FW入口で到着の有無を確かめる案でも可）",
+            "西支店ルータで新IP宛ての次ホップ・送出を照合するなど、調査する区間を絞れる観測点と対象を示した（クラウド接続FWの支店側入口で同じ接続要求を探す方法でも可）"
+          ],
+          explanation: "西支店で新IPが得られ、名前解決を介さずに接続しても失敗しています。FWの試験記録がない理由は、この時点の資料だけでは確定しません。西支店ルータで新IP宛ての接続要求がどこへ送られたかを見ます。FWの支店側入口で同じ要求を観測するなら、見えなければ上流、見えればFWの許可・記録とその先を調べます。"
+        },
+        {
+          prompt: "5　資料Cから、西支店ルータが新IP宛てに選ぶ経路と次ホップを示し、設定の修正案と修正後の経路を答えてください。ほかの業務通信も維持することが条件です。",
+          thinkFirst: true,
+          contextId: [
+            "b-5-8-cutover-tests",
+            "b-5-8-route-table"
+          ],
+          options: [
+            "デフォルト経路で本社へ向かっている。西支店ルータから本社へのデフォルト経路を削除する。",
+            "西支店の/26が選ばれる。クラウド接続FWの宛先を/26に広げ、検証用ルータへの経路は変えない。",
+            "新IPに一致する/26がデフォルト経路より優先され、検証用ルータへ向かう。不要な/26を西支店ルータから削除し、本社へのデフォルト経路からクラウド接続FWを通って新サーバへ送る。"
+          ],
+          answer: 2,
+          selfCheck: [
+            "203.0.113.70には西支店ルータの203.0.113.64/26が最長一致し、検証用ルータに向かうと答えた",
+            "西支店ルータの設定を修正して、新サーバ宛ての次ホップを本社にすると答えた（不要な/26の削除、/26の次ホップ変更、新IPの/32を追加する方法でも可）",
+            "修正後に西支店ルータから本社ルータ、クラウド接続FW、新サーバへ進むと答えた"
+          ],
+          explanation: "西支店だけ、デフォルト経路より具体的な/26が残っています。使っている現行業務がなければ削除で足ります。既存/26を本社向きに変える案と、新サーバの203.0.113.70/32を本社向きに追加する案も資料の条件では成立します。それぞれ修正後に選ばれる行を示し、他業務に必要な経路を維持します。",
+          solutionId: "b-5-8-route-fix"
+        },
+        {
+          prompt: "6　修正後、旧サーバを停止する前に両支店で何を確認しますか。名前解決、実際の接続先、業務操作の結果と、旧サーバを停止できる条件を答えてください。",
+          thinkFirst: true,
+          contextId: [
+            "b-5-8-cutover-tests",
+            "b-5-8-route-table"
+          ],
+          options: [
+            "東支店で新IPが得られれば、両支店の業務も新サーバへ移ったと判断し、旧サーバを停止する。",
+            "両支店で通常URLから新規接続し、各支店DNSが新IPを返し、実際に新IPのTCP 443へ接続して返品受付を完了できることを確認する。旧サーバに業務で使われている接続が残っていなければ停止する。",
+            "両支店から新IPへpingできれば、名前解決と返品受付も成功していると判断し、旧サーバを停止する。"
+          ],
+          answer: 1,
+          selfCheck: [
+            "両支店のDNSが returns.example に新IPを返すと確かめた",
+            "両支店で通常URLから新しく接続し、接続先が新IPのTCP 443と確かめた",
+            "試験用の返品受付が新サーバで正常に完了することを確認した（新サーバ側で当該試験取引を識別できる受付記録でも可）",
+            "旧サーバに業務で利用中の接続が残っていないことを停止の条件に含めた"
+          ],
+          explanation: "名前解決の結果、実際の接続記録、業務操作の成功はそれぞれ別の確認です。両支店で確かめ、試験用の返品受付が新サーバで完了したと照合します。旧サーバに業務で使われている接続がなくなったことも確かめてから停止します。"
         }
       ],
       "b-6-11": [
@@ -11764,7 +12112,10 @@ WHERE p.点検月 = :対象月</code></pre></div>
         position.textContent = (questionIndex + 1) + " / " + questions.length + "問";
         legend.textContent = question.prompt;
         context.textContent = question.context ?? "";
-        if (question.contextId) context.append(byId(question.contextId).content.cloneNode(true));
+        const contextIds = [].concat(question.contextId ?? []);
+        for (const contextId of contextIds) {
+          context.append(byId(contextId).content.cloneNode(true));
+        }
         if (question.contextId === "availability-graphs") {
           const graphs = context.querySelector(".availability-graphs");
           const functions = [p => p, p => 1 - (1 - p) ** 3, p => p * (1 - (1 - p) ** 3), p => p ** 4];
@@ -11802,7 +12153,7 @@ WHERE p.点検月 = :対象月</code></pre></div>
             ctx.stroke();
           }
         }
-        context.hidden = !question.context && !question.contextId;
+        context.hidden = !question.context && contextIds.length === 0;
         options.replaceChildren(...question.options.map((option, index) => {
           const label = document.createElement("label");
           label.className = "option";
